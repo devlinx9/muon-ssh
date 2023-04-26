@@ -1,11 +1,8 @@
-/**
- *
- */
 package com.jediterm.terminal;
 
-import org.apache.log4j.Logger;
 
-import java.awt.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public enum TerminalMode {
   Null,
@@ -19,10 +16,8 @@ public enum TerminalMode {
   WideColumn {
     @Override
     public void setEnabled(Terminal terminal, boolean enabled) {
-      int h = terminal.getTerminalHeight();
-      Dimension d = enabled ? new Dimension(132, h) : new Dimension(80, h);
-
-      terminal.resize(d, RequestOrigin.Remote);
+      // Skip resizing as it would require to resize parent container.
+      // Other terminal emulators (iTerm2, Terminal.app, GNOME Terminal) ignore it too.
       terminal.clearScreen();
       terminal.resetScrollRegions();
     }
@@ -97,12 +92,21 @@ public enum TerminalMode {
             public void setEnabled(Terminal terminal, boolean enabled) {
               terminal.setAltSendsEscape(enabled);
             }
-          }
+          },
+
+  // https://cirw.in/blog/bracketed-paste
+  // http://www.xfree86.org/current/ctlseqs.html#Bracketed%20Paste%20Mode
+  BracketedPasteMode {
+    @Override
+    public void setEnabled(Terminal terminal, boolean enabled) {
+      terminal.setBracketedPasteMode(enabled);
+    }
+  }
   ;
 
-  private static final Logger LOG = Logger.getLogger(TerminalMode.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TerminalMode.class);
   
   public void setEnabled(Terminal terminal, boolean enabled) {
-    LOG.error("Mode " + name() + " is not implemented, setting to " + enabled);
+    LOG.warn("Mode " + name() + " is not implemented, setting to " + enabled);
   }
 }

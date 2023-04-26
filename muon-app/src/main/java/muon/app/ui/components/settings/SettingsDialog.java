@@ -4,6 +4,7 @@
 package muon.app.ui.components.settings;
 
 import com.jediterm.terminal.emulator.ColorPalette;
+import com.jediterm.terminal.emulator.ColorPaletteImpl;
 import muon.app.App;
 import muon.app.PasswordStore;
 import muon.app.Settings;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import com.jediterm.core.Color;
 
 /**
  * @author subhro
@@ -56,13 +58,37 @@ public class SettingsDialog extends JDialog {
     private JSpinner spSysLoadInterval;
     private JComboBox<Constants.TransferMode> cmbTransferMode;
     private JComboBox<Constants.ConflictAction> cmbConflictAction;
-    private Color defaultForegroundColor = Color.gray;
+    private Color defaultForegroundColor = new Color(211,211,211);
     private JTable editorTable;
     private JCheckBox chkUseManualScaling;
     private JSpinner spScaleValue;
 
     private JCheckBox chkUseMasterPassword;
     private JButton btnChangeMasterPassword;
+
+    public Color[] getIndexColors() {
+          return new Color[]{
+              new Color(0x000000), //Black
+              new Color(0xcd0000), //Red 
+              new Color(0x00cd00), //Green
+              new Color(0xcdcd00), //Yellow
+              new Color(0x1e90ff), //Blue 
+              new Color(0xcd00cd), //Magenta
+              new Color(0x00cdcd), //Cyan
+              new Color(0xe5e5e5), //White
+              //Bright versions of the ISO colors
+              new Color(0x4c4c4c), //Black 
+              new Color(0xff0000), //Red
+              new Color(0x00ff00), //Green
+              new Color(0xffff00), //Yellow
+              new Color(0x4682b4), //Blue
+              new Color(0xff00ff), //Magenta
+              new Color(0x00ffff), //Cyan
+              new Color(0xffffff), //White
+          };
+         
+      };
+
 
     /**
      *
@@ -245,15 +271,22 @@ public class SettingsDialog extends JDialog {
 
         cmbTermTheme.addActionListener(e -> {
             int index = cmbTermTheme.getSelectedIndex();
+
             TerminalTheme theme = cmbTermTheme.getItemAt(index);
-            defaultColorFg.setColor(theme.getDefaultStyle().getForeground().toAwtColor());
-            defaultColorBg.setColor(theme.getDefaultStyle().getBackground().toAwtColor());
+            
+            defaultColorFg
+            .setColor(theme
+                .getDefaultStyle()
+                .getForeground()
+                .toColor()
+            );
+            defaultColorBg.setColor(theme.getDefaultStyle().getBackground().toColor());
 
-            defaultSelectionFg.setColor(theme.getSelectionColor().getForeground().toAwtColor());
-            defaultSelectionBg.setColor(theme.getSelectionColor().getBackground().toAwtColor());
+            defaultSelectionFg.setColor(theme.getSelectionColor().getForeground().toColor());
+            defaultSelectionBg.setColor(theme.getSelectionColor().getBackground().toColor());
 
-            defaultFoundFg.setColor(theme.getFoundPatternColor().getForeground().toAwtColor());
-            defaultFoundBg.setColor(theme.getFoundPatternColor().getBackground().toAwtColor());
+            defaultFoundFg.setColor(theme.getFoundPatternColor().getForeground().toColor());
+            defaultFoundBg.setColor(theme.getFoundPatternColor().getBackground().toColor());
         });
 
         paletteButtons = new ColorSelectorButton[16];
@@ -272,8 +305,9 @@ public class SettingsDialog extends JDialog {
             int index = cmbTermPalette.getSelectedIndex();
             if (index == 2)
                 return;
-            ColorPalette palette = index == 0 ? ColorPalette.XTERM_PALETTE : ColorPalette.WINDOWS_PALETTE;
-            Color[] colors = palette.getIndexColors();
+            // ColorPalette palette = index == 0 ? this.XTERM_PALETTE : this.WINDOWS_PALETTE;
+             //Color[] colors = palette.getIndexColors();
+             Color[] colors = this.getIndexColors();
             for (int i = 0; i < paletteButtons.length; i++) {
                 paletteButtons[i].setColor(colors[i]);
             }
@@ -377,7 +411,7 @@ public class SettingsDialog extends JDialog {
 
         return new SkinnedScrollPane(panelBuffered);
     }
-
+    
     public SkinnedScrollPane createGeneralPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -606,7 +640,11 @@ public class SettingsDialog extends JDialog {
     }
 
     private void loadSettings(Settings settings) {
-        defaultForegroundColor = this.cmbTermTheme.getForeground();
+
+        java.awt.Color awtColor = this.cmbTermTheme.getForeground();
+        Color jediColor = new com.jediterm.core.Color(awtColor.getRGB());
+       
+        defaultForegroundColor = jediColor ;
         this.chkAudibleBell.setSelected(settings.isTerminalBell());
         this.chkPuttyLikeCopyPaste.setSelected(settings.isPuttyLikeCopyPaste());
 
@@ -649,7 +687,7 @@ public class SettingsDialog extends JDialog {
         } else {
             chkPromptForSudo.setSelected(false);
             chkPromptForSudo.setEnabled(false);
-            chkPromptForSudo.setForeground(Color.gray);
+            chkPromptForSudo.setForeground(java.awt.Color.gray);
         }
         chkDirectoryCache.setSelected(settings.isDirectoryCache());
         chkShowPathBar.setSelected(settings.isShowPathBar());
@@ -852,12 +890,17 @@ public class SettingsDialog extends JDialog {
     private void setStatusCheckBox(JCheckBox jCheckBox, boolean status) {
         if (status) {
             jCheckBox.setEnabled(true);
-            jCheckBox.setForeground(defaultForegroundColor);
+
+            java.awt.Color awtColor = new java.awt.Color(defaultForegroundColor.getRed(), defaultForegroundColor.getGreen(), defaultForegroundColor.getBlue(), defaultForegroundColor.getAlpha());
+
+
+
+            jCheckBox.setForeground(awtColor);
 
         } else {
             jCheckBox.setSelected(false);
             jCheckBox.setEnabled(false);
-            jCheckBox.setForeground(Color.gray);
+            jCheckBox.setForeground(java.awt.Color.gray);
         }
     }
 

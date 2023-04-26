@@ -1,5 +1,7 @@
 package com.jediterm.terminal;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.EnumSet;
@@ -21,17 +23,17 @@ public class TextStyle {
     this(null, null, NO_OPTIONS);
   }
 
-  public TextStyle( TerminalColor foreground,  TerminalColor background) {
+  public TextStyle(@Nullable TerminalColor foreground, @Nullable TerminalColor background) {
     this(foreground, background, NO_OPTIONS);
   }
 
-  public TextStyle( TerminalColor foreground,  TerminalColor background,  EnumSet<Option> options) {
+  public TextStyle(@Nullable TerminalColor foreground, @Nullable TerminalColor background, @NotNull EnumSet<Option> options) {
     myForeground = foreground;
     myBackground = background;
     myOptions = options.clone();
   }
 
-  
+  @NotNull
   public static TextStyle getCanonicalStyle(TextStyle currentStyle) {
     if (currentStyle instanceof HyperlinkStyle) {
       return currentStyle;
@@ -47,12 +49,12 @@ public class TextStyle {
     return currentStyle;
   }
 
-  
+  @Nullable
   public TerminalColor getForeground() {
     return myForeground;
   }
 
-  
+  @Nullable
   public TerminalColor getBackground() {
     return myBackground;
   }
@@ -92,7 +94,7 @@ public class TextStyle {
     return myOptions.contains(Option.INVERSE) ? myBackground : myForeground;
   }
 
-  
+  @NotNull
   public Builder toBuilder() {
     return new Builder(this);
   }
@@ -106,7 +108,7 @@ public class TextStyle {
     UNDERLINED,
     HIDDEN;
 
-    private void set( EnumSet<Option> options, boolean val) {
+    private void set(@NotNull EnumSet<Option> options, boolean val) {
       if (val) {
         options.add(this);
       }
@@ -119,9 +121,9 @@ public class TextStyle {
   public static class Builder {
     private TerminalColor myForeground;
     private TerminalColor myBackground;
-    private final EnumSet<Option> myOptions;
+    private EnumSet<Option> myOptions;
 
-    public Builder( TextStyle textStyle) {
+    public Builder(@NotNull TextStyle textStyle) {
       myForeground = textStyle.myForeground;
       myBackground = textStyle.myBackground;
       myOptions = textStyle.myOptions.clone();
@@ -133,25 +135,25 @@ public class TextStyle {
       myOptions = EnumSet.noneOf(Option.class);
     }
 
-    
-    public Builder setForeground( TerminalColor foreground) {
+    @NotNull
+    public Builder setForeground(@Nullable TerminalColor foreground) {
       myForeground = foreground;
       return this;
     }
 
-    
-    public Builder setBackground( TerminalColor background) {
+    @NotNull
+    public Builder setBackground(@Nullable TerminalColor background) {
       myBackground = background;
       return this;
     }
 
-    
-    public Builder setOption( Option option, boolean val) {
+    @NotNull
+    public Builder setOption(@NotNull Option option, boolean val) {
       option.set(myOptions, val);
       return this;
     }
 
-    
+    @NotNull
     public TextStyle build() {
       return new TextStyle(myForeground, myBackground, myOptions);
     }

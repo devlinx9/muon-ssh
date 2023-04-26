@@ -6,7 +6,7 @@ package com.jediterm.terminal.model;
 import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.emulator.charset.CharacterSet;
 import com.jediterm.terminal.emulator.charset.GraphicSetState;
-
+import org.jetbrains.annotations.NotNull;
 
 public class StoredCursor {
 
@@ -38,7 +38,7 @@ public class StoredCursor {
 
   public StoredCursor(int cursorX,
                       int cursorY,
-                       TextStyle textStyle,
+                      @NotNull TextStyle textStyle,
                       boolean autoWrap,
                       boolean originMode,
                       GraphicSetState graphicSetState) {

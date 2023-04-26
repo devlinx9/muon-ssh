@@ -203,4 +203,9 @@ public class SshTtyConnector implements DisposableTtyConnector {
         return isInitiated.get();
     }
 
+     @Override
+      public boolean ready() throws IOException {
+        return myInputStreamReader.ready();
+      }
+
 }

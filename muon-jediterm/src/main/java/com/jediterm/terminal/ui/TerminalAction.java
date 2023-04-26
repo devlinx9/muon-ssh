@@ -1,10 +1,12 @@
 package com.jediterm.terminal.ui;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -12,24 +14,33 @@ import java.util.function.Supplier;
  * @author traff
  */
 public class TerminalAction {
-  private final String myName;
-  private final KeyStroke[] myKeyStrokes;
+  private final TerminalActionPresentation myPresentation;
   private final Predicate<KeyEvent> myRunnable;
 
-  private Character myMnemonic = null;
-  private Supplier<Boolean> myEnabledSupplier = null;
-  private Integer myMnemonicKey = null;
+  private Supplier<Boolean> myEnabledSupplier = () -> true;
+  private Integer myMnemonicKeyCode = null;
   private boolean mySeparatorBefore = false;
   private boolean myHidden = false;
 
-  public TerminalAction(String name, KeyStroke[] keyStrokes, Predicate<KeyEvent> runnable) {
-    myName = name;
-    myKeyStrokes = keyStrokes;
+  public TerminalAction(@NotNull TerminalActionPresentation presentation, @NotNull Predicate<KeyEvent> runnable) {
+    myPresentation = presentation;
     myRunnable = runnable;
   }
 
+  public TerminalAction(@NotNull TerminalActionPresentation presentation) {
+    this(presentation, keyEvent -> true);
+  }
+
+  public @NotNull TerminalActionPresentation getPresentation() {
+    return myPresentation;
+  }
+
+  public @Nullable Integer getMnemonicKeyCode() {
+    return myMnemonicKeyCode;
+  }
+
   public boolean matches(KeyEvent e) {
-    for (KeyStroke ks : myKeyStrokes) {
+    for (KeyStroke ks : myPresentation.getKeyStrokes()) {
       if (ks.equals(KeyStroke.getKeyStrokeForEvent(e))) {
         return true;
       }
@@ -37,17 +48,18 @@ public class TerminalAction {
     return false;
   }
 
-  public boolean perform(KeyEvent e) {
-    if (myEnabledSupplier != null && !myEnabledSupplier.get()) {
-      return false;
-    }
+  public boolean isEnabled(@Nullable KeyEvent e) {
+    return myEnabledSupplier.get();
+  }
+
+  public boolean actionPerformed(@Nullable KeyEvent e) {
     return myRunnable.test(e);
   }
 
-  public static boolean processEvent(TerminalActionProvider actionProvider, final KeyEvent e) {
+  public static boolean processEvent(@NotNull TerminalActionProvider actionProvider, @NotNull KeyEvent e) {
     for (TerminalAction a : actionProvider.getActions()) {
       if (a.matches(e)) {
-        return a.perform(e);
+        return a.isEnabled(e) && a.actionPerformed(e);
       }
     }
 
@@ -58,68 +70,16 @@ public class TerminalAction {
     return false;
   }
 
-  public static boolean addToMenu(JPopupMenu menu, TerminalActionProvider actionProvider) {
-    boolean added = false;
-    if (actionProvider.getNextProvider() != null) {
-      added = addToMenu(menu, actionProvider.getNextProvider());
-    }
-    boolean addSeparator = added;
-    for (final TerminalAction a : actionProvider.getActions()) {
-      if (a.isHidden()) {
-        continue;
-      }
-      if (!addSeparator) {
-        addSeparator = a.isSeparated();
-      }
-      if (addSeparator) {
-        menu.addSeparator();
-        addSeparator = false;
-      }
-
-      menu.add(a.toMenuItem());
-
-      added = true;
-    }
-
-    return added;
-  }
-
-  public int getKeyCode() {
-    for (KeyStroke ks : myKeyStrokes) {
-      return ks.getKeyCode();
-    }
-    return 0;
-  }
-
-  public int getModifiers() {
-    for (KeyStroke ks : myKeyStrokes) {
-      return ks.getModifiers();
-    }
-    return 0;
-  }
-
-  public String getName() {
-    return myName;
-  }
-  
-  public TerminalAction withMnemonic(Character ch) {
-    myMnemonic = ch;
-    return this;
+  public @NotNull String getName() {
+    return myPresentation.getName();
   }
 
   public TerminalAction withMnemonicKey(Integer key) {
-    myMnemonicKey = key;
+    myMnemonicKeyCode = key;
     return this;
   }
 
-  public boolean isEnabled() {
-    if (myEnabledSupplier != null) {
-      return myEnabledSupplier.get();
-    }
-    return true;
-  }
-  
-  public TerminalAction withEnabledSupplier(Supplier<Boolean> enabledSupplier) {
+  public TerminalAction withEnabledSupplier(@NotNull Supplier<Boolean> enabledSupplier) {
     myEnabledSupplier = enabledSupplier;
     return this;
   }
@@ -129,27 +89,19 @@ public class TerminalAction {
     return this;
   }
   
-  public JMenuItem toMenuItem() {
-    JMenuItem menuItem = new JMenuItem(myName);
+  private @NotNull JMenuItem toMenuItem() {
+    JMenuItem menuItem = new JMenuItem(myPresentation.getName());
 
-    if (myMnemonic != null) {
-      menuItem.setMnemonic(myMnemonic);
-    }
-    if (myMnemonicKey != null) {
-      menuItem.setMnemonic(myMnemonicKey);
+    if (myMnemonicKeyCode != null) {
+      menuItem.setMnemonic(myMnemonicKeyCode);
     }
 
-    if (myKeyStrokes.length > 0) {
-      menuItem.setAccelerator(myKeyStrokes[0]);
+    if (!myPresentation.getKeyStrokes().isEmpty()) {
+      menuItem.setAccelerator(myPresentation.getKeyStrokes().get(0));
     }
 
-    menuItem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        myRunnable.test(null);
-      }
-    });
-    menuItem.setEnabled(isEnabled());
+    menuItem.addActionListener(actionEvent -> actionPerformed(null));
+    menuItem.setEnabled(isEnabled(null));
     
     return menuItem;
   }
@@ -165,5 +117,50 @@ public class TerminalAction {
   public TerminalAction withHidden(boolean hidden) {
     myHidden = hidden;
     return this;
+  }
+
+  @Override
+  public String toString() {
+    return "'" + myPresentation.getName() + "'";
+  }
+
+  public static void fillMenu(@NotNull JPopupMenu menu, @NotNull TerminalActionProvider actionProvider) {
+    buildMenu(actionProvider, new TerminalActionMenuBuilder() {
+      @Override
+      public void addAction(@NotNull TerminalAction action) {
+        menu.add(action.toMenuItem());
+      }
+
+      @Override
+      public void addSeparator() {
+        menu.addSeparator();
+      }
+    });
+  }
+
+  public static void buildMenu(@NotNull TerminalActionProvider provider, @NotNull TerminalActionMenuBuilder builder) {
+    List<TerminalActionProvider> actionProviders = listActionProviders(provider);
+    boolean emptyGroup = true;
+    for (TerminalActionProvider actionProvider : actionProviders) {
+      boolean addSeparator = !emptyGroup;
+      emptyGroup = true;
+      for (TerminalAction action : actionProvider.getActions()) {
+        if (action.isHidden()) continue;
+        if (addSeparator || action.isSeparated()) {
+          builder.addSeparator();
+          addSeparator = false;
+        }
+        builder.addAction(action);
+        emptyGroup = false;
+      }
+    }
+  }
+
+  private static @NotNull List<TerminalActionProvider> listActionProviders(@NotNull TerminalActionProvider provider) {
+    var providers = new ArrayList<TerminalActionProvider>();
+    for (var p = provider; p != null; p = p.getNextProvider()) {
+      providers.add(0, p);
+    }
+    return providers;
   }
 }

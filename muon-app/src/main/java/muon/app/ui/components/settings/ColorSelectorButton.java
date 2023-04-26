@@ -12,7 +12,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import com.jediterm.core.Color;
 /**
  * @author subhro
  *
@@ -34,8 +34,11 @@ public class ColorSelectorButton extends JLabel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Color color = JColorChooser.showDialog(null, "Select color",
-                        getColor());
+
+                java.awt.Color awtColor = JColorChooser.showDialog(null, "Select color",
+                        java.awt.Color.WHITE);
+                
+                Color color = new Color(awtColor.getRGB());
                 if (color != null) {
                     setColor(color);
                 }
@@ -69,7 +72,8 @@ public class ColorSelectorButton extends JLabel {
      * @param color the color to set
      */
     public void setColor(Color color) {
-        this.setBackground(color);
+        java.awt.Color awtColor = new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+        this.setBackground(awtColor);
         this.color = color;
     }
 

@@ -1,16 +1,16 @@
 package com.jediterm.terminal;
 
-import com.jediterm.terminal.ui.UIUtil;
+import com.jediterm.core.Platform;
+import com.jediterm.core.input.InputEvent;
+import com.jediterm.core.util.Ascii;
 import com.jediterm.terminal.util.CharUtils;
+import org.jetbrains.annotations.NotNull;
 
-import muon.terminal.Ascii;
-
-import java.awt.event.InputEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.awt.event.KeyEvent.*;
+import static com.jediterm.core.input.KeyEvent.*;
 
 /**
  * @author traff
@@ -18,14 +18,21 @@ import static java.awt.event.KeyEvent.*;
 public class TerminalKeyEncoder {
   private static final int ESC = Ascii.ESC;
 
-  private final Map<KeyCodeAndModifier, byte[]> myKeyCodes = new HashMap<KeyCodeAndModifier, byte[]>();
+  private final Platform myPlatform;
+  private final Map<KeyCodeAndModifier, byte[]> myKeyCodes = new HashMap<>();
 
   private boolean myAltSendsEscape = true;
   private boolean myMetaSendsEscape = false;
 
   public TerminalKeyEncoder() {
+    this(Platform.current());
+  }
+
+  public TerminalKeyEncoder(@NotNull Platform platform) {
+    myPlatform = platform;
     setAutoNewLine(false);
     arrowKeysAnsiCursorSequences();
+    configureLeftRight();
     keypadAnsiSequences();
     putCode(VK_BACK_SPACE, Ascii.DEL);
     putCode(VK_F1, ESC, 'O', 'P');
@@ -38,8 +45,8 @@ public class TerminalKeyEncoder {
     putCode(VK_F8, ESC, '[', '1', '9', '~');
     putCode(VK_F9, ESC, '[', '2', '0', '~');
     putCode(VK_F10, ESC, '[', '2', '1', '~');
-    putCode(VK_F11, ESC, '[', '2', '3', '~', ESC);
-    putCode(VK_F12, ESC, '[', '2', '4', '~', Ascii.BS);
+    putCode(VK_F11, ESC, '[', '2', '3', '~');
+    putCode(VK_F12, ESC, '[', '2', '4', '~');
 
     putCode(VK_INSERT, ESC, '[', '2', '~');
     putCode(VK_DELETE, ESC, '[', '3', '~');
@@ -49,6 +56,8 @@ public class TerminalKeyEncoder {
 
     putCode(VK_HOME, ESC, '[', 'H');
     putCode(VK_END, ESC, '[', 'F');
+
+    putCode(new KeyCodeAndModifier(VK_TAB, InputEvent.SHIFT_MASK), ESC, '[', 'Z');
   }
 
   public void arrowKeysApplicationSequences() {
@@ -56,15 +65,6 @@ public class TerminalKeyEncoder {
     putCode(VK_DOWN, ESC, 'O', 'B');
     putCode(VK_RIGHT, ESC, 'O', 'C');
     putCode(VK_LEFT, ESC, 'O', 'D');
-
-    if (UIUtil.isLinux) {
-      putCode(new KeyCodeAndModifier(VK_RIGHT, InputEvent.CTRL_MASK), ESC, '[',  '1', ';', '5', 'C'); // ^[[1;5C
-      putCode(new KeyCodeAndModifier(VK_LEFT, InputEvent.CTRL_MASK), ESC, '[',  '1', ';', '5', 'D'); // ^[[1;5D
-    }
-    else {
-      putCode(new KeyCodeAndModifier(VK_RIGHT, InputEvent.ALT_MASK), ESC, 'f'); // ^[f
-      putCode(new KeyCodeAndModifier(VK_LEFT, InputEvent.ALT_MASK), ESC, 'b'); // ^[b
-    }
   }
 
   public void arrowKeysAnsiCursorSequences() {
@@ -72,9 +72,18 @@ public class TerminalKeyEncoder {
     putCode(VK_DOWN, ESC, '[', 'B');
     putCode(VK_RIGHT, ESC, '[', 'C');
     putCode(VK_LEFT, ESC, '[', 'D');
-    if (UIUtil.isMac) {
+  }
+
+  private void configureLeftRight() {
+    if (myPlatform == Platform.Mac) {
       putCode(new KeyCodeAndModifier(VK_RIGHT, InputEvent.ALT_MASK), ESC, 'f'); // ^[f
       putCode(new KeyCodeAndModifier(VK_LEFT, InputEvent.ALT_MASK), ESC, 'b'); // ^[b
+    }
+    else {
+      putCode(new KeyCodeAndModifier(VK_LEFT, InputEvent.CTRL_MASK), ESC, '[',  '1', ';', '5', 'D'); // ^[[1;5D
+      putCode(new KeyCodeAndModifier(VK_RIGHT, InputEvent.CTRL_MASK), ESC, '[',  '1', ';', '5', 'C'); // ^[[1;5C
+      putCode(new KeyCodeAndModifier(VK_LEFT, InputEvent.ALT_MASK), ESC, '[',  '1', ';', '3', 'D'); // ^[[1;3D
+      putCode(new KeyCodeAndModifier(VK_RIGHT, InputEvent.ALT_MASK), ESC, '[',  '1', ';', '3', 'C'); // ^[[1;3C
     }
   }
 
@@ -102,7 +111,7 @@ public class TerminalKeyEncoder {
     myKeyCodes.put(new KeyCodeAndModifier(code, 0), CharUtils.makeCode(bytesAsInt));
   }
 
-  private void putCode( KeyCodeAndModifier key, final int... bytesAsInt) {
+  private void putCode(@NotNull KeyCodeAndModifier key, final int... bytesAsInt) {
     myKeyCodes.put(key, CharUtils.makeCode(bytesAsInt));
   }
 
@@ -124,7 +133,7 @@ public class TerminalKeyEncoder {
       return insertCodeAt(bytes, CharUtils.makeCode(ESC), 0);
     }
 
-    if (isCursorKey(key)) {
+    if (isCursorKey(key) || isFunctionKey(key)) {
       return getCodeWithModifiers(bytes, modifiers);
     }
 
@@ -139,14 +148,23 @@ public class TerminalKeyEncoder {
     return key == VK_DOWN || key == VK_UP || key == VK_LEFT || key == VK_RIGHT || key == VK_HOME || key == VK_END;
   }
 
+  private boolean isFunctionKey(int key) {
+    return key >= VK_F1 && key <= VK_F12 || key == VK_INSERT || key == VK_DELETE || key == VK_PAGE_UP || key == VK_PAGE_DOWN;
+  }
+
   /**
    * Refer to section PC-Style Function Keys in http://invisible-island.net/xterm/ctlseqs/ctlseqs.html
    */
   private byte[] getCodeWithModifiers(byte[] bytes, int modifiers) {
     int code = modifiersToCode(modifiers);
 
-    if (code > 0) {
-      return insertCodeAt(bytes, Integer.toString(code).getBytes(), bytes.length-1);
+    if (code > 0 && bytes.length > 2) {
+      // SS3 needs to become CSI.
+      if (bytes[0] == ESC && bytes[1] == 'O') bytes[1] = '[';
+      // If the control sequence has no parameters, it needs a default parameter.
+      // Either way it also needs a semicolon separator.
+      String prefix = bytes.length == 3 ? "1;" : ";";
+      return insertCodeAt(bytes, (prefix + code).getBytes(), bytes.length-1);
     }
     return bytes;
   }

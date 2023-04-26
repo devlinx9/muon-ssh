@@ -6,6 +6,7 @@ package muon.app.ui.components.session.terminal;
 import com.jediterm.terminal.TerminalColor;
 import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.emulator.ColorPalette;
+import com.jediterm.terminal.emulator.ColorPaletteImpl;
 import com.jediterm.terminal.ui.settings.DefaultSettingsProvider;
 import muon.app.App;
 import muon.app.Settings;
@@ -13,6 +14,7 @@ import util.FontUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import com.jediterm.core.Color;
 
 /**
  * @author subhro
@@ -31,12 +33,22 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
         for (int i = 0; i < 16; i++) {
             colors[i] = new Color(colorArr[i]);
         }
+
+        //palette = this.getTerminalColorPalette;
         palette = new ColorPalette() {
 
-            @Override
             public Color[] getIndexColors() {
                 return colors;
             }
+
+            @Override
+            protected Color getBackgroundByColorIndex(int colorIndex) {
+                return colors[colorIndex];
+            }
+            @Override
+              public Color getForegroundByColorIndex(int colorIndex) {
+                return colors[colorIndex];
+              }
         };
     }
 
@@ -126,25 +138,25 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     }
 
     public final TerminalColor getTerminalColor(int rgb) {
-        return TerminalColor.awt(new Color(rgb));
+        return TerminalColor.fromColor(new Color(rgb));
     }
 
-    @Override
+    
     public KeyStroke[] getCopyKeyStrokes() {
         return new KeyStroke[]{getKeyStroke(Settings.COPY_KEY)};
     }
 
-    @Override
+    
     public KeyStroke[] getPasteKeyStrokes() {
         return new KeyStroke[]{getKeyStroke(Settings.PASTE_KEY)};
     }
 
-    @Override
+    
     public KeyStroke[] getClearBufferKeyStrokes() {
         return new KeyStroke[]{getKeyStroke(Settings.CLEAR_BUFFER)};
     }
 
-    @Override
+    
     public KeyStroke[] getFindKeyStrokes() {
         return new KeyStroke[]{getKeyStroke(Settings.FIND_KEY)};
     }

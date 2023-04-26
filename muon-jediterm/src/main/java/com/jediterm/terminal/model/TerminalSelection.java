@@ -1,8 +1,8 @@
 package com.jediterm.terminal.model;
 
+import com.jediterm.core.compatibility.Point;
 import com.jediterm.terminal.util.Pair;
-
-import java.awt.*;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author traff
@@ -52,7 +52,7 @@ public class TerminalSelection {
     return null != intersect(x, row, length);
   }
 
-
+  @Nullable
   public Pair<Integer, Integer> intersect(int x, int row, int length) {
     int newX = x;
     int newLength;

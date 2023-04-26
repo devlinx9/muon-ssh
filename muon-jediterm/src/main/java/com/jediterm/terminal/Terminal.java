@@ -1,11 +1,16 @@
 package com.jediterm.terminal;
 
-import com.jediterm.terminal.model.StyleState;
+import com.jediterm.core.Color;
+import com.jediterm.core.util.TermSize;
 import com.jediterm.terminal.emulator.mouse.MouseFormat;
 import com.jediterm.terminal.emulator.mouse.MouseMode;
+import com.jediterm.terminal.model.StyleState;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Executes terminal commands interpreted by {@link com.jediterm.terminal.emulator.Emulator}, receives text
@@ -13,7 +18,9 @@ import java.io.UnsupportedEncodingException;
  * @author traff
  */
 public interface Terminal {
-  Dimension resize(Dimension dimension, RequestOrigin origin);
+  void resize(@NotNull TermSize newTermSize, @NotNull RequestOrigin origin);
+
+  void resize(@NotNull TermSize newTermSize, @NotNull RequestOrigin origin, @NotNull CompletableFuture<?> promptUpdated);
 
   void beep();
 
@@ -101,7 +108,9 @@ public interface Terminal {
 
   void setWindowTitle(String name);
 
-  void setCurrentPath(String path);
+  void saveWindowTitleOnStack();
+
+  void restoreWindowTitleFromStack();
 
   void clearScreen();
 
@@ -137,9 +146,9 @@ public interface Terminal {
 
   void writeUnwrappedString(String string);
 
-  void setTerminalOutput( TerminalOutputStream terminalOutput);
+  void setTerminalOutput(@Nullable TerminalOutputStream terminalOutput);
 
-  void setMouseMode( MouseMode mode);
+  void setMouseMode(@NotNull MouseMode mode);
 
   void setMouseFormat(MouseFormat mouseFormat);
 
@@ -149,7 +158,19 @@ public interface Terminal {
 
   void deviceAttributes(byte[] response);
 
-  void setLinkUriStarted( String uri);
+  void setLinkUriStarted(@NotNull String uri);
 
   void setLinkUriFinished();
+
+  void setBracketedPasteMode(boolean enabled);
+
+  @Nullable Color getWindowForeground();
+
+  @Nullable Color getWindowBackground();
+
+  default void addCustomCommandListener(@NotNull TerminalCustomCommandListener listener) {}
+
+  default void removeCustomCommandListener(@NotNull TerminalCustomCommandListener listener) {}
+
+  default void processCustomCommand(@NotNull List<String> args) {}
 }

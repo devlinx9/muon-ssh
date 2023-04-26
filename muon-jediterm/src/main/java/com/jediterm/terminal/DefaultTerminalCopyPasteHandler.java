@@ -1,16 +1,19 @@
 package com.jediterm.terminal;
 
 import com.jediterm.terminal.ui.UIUtil;
-import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
 
 public class DefaultTerminalCopyPasteHandler implements TerminalCopyPasteHandler, ClipboardOwner {
-  private static final Logger LOG = Logger.getLogger(DefaultTerminalCopyPasteHandler.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DefaultTerminalCopyPasteHandler.class);
 
   @Override
-  public void setContents( String text, boolean useSystemSelectionClipboardIfAvailable) {
+  public void setContents(@NotNull String text, boolean useSystemSelectionClipboardIfAvailable) {
     if (useSystemSelectionClipboardIfAvailable) {
       Clipboard systemSelectionClipboard = getSystemSelectionClipboard();
       if (systemSelectionClipboard != null) {
@@ -21,7 +24,7 @@ public class DefaultTerminalCopyPasteHandler implements TerminalCopyPasteHandler
     setSystemClipboardContents(text);
   }
 
-  
+  @Nullable
   @Override
   public String getContents(boolean useSystemSelectionClipboardIfAvailable) {
     if (useSystemSelectionClipboardIfAvailable) {
@@ -34,16 +37,16 @@ public class DefaultTerminalCopyPasteHandler implements TerminalCopyPasteHandler
   }
 
   @SuppressWarnings("WeakerAccess")
-  protected void setSystemClipboardContents( String text) {
+  protected void setSystemClipboardContents(@NotNull String text) {
     setClipboardContents(new StringSelection(text), getSystemClipboard());
   }
 
-  
+  @Nullable
   private String getSystemClipboardContents() {
     return getClipboardContents(getSystemClipboard());
   }
 
-  private void setClipboardContents( Transferable contents,  Clipboard clipboard) {
+  private void setClipboardContents(@NotNull Transferable contents, @Nullable Clipboard clipboard) {
     if (clipboard != null) {
       try {
         clipboard.setContents(contents, this);
@@ -54,11 +57,13 @@ public class DefaultTerminalCopyPasteHandler implements TerminalCopyPasteHandler
     }
   }
 
-  
-  private String getClipboardContents( Clipboard clipboard) {
+  @Nullable
+  private String getClipboardContents(@Nullable Clipboard clipboard) {
     if (clipboard != null) {
       try {
-        return (String) clipboard.getData(DataFlavor.stringFlavor);
+        if (clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
+          return (String) clipboard.getData(DataFlavor.stringFlavor);
+        }
       }
       catch (Exception e) {
         logException("Cannot get clipboard contents", e);
@@ -67,7 +72,7 @@ public class DefaultTerminalCopyPasteHandler implements TerminalCopyPasteHandler
     return null;
   }
 
-  
+  @Nullable
   private static Clipboard getSystemClipboard() {
     try {
       return Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -78,7 +83,7 @@ public class DefaultTerminalCopyPasteHandler implements TerminalCopyPasteHandler
     }
   }
 
-  
+  @Nullable
   private static Clipboard getSystemSelectionClipboard() {
     try {
       return Toolkit.getDefaultToolkit().getSystemSelection();
@@ -89,7 +94,7 @@ public class DefaultTerminalCopyPasteHandler implements TerminalCopyPasteHandler
     }
   }
 
-  private static void logException( String message,  Exception e) {
+  private static void logException(@NotNull String message, @NotNull Exception e) {
     if (UIUtil.isWindows && e instanceof IllegalStateException) {
       LOG.debug(message, e);
     }

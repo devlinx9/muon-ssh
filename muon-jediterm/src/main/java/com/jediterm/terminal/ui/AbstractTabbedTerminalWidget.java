@@ -1,22 +1,18 @@
 package com.jediterm.terminal.ui;
 
+import com.jediterm.app.TtyConnectorWaitFor;
 import com.jediterm.terminal.RequestOrigin;
 import com.jediterm.terminal.TerminalDisplay;
 import com.jediterm.terminal.TtyConnector;
-import com.jediterm.terminal.TtyConnectorWaitFor;
+import com.jediterm.terminal.ui.*;
 import com.jediterm.terminal.ui.settings.TabbedSettingsProvider;
-import com.jediterm.terminal.util.JTextFieldLimit;
-import java.util.function.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 
@@ -34,15 +30,14 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
 
   private final TabbedSettingsProvider mySettingsProvider;
 
-  private final List<TabListener> myTabListeners = new ArrayList<>();
-  private final List<TerminalWidgetListener> myWidgetListeners = new CopyOnWriteArrayList<>();
+  private final List<TabListener<T>> myTabListeners = new ArrayList<>();
   private TerminalActionProvider myNextActionProvider;
 
   private final Function<AbstractTabbedTerminalWidget<T>, T> myCreateNewSessionAction;
 
   private final JPanel myPanel;
 
-  public AbstractTabbedTerminalWidget( TabbedSettingsProvider settingsProvider,  Function<AbstractTabbedTerminalWidget<T>, T> createNewSessionAction) {
+  public AbstractTabbedTerminalWidget(@NotNull TabbedSettingsProvider settingsProvider, @NotNull Function<AbstractTabbedTerminalWidget<T>, T> createNewSessionAction) {
     super(new BorderLayout());
     mySettingsProvider = settingsProvider;
     myCreateNewSessionAction = createNewSessionAction;
@@ -90,7 +85,7 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
       setSize(size);
 
       if (myTerminalPanelListener != null) {
-        myTerminalPanelListener.onPanelResize(size, RequestOrigin.User);
+        myTerminalPanelListener.onPanelResize(RequestOrigin.User);
       }
 
       onSessionChanged();
@@ -111,11 +106,6 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
     new TtyConnectorWaitFor(ttyConnector, Executors.newSingleThreadExecutor()).setTerminationCallback(integer -> {
       if (mySettingsProvider.shouldCloseTabOnLogout(ttyConnector)) {
         closeTab(widget);
-        if (myTabs.getTabCount() == 0) {
-          for (TerminalWidgetListener widgetListener : myWidgetListeners) {
-            widgetListener.allSessionsClosed(widget);
-          }
-        }
       }
       return true;
     });
@@ -127,8 +117,13 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
     addTab(terminal, tabs, name);
   }
 
+  @NotNull String getTabName(@NotNull T terminal) {
+    TtyConnector ttyConnector = terminal.getTtyConnector();
+    return ttyConnector != null ? ttyConnector.getName() : "Session";
+  }
+
   private String generateUniqueName(T terminal, AbstractTabs<T> tabs) {
-    return generateUniqueName(mySettingsProvider.tabName(terminal.getTtyConnector(), terminal.getSessionName()), tabs);
+    return generateUniqueName(mySettingsProvider.tabName(terminal.getTtyConnector(), getTabName(terminal)), tabs);
   }
 
   private void addTab(T terminal, AbstractTabs<T> tabs, String name) {
@@ -137,14 +132,6 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
 
     tabs.setTabComponentAt(tabs.getTabCount() - 1, createTabComponent(tabs, terminal));
     tabs.setSelectedComponent(terminal);
-  }
-
-  public void addTab(String name, T terminal) {
-    if (myTabs == null) {
-      myTabs = setupTabs();
-    }
-
-    addTab(terminal, myTabs, name);
   }
 
   private String generateUniqueName(String suggestedName, AbstractTabs<T> tabs) {
@@ -188,18 +175,12 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
     return tabs;
   }
 
-  public boolean isNoActiveSessions() {
-    return myTabs == null && myTermWidget == null;
-  }
-
   private void onSessionChanged() {
     T session = getCurrentSession();
-    if (session != null) {
-      if (myTerminalPanelListener != null) {
-        myTerminalPanelListener.onSessionChanged(session);
-      }
-      session.getTerminalPanel().requestFocusInWindow();
+    for (TabListener<T> tabListener : myTabListeners) {
+      tabListener.onSelectedTabChanged(session);
     }
+    session.getTerminalPanel().requestFocusInWindow();
   }
 
   protected abstract AbstractTabs<T> createTabbedPane();
@@ -211,12 +192,7 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
   public void closeTab(final T terminal) {
     if (terminal != null) {
       if (myTabs != null && myTabs.indexOfComponent(terminal) != -1) {
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              removeTab(terminal);
-            }
-          });
+        SwingUtilities.invokeLater(() -> removeTab(terminal));
         fireTabClosed(terminal);
       } else if (myTermWidget == terminal) {
         myTermWidget = null;
@@ -227,10 +203,8 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
 
   public void closeCurrentSession() {
     T session = getCurrentSession();
-    if (session != null) {
-      session.close();
-      closeTab(session);
-    }
+    session.close();
+    closeTab(session);
   }
 
   public void dispose() {
@@ -273,46 +247,24 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
 
   @Override
   public List<TerminalAction> getActions() {
-    return new ArrayList<>(Arrays.asList(
-      new TerminalAction("New Session", mySettingsProvider.getNewSessionKeyStrokes(), new Predicate<KeyEvent>() {
-        @Override
-        public boolean test(KeyEvent input) {
-          handleNewSession();
-          return true;
-        }
+    return List.of(
+      new TerminalAction(mySettingsProvider.getNewSessionActionPresentation(), input -> {
+        handleNewSession();
+        return true;
       }).withMnemonicKey(KeyEvent.VK_N),
-      new TerminalAction("Close Session", mySettingsProvider.getCloseSessionKeyStrokes(), new Predicate<KeyEvent>() {
-        @Override
-        public boolean test(KeyEvent input) {
-          closeCurrentSession();
-          return true;
-        }
+      new TerminalAction(mySettingsProvider.getCloseSessionActionPresentation(), input -> {
+        closeCurrentSession();
+        return true;
       }).withMnemonicKey(KeyEvent.VK_S),
-      new TerminalAction("Next Tab", mySettingsProvider.getNextTabKeyStrokes(), new Predicate<KeyEvent>() {
-        @Override
-        public boolean test(KeyEvent input) {
-          selectNextTab();
-          return true;
-        }
-      }).withEnabledSupplier(new Supplier<Boolean>() {
-        @Override
-        public Boolean get() {
-          return myTabs != null && myTabs.getSelectedIndex() < myTabs.getTabCount() - 1;
-        }
-      }),
-      new TerminalAction("Previous Tab", mySettingsProvider.getPreviousTabKeyStrokes(), new Predicate<KeyEvent>() {
-        @Override
-        public boolean test(KeyEvent input) {
-          selectPreviousTab();
-          return true;
-        }
-      }).withEnabledSupplier(new Supplier<Boolean>() {
-        @Override
-        public Boolean get() {
-          return myTabs != null && myTabs.getSelectedIndex() > 0;
-        }
-      })
-    ));
+      new TerminalAction(mySettingsProvider.getNextTabActionPresentation(), input -> {
+        selectNextTab();
+        return true;
+      }).withEnabledSupplier(() -> myTabs != null && myTabs.getSelectedIndex() < myTabs.getTabCount() - 1),
+      new TerminalAction(mySettingsProvider.getPreviousTabActionPresentation(), input -> {
+        selectPreviousTab();
+        return true;
+      }).withEnabledSupplier(() -> myTabs != null && myTabs.getSelectedIndex() > 0)
+    );
   }
 
   private void selectPreviousTab() {
@@ -414,9 +366,6 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
     }
 
     class TabComponentLabel extends JLabel {
-      TabComponent getTabComponent() {
-        return TabComponent.this;
-      }
 
       public String getText() {
         if (myTabs != null) {
@@ -429,7 +378,7 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
       }
     }
 
-    private TabComponent(final  AbstractTabs<T> tabs, final T terminal) {
+    private TabComponent(final @NotNull AbstractTabs<T> tabs, final T terminal) {
       super(new FlowLayout(FlowLayout.LEFT, 0, 0));
       myTerminal = terminal;
       setOpaque(false);
@@ -442,6 +391,9 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
       JLabel label = new TabComponentLabel();
 
       label.addFocusListener(this);
+
+      //add more space between the label and the button
+//      label.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 5));
 
       label.addMouseListener(new MouseAdapter() {
 
@@ -477,16 +429,11 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
     protected JPopupMenu createPopup() {
       JPopupMenu popupMenu = new JPopupMenu();
 
-      TerminalAction.addToMenu(popupMenu, AbstractTabbedTerminalWidget.this);
+      TerminalAction.fillMenu(popupMenu, AbstractTabbedTerminalWidget.this);
 
       JMenuItem rename = new JMenuItem("Rename Tab");
 
-      rename.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-          renameTab();
-        }
-      });
+      rename.addActionListener(actionEvent -> renameTab());
 
       popupMenu.add(rename);
 
@@ -558,15 +505,11 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
     myTerminalPanelListener = terminalPanelListener;
   }
 
-  @Override
-  
-  public T getCurrentSession() {
+  public @NotNull T getCurrentSession() {
     if (myTabs != null) {
       return getTerminalPanel(myTabs.getSelectedIndex());
     }
-    else {
-      return myTermWidget;
-    }
+    return Objects.requireNonNull(myTermWidget);
   }
 
   @Override
@@ -574,42 +517,32 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
     return getCurrentSession().getTerminalDisplay();
   }
 
-  
-  private T getTerminalPanel(int index) {
-    if (index < myTabs.getTabCount() && index >= 0) {
-      return myTabs.getComponentAt(index);
-    }
-    else {
-      return null;
-    }
+  private @NotNull T getTerminalPanel(int index) {
+    Objects.checkIndex(index, myTabs.getTabCount());
+    return myTabs.getComponentAt(index);
   }
 
-  public void addTabListener(TabListener listener) {
+  public void addTabListener(TabListener<T> listener) {
     myTabListeners.add(listener);
   }
 
-  public void removeTabListener(TabListener listener) {
-    myTabListeners.remove(listener);
-  }
-
   private void fireTabClosed(T terminal) {
-    for (TabListener l : myTabListeners) {
+    for (TabListener<T> l : myTabListeners) {
       l.tabClosed(terminal);
     }
   }
 
   public interface TabListener<T extends JediTermWidget> {
     void tabClosed(T terminal);
+    void onSelectedTabChanged(@NotNull T terminal);
   }
 
   @Override
   public void addListener(TerminalWidgetListener listener) {
-    myWidgetListeners.add(listener);
   }
 
   @Override
   public void removeListener(TerminalWidgetListener listener) {
-    myWidgetListeners.remove(listener);
   }
 
   public TabbedSettingsProvider getSettingsProvider() {

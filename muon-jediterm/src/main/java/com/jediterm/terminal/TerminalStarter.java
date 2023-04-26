@@ -1,14 +1,20 @@
 package com.jediterm.terminal;
 
+import com.jediterm.core.typeahead.TerminalTypeAheadManager;
+import com.jediterm.core.util.TermSize;
 import com.jediterm.terminal.emulator.Emulator;
 import com.jediterm.terminal.emulator.JediEmulator;
-import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 
 
 /**
@@ -17,24 +23,24 @@ import java.util.concurrent.Executors;
  * @author traff
  */
 public class TerminalStarter implements TerminalOutputStream {
-  private static final Logger LOG = Logger.getLogger(TerminalStarter.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TerminalStarter.class);
 
   private final Emulator myEmulator;
 
   private final Terminal myTerminal;
-  private final TerminalDataStream myDataStream;
 
   private final TtyConnector myTtyConnector;
 
-  private final ExecutorService myEmulatorExecutor = Executors.newSingleThreadExecutor();
+  private final TerminalTypeAheadManager myTypeAheadManager;
 
-  public TerminalStarter(final Terminal terminal, final TtyConnector ttyConnector, TerminalDataStream dataStream) {
+  private final ScheduledExecutorService myEmulatorExecutor = Executors.newSingleThreadScheduledExecutor();
+
+  public TerminalStarter(final Terminal terminal, final TtyConnector ttyConnector, TerminalDataStream dataStream, TerminalTypeAheadManager typeAheadManager) {
     myTtyConnector = ttyConnector;
-    //can be implemented - just recreate channel and that's it
-    myDataStream = dataStream;
     myTerminal = terminal;
     myTerminal.setTerminalOutput(this);
-    myEmulator = createEmulator(myDataStream, terminal);
+    myEmulator = createEmulator(dataStream, terminal);
+    myTypeAheadManager = typeAheadManager;
   }
 
   protected JediEmulator createEmulator(TerminalDataStream dataStream, Terminal terminal) {
@@ -69,27 +75,40 @@ public class TerminalStarter implements TerminalOutputStream {
     return myTerminal.getCodeForKey(key, modifiers);
   }
 
-  public void postResize(final Dimension dimension, final RequestOrigin origin) {
-    execute(() -> resizeTerminal(myTerminal, myTtyConnector, dimension, origin));
+  public void postResize(@NotNull TermSize termSize, @NotNull RequestOrigin origin) {
+    execute(() -> {
+      resize(myEmulator, myTerminal, myTtyConnector, termSize, origin, (millisDelay, runnable) -> {
+        myEmulatorExecutor.schedule(runnable, millisDelay, TimeUnit.MILLISECONDS);
+      });
+    });
   }
 
   /**
    * Resizes terminal and tty connector, should be called on a pooled thread.
    */
-  public static void resizeTerminal( Terminal terminal,  TtyConnector ttyConnector,
-                                     Dimension terminalDimension,  RequestOrigin origin) {
-    Dimension pixelSize;
-    //noinspection SynchronizationOnLocalVariableOrMethodParameter
-    synchronized (terminal) {
-      pixelSize = terminal.resize(terminalDimension, origin);
-    }
-    ttyConnector.resize(terminalDimension, pixelSize);
+  public static void resize(@NotNull Emulator emulator,
+                            @NotNull Terminal terminal,
+                            @NotNull TtyConnector ttyConnector,
+                            @NotNull TermSize newTermSize,
+                            @NotNull RequestOrigin origin,
+                            @NotNull BiConsumer<Long, Runnable> taskScheduler) {
+    CompletableFuture<?> promptUpdated = ((JediEmulator)emulator).getPromptUpdatedAfterResizeFuture(taskScheduler);
+    terminal.resize(newTermSize, origin, promptUpdated);
+    ttyConnector.resize(newTermSize);
   }
 
   @Override
   public void sendBytes(final byte[] bytes) {
+    sendBytes(bytes, false);
+  }
+
+  @Override
+  public void sendBytes(final byte[] bytes, boolean userInput) {
     execute(() -> {
       try {
+        if (userInput) {
+          TerminalTypeAheadManager.TypeAheadEvent.fromByteArray(bytes).forEach(myTypeAheadManager::onKeyEvent);
+        }
         myTtyConnector.write(bytes);
       }
       catch (IOException e) {
@@ -100,8 +119,17 @@ public class TerminalStarter implements TerminalOutputStream {
 
   @Override
   public void sendString(final String string) {
+    sendString(string, false);
+  }
+
+  @Override
+  public void sendString(final String string, boolean userInput) {
     execute(() -> {
       try {
+        if (userInput) {
+          TerminalTypeAheadManager.TypeAheadEvent.fromString(string).forEach(myTypeAheadManager::onKeyEvent);
+        }
+
         myTtyConnector.write(string);
       }
       catch (IOException e) {

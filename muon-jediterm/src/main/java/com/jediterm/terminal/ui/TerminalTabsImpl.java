@@ -1,5 +1,7 @@
 package com.jediterm.terminal.ui;
 
+import com.jediterm.terminal.ui.JediTermWidget;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;

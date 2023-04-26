@@ -4,7 +4,6 @@ import com.jediterm.terminal.util.Util;
 
 import java.awt.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -47,7 +46,10 @@ public class UIUtil {
 
     final Float scaleFactor = (Float)Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
 
-    return scaleFactor != null && scaleFactor.intValue() == 2;
+    if (scaleFactor != null && scaleFactor.intValue() == 2) {
+      return true;
+    }
+    return false;
   }
 
   private static boolean isOracleJvm() {

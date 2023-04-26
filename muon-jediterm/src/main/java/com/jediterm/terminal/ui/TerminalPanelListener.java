@@ -1,14 +1,11 @@
 package com.jediterm.terminal.ui;
 
 import com.jediterm.terminal.RequestOrigin;
-
-import java.awt.*;
+import org.jetbrains.annotations.NotNull;
 
 
 public interface TerminalPanelListener {
-  void onPanelResize(Dimension pixelDimension, RequestOrigin origin);
-
-  void onSessionChanged(TerminalSession currentSession);
+  void onPanelResize(@NotNull RequestOrigin origin);
 
   void onTitleChanged(String title);
 }

@@ -1,10 +1,9 @@
-/**
- *
- */
 package com.jediterm.terminal.emulator;
 
-import com.jediterm.terminal.util.CharUtils;
+import com.jediterm.core.util.Ascii;
 import com.jediterm.terminal.TerminalDataStream;
+import com.jediterm.terminal.util.CharUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -93,7 +92,7 @@ public class ControlSequence {
     for (final char b : myUnhandledChars) {
       bytes[i++] = b;
     }
-    bytes[i++] = (byte)CharUtils.ESC;
+    bytes[i++] = (byte)Ascii.ESC;
     bytes[i++] = (byte)'[';
 
     if (myStartsWithQuestionMark) {
@@ -127,13 +126,7 @@ public class ControlSequence {
     return myArgv[index];
   }
 
-  public String appendTo(final String str) {
-    StringBuilder sb = new StringBuilder(str);
-    appendToBuffer(sb);
-    return sb.toString();
-  }
-
-  public final void appendToBuffer(final StringBuilder sb) {
+  private void appendToBuffer(final StringBuilder sb) {
     sb.append("ESC[");
 
     if (myStartsWithQuestionMark) {
@@ -180,7 +173,12 @@ public class ControlSequence {
     return myStartsWithMoreMark;
   }
 
-  public String getSequenceString() {
-    return mySequenceString.toString();
+  public @NotNull String getDebugInfo() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("parsed: ");
+    appendToBuffer(sb);
+    sb.append(", raw: ESC[");
+    sb.append(mySequenceString);
+    return sb.toString();
   }
 }

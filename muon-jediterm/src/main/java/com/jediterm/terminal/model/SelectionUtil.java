@@ -1,10 +1,12 @@
 package com.jediterm.terminal.model;
 
+import com.jediterm.core.compatibility.Point;
 import com.jediterm.terminal.util.CharUtils;
 import com.jediterm.terminal.util.Pair;
-import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,7 @@ import java.util.List;
  * @author traff
  */
 public class SelectionUtil {
-  private static final Logger LOG = Logger.getLogger(SelectionUtil.class);
+  private static final Logger LOG = LoggerFactory.getLogger(SelectionUtil.class);
   
   private static final List<Character> SEPARATORS = new ArrayList<Character>();
   static {
@@ -49,10 +51,10 @@ public class SelectionUtil {
     return getSelectionText(selection.getStart(), selection.getEnd(), terminalTextBuffer);
   }
 
-  
-  public static String getSelectionText( Point selectionStart,
-                                         Point selectionEnd,
-                                         TerminalTextBuffer terminalTextBuffer) {
+  @NotNull
+  public static String getSelectionText(@NotNull Point selectionStart,
+                                        @NotNull Point selectionEnd,
+                                        @NotNull TerminalTextBuffer terminalTextBuffer) {
 
     Pair<Point, Point> pair = sortPoints(selectionStart, selectionEnd);
     pair.first.y = Math.max(pair.first.y, - terminalTextBuffer.getHistoryLinesCount());
@@ -106,7 +108,7 @@ public class SelectionUtil {
     return getPreviousSeparator(charCoords, terminalTextBuffer, SEPARATORS);
   }
 
-  public static Point getPreviousSeparator(Point charCoords, TerminalTextBuffer terminalTextBuffer,  List<Character> separators) {
+  public static Point getPreviousSeparator(Point charCoords, TerminalTextBuffer terminalTextBuffer, @NotNull List<Character> separators) {
     int x = charCoords.x;
     int y = charCoords.y;
     int terminalWidth = terminalTextBuffer.getWidth();
@@ -142,7 +144,7 @@ public class SelectionUtil {
     return getNextSeparator(charCoords, terminalTextBuffer, SEPARATORS);
   }
 
-  public static Point getNextSeparator(Point charCoords, TerminalTextBuffer terminalTextBuffer,  List<Character> separators) {
+  public static Point getNextSeparator(Point charCoords, TerminalTextBuffer terminalTextBuffer, @NotNull List<Character> separators) {
     int x = charCoords.x;
     int y = charCoords.y;
     int terminalWidth = terminalTextBuffer.getWidth();

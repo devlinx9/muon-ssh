@@ -7,7 +7,9 @@ import com.jediterm.terminal.model.LinesBuffer;
 import com.jediterm.terminal.model.TerminalLine;
 import com.jediterm.terminal.model.TerminalTextBuffer;
 import com.jediterm.terminal.util.CharUtils;
-import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,30 +19,30 @@ import java.util.List;
  */
 public class TextProcessing {
 
-  private static final Logger LOG = Logger.getLogger(TextProcessing.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TextProcessing.class);
 
   private final List<HyperlinkFilter> myHyperlinkFilter;
-  private final TextStyle myHyperlinkColor;
-  private final HyperlinkStyle.HighlightMode myHighlightMode;
+  private TextStyle myHyperlinkColor;
+  private HyperlinkStyle.HighlightMode myHighlightMode;
   private TerminalTextBuffer myTerminalTextBuffer;
 
-  public TextProcessing( TextStyle hyperlinkColor,
-                         HyperlinkStyle.HighlightMode highlightMode) {
+  public TextProcessing(@NotNull TextStyle hyperlinkColor,
+                        @NotNull HyperlinkStyle.HighlightMode highlightMode) {
     myHyperlinkColor = hyperlinkColor;
     myHighlightMode = highlightMode;
     myHyperlinkFilter = new ArrayList<>();
   }
 
-  public void setTerminalTextBuffer( TerminalTextBuffer terminalTextBuffer) {
+  public void setTerminalTextBuffer(@NotNull TerminalTextBuffer terminalTextBuffer) {
     myTerminalTextBuffer = terminalTextBuffer;
   }
 
-  public void processHyperlinks( LinesBuffer buffer,  TerminalLine updatedLine) {
+  public void processHyperlinks(@NotNull LinesBuffer buffer, @NotNull TerminalLine updatedLine) {
     if (myHyperlinkFilter.isEmpty()) return;
     doProcessHyperlinks(buffer, updatedLine);
   }
 
-  private void doProcessHyperlinks( LinesBuffer buffer,  TerminalLine updatedLine) {
+  private void doProcessHyperlinks(@NotNull LinesBuffer buffer, @NotNull TerminalLine updatedLine) {
     myTerminalTextBuffer.lock();
     try {
       int updatedLineInd = findLineInd(buffer, updatedLine);
@@ -84,7 +86,7 @@ public class TextProcessing {
     }
   }
 
-  private int findHistoryLineInd( LinesBuffer historyBuffer,  TerminalLine line) {
+  private int findHistoryLineInd(@NotNull LinesBuffer historyBuffer, @NotNull TerminalLine line) {
     int lastLineInd = Math.max(0, historyBuffer.getLineCount() - 200); // check only last lines in history buffer
     for (int i = historyBuffer.getLineCount() - 1; i >= lastLineInd; i--) {
       if (historyBuffer.getLine(i) == line) {
@@ -94,7 +96,7 @@ public class TextProcessing {
     return -1;
   }
 
-  private static int findLineInd( LinesBuffer buffer,  TerminalLine line) {
+  private static int findLineInd(@NotNull LinesBuffer buffer, @NotNull TerminalLine line) {
     for (int i = 0; i < buffer.getLineCount(); i++) {
       TerminalLine l = buffer.getLine(i);
       if (l == line) {
@@ -104,8 +106,8 @@ public class TextProcessing {
     return -1;
   }
 
-  
-  private String joinLines( LinesBuffer buffer, int startLineInd, int updatedLineInd) {
+  @NotNull
+  private String joinLines(@NotNull LinesBuffer buffer, int startLineInd, int updatedLineInd) {
     StringBuilder result = new StringBuilder();
     for (int i = startLineInd; i <= updatedLineInd; i++) {
       String text = buffer.getLine(i).getText();
@@ -117,7 +119,18 @@ public class TextProcessing {
     return result.toString();
   }
 
-  public void addHyperlinkFilter( HyperlinkFilter filter) {
+  public void addHyperlinkFilter(@NotNull HyperlinkFilter filter) {
     myHyperlinkFilter.add(filter);
+  }
+
+  public @NotNull List<LinkResultItem> applyFilter(@NotNull String line) {
+    List<LinkResultItem> links = new ArrayList<>();
+    for (HyperlinkFilter filter : myHyperlinkFilter) {
+      LinkResult result = filter.apply(line);
+      if (result != null) {
+        links.addAll(result.getItems());
+      }
+    }
+    return links;
   }
 }

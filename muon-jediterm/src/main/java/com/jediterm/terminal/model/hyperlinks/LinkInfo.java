@@ -1,13 +1,11 @@
 package com.jediterm.terminal.model.hyperlinks;
 
+import org.jetbrains.annotations.NotNull;
 
-/**
- * @author traff
- */
 public class LinkInfo {
   private final Runnable myNavigateCallback;
 
-  public LinkInfo( Runnable navigateCallback) {
+  public LinkInfo(@NotNull Runnable navigateCallback) {
     myNavigateCallback = navigateCallback;
   }
 

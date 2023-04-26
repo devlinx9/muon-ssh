@@ -1,5 +1,6 @@
 package com.jediterm.terminal.emulator.charset;
 
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Denotes how a graphic set is designated.
@@ -60,7 +61,7 @@ public class GraphicSet
   /**
    * Sets the designation of this graphic set.
    */
-  public void setDesignation( CharacterSet designation )
+  public void setDesignation(@NotNull CharacterSet designation )
   {
     myDesignation = designation;
   }

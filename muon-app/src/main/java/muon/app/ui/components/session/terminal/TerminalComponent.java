@@ -85,14 +85,12 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
                 SwingUtilities.invokeLater(() -> tabTitle.getCallback().accept(title));
             }
 
-            @Override
+            
             public void onSessionChanged(TerminalSession currentSession) {
                 System.out.println("currentSession: " + currentSession);
             }
 
-            @Override
-            public void onPanelResize(Dimension pixelDimension, RequestOrigin origin) {
-            }
+            public void onPanelResize(RequestOrigin origin) {  }
         });
         contentPane.add(term);
 
