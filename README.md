@@ -48,6 +48,9 @@ although I recognize the great job done in that repo.
 
 ### TODO 
 
+* [ ] Swing File Picker sucks, change it to native
+* [x] Mouse scroll too slow
+* [ ] Refresh window after copying files
 * [ ] **Here goes new features**
 
 <h2>Documentation: (from the upstream repo)</h2>
