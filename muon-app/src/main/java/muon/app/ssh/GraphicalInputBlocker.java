@@ -23,6 +23,7 @@ public class GraphicalInputBlocker extends JDialog implements InputBlocker {
     public GraphicalInputBlocker(JFrame window) {
         super(window);
         this.window = window;
+        this.setUndecorated(true);
         setModal(true);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setSize(200, 100);
@@ -33,7 +34,6 @@ public class GraphicalInputBlocker extends JDialog implements InputBlocker {
         SwingUtilities.invokeLater(() -> {
             System.out.println("Making visible...");
             this.setLocationRelativeTo(window);
-            this.setUndecorated(true);
             connectingLabel.setHorizontalAlignment(SwingConstants.CENTER);
             this.add(connectingLabel);
             this.setVisible(true);
