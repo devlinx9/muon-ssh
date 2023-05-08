@@ -3,6 +3,7 @@ package util;
 public enum Language {
     ENGLISH("en", "English"),
     SPANISH("es", "Español"),
+    CATALAN("ca", "Català"),
     PORTUGUESE("pt", "Portuguese"),
     RUSSIAN("ru", "Русский"),
     GERMAN("de", "Deutsch"),
