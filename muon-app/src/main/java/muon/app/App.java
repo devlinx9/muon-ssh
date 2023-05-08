@@ -95,7 +95,7 @@ public class App {
         if (!appDir.exists()) {
             //Validate if the config directory can be created
             if(!appDir.mkdirs()){
-                System.err.println("The config directory for moun cannot be created: "+ CONFIG_DIR);
+                System.err.println("The config directory for muon cannot be created: "+ CONFIG_DIR);
                 System.exit(1);
             }
             firstRun = true;
