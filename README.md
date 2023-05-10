@@ -51,7 +51,7 @@ although I recognize the great job done in that repo.
 * [ ] Swing File Picker sucks, change it to native
 * [x] Mouse scroll too slow
 * [ ] Refresh window after copying files
-* [ ] Bug: Set connection timeout and/or add a cancel button to the dialog
+* [ ] Bug: Timeout no saved, Set connection timeout and/or add a cancel button to the dialog
 * [ ] Don't blink the screen every time a folder is updated
 * [ ] **Here goes new features**
 
