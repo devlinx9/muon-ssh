@@ -51,6 +51,7 @@ although I recognize the great job done in that repo.
 * [ ] Swing File Picker sucks, change it to native
 * [x] Mouse scroll too slow
 * [ ] Refresh window after copying files
+* [ ] Bug: Set connection timeout and/or add a cancel button to the dialog
 * [ ] **Here goes new features**
 
 <h2>Documentation: (from the upstream repo)</h2>
