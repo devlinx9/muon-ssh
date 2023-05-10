@@ -52,6 +52,7 @@ although I recognize the great job done in that repo.
 * [x] Mouse scroll too slow
 * [ ] Refresh window after copying files
 * [ ] Bug: Set connection timeout and/or add a cancel button to the dialog
+* [ ] Don't blink the screen every time a folder is updated
 * [ ] **Here goes new features**
 
 <h2>Documentation: (from the upstream repo)</h2>
