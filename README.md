@@ -48,11 +48,14 @@ although I recognize the great job done in that repo.
 
 ### TODO 
 
-* [ ] Swing File Picker sucks, change it to native
 * [x] Mouse scroll too slow
+* [ ] Swing File Picker sucks, change it to native
 * [ ] Refresh window after copying files
 * [ ] Bug: Timeout no saved, Set connection timeout and/or add a cancel button to the dialog
 * [ ] Don't blink the screen every time a folder is updated
+* [ ] Add a box to query what happens when copying a file that exists
+* [ ] Dialogs are always shown in the primary screen when more than one exist
+* [ ] Bug: After reconnecting, cursor disappears
 * [ ] **Here goes new features**
 
 <h2>Documentation: (from the upstream repo)</h2>
