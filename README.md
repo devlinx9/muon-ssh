@@ -56,7 +56,12 @@ although I recognize the great job done in that repo.
 * [ ] Add a box to query what happens when copying a file that exists
 * [ ] Dialogs are always shown in the primary screen when more than one exist
 * [ ] Bug: After reconnecting, cursor disappears
-* [ ] **Here goes new features**
+* [ ] Combination of keys to avoid inserting sudo password every time
+* [ ] When hit a CTRL+C, flush console buffer to receive the prompt ASAP 
+* [ ] Move an item to a folder in the same window
+* [ ] Open the program in the last location, or in the active screen if multiple
+
+**Here goes new features**
 
 <h2>Documentation: (from the upstream repo)</h2>
 
