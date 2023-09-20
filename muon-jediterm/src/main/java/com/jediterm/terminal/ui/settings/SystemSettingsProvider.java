@@ -22,4 +22,8 @@ public interface SystemSettingsProvider {
   KeyStroke[] getLineUpKeyStrokes();
 
   KeyStroke[] getLineDownKeyStrokes();
+  
+  KeyStroke[] getTypeSudoPasswordKeyStrokes();
+  
+  String getSudoPassword();
 }

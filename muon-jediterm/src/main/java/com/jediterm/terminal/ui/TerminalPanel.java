@@ -1500,28 +1500,47 @@ public class TerminalPanel extends JComponent
 	public List<TerminalAction> getActions() {
 		ArrayList<TerminalAction> list = new ArrayList<>();
 		list.addAll(Arrays.asList(
+				
 				new TerminalAction("Open as URL", new KeyStroke[0],
-						input -> openSelectionAsURL())
-								.withEnabledSupplier(this::selectionTextIsUrl),
+						input -> openSelectionAsURL()
+				)
+						.withEnabledSupplier(this::selectionTextIsUrl),
+				
 				new TerminalAction("Copy",
 						mySettingsProvider.getCopyKeyStrokes(),
-						input -> handleCopy()).withMnemonicKey(KeyEvent.VK_C)
-								.withEnabledSupplier(() -> mySelection != null),
+						input -> handleCopy()
+				)
+						.withMnemonicKey(KeyEvent.VK_C)
+						.withEnabledSupplier(() -> mySelection != null),
+				
 				new TerminalAction("Paste",
 						mySettingsProvider.getPasteKeyStrokes(), input -> {
 							handlePaste();
 							return true;
-						}).withMnemonicKey(KeyEvent.VK_P).withEnabledSupplier(
-								() -> getClipboardString() != null),
+						})
+						.withMnemonicKey(KeyEvent.VK_P)
+						.withEnabledSupplier(() -> getClipboardString() != null),
+				
 				new TerminalAction("Clear Buffer",
 						mySettingsProvider.getClearBufferKeyStrokes(),
 						input -> {
 							clearBuffer();
 							return true;
-						}).withMnemonicKey(KeyEvent.VK_K)
-								.withEnabledSupplier(() -> !myTerminalTextBuffer
-										.isUsingAlternateBuffer())
-								.separatorBefore(true),
+						})
+						.withMnemonicKey(KeyEvent.VK_K)
+						.withEnabledSupplier(
+								() -> !myTerminalTextBuffer.isUsingAlternateBuffer()
+						)
+						.separatorBefore(true),
+				
+				new TerminalAction("Type SUDO Password",
+						mySettingsProvider.getTypeSudoPasswordKeyStrokes(), input -> {
+					String sudoPass = mySettingsProvider.getSudoPassword();
+					if(sudoPass != null)
+						myTerminalStarter.sendString(sudoPass);
+					return true;
+				}),
+				
 				new TerminalAction("Page Up",
 						mySettingsProvider.getPageUpKeyStrokes(), input -> {
 							pageUp();
@@ -1726,7 +1745,7 @@ public class TerminalPanel extends JComponent
 		}
 
 		final char keychar = e.getKeyChar();
-		if (!Character.isISOControl(keychar)) { // keys filtered out here will
+		if (!Character.isISOControl(keychar) && !e.isControlDown() && !e.isMetaDown()) { // keys filtered out here will
 												// be processed in
 												// processTerminalKeyPressed
 			try {

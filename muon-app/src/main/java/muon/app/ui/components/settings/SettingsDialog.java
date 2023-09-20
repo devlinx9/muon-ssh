@@ -292,19 +292,23 @@ public class SettingsDialog extends JDialog {
         cmbTermTheme.setSelectedIndex(0);
         cmbTermPalette.setSelectedIndex(0);
 
-        kcc = new KeyShortcutComponent[4];
+        kcc = new KeyShortcutComponent[Settings.allKeys.length];
         for (int i = 0; i < kcc.length; i++) {
             kcc[i] = new KeyShortcutComponent();
         }
 
-        JLabel[] labels = {new JLabel(Settings.COPY_KEY), new JLabel(Settings.PASTE_KEY),
-                new JLabel(Settings.CLEAR_BUFFER), new JLabel(Settings.FIND_KEY)};
-
-        LayoutUtilities.equalizeSize(labels[0], labels[1], labels[2], labels[3]);
-
-        Component[] kcPanels = {createRow(labels[0], kcc[0]), createRow(labels[1], kcc[1]),
-                createRow(labels[2], kcc[2]), createRow(labels[3], kcc[3])};
-
+        JLabel[] labels = new JLabel[Settings.allKeys.length];
+        for (int i = 0; i < labels.length; i++) {
+            labels[i] = new JLabel(Settings.allKeys[i]);
+        }
+        
+        LayoutUtilities.equalizeSize(labels);
+        
+        Component[] kcPanels = new Component[Settings.allKeys.length];
+        for (int i = 0; i < labels.length; i++) {
+            kcPanels[i] = createRow(labels[i], kcc[i]);
+        }
+        
         Box panel = Box.createVerticalBox();
 
         panel.add(Box.createVerticalStrut(20));
@@ -537,17 +541,12 @@ public class SettingsDialog extends JDialog {
 
         settings.setDefaultFoundFg(this.defaultFoundFg.getColor().getRGB());
         settings.setDefaultFoundBg(this.defaultFoundBg.getColor().getRGB());
-
-        settings.getKeyCodeMap().put(Settings.COPY_KEY, kcc[0].getKeyCode());
-        settings.getKeyCodeMap().put(Settings.PASTE_KEY, kcc[1].getKeyCode());
-        settings.getKeyCodeMap().put(Settings.CLEAR_BUFFER, kcc[2].getKeyCode());
-        settings.getKeyCodeMap().put(Settings.FIND_KEY, kcc[3].getKeyCode());
-
-        settings.getKeyModifierMap().put(Settings.COPY_KEY, kcc[0].getModifier());
-        settings.getKeyModifierMap().put(Settings.PASTE_KEY, kcc[1].getModifier());
-        settings.getKeyModifierMap().put(Settings.CLEAR_BUFFER, kcc[2].getModifier());
-        settings.getKeyModifierMap().put(Settings.FIND_KEY, kcc[3].getModifier());
-
+        
+        for(int i = 0; i < Settings.allKeys.length; i++){
+            settings.getKeyCodeMap().put(Settings.allKeys[i], kcc[i].getKeyCode());
+            settings.getKeyModifierMap().put(Settings.allKeys[i], kcc[i].getModifier());
+        }
+        
         settings.setConfirmBeforeDelete(chkConfirmBeforeDelete.isSelected());
         settings.setConfirmBeforeMoveOrCopy(chkConfirmBeforeMoveOrCopy.isSelected());
         settings.setShowHiddenFilesByDefault(chkShowHiddenFilesByDefault.isSelected());
@@ -624,16 +623,11 @@ public class SettingsDialog extends JDialog {
 
         this.cmbTermPalette.setSelectedItem(settings.getTerminalPalette());
 
-        kcc[0].setKeyCode(settings.getKeyCodeMap().get(Settings.COPY_KEY));
-        kcc[1].setKeyCode(settings.getKeyCodeMap().get(Settings.PASTE_KEY));
-        kcc[2].setKeyCode(settings.getKeyCodeMap().get(Settings.CLEAR_BUFFER));
-        kcc[3].setKeyCode(settings.getKeyCodeMap().get(Settings.FIND_KEY));
-
-        kcc[0].setModifier(settings.getKeyModifierMap().get(Settings.COPY_KEY));
-        kcc[1].setModifier(settings.getKeyModifierMap().get(Settings.PASTE_KEY));
-        kcc[2].setModifier(settings.getKeyModifierMap().get(Settings.CLEAR_BUFFER));
-        kcc[3].setModifier(settings.getKeyModifierMap().get(Settings.FIND_KEY));
-
+        for(int i = 0; i < Settings.allKeys.length; i++){
+            kcc[i].setKeyCode(settings.getKeyCodeMap().get(Settings.allKeys[i]));
+            kcc[i].setModifier(settings.getKeyModifierMap().get(Settings.allKeys[i]));
+        }
+        
         chkConfirmBeforeDelete.setSelected(settings.isConfirmBeforeDelete());
         chkConfirmBeforeMoveOrCopy.setSelected(settings.isConfirmBeforeMoveOrCopy());
         chkShowHiddenFilesByDefault.setSelected(settings.isShowHiddenFilesByDefault());

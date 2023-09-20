@@ -50,13 +50,13 @@ although I recognize the great job done in that repo.
 
 * [x] Mouse scroll too slow
 * [x] Add a cancel button to the dialog
+* [x] Combination of keys to avoid inserting sudo password every time
 * [ ] Swing File Picker sucks, change it to native
 * [ ] Refresh window after copying files
 * [ ] Don't blink the screen every time a folder is updated
 * [ ] Add a box to query what happens when copying a file that exists
 * [ ] Dialogs are always shown in the primary screen when more than one screen exist
 * [ ] Bug: After reconnecting, cursor disappears
-* [ ] Combination of keys to avoid inserting sudo password every time
 * [ ] When hit a CTRL+C, flush console buffer to receive the prompt ASAP 
 * [ ] Move an item to a folder in the same window
 * [ ] Open the program in the last location, or in the active screen if multiple

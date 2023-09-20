@@ -20,7 +20,7 @@ import java.awt.event.ComponentEvent;
 
 public class TerminalComponent extends JPanel implements ClosableTabContent {
     private final JPanel contentPane;
-    private final JediTermWidget term = new CustomJediterm(new CustomizedSettingsProvider());
+    private final JediTermWidget term;
     private DisposableTtyConnector tty;
     private String name;
     private final Box reconnectionBox;
@@ -35,6 +35,8 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         JRootPane rootPane = new JRootPane();
         rootPane.setContentPane(contentPane);
         add(rootPane);
+        
+        term = new CustomJediterm(new CustomizedSettingsProvider(info));
 
         addComponentListener(new ComponentAdapter() {
             @Override

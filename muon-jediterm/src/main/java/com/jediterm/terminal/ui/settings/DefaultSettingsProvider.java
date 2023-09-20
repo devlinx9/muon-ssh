@@ -56,7 +56,15 @@ public class DefaultSettingsProvider implements SettingsProvider {
             ? KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.META_DOWN_MASK)
             : KeyStroke.getKeyStroke(KeyEvent.VK_F, InputEvent.CTRL_DOWN_MASK)};
   }
-
+  
+  @Override
+  public KeyStroke[] getTypeSudoPasswordKeyStrokes() {
+    return new KeyStroke[]{UIUtil.isMac
+            ? KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.META_DOWN_MASK)
+            // use CTRL + SHIFT + SPACE
+            : KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)};
+  }
+  
   @Override
   public KeyStroke[] getPageUpKeyStrokes() {
     return new KeyStroke[]{KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_UP, InputEvent.SHIFT_DOWN_MASK)};
@@ -80,7 +88,7 @@ public class DefaultSettingsProvider implements SettingsProvider {
       ? KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.META_DOWN_MASK)
       : KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, InputEvent.CTRL_DOWN_MASK)};
   }
-
+  
   @Override
   public ColorPalette getTerminalColorPalette() {
     return UIUtil.isWindows ? ColorPalette.WINDOWS_PALETTE : ColorPalette.XTERM_PALETTE;
@@ -208,4 +216,10 @@ public class DefaultSettingsProvider implements SettingsProvider {
   public boolean ambiguousCharsAreDoubleWidth() {
     return false;
   }
+  
+  @Override
+  public String getSudoPassword() {
+    return null;
+  }
+  
 }

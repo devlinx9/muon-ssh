@@ -14,7 +14,15 @@ import java.util.List;
 import java.util.Map;
 
 public class Settings {
-    public static final String COPY_KEY = "Copy", PASTE_KEY = "Paste", CLEAR_BUFFER = "Clear buffer", FIND_KEY = "Find";
+    public static final String COPY_KEY = "Copy",
+            PASTE_KEY = "Paste",
+            CLEAR_BUFFER = "Clear buffer",
+            FIND_KEY = "Find",
+            TYPE_SUDO_PASSWORD = "Type SUDO Password";
+    public static final String[] allKeys = {
+            COPY_KEY, PASTE_KEY, CLEAR_BUFFER, FIND_KEY, TYPE_SUDO_PASSWORD
+    };
+    
     private boolean usingMasterPassword = false;
     private Constants.TransferMode fileTransferMode = Constants.TransferMode.NORMAL;
     private Constants.ConflictAction conflictAction = Constants.ConflictAction.AUTORENAME;
@@ -55,9 +63,13 @@ public class Settings {
             defaultSelectionFg = DarkTerminalTheme.SEL_FG, defaultSelectionBg = DarkTerminalTheme.SEL_BG,
             defaultFoundFg = DarkTerminalTheme.FIND_FG, defaultFoundBg = DarkTerminalTheme.FIND_BG,
             defaultHrefFg = DarkTerminalTheme.HREF_FG, defaultHrefBg = DarkTerminalTheme.HREF_BG;
+    
     private Map<String, Integer> keyCodeMap = new CollectionHelper.OrderedDict<String, Integer>()
-            .putItem(COPY_KEY, KeyEvent.VK_C).putItem(PASTE_KEY, KeyEvent.VK_V)
-            .putItem(CLEAR_BUFFER, App.IS_MAC ? KeyEvent.VK_K : KeyEvent.VK_L).putItem(FIND_KEY, KeyEvent.VK_F);
+            .putItem(COPY_KEY, KeyEvent.VK_C)
+            .putItem(PASTE_KEY, KeyEvent.VK_V)
+            .putItem(CLEAR_BUFFER, App.IS_MAC ? KeyEvent.VK_K : KeyEvent.VK_L)
+            .putItem(FIND_KEY, KeyEvent.VK_F)
+            .putItem(TYPE_SUDO_PASSWORD, KeyEvent.VK_SPACE);
 
     private Map<String, Integer> keyModifierMap = new CollectionHelper.Dict<String, Integer>()
             .putItem(COPY_KEY,
@@ -65,7 +77,9 @@ public class Settings {
             .putItem(PASTE_KEY,
                     App.IS_MAC ? KeyEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
             .putItem(CLEAR_BUFFER, App.IS_MAC ? KeyEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK)
-            .putItem(FIND_KEY, App.IS_MAC ? KeyEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK);
+            .putItem(FIND_KEY, App.IS_MAC ? KeyEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK)
+            .putItem(TYPE_SUDO_PASSWORD,
+                    App.IS_MAC ? KeyEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
 
     private boolean dualPaneMode = true;
     private boolean listViewEnabled = false;

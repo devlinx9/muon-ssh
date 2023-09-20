@@ -9,6 +9,7 @@ import com.jediterm.terminal.emulator.ColorPalette;
 import com.jediterm.terminal.ui.settings.DefaultSettingsProvider;
 import muon.app.App;
 import muon.app.Settings;
+import muon.app.ui.components.session.SessionInfo;
 import util.FontUtils;
 
 import javax.swing.*;
@@ -20,12 +21,15 @@ import java.awt.*;
  */
 public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     private final ColorPalette palette;
-
+    
+    private final SessionInfo info;
+    
     /**
      *
      */
-    public CustomizedSettingsProvider() {
-
+    public CustomizedSettingsProvider(SessionInfo info) {
+        this.info = info;
+        
         Color[] colors = new Color[16];
         int[] colorArr = App.getGlobalSettings().getPalleteColors();
         for (int i = 0; i < 16; i++) {
@@ -148,10 +152,21 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     public KeyStroke[] getFindKeyStrokes() {
         return new KeyStroke[]{getKeyStroke(Settings.FIND_KEY)};
     }
-
-    private KeyStroke getKeyStroke(String key) {
-        return KeyStroke.getKeyStroke(App.getGlobalSettings().getKeyCodeMap().get(key),
-                App.getGlobalSettings().getKeyModifierMap().get(key));
+    
+    @Override
+    public KeyStroke[] getTypeSudoPasswordKeyStrokes() {
+        return new KeyStroke[]{getKeyStroke(Settings.TYPE_SUDO_PASSWORD)};
     }
-
+    
+    private KeyStroke getKeyStroke(String key) {
+        return KeyStroke.getKeyStroke(
+                App.getGlobalSettings().getKeyCodeMap().get(key),
+                App.getGlobalSettings().getKeyModifierMap().get(key)
+        );
+    }
+    
+    @Override
+    public String getSudoPassword() {
+        return info.getSudoPassword();
+    }
 }
