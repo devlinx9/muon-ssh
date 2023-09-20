@@ -2054,4 +2054,5 @@ public class TerminalPanel extends JComponent implements TerminalDisplay, Termin
   public void dispose() {
     myRepaintTimer.stop();
   }
+
 }

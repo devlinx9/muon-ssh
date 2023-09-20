@@ -321,7 +321,12 @@ public class SessionInfo extends NamedItem implements Serializable {
     public int hashCode() {
         return Objects.hash(host, user, localFolder, remoteFolder, port, favouriteRemoteFolders, favouriteLocalFolders, privateKeyFile, proxyPort, proxyHost, proxyUser, proxyPassword, proxyType, useJumpHosts, jumpType, jumpHosts, portForwardingRules, password);
     }
-
+    
+    public String getSudoPassword() {
+        // TODO ask user for password
+        return password;
+    }
+    
     public enum JumpType {
         TcpForwarding, PortForwarding
     }

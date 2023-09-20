@@ -82,6 +82,16 @@ public class App {
 
         if (importOnFirstRun) {
             SessionExportImport.importOnFirstRun();
+        
+        /*File appDir = new File(CONFIG_DIR);
+       if (!appDir.exists()) {
+            //Validate if the config directory can be created
+            if(!appDir.mkdirs()){
+                System.err.println("The config directory for muon cannot be created: "+ CONFIG_DIR);
+                System.exit(1);
+            }
+            firstRun = true;
+            */
         }
 
         if (settings.isManualScaling()) {

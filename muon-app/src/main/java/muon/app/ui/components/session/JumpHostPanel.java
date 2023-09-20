@@ -21,6 +21,7 @@ public class JumpHostPanel extends JPanel {
 
     public JumpHostPanel() {
         super(new BorderLayout(5, 5));
+        // TODO i18n
         JLabel lblTitle = new JLabel("Intermediate hops");
         hopList.setBackground(App.skin.getTableBackgroundColor());
 

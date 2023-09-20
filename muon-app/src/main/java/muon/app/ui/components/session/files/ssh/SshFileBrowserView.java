@@ -147,6 +147,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                         this.fileBrowser.getHolder().reconnect();
 
                         e.printStackTrace();
+                        // TODO i18n
                         if (JOptionPane.showConfirmDialog(null,
                                 "Unable to connect to server " + this.fileBrowser.getInfo().getName() + " at "
                                         + this.fileBrowser.getInfo().getHost()

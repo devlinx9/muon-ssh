@@ -61,7 +61,15 @@ public class DefaultSettingsProvider implements SettingsProvider {
     return new TerminalActionPresentation("Page Down",
       KeyStroke.getKeyStroke(KeyEvent.VK_PAGE_DOWN, InputEvent.SHIFT_DOWN_MASK));
   }
-
+  
+  @Override
+  public KeyStroke[] getTypeSudoPasswordKeyStrokes() {
+    return new KeyStroke[]{UIUtil.isMac
+            ? KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.META_DOWN_MASK)
+            // use CTRL + SHIFT + SPACE
+            : KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)};
+  }
+  
   @Override
   public @NotNull TerminalActionPresentation getLineUpActionPresentation() {
     return new TerminalActionPresentation("Line Up", UIUtil.isMac
@@ -87,7 +95,7 @@ public class DefaultSettingsProvider implements SettingsProvider {
   public @NotNull TerminalActionPresentation getSelectAllActionPresentation() {
     return new TerminalActionPresentation("Select All", Collections.emptyList());
   }
-
+  
   @Override
   public ColorPalette getTerminalColorPalette() {
     return UIUtil.isWindows ? ColorPaletteImpl.WINDOWS_PALETTE : ColorPaletteImpl.XTERM_PALETTE;
@@ -221,4 +229,10 @@ public class DefaultSettingsProvider implements SettingsProvider {
   public boolean sendArrowKeysInAlternativeMode() {
     return true;
   }
+  
+  @Override
+  public String getSudoPassword() {
+    return null;
+  }
+  
 }

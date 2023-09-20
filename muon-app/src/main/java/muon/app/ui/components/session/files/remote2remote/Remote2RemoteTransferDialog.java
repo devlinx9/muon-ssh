@@ -197,6 +197,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             spPort.setValue(port);
         }
 
+        // TODO i18n
         while (JOptionPane.showOptionDialog(this,
                 new Object[]{"Host", txtHost, "User", txtUser, "Copy to ( target directory)", txtPath, "Port",
                         spPort},
@@ -206,7 +207,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             user = txtUser.getText();
             path = txtPath.getText();
             port = (Integer) spPort.getValue();
-            if (host.length() < 1 || user.length() < 1 || path.length() < 1 || port <= 0) {
+            if (host.isEmpty() || user.isEmpty() || path.length() < 1 || port <= 0) {
                 JOptionPane.showMessageDialog(this, "Invalid input: all fields mandatory");
                 continue;
             }

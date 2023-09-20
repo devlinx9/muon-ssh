@@ -48,6 +48,7 @@ public class ExternalEditorHandler extends JDialog {
         setSize(400, 200);
 
         progressBar = new JProgressBar();
+        // TODO i18n
         progressLabel = new JLabel("Transferring...");
         progressLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
         progressLabel.setFont(App.skin.getDefaultFont().deriveFont(18.0f));
@@ -71,6 +72,7 @@ public class ExternalEditorHandler extends JDialog {
         this.add(box);
         this.fileWatcher = new FileChangeWatcher(files -> {
             List<String> messages = new ArrayList<>();
+            // TODO i18n
             messages.add("Some file(s) have been modified, upload changes to server?\n");
             messages.add("Changed file(s):");
             messages.addAll(files.stream().map(e -> e.toString()).collect(Collectors.toList()));

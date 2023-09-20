@@ -278,6 +278,7 @@ public class FileBrowser extends Page {
 
     public boolean handleLocalDrop(DndTransferData transferData, SessionInfo info, FileSystem currentFileSystem,
                                    String currentPath) {
+        // TODO i18n
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
                 && JOptionPane.showConfirmDialog(null, "Move/copy files?") != JOptionPane.YES_OPTION) {
             return false;

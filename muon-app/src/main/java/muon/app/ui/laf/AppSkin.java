@@ -45,7 +45,7 @@ public abstract class AppSkin {
         this.defaults.put("ScrollPane[Enabled+Focused].borderPainter", scrollPaneBorderPainter);
         this.defaults.put("ScrollPane[Enabled].borderPainter", scrollPaneBorderPainter);
 
-        this.defaults.put("ScrollBar.width", 7);
+        this.defaults.put("ScrollBar.width", 10);
 
         Painter<? extends JComponent> treeCellFocusPainter = (g, object, width, height) -> {
         };
