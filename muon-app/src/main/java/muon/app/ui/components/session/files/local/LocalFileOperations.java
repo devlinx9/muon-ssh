@@ -32,12 +32,14 @@ public class LocalFileOperations {
             return true;
         } catch (Exception e1) {
             e1.printStackTrace();
+            // TODO i18n
             JOptionPane.showMessageDialog(null, "Unable to create new file");
         }
         return false;
     }
 
     public boolean newFolder(String folder) {
+        // TODO i18n
         String text = JOptionPane.showInputDialog("New folder name");
         if (text == null || text.length() < 1) {
             return false;
@@ -48,6 +50,7 @@ public class LocalFileOperations {
             return true;
         } catch (Exception e1) {
             e1.printStackTrace();
+            // TODO i18n
             JOptionPane.showMessageDialog(null, "Unable to create new folder");
         }
         return false;

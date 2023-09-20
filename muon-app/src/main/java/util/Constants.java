@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import static muon.app.App.bundle;
 
 public class Constants {
-    public static final String BASE_URL = "https://github.com/devlinx9";
+    public static final String BASE_URL = "https://github.com/achiikun/muon-ssh";//"https://github.com/devlinx9";
     public static final String HELP_URL = "https://github.com/subhra74/snowflake/wiki"; //TODO change wiki pages
     public static final String UPDATE_URL = "https://devlinx9.github.io/muon-ssh";
     public static final String API_UPDATE_URL = "https://api.github.com/repos/devlinx9/muon-ssh/releases/latest";

@@ -112,7 +112,7 @@ public class App {
             SessionExportImport.importOnFirstRun();
         }
 
-        if (settings.getEditors().size() == 0) {
+        if (settings.getEditors().isEmpty()) {
             System.out.println("Searching for known editors...");
             settings.setEditors(PlatformUtils.getKnownEditors());
             saveSettings();

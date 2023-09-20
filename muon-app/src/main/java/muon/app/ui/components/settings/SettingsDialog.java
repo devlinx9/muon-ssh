@@ -400,7 +400,7 @@ public class SettingsDialog extends JDialog {
 
         chkLogWrap = new JCheckBox(App.bundle.getString("word_wrap"));
         spLogLinesPerPage = new JSpinner(new SpinnerNumberModel(50, 10, 500, 1));
-        spConnectionTimeout = new JSpinner(new SpinnerNumberModel(60, 30, 300, 5));
+        spConnectionTimeout = new JSpinner(new SpinnerNumberModel(60, 5, 300, 5));
 
         spConnectionKeepAlive = new JCheckBox(App.bundle.getString("keep_alive"));
 

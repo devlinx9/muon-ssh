@@ -54,6 +54,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         reconnectionBox = Box.createHorizontalBox();
         reconnectionBox.setOpaque(true);
         reconnectionBox.setBackground(Color.RED);
+        // TODO i18n
         reconnectionBox.add(new JLabel("Session not connected"));
         JButton btnReconnect = new JButton("Reconnect");
         btnReconnect.addActionListener(e -> {
