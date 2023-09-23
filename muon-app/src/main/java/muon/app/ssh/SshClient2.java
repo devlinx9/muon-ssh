@@ -210,14 +210,14 @@ public class SshClient2 implements Closeable {
                 this.sshj.setTimeout(CONNECTION_TIMEOUT);
                 if (hopStack.isEmpty()) {
                     this.setupProxyAndSocketFactory();
-                    this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
+                    this.sshj.addHostKeyVerifier(App.hostKeyVerifier);
                     this.sshj.connect(info.getHost(), info.getPort());
                 } else {
                     try {
                         System.out.println("Tunneling through...");
                         tunnelThrough(hopStack);
                         System.out.println("adding host key verifier");
-                        this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
+                        this.sshj.addHostKeyVerifier(App.hostKeyVerifier);
                         System.out.println("Host key verifier added");
                         if (this.info.getJumpType() == SessionInfo.JumpType.TcpForwarding) {
                             System.out.println("tcp forwarding...");

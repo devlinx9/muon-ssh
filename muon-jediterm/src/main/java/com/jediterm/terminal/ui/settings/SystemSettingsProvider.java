@@ -1,5 +1,5 @@
 package com.jediterm.terminal.ui.settings;
-
+import javax.swing.KeyStroke;
 import com.jediterm.terminal.ui.TerminalActionPresentation;
 import org.jetbrains.annotations.NotNull;
 

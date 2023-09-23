@@ -323,7 +323,7 @@ public class SettingsDialog extends JDialog {
         cmbTermPalette.setSelectedIndex(0);
 
         kcc = new KeyShortcutComponent[Settings.allKeys.length];
-        for (int i = 0; i < kcc.length; i++) {
+        for (int i = 0; i < Settings.allKeys.length; i++) {
             kcc[i] = new KeyShortcutComponent();
         }
 
@@ -665,8 +665,10 @@ public class SettingsDialog extends JDialog {
         this.cmbTermPalette.setSelectedItem(settings.getTerminalPalette());
 
         for(int i = 0; i < Settings.allKeys.length; i++){
-            kcc[i].setKeyCode(settings.getKeyCodeMap().get(Settings.allKeys[i]));
-            kcc[i].setModifier(settings.getKeyModifierMap().get(Settings.allKeys[i]));
+            if (settings.getKeyCodeMap().get(Settings.allKeys[i]) != null) {
+                kcc[i].setKeyCode(settings.getKeyCodeMap().get(Settings.allKeys[i]));
+                kcc[i].setModifier(settings.getKeyModifierMap().get(Settings.allKeys[i]));
+            }
         }
         
         chkConfirmBeforeDelete.setSelected(settings.isConfirmBeforeDelete());
