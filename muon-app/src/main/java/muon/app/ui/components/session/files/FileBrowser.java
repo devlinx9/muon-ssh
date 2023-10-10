@@ -213,7 +213,7 @@ public class FileBrowser extends Page {
         holder.EXECUTOR.submit(this.ongoingFileTransfer);
     }
 
-    private void reloadView() {
+    public void reloadView() {
         Component c = leftTabs.getSelectedContent();
         System.out.println("c1 " + c);
         if (c instanceof AbstractFileBrowserView) {

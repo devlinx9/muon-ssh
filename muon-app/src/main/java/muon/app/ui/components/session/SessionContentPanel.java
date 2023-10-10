@@ -49,7 +49,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     private final DisabledPanel disabledPanel;
     private final TransferProgressPanel progressPanel = new TransferProgressPanel();
     private final TabbedPage[] pages;
-    private final FileBrowser fileBrowser;
+    public final FileBrowser fileBrowser;
     private final LogViewer logViewer;
     private final TerminalHolder terminalHolder;
     private final DiskspaceAnalyzer diskspaceAnalyzer;

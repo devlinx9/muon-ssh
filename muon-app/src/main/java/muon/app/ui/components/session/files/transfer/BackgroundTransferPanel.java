@@ -150,6 +150,9 @@ public class BackgroundTransferPanel extends JPanel {
             callback.accept(transferCount.get());
             this.fileTransfer.getSession().addToSessionCache(this.fileTransfer.getInstance());
             System.out.println("done transfer");
+
+            this.fileTransfer.getSession().fileBrowser.reloadView();
+
             SwingUtilities.invokeLater(() -> {
                 BackgroundTransferPanel.this.verticalBox.remove(this);
                 BackgroundTransferPanel.this.revalidate();
