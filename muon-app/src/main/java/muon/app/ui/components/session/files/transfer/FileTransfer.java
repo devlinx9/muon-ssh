@@ -129,7 +129,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
                                     "Permission denied, do you want to copy files from the temporary folder to destination with sudo?",
                                     App.bundle.getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
-                        if (App.getGlobalSettings().isTransferTemporaryDirectory()) {
+                        if (!App.getGlobalSettings().isTransferTemporaryDirectory()) {
                             targetFs.mkdir(tmpDir);
                             transfer(tmpDir, instance);
                         }
