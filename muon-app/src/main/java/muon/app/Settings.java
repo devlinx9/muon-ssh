@@ -69,11 +69,11 @@ public class Settings {
 
     private Map<String, Integer> keyModifierMap = new CollectionHelper.Dict<String, Integer>()
             .putItem(COPY_KEY,
-                    App.IS_MAC ? KeyEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+                    App.IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
             .putItem(PASTE_KEY,
-                    App.IS_MAC ? KeyEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
-            .putItem(CLEAR_BUFFER, App.IS_MAC ? KeyEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK)
-            .putItem(FIND_KEY, App.IS_MAC ? KeyEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK);
+                    App.IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .putItem(CLEAR_BUFFER, App.IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK)
+            .putItem(FIND_KEY, App.IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK);
 
     private boolean dualPaneMode = true;
     private boolean listViewEnabled = false;

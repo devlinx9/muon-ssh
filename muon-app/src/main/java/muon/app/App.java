@@ -41,11 +41,9 @@ import static util.Constants.*;
 public class App {
 
     private App() {
-
     }
 
     private static final Logger LOG = Logger.getLogger(App.class);
-
     public static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     public static final SnippetManager SNIPPET_MANAGER = new SnippetManager();
     public static final boolean IS_MAC = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH)
@@ -68,31 +66,32 @@ public class App {
 
     public static void main(String[] args) throws UnsupportedLookAndFeelException {
         LOG.setLevel(Level.INFO);
-        LOG.debug("Java version : ".concat(System.getProperty("java.version")));
 
         if (Boolean.parseBoolean(System.getProperty("debugMuon"))) {
             LOG.setLevel(Level.DEBUG);
         }
+
+        LOG.info("Java version : ".concat(System.getProperty("java.version")));
 
         Security.addProvider(new BouncyCastleProvider());
         Security.setProperty("networkaddress.cache.ttl", "1");
         Security.setProperty("networkaddress.cache.negative.ttl", "1");
         Security.setProperty("crypto.policy", "unlimited");
 
-        boolean importOnFirstRun = validateCustomMuonPath() || !validateConfigPath();
-
         setBundleLanguage();
         loadSettings();
 
-        if (importOnFirstRun) {
+        if (validateCustomMuonPath() || !validateConfigPath()) {
             SessionExportImport.importOnFirstRun();
         }
 
+        //TODO devlinx9 use splitpane for right toolbar
         if (settings.isManualScaling()) {
             System.setProperty("sun.java2d.uiScale.enabled", "true");
             System.setProperty("sun.java2d.uiScale", String.format("%.2f", settings.getUiScaling()));
         }
 
+        //TODO devlinx9 use mouselistener to desselected a server connection and create a new root tree
         if (settings.getEditors().isEmpty()) {
             LOG.info("Searching for known editors...");
             settings.setEditors(PlatformUtils.getKnownEditors());
@@ -138,25 +137,27 @@ public class App {
     private static boolean validateConfigPath() {
         File appDir = new File(configDir);
         File oldAppDir = new File(oldConfigDir);
-        if (!appDir.exists()) {
-            //Validate if the config directory can be created
-            if (!appDir.mkdirs()) {
-                LOG.error("The config directory for moun cannot be created: " + configDir);
-                System.exit(1);
-            }
-
-            if (!oldAppDir.exists()) {
-                return true;
-            }
-
-            try {
-                copyDirectory(oldAppDir, appDir);
-            } catch (IOException e) {
-                LOG.error("The copy to the new directory failed: " + oldConfigDir, e);
-                System.exit(1);
-            }
+        if (appDir.exists()) {
+            return false;
         }
-        return false;
+
+        //Validate if the config directory can be created
+        if (!appDir.mkdirs()) {
+            LOG.error("The config directory for moun cannot be created: " + configDir);
+            System.exit(1);
+        }
+
+        if (!oldAppDir.exists()) {
+            return true;
+        }
+
+        try {
+            copyDirectory(oldAppDir, appDir);
+        } catch (IOException e) {
+            LOG.error("The copy to the new directory failed: " + oldConfigDir, e);
+            System.exit(1);
+        }
+        return true;
     }
 
     private static void validateMaxKeySize() {
@@ -174,18 +175,18 @@ public class App {
     private static boolean validateCustomMuonPath() {
         //Checks if the parameter muonPath is set in the startup
         String muonPath = System.getProperty("muonPath");
-        boolean isMuonPath = false;
-        if (muonPath != null && !muonPath.isEmpty()) {
-            LOG.info("Muon path: " + muonPath);
-            configDir = muonPath;
-            //Validate if the config directory can be created
-            if (!Paths.get(muonPath).toFile().exists()) {
-                LOG.error("The config directory for moun doesn't exists: " + configDir);
-                System.exit(1);
-            }
-            isMuonPath = true;
+        if (muonPath == null || muonPath.isEmpty()) {
+            return false;
         }
-        return isMuonPath;
+
+        LOG.info("Muon path: " + muonPath);
+        configDir = muonPath;
+        //Validate if the config directory can be created
+        if (!Paths.get(muonPath).toFile().exists()) {
+            System.out.println("The config directory for moun doesn't exists: " + configDir);
+            System.exit(1);
+        }
+        return true;
     }
 
     public static synchronized Settings loadSettings() {
@@ -244,6 +245,22 @@ public class App {
         return pinnedLogs;
     }
 
+    public static synchronized void addUpload(BackgroundFileTransfer transfer) {
+        mw.addUpload(transfer);
+    }
+
+    public static synchronized void addDownload(BackgroundFileTransfer transfer) {
+        mw.addDownload(transfer);
+    }
+
+    public static synchronized void removePendingTransfers(int sessionId) {
+        mw.removePendingTransfers(sessionId);
+    }
+
+    public static synchronized void openSettings(SettingsPageName page) {
+        mw.openSettings(page);
+    }
+
     public static synchronized void loadPinnedLogs() {
         File file = new File(configDir, PINNED_LOGS);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -270,21 +287,6 @@ public class App {
         }
     }
 
-    public static synchronized void addUpload(BackgroundFileTransfer transfer) {
-        mw.addUpload(transfer);
-    }
-
-    public static synchronized void addDownload(BackgroundFileTransfer transfer) {
-        mw.addDownload(transfer);
-    }
-
-    public static synchronized void removePendingTransfers(int sessionId) {
-        mw.removePendingTransfers(sessionId);
-    }
-
-    public static synchronized void openSettings(SettingsPageName page) {
-        mw.openSettings(page);
-    }
 
     public static synchronized AppWindow getAppWindow() {
         return mw;

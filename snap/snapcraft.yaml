@@ -1,4 +1,4 @@
-name: muon
+name: muonssh
 version: "2.2.0"
 summary: Graphical SFTP client and terminal emulator with helpful utilities
 description: |
@@ -14,8 +14,8 @@ icon: snap/gui/muonssh.png
 confinement: strict
 
 apps:
-  muon:
-    command: java -jar $SNAP/jar/muonssh_2.2.0.jar
+  muonssh:
+    command: java -jar -DmuonPath=$SNAP/.muon-ssh $SNAP/jar/muonssh_2.2.0.jar
     common-id: muonssh.desktop
     environment:
       # Needed for fontconfig
@@ -25,11 +25,13 @@ apps:
     plugs: [x11, ssh-keys, network, desktop, home, network-bind]
 
 parts:
-  muon:
+  muonssh:
     plugin: maven
     source: .
     override-build: |
+      [ -f usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs ] && rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
       mkdir -p $SNAPCRAFT_PART_INSTALL/jar/
+      mkdir -p $SNAPCRAFT_PART_INSTALL/.muon-ssh/
       snapcraftctl build
       cp ./muon-app/target/*.jar $SNAPCRAFT_PART_INSTALL/jar/
       cp ./muon-jediterm/target/*.jar $SNAPCRAFT_PART_INSTALL/jar/
@@ -37,7 +39,11 @@ parts:
       - /root/parts/muon/build/muon-app
       - /root/parts/muon/build/muon-jediterm
     build-packages:
+      - ca-certificates
+      - ca-certificates-java
       - openjdk-11-jdk
     stage-packages:
-      - openjdk-11-jre
+      - openjdk-11-jdk
+      - ca-certificates
+      - ca-certificates-java
       - x11-utils

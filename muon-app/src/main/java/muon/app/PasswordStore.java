@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import muon.app.ui.components.session.SavedSessionTree;
 import muon.app.ui.components.session.SessionFolder;
 import muon.app.ui.components.session.SessionInfo;
+import org.apache.log4j.Logger;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -24,6 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static util.Constants.configDir;
 
 public final class PasswordStore {
+    private static final Logger LOG = Logger.getLogger(PasswordStore.class);
+
     private static KeyStore keyStore;
     private static PasswordStore instance;
 
@@ -88,11 +91,11 @@ public final class PasswordStore {
         return writer.toCharArray();
     }
 
-    public synchronized char[] getSavedPassword(String alias) throws Exception {
+    public synchronized char[] getSavedPassword(String alias) {
         return this.passwordMap.get(alias);
     }
 
-    public synchronized void savePassword(String alias, char[] password) throws Exception {
+    public synchronized void savePassword(String alias, char[] password) {
         this.passwordMap.put(alias, password);
     }
 
@@ -103,7 +106,7 @@ public final class PasswordStore {
                 .generateSecret(new PBEKeySpec(serializePasswordMap(this.passwordMap)));
         keyStore.setEntry("passwords", new SecretKeyEntry(generatedSecret), protParam);
 
-        System.out.println("Password protection: " + protParam.getProtectionAlgorithm());
+        LOG.info("Password protection: " + protParam.getProtectionAlgorithm());
 
         try (OutputStream out = new FileOutputStream(new File(configDir, "passwords.pfx"))) {
             keyStore.store(out, protParam.getPassword());
@@ -202,11 +205,10 @@ public final class PasswordStore {
                     return true;
                 }
             } catch (IOException e) {
-                if (e.getCause() instanceof UnrecoverableKeyException) {
-                    if (JOptionPane.showConfirmDialog(App.getAppWindow(),
-                            App.bundle.getString("incorrect_password")) != JOptionPane.YES_OPTION) {
-                        break;
-                    }
+                if (e.getCause() instanceof UnrecoverableKeyException && (JOptionPane.showConfirmDialog(App.getAppWindow(),
+                        App.bundle.getString("incorrect_password")) != JOptionPane.YES_OPTION)) {
+                    return false;
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -214,10 +216,9 @@ public final class PasswordStore {
 
             if (JOptionPane.showConfirmDialog(App.getAppWindow(),
                     App.bundle.getString("error_loading_password")) != JOptionPane.YES_OPTION) {
-                break;
+                return false;
             }
         }
-        return false;
     }
 
     public boolean changeStorePassword(char[] newPassword) throws Exception {
