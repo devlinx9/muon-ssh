@@ -26,8 +26,15 @@ public abstract class AppSkin {
     }
 
     private void initDefaults() {
+        this.defaults =UIManager.getDefaults();
         this.laf = new NimbusLookAndFeel();
-        this.defaults = this.laf.getDefaults();
+
+        try {
+                UIManager.setLookAndFeel(this.laf);
+        }
+        catch (javax.swing.UnsupportedLookAndFeelException ue){
+              
+        }
 
         this.defaults.put("defaultFont", loadFonts());
         this.defaults.put("iconFont", loadFontAwesomeFonts());
@@ -62,7 +69,7 @@ public abstract class AppSkin {
     protected Font loadFonts() {
         try (InputStream is = AppSkin.class
 
-                .getResourceAsStream("/fonts/Helvetica.ttf")) {
+                .getResourceAsStream("/fonts/zysong.ttf")) {
             Font font = Font.createFont(Font.TRUETYPE_FONT, is);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
