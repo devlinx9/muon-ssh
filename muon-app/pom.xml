@@ -299,7 +299,7 @@
                         </goals>
                         <configuration>
                             <icon>src/exe/muonssh.ico</icon>
-                            <headerType>console</headerType>
+                            <headerType>gui</headerType>
                             <outfile>target/muonssh_${project.version}.exe</outfile>
                             <jar>target/muonssh_${project.version}.jar</jar>
                             <errTitle>Failed to load muonssh</errTitle>
