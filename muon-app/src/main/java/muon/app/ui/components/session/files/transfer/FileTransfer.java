@@ -122,24 +122,28 @@ public class FileTransfer implements Runnable, AutoCloseable {
                         tmpFilePath.setText("Files copied in " + tmpDir + " due to permission issues");
                         tmpFilePath.setEnabled(true);
                         JOptionPane.showMessageDialog(null, tmpFilePath, "Copied to temp directory", JOptionPane.WARNING_MESSAGE);
-
-                        if (!App.getGlobalSettings().isPromptForSudo() ||
-                                JOptionPane.showConfirmDialog(null,
-                                        "Permission denied, do you want to copy files from the temporary folder to destination with sudo?",
-                                        App.bundle.getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                            String command = "sh -c  \"cd '" + tmpDir + "'; cp -r * '" + this.targetFolder + "'\"";
-
-                            System.out.println("Invoke sudo: " + command);
-                            int ret = SudoUtils.runSudo(command, instance);
-                            if (ret == 0) {
-                                callback.done(this);
-                                return;
-                            }
-                        }
                     }
 
+                    if (!App.getGlobalSettings().isPromptForSudo() ||
+                            JOptionPane.showConfirmDialog(null,
+                                    "Permission denied, do you want to copy files from the temporary folder to destination with sudo?",
+                                    App.bundle.getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
+                        if (!App.getGlobalSettings().isTransferTemporaryDirectory()) {
+                            targetFs.mkdir(tmpDir);
+                            transfer(tmpDir, instance);
+                        }
 
-                    throw e;
+                        String command = "sh -c  \"cd '" + tmpDir + "'; cp -r * '" + this.targetFolder + "'\"";
+
+                        System.out.println("Invoke sudo: " + command);
+                        int ret = SudoUtils.runSudo(command, instance);
+                        if (ret == 0) {
+                            callback.done(this);
+                            return;
+                        }
+                        throw e;
+                    }
                 }
             }
         } catch (Exception e) {

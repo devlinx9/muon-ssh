@@ -64,8 +64,8 @@ public class AppWindow extends JFrame {
 
         Dimension screenD = Toolkit.getDefaultToolkit().getScreenSize();
 
-        int screenWidth = screenD.width - inset.left - inset.right;
-        int screenHeight = screenD.height - inset.top - inset.bottom;
+        int screenWidth = (screenD.width - inset.left - inset.right)/2;
+        int screenHeight = (screenD.height - inset.top - inset.bottom)*2/3;
 
         if (screenWidth < 1024 || screenHeight < 650 || App.getGlobalSettings().isStartMaximized()) {
             setSize(screenWidth, screenHeight);
