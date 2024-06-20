@@ -193,7 +193,7 @@ public class LocalMenuHandler {
     }
 
     private void renameAsync(String oldName, String newName, String baseFolder) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             if (fileOperations.rename(oldName, newName)) {
                 fileBrowserView.render(baseFolder);
@@ -204,7 +204,7 @@ public class LocalMenuHandler {
     }
 
     private void delete(FileInfo[] selectedFiles) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             for (FileInfo f : selectedFiles) {
                 try {
@@ -218,7 +218,7 @@ public class LocalMenuHandler {
     }
 
     private void newFile() {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             String baseFolder = fileBrowserView.getCurrentDirectory();
             if (fileOperations.newFile(baseFolder)) {
@@ -230,7 +230,7 @@ public class LocalMenuHandler {
     }
 
     private void newFolder(String currentDirectory) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             String baseFolder = currentDirectory;
             if (fileOperations.newFolder(baseFolder)) {

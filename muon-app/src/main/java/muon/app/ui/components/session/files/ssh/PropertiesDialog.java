@@ -29,7 +29,7 @@ public class PropertiesDialog extends JDialog {
     public static final int S_IROTH = 00004; // read by others
     public static final int S_IWOTH = 00002; // write by others
     public static final int S_IXOTH = 00001; // execute/search by others
-    static final int[] perms = new int[]{S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP,
+    static final int[] PERMS = new int[]{S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP,
             S_IWGRP, S_IXGRP, S_IROTH, S_IWOTH, S_IXOTH};
     private static final String userGroupRegex = "^[^\\s]+\\s+[^\\s]+\\s+([^\\s]+)\\s+([^\\s]+)";
     private static final Pattern duPattern = Pattern
@@ -220,7 +220,7 @@ public class PropertiesDialog extends JDialog {
     private boolean[] extractPermissions(int permissions) {
         boolean[] perms = new boolean[9];
         for (int i = 0; i < 9; i++) {
-            perms[i] = (permissions & PropertiesDialog.perms[i]) != 0;
+            perms[i] = (permissions & PropertiesDialog.PERMS[i]) != 0;
         }
         return perms;
     }
@@ -298,7 +298,7 @@ public class PropertiesDialog extends JDialog {
         int perms = 0;
         for (int i = 0; i < 9; i++) {
             if (chkPermissons[i].isSelected()) {
-                perms |= PropertiesDialog.perms[i];
+                perms |= PropertiesDialog.PERMS[i];
             }
         }
         return perms;
@@ -306,7 +306,7 @@ public class PropertiesDialog extends JDialog {
 
     private Component addPropertyField(JTextField txt, String label) {
         txt.setEditable(false);
-        txt.setBackground(App.SKIN.getDefaultBackground());
+        txt.setBackground(App.skin.getDefaultBackground());
         txt.setBorder(null);
         JLabel lblFileName = new JLabel(label);
         lblFileName.setPreferredSize(
@@ -396,7 +396,7 @@ public class PropertiesDialog extends JDialog {
             command.append("\"" + fileInfo.getPath() + "\" ");
         }
         System.out.println("Command to execute: " + command);
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             try {
                 long total = 0;
                 StringBuilder output = new StringBuilder();
@@ -435,7 +435,7 @@ public class PropertiesDialog extends JDialog {
                 "export POSIXLY_CORRECT=1; export BLOCKSIZE=1024; df -P -k \""
                         + files[0].getPath() + "\"");
         System.out.println("Command to execute: " + command);
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             try {
                 StringBuilder output = new StringBuilder();
                 boolean ret = fileBrowser.getSessionInstance().exec(
@@ -499,7 +499,7 @@ public class PropertiesDialog extends JDialog {
         dlg.pack();
         AtomicBoolean disposed = new AtomicBoolean(false);
         dlg.setLocationRelativeTo(this);
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             try {
                 for (FileInfo path : paths) {
                     fileBrowser.getSSHFileSystem().chmod(perm, path.getPath());

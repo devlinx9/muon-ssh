@@ -71,8 +71,7 @@ public class FolderViewTableModel extends AbstractTableModel implements ListMode
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        FileInfo ent = files.get(rowIndex);
-        return ent;
+        return files.get(rowIndex);
     }
 
     @Override

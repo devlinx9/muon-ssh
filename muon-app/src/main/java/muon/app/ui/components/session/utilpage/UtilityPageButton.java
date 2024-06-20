@@ -23,7 +23,7 @@ public class UtilityPageButton extends JToggleButton {
     public UtilityPageButton(String text, String iconText) {
         this.text = text;
         this.iconText = iconText;
-        this.iconFont = App.SKIN.getIconFont().deriveFont(24.0f);
+        this.iconFont = App.skin.getIconFont().deriveFont(24.0f);
     }
 
     @Override
@@ -32,11 +32,11 @@ public class UtilityPageButton extends JToggleButton {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(
-                super.isSelected() ? App.SKIN.getDefaultSelectionBackground()
+                super.isSelected() ? App.skin.getDefaultSelectionBackground()
                         : getBackground());
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setColor(
-                super.isSelected() ? App.SKIN.getDefaultSelectionForeground()
+                super.isSelected() ? App.skin.getDefaultSelectionForeground()
                         : getForeground());
         FontMetrics fm1 = g2.getFontMetrics(iconFont);
         FontMetrics fm2 = g2.getFontMetrics(getFont());

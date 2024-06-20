@@ -12,17 +12,17 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class TabbedPanel extends JPanel {
-    private final Color unselectedBg = App.SKIN.getSelectedTabColor();
-    private final Color selectedBg = App.SKIN.getDefaultBackground();
+    private final Color unselectedBg = App.skin.getSelectedTabColor();
+    private final Color selectedBg = App.skin.getDefaultBackground();
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final Box tabHolder;
     private final Border selectedTabBorder = new CompoundBorder(
             new MatteBorder(2, 0, 0, 0,
-                    App.SKIN.getDefaultSelectionBackground()),
+                    App.skin.getDefaultSelectionBackground()),
             new EmptyBorder(10, 15, 10, 15));
     private final Border unselectedTabBorder = new CompoundBorder(
-            new MatteBorder(2, 0, 0, 0, App.SKIN.getSelectedTabColor()),
+            new MatteBorder(2, 0, 0, 0, App.skin.getSelectedTabColor()),
             new EmptyBorder(10, 15, 10, 15));
 
     public TabbedPanel() {

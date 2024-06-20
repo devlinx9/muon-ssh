@@ -43,7 +43,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
         }
 
         System.out.println("Path: " + path);
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             try {
                 this.fs = new LocalFileSystem();
                 //Validate if local path exists, if not set the home path
@@ -104,7 +104,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
     @Override
     public void render(String path) {
         this.path = path;
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (this.path == null) {

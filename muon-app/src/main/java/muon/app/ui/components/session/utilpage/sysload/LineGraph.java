@@ -17,11 +17,11 @@ public class LineGraph extends JComponent {
     private boolean dynamic = false;
     private String suffix = "%";
     private final Path2D shape = new Path2D.Double();
-    private final Color bgColor = App.SKIN.getDefaultBackground();
-    private final Color textColor = App.SKIN.getDefaultForeground();
+    private final Color bgColor = App.skin.getDefaultBackground();
+    private final Color textColor = App.skin.getDefaultForeground();
     private final Color lineColor = new Color(51, 181, 229);
     private final Color gridColor = new Color(62, 68, 81);
-    private final Color gridLineColor = App.SKIN.getSelectedTabColor();
+    private final Color gridLineColor = App.skin.getSelectedTabColor();
 
     @Override
     protected void paintComponent(Graphics g) {

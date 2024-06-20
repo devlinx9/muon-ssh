@@ -112,14 +112,14 @@ public class NetworkToolsPage extends UtilPageItemView {
         txtOutput = new SkinnedTextArea();
         txtOutput.setEditable(false);
         JScrollPane jsp = new SkinnedScrollPane(txtOutput);
-        jsp.setBorder(new LineBorder(App.SKIN.getDefaultBorderColor()));
+        jsp.setBorder(new LineBorder(App.skin.getDefaultBorderColor()));
         this.add(jsp);
     }
 
     private void executeAsync(String cmd) {
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         holder.disableUi(stopFlag);
-        holder.EXECUTOR.submit(() -> {
+        holder.executor.submit(() -> {
             StringBuilder outText = new StringBuilder();
             try {
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();

@@ -31,15 +31,13 @@ public class AddressBar extends JPanel {
         addrPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
         this.separator = separator;
 
-        UIDefaults toolbarSkin = App.SKIN.createToolbarSkin();
+        UIDefaults toolbarSkin = App.skin.createToolbarSkin();
 
         JButton btnRoot = new JButton();
         btnRoot.putClientProperty("Nimbus.Overrides", toolbarSkin);
-        btnRoot.setFont(App.SKIN.getIconFont());
+        btnRoot.setFont(App.skin.getIconFont());
         btnRoot.setText("\uf0a0");
-        btnRoot.addActionListener(e -> {
-            createAndShowPopup();
-        });
+        btnRoot.addActionListener(e -> createAndShowPopup());
 
         DefaultComboBoxModel<String> model1 = new DefaultComboBoxModel<>();
         txtAddressBar = new JComboBox<>(model1);
@@ -95,7 +93,7 @@ public class AddressBar extends JPanel {
 
         btnEdit = new JButton();
         btnEdit.putClientProperty("Nimbus.Overrides", toolbarSkin);
-        btnEdit.setFont(App.SKIN.getIconFont());
+        btnEdit.setFont(App.skin.getIconFont());
         btnEdit.setText("\uf023");
         btnEdit.addActionListener(e -> {
             if (!isSelected()) {
@@ -167,11 +165,12 @@ public class AddressBar extends JPanel {
             popup.removeAll();
         }
 
+        String itemPath = "item.path";
         if (separator == '/') {
             JMenuItem item = new JMenuItem("ROOT");
-            item.putClientProperty("item.path", "/");
+            item.putClientProperty(itemPath, "/");
             item.addActionListener(e -> {
-                String selectedText = (String) item.getClientProperty("item.path");
+                String selectedText = (String) item.getClientProperty(itemPath);
                 if (a != null) {
                     a.actionPerformed(new ActionEvent(this, 0, selectedText));
                 }
@@ -181,9 +180,9 @@ public class AddressBar extends JPanel {
             File[] roots = File.listRoots();
             for (File f : roots) {
                 JMenuItem item = new JMenuItem(f.getAbsolutePath());
-                item.putClientProperty("item.path", f.getAbsolutePath());
+                item.putClientProperty(itemPath, f.getAbsolutePath());
                 item.addActionListener(e -> {
-                    String selectedText = (String) item.getClientProperty("item.path");
+                    String selectedText = (String) item.getClientProperty(itemPath);
                     if (a != null) {
                         a.actionPerformed(new ActionEvent(this, 0, selectedText));
                     }

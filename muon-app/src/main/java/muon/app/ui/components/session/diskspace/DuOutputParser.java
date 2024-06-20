@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class DuOutputParser {
-    private static final Pattern duPattern = Pattern
+    private static final Pattern DU_PATTERN = Pattern
             .compile("([\\d]+)\\s+(.+)");
     private final DiskUsageEntry root;
 
@@ -16,9 +16,9 @@ public final class DuOutputParser {
                 true);
     }
 
-    public final DiskUsageEntry parseList(List<String> lines, int prefixLen) {
+    public DiskUsageEntry parseList(List<String> lines, int prefixLen) {
         for (String line : lines) {
-            Matcher matcher = duPattern.matcher(line);
+            Matcher matcher = DU_PATTERN.matcher(line);
             if (matcher.find()) {
                 try {
                     long size = Long.parseLong(matcher.group(1)) * 512;

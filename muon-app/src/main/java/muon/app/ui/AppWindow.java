@@ -34,7 +34,6 @@ import static util.Constants.*;
 
 /**
  * @author subhro
- *
  */
 public class AppWindow extends JFrame {
     private final CardLayout sessionCard;
@@ -88,17 +87,13 @@ public class AppWindow extends JFrame {
         this.bottomPanel = createBottomPanel();
         this.add(this.bottomPanel, BorderLayout.SOUTH);
 
-        this.uploadPanel = new BackgroundTransferPanel(count -> {
-            SwingUtilities.invokeLater(() -> {
-                lblUploadCount.setText(count + "");
-            });
-        });
+        this.uploadPanel = new BackgroundTransferPanel(count ->
+                SwingUtilities.invokeLater(() ->
+                        lblUploadCount.setText(count + "")));
 
-        this.downloadPanel = new BackgroundTransferPanel(count -> {
-            SwingUtilities.invokeLater(() -> {
-                lblDownloadCount.setText(count + "");
-            });
-        });
+        this.downloadPanel = new BackgroundTransferPanel(count ->
+                SwingUtilities.invokeLater(() ->
+                        lblDownloadCount.setText(count + "")));
 
         new Thread(() -> {
             if (UpdateChecker.isNewUpdateAvailable()) {
@@ -117,19 +112,15 @@ public class AppWindow extends JFrame {
 
     private JPanel createSessionPanel() {
         JLabel lblSession = new JLabel(bundle.getString("sessions"));
-        lblSession.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
+        lblSession.setFont(App.skin.getDefaultFont().deriveFont(14.0f));
         JButton btnNew = new JButton(bundle.getString("add"));
-        btnNew.setFont(App.SKIN.getDefaultFont().deriveFont(12.0f));
-        btnNew.addActionListener(e -> {
-            this.createFirstSessionPanel();
-        });
+        btnNew.setFont(App.skin.getDefaultFont().deriveFont(12.0f));
+        btnNew.addActionListener(e -> this.createFirstSessionPanel());
 
         JButton btnSettings = new JButton();
-        btnSettings.setFont(App.SKIN.getIconFont().deriveFont(12.0f));
+        btnSettings.setFont(App.skin.getIconFont().deriveFont(12.0f));
         btnSettings.setText(FontAwesomeContants.FA_COG);
-        btnSettings.addActionListener(e -> {
-            openSettings(null);
-        });
+        btnSettings.addActionListener(e -> openSettings(null));
 
         Box topBox = Box.createHorizontalBox();
         topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -141,7 +132,7 @@ public class AppWindow extends JFrame {
         topBox.add(btnSettings);
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.SKIN.getDefaultBorderColor()));
+        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.skin.getDefaultBorderColor()));
         panel.add(topBox, BorderLayout.NORTH);
 
         sessionListPanel = new SessionListPanel(this);
@@ -179,13 +170,13 @@ public class AppWindow extends JFrame {
 
     private Component createBottomPanel() {
         popup = new JPopupMenu();
-        popup.setBorder(new LineBorder(App.SKIN.getDefaultBorderColor(), 1));
+        popup.setBorder(new LineBorder(App.skin.getDefaultBorderColor(), 1));
         popup.setPreferredSize(new Dimension(400, 500));
 
         Box b1 = Box.createHorizontalBox();
         b1.setOpaque(true);
-        b1.setBackground(App.SKIN.getTableBackgroundColor());
-        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()),
+        b1.setBackground(App.skin.getTableBackgroundColor());
+        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.skin.getDefaultBorderColor()),
                 new EmptyBorder(5, 5, 5, 5)));
         b1.add(Box.createRigidArea(new Dimension(10, 10)));
 
@@ -220,7 +211,7 @@ public class AppWindow extends JFrame {
         b1.add(Box.createHorizontalGlue());
 
         JLabel lblUpload = new JLabel();
-        lblUpload.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+        lblUpload.setFont(App.skin.getIconFont().deriveFont(16.0f));
         lblUpload.setText(FontAwesomeContants.FA_CLOUD_UPLOAD);
         b1.add(lblUpload);
         b1.add(Box.createRigidArea(new Dimension(5, 10)));
@@ -244,7 +235,7 @@ public class AppWindow extends JFrame {
         b1.add(Box.createRigidArea(new Dimension(10, 10)));
 
         JLabel lblDownload = new JLabel();
-        lblDownload.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+        lblDownload.setFont(App.skin.getIconFont().deriveFont(16.0f));
         lblDownload.setText(FontAwesomeContants.FA_CLOUD_DOWNLOAD);
         b1.add(lblDownload);
         b1.add(Box.createRigidArea(new Dimension(5, 10)));
@@ -268,7 +259,7 @@ public class AppWindow extends JFrame {
         b1.add(Box.createRigidArea(new Dimension(30, 10)));
 
         JLabel lblHelp = new JLabel();
-        lblHelp.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+        lblHelp.setFont(App.skin.getIconFont().deriveFont(16.0f));
 
         lblHelp.addMouseListener(new MouseAdapter() {
             @Override
@@ -299,7 +290,7 @@ public class AppWindow extends JFrame {
             }
         });
 
-        lblUpdate.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+        lblUpdate.setFont(App.skin.getIconFont().deriveFont(16.0f));
         lblUpdate.setText(FontAwesomeContants.FA_REFRESH);
         b1.add(lblUpdate);
 
@@ -324,7 +315,7 @@ public class AppWindow extends JFrame {
     protected void openUpdateURL() {
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().browse(new URI(App.UPDATE_URL2));
+                Desktop.getDesktop().browse(new URI(UPDATE_URL2));
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (URISyntaxException ex) {

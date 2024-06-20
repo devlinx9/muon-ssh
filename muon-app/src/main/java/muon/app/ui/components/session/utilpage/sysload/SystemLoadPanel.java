@@ -18,8 +18,13 @@ public class SystemLoadPanel extends JPanel {
     private final JLabel cpuLabel;
     private final JLabel memoryLabel;
     private final JLabel swapLabel;
-    private long totalMemory, usedMemory, totalSwap, usedSwap;
-    private double cpuUsage, memoryUsage, swapUsage;
+    private long totalMemory;
+    private long usedMemory;
+    private long totalSwap;
+    private long usedSwap;
+    private double cpuUsage;
+    private double memoryUsage;
+    private double swapUsage;
 
     public SystemLoadPanel() {
         super(new BorderLayout(5, 5));

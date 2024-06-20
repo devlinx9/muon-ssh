@@ -8,6 +8,7 @@ import com.jediterm.terminal.TextStyle;
 import muon.app.App;
 
 import java.awt.*;
+import com.jediterm.core.Color;
 
 /**
  * @author subhro
@@ -16,7 +17,7 @@ import java.awt.*;
 public class CustomTerminalTheme implements TerminalTheme {
 
     public static final TerminalColor getTerminalColor(int rgb) {
-        return TerminalColor.awt(new Color(rgb));
+        return TerminalColor.fromColor(new Color(rgb));
     }
 
     @Override

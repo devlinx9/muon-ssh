@@ -27,7 +27,7 @@ public class TabCloseButton extends JComponent {
         setPreferredSize(new Dimension(20, 20));
         setMinimumSize(new Dimension(20, 20));
         setMaximumSize(new Dimension(20, 20));
-        font = App.SKIN.getIconFont().deriveFont(14.0f);
+        font = App.skin.getIconFont().deriveFont(14.0f);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {

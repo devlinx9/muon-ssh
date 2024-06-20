@@ -20,7 +20,7 @@ import java.awt.event.ComponentEvent;
 
 public class TerminalComponent extends JPanel implements ClosableTabContent {
     private final JPanel contentPane;
-    private final JediTermWidget term = new CustomJediterm(new CustomizedSettingsProvider());
+    private final JediTermWidget term;
     private DisposableTtyConnector tty;
     private String name;
     private final Box reconnectionBox;
@@ -35,6 +35,8 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         JRootPane rootPane = new JRootPane();
         rootPane.setContentPane(contentPane);
         add(rootPane);
+        
+        term = new CustomJediterm(new CustomizedSettingsProvider(info));
 
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -54,6 +56,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         reconnectionBox = Box.createHorizontalBox();
         reconnectionBox.setOpaque(true);
         reconnectionBox.setBackground(Color.RED);
+        // TODO i18n
         reconnectionBox.add(new JLabel("Session not connected"));
         JButton btnReconnect = new JButton("Reconnect");
         btnReconnect.addActionListener(e -> {
@@ -85,14 +88,12 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
                 SwingUtilities.invokeLater(() -> tabTitle.getCallback().accept(title));
             }
 
-            @Override
+            
             public void onSessionChanged(TerminalSession currentSession) {
                 System.out.println("currentSession: " + currentSession);
             }
 
-            @Override
-            public void onPanelResize(Dimension pixelDimension, RequestOrigin origin) {
-            }
+            public void onPanelResize(RequestOrigin origin) {  }
         });
         contentPane.add(term);
 

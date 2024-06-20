@@ -40,13 +40,11 @@ public class KeyPage extends UtilPageItemView {
         tabs = new TabbedPanel();
         remoteKeyPanel = new RemoteKeyPanel(holder.getInfo(), a -> {
             holder.disableUi();
-            holder.EXECUTOR.submit(() -> {
+            holder.executor.submit(() -> {
                 try {
                     SshKeyManager.generateKeys(keyHolder,
                             holder.getRemoteSessionInstance(), false);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -55,12 +53,10 @@ public class KeyPage extends UtilPageItemView {
             });
         }, a -> {
             holder.disableUi();
-            holder.EXECUTOR.submit(() -> {
+            holder.executor.submit(() -> {
                 try {
                     keyHolder = SshKeyManager.getKeyDetails(holder);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -70,14 +66,12 @@ public class KeyPage extends UtilPageItemView {
             });
         }, a -> {
             holder.disableUi();
-            holder.EXECUTOR.submit(() -> {
+            holder.executor.submit(() -> {
                 try {
                     SshKeyManager.saveAuthorizedKeysFile(a,
                             holder.getRemoteSessionInstance().getSshFs());
                     keyHolder = SshKeyManager.getKeyDetails(holder);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -87,13 +81,11 @@ public class KeyPage extends UtilPageItemView {
         });
         localKeyPanel = new LocalKeyPanel(holder.getInfo(), a -> {
             holder.disableUi();
-            holder.EXECUTOR.submit(() -> {
+            holder.executor.submit(() -> {
                 try {
                     SshKeyManager.generateKeys(keyHolder,
                             holder.getRemoteSessionInstance(), true);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -102,12 +94,10 @@ public class KeyPage extends UtilPageItemView {
             });
         }, a -> {
             holder.disableUi();
-            holder.EXECUTOR.submit(() -> {
+            holder.executor.submit(() -> {
                 try {
                     keyHolder = SshKeyManager.getKeyDetails(holder);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -119,13 +109,11 @@ public class KeyPage extends UtilPageItemView {
         tabs.addTab(bundle.getString("local_computer"), localKeyPanel);
         this.add(tabs);
 
-        holder.EXECUTOR.submit(() -> {
+        holder.executor.submit(() -> {
             holder.disableUi();
             try {
                 keyHolder = SshKeyManager.getKeyDetails(holder);
-                SwingUtilities.invokeLater(() -> {
-                    setKeyData(keyHolder);
-                });
+                SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
             } catch (Exception err) {
                 err.printStackTrace();
             } finally {

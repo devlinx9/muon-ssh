@@ -57,8 +57,9 @@ public class ProcessTableModel extends AbstractTableModel {
                 return ent.getUser();
             case 7:
                 return ent.getNice();
+            default:
+                return "-";
         }
-        return "-";
     }
 
     @Override
@@ -75,7 +76,8 @@ public class ProcessTableModel extends AbstractTableModel {
             case 2:
             case 3:
                 return Float.class;
+            default:
+                return Object.class;
         }
-        return Object.class;
     }
 }

@@ -22,9 +22,9 @@ public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
         lblText = new JLabel();
         lblHost = new JLabel();
 
-        lblIcon.setFont(App.SKIN.getIconFont().deriveFont(24.0f));
-        lblText.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
-        lblHost.setFont(App.SKIN.getDefaultFont().deriveFont(12.0f));
+        lblIcon.setFont(App.skin.getIconFont().deriveFont(24.0f));
+        lblText.setFont(App.skin.getDefaultFont().deriveFont(14.0f));
+        lblHost.setFont(App.skin.getDefaultFont().deriveFont(12.0f));
 
         lblText.setText("Sample server");
         lblHost.setText("server host");
@@ -40,7 +40,7 @@ public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
         panel.add(textHolder);
 
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panel.setBackground(App.SKIN.getDefaultBackground());
+        panel.setBackground(App.skin.getDefaultBackground());
         panel.setOpaque(true);
 
         Dimension d = panel.getPreferredSize();
@@ -59,15 +59,15 @@ public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
         lblIcon.setText(FontAwesomeContants.FA_CUBE);
 
         if (isSelected) {
-            panel.setBackground(App.SKIN.getDefaultSelectionBackground());
-            lblText.setForeground(App.SKIN.getDefaultSelectionForeground());
-            lblHost.setForeground(App.SKIN.getDefaultSelectionForeground());
-            lblIcon.setForeground(App.SKIN.getDefaultSelectionForeground());
+            panel.setBackground(App.skin.getDefaultSelectionBackground());
+            lblText.setForeground(App.skin.getDefaultSelectionForeground());
+            lblHost.setForeground(App.skin.getDefaultSelectionForeground());
+            lblIcon.setForeground(App.skin.getDefaultSelectionForeground());
         } else {
             panel.setBackground(list.getBackground());
-            lblText.setForeground(App.SKIN.getDefaultForeground());
-            lblHost.setForeground(App.SKIN.getInfoTextForeground());
-            lblIcon.setForeground(App.SKIN.getDefaultForeground());
+            lblText.setForeground(App.skin.getDefaultForeground());
+            lblHost.setForeground(App.skin.getInfoTextForeground());
+            lblIcon.setForeground(App.skin.getDefaultForeground());
         }
         return panel;
     }

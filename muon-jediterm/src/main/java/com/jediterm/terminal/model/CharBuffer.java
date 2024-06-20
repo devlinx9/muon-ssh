@@ -2,6 +2,7 @@ package com.jediterm.terminal.model;
 
 import com.jediterm.terminal.util.CharUtils;
 import com.jediterm.terminal.util.Pair;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -18,7 +19,7 @@ public class CharBuffer implements Iterable<Character>, CharSequence {
   private final int myStart;
   private final int myLength;
 
-  public CharBuffer( char[] buf, int start, int length) {
+  public CharBuffer(@NotNull char[] buf, int start, int length) {
     if (start + length > buf.length) {
       throw new IllegalArgumentException(String.format("Out ouf bounds %d+%d>%d", start, length, buf.length));
     }
@@ -45,14 +46,14 @@ public class CharBuffer implements Iterable<Character>, CharSequence {
     Arrays.fill(myBuf, c);
   }
 
-  public CharBuffer( String str) {
+  public CharBuffer(@NotNull String str) {
     this(str.toCharArray(), 0, str.length());
   }
 
   @Override
   public Iterator<Character> iterator() {
     return new Iterator<Character>() {
-      private final int myCurPosition = myStart;
+      private int myCurPosition = myStart;
 
       @Override
       public boolean hasNext() {

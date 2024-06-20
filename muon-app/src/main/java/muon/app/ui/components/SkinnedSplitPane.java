@@ -25,7 +25,7 @@ public class SkinnedSplitPane extends JSplitPane {
     }
 
     public void applySkin() {
-        this.putClientProperty("Nimbus.Overrides", App.SKIN.getSplitPaneSkin());
+        this.putClientProperty("Nimbus.Overrides", App.skin.getSplitPaneSkin());
     }
 
 }

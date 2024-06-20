@@ -40,7 +40,7 @@ import java.util.function.Consumer;
  *
  */
 public class SessionContentPanel extends JPanel implements PageHolder, CachedCredentialProvider {
-    public final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+    public final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final SessionInfo info;
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
@@ -74,7 +74,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         this.disabledPanel = new DisabledPanel();
         this.remoteSessionInstance = new RemoteSessionInstance(info, App.getInputBlocker(), this);
         Box contentTabs = Box.createHorizontalBox();
-        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.SKIN.getDefaultBorderColor()));
+        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.skin.getDefaultBorderColor()));
 
         fileBrowser = new FileBrowser(info, this, null, this.hashCode());
         logViewer = new LogViewer(this);
@@ -123,7 +123,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
 
         showPage(this.pages[0].getId());
 
-        if (info.getPortForwardingRules() != null && info.getPortForwardingRules().size() > 0) {
+        if (info.getPortForwardingRules() != null && !info.getPortForwardingRules().isEmpty()) {
             this.pfSession = new PortForwardingSession(info, App.getInputBlocker(), this);
             this.pfSession.start();
         }
@@ -166,7 +166,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
 
     public void disableUi() {
         SwingUtilities.invokeLater(() -> {
-            this.disabledPanel.startAnimation(null);
+            this.disabledPanel.startAnimation(new AtomicBoolean(true));
             this.rootPane.setGlassPane(this.disabledPanel);
             this.disabledPanel.setVisible(true);
         });
@@ -250,7 +250,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             this.backgroundTransferPool.shutdownNow();
         }
 
-        EXECUTOR.submit(() -> {
+        executor.submit(() -> {
             try {
                 this.backgroundTransferPool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             } catch (InterruptedException e1) {
@@ -267,7 +267,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
                 e2.printStackTrace();
             }
         });
-        EXECUTOR.shutdown();
+        executor.shutdown();
 
         if (this.pfSession != null) {
             this.pfSession.close();
@@ -297,7 +297,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             this.backgroundTransferPool = new ThreadPoolExecutor(
                     App.getGlobalSettings().getBackgroundTransferQueueSize(),
                     App.getGlobalSettings().getBackgroundTransferQueueSize(), 0, TimeUnit.NANOSECONDS,
-                    new LinkedBlockingQueue<Runnable>());
+                    new LinkedBlockingQueue<>());
         } else {
             if (this.backgroundTransferPool.getMaximumPoolSize() != App.getGlobalSettings()
                     .getBackgroundTransferQueueSize()) {
@@ -309,7 +309,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     }
 
     public synchronized RemoteSessionInstance createBackgroundSession() {
-        if (this.cachedSessions.size() == 0) {
+        if (this.cachedSessions.isEmpty()) {
             return new RemoteSessionInstance(info, App.getInputBlocker(), this);
         }
         return this.cachedSessions.pop();

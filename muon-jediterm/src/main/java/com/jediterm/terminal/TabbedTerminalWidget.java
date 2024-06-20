@@ -2,6 +2,7 @@ package com.jediterm.terminal;
 
 import com.jediterm.terminal.ui.*;
 import com.jediterm.terminal.ui.settings.TabbedSettingsProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -9,7 +10,7 @@ import java.util.function.Function;
  * @author traff
  */
 public class TabbedTerminalWidget extends AbstractTabbedTerminalWidget<JediTermWidget> {
-  public TabbedTerminalWidget( TabbedSettingsProvider settingsProvider,  Function<AbstractTabbedTerminalWidget, JediTermWidget> createNewSessionAction) {
+  public TabbedTerminalWidget(@NotNull TabbedSettingsProvider settingsProvider, @NotNull Function<AbstractTabbedTerminalWidget, JediTermWidget> createNewSessionAction) {
     super(settingsProvider, createNewSessionAction::apply);
   }
 

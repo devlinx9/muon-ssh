@@ -27,10 +27,9 @@ public class LocalFileSystem implements FileSystem {
         }
         Path p = f.toPath();
         BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
-        FileInfo info = new FileInfo(f.getName(), path, f.length(),
+        return new FileInfo(f.getName(), path, f.length(),
                 f.isDirectory() ? FileType.Directory : FileType.File, f.lastModified(), -1, PROTO_LOCAL_FILE, "",
                 attrs.creationTime().toMillis(), "", f.isHidden());
-        return info;
     }
 
     @Override
@@ -191,7 +190,7 @@ public class LocalFileSystem implements FileSystem {
     }
 
     public InputTransferChannel inputTransferChannel() throws Exception {
-        InputTransferChannel tc = new InputTransferChannel() {
+        return new InputTransferChannel() {
             @Override
             public InputStream getInputStream(String path) throws Exception {
                 return new FileInputStream(path);
@@ -208,11 +207,10 @@ public class LocalFileSystem implements FileSystem {
             }
 
         };
-        return tc;
     }
 
     public OutputTransferChannel outputTransferChannel() throws Exception {
-        OutputTransferChannel tc = new OutputTransferChannel() {
+        return new OutputTransferChannel() {
             @Override
             public OutputStream getOutputStream(String path) throws Exception {
                 return new FileOutputStream(path);
@@ -223,7 +221,6 @@ public class LocalFileSystem implements FileSystem {
                 return File.separator;
             }
         };
-        return tc;
     }
 
     public String getSeparator() {

@@ -90,7 +90,7 @@ public class ImportDlg extends JDialog {
     }
 
     private void importSessionsFromPutty(DefaultMutableTreeNode node) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         int[] arr = sessionList.getSelectedIndices();
         if (arr != null) {
             for (int i = 0; i < arr.length; i++) {
@@ -102,7 +102,7 @@ public class ImportDlg extends JDialog {
     }
 
     private void importSessionsFromWinScp(DefaultMutableTreeNode node) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         int[] arr = sessionList.getSelectedIndices();
         if (arr != null) {

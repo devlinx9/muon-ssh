@@ -150,7 +150,6 @@ public class FileTransfer implements Runnable, AutoCloseable {
                 return;
             }
             callback.error("Error", this);
-            return;
         }
     }
 
@@ -243,7 +242,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
         }
 
         ConflictAction action = ConflictAction.CANCEL;
-        if (dupList.size() > 0) {
+        if (!dupList.isEmpty()) {
 
             DefaultComboBoxModel<Constants.ConflictAction> conflictOptionsCmb = new DefaultComboBoxModel<>(Constants.ConflictAction.values());
             conflictOptionsCmb.removeAllElements();

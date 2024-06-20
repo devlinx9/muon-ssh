@@ -4,37 +4,62 @@ import muon.app.common.FileInfo;
 import muon.app.common.FileType;
 
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 public class FileIconUtil {
+
+    public FileIconUtil() {
+    }
+
+    private static final String PATTERN_FILE_ARCHIVE_EXTENSION = ".*(\\.zip|\\.tar|\\.tgz|\\.gz|\\.bz2|\\.tbz2|\\.tbz|\\.txz|\\.xz)$";
+    private static final String PATTERN_FILE_AUDIO_EXTENSION = ".*(\\.mp3|\\.aac|\\.mp2|\\.wav|\\.flac|\\.mpa|\\.m4a)$";
+    private static final String PATTERN_FILE_CODE_EXTENSION = ".*(\\.c|\\.js|\\.cpp|\\.java|\\.cs|\\.py|\\.pl|\\.rb|\\.sql|\\.go|\\.ksh|\\.css|\\.scss|\\.html|\\.htm|\\.ts|\\.sh)$";
+    private static final String PATTERN_FILE_EXCEL_EXTENSION = ".*(\\.xls|\\.xlsx)$";
+    private static final String PATTERN_FILE_IMAGE_EXTENSION = ".*(\\.jpg|\\.jpeg|\\.png|\\.ico|\\.gif|\\.svg)$";
+    private static final String PATTERN_FILE_VIDEO_EXTENSION = ".*(\\.mp4|\\.mkv|\\.m4v|\\.avi)$";
+    private static final String PATTERN_FILE_PDF_EXTENSION = ".*(\\.pdf)$";
+    private static final String PATTERN_FILE_POWER_POINT_EXTENSION = ".*(\\.ppt|\\.pptx)$";
+    private static final String PATTERN_FILE_WORD_EXTENSION = ".*(\\.doc|\\.docx)$";
+
     public static String getIconForType(FileInfo ent) {
         if (ent.getType() == FileType.Directory || ent.getType() == FileType.DirLink) {
             return FontAwesomeContants.FA_FOLDER;
         }
         String name = ent.getName().toLowerCase(Locale.ENGLISH);
-        if (name.endsWith(".zip") || name.endsWith(".tar") || name.endsWith(".tgz") || name.endsWith(".gz")
-                || name.endsWith(".bz2") || name.endsWith(".tbz2") || name.endsWith(".tbz") || name.endsWith(".txz")
-                || name.endsWith(".xz")) {
+
+        if (Pattern.compile(PATTERN_FILE_ARCHIVE_EXTENSION).matcher(name).find()) {
             return FontAwesomeContants.FA_FILE_ARCHIVE_O;
-        } else if (name.endsWith(".mp3") || name.endsWith(".aac") || name.endsWith(".mp2") || name.endsWith(".wav")
-                || name.endsWith(".flac") || name.endsWith(".mpa") || name.endsWith(".m4a")) {
+        }
+
+        if (Pattern.compile(PATTERN_FILE_AUDIO_EXTENSION).matcher(name).find()) {
             return FontAwesomeContants.FA_FILE_AUDIO_O;
-        } else if (name.endsWith(".c") || name.endsWith(".js") || name.endsWith(".cpp") || name.endsWith(".java")
-                || name.endsWith(".cs") || name.endsWith(".py") || name.endsWith(".pl") || name.endsWith(".rb")
-                || name.endsWith(".sql") || name.endsWith(".go") || name.endsWith(".ksh") || name.endsWith(".css")
-                || name.endsWith(".scss") || name.endsWith(".html") || name.endsWith(".htm") || name.endsWith(".ts")) {
+        }
+
+        if (Pattern.compile(PATTERN_FILE_CODE_EXTENSION).matcher(name).find()) {
             return FontAwesomeContants.FA_FILE_CODE_O;
-        } else if (name.endsWith(".xls") || name.endsWith(".xlsx")) {
+        }
+
+        if (Pattern.compile(PATTERN_FILE_EXCEL_EXTENSION).matcher(name).find()) {
             return FontAwesomeContants.FA_FILE_EXCEL_O;
-        } else if (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png") || name.endsWith(".ico")
-                || name.endsWith(".gif") || name.endsWith(".svg")) {
+        }
+
+        if (Pattern.compile(PATTERN_FILE_IMAGE_EXTENSION).matcher(name).find()) {
             return FontAwesomeContants.FA_FILE_IMAGE_O;
-        } else if (name.endsWith(".mp4") || name.endsWith(".mkv") || name.endsWith(".m4v") || name.endsWith(".avi")) {
+        }
+
+        if (Pattern.compile(PATTERN_FILE_VIDEO_EXTENSION).matcher(name).find()) {
             return FontAwesomeContants.FA_FILE_VIDEO_O;
-        } else if (name.endsWith(".pdf")) {
+        }
+
+        if (Pattern.compile(PATTERN_FILE_PDF_EXTENSION).matcher(name).find()) {
             return FontAwesomeContants.FA_FILE_PDF_O;
-        } else if (name.endsWith(".ppt") || name.endsWith(".pptx")) {
+        }
+
+        if (Pattern.compile(PATTERN_FILE_POWER_POINT_EXTENSION).matcher(name).find()) {
             return FontAwesomeContants.FA_FILE_POWERPOINT_O;
-        } else if (name.endsWith(".doc") || name.endsWith(".docx")) {
+        }
+
+        if (Pattern.compile(PATTERN_FILE_WORD_EXTENSION).matcher(name).find()) {
             return FontAwesomeContants.FA_FILE_WORD_O;
         }
         return FontAwesomeContants.FA_FILE;

@@ -12,13 +12,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  */
 public class LinuxMetrics {
-    private double cpuUsage, memoryUsage, swapUsage;
-    private long totalMemory, usedMemory, totalSwap, usedSwap;
-    private long prev_idle, prev_total;
-    private String OS;
+    private double cpuUsage;
+    private double memoryUsage;
+    private double swapUsage;
+    private long totalMemory;
+    private long usedMemory;
+    private long totalSwap;
+    private long usedSwap;
+    private long prevIdle;
+    private long prevTotal;
+    private String os;
 
     public void updateMetrics(RemoteSessionInstance instance) throws Exception {
-        StringBuilder out = new StringBuilder(), err = new StringBuilder();
+        StringBuilder out = new StringBuilder();
+        StringBuilder err = new StringBuilder();
         int ret = instance.exec(
                 "uname; head -1 /proc/stat;grep -E \"MemTotal|MemFree|Cached|SwapTotal|SwapFree\" /proc/meminfo",
                 new AtomicBoolean(), out, err);
@@ -29,7 +36,7 @@ public class LinuxMetrics {
 
     private void updateStats(String str) {
         String[] lines = str.split("\n");
-        OS = lines[0];
+        os = lines[0];
         String cpuStr = lines[1];
         updateCpu(cpuStr);
         updateMemory(lines);
@@ -42,17 +49,21 @@ public class LinuxMetrics {
         for (int i = 1; i < cols.length; i++) {
             total += Long.parseLong(cols[i]);
         }
-        long diff_idle = idle - prev_idle;
-        long diff_total = total - prev_total;
-        this.cpuUsage = (1000 * ((double) diff_total - diff_idle) / diff_total
+        long diffIdle = idle - prevIdle;
+        long diffTotal = total - prevTotal;
+        this.cpuUsage = (1000 * ((double) diffTotal - diffIdle) / diffTotal
                 + 5) / 10;
-        this.prev_idle = idle;
-        this.prev_total = total;
+        this.prevIdle = idle;
+        this.prevTotal = total;
     }
 
     private void updateMemory(String[] lines) {
-        long memTotalK = 0, memFreeK = 0, memCachedK = 0, swapTotalK = 0,
-                swapFreeK = 0, swapCachedK = 0;
+        long memTotalK = 0;
+        long memFreeK = 0;
+        long memCachedK = 0;
+        long swapTotalK = 0;
+        long swapFreeK = 0;
+        long swapCachedK = 0;
         for (int i = 2; i < lines.length; i++) {
             String[] arr = lines[i].split("\\s+");
             if (arr.length >= 2) {
@@ -144,7 +155,7 @@ public class LinuxMetrics {
     /**
      * @return the oS
      */
-    public String getOS() {
-        return OS;
+    public String getOs() {
+        return os;
     }
 }

@@ -11,16 +11,14 @@ import java.util.*;
  */
 public final class CollectionHelper {
     @SafeVarargs
-    public static final <E> List<E> arrayList(E... args) {
+    public static <E> List<E> arrayList(E... args) {
         List<E> list = new ArrayList<>();
-        for (E arg : args) {
-            list.add(arg);
-        }
+        list.addAll(Arrays.asList(args));
         return list;
     }
 
     @SuppressWarnings("unchecked")
-    public static final <T> T[] toArray(Collection<T> collection) {
+    public static <T> T[] toArray(Collection<T> collection) {
         return collection.toArray((T[]) new Object[0]);
     }
 

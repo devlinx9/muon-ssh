@@ -2,6 +2,7 @@ package com.jediterm.terminal.model;
 
 import com.jediterm.terminal.TerminalColor;
 import com.jediterm.terminal.TextStyle;
+import org.jetbrains.annotations.NotNull;
 
 public class StyleState {
   private TextStyle myCurrentStyle = TextStyle.EMPTY;
@@ -16,8 +17,8 @@ public class StyleState {
     return TextStyle.getCanonicalStyle(getMergedStyle());
   }
 
-
-  private static TextStyle merge( TextStyle style,  TextStyle defaultStyle) {
+  @NotNull
+  private static TextStyle merge(@NotNull TextStyle style, @NotNull TextStyle defaultStyle) {
     TextStyle.Builder builder = style.toBuilder();
     if (style.getBackground() == null && defaultStyle.getBackground() != null) {
       builder.setBackground(defaultStyle.getBackground());

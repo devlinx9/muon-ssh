@@ -59,17 +59,17 @@ public class FileBrowser extends Page {
 
         localMenuItem.addActionListener(e -> {
             if (leftPopup) {
-                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Left);
+                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.LEFT);
             } else {
-                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Right);
+                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.RIGHT);
             }
         });
 
         remoteMenuItem.addActionListener(e -> {
             if (leftPopup) {
-                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Left);
+                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.LEFT);
             } else {
-                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Right);
+                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.RIGHT);
             }
         });
 
@@ -129,7 +129,7 @@ public class FileBrowser extends Page {
 
     public void openSshFileBrowserView(String path, AbstractFileBrowserView.PanelOrientation orientation) {
         SshFileBrowserView tab = new SshFileBrowserView(this, path, orientation);
-        if (orientation == AbstractFileBrowserView.PanelOrientation.Left) {
+        if (orientation == AbstractFileBrowserView.PanelOrientation.LEFT) {
             this.leftTabs.addTab(tab.getTabTitle(), tab);
         } else {
             this.rightTabs.addTab(tab.getTabTitle(), tab);
@@ -139,7 +139,7 @@ public class FileBrowser extends Page {
     public void openLocalFileBrowserView(String path, AbstractFileBrowserView.PanelOrientation orientation) {
 
         LocalFileBrowserView tab = new LocalFileBrowserView(this, path, orientation);
-        if (orientation == AbstractFileBrowserView.PanelOrientation.Left) {
+        if (orientation == AbstractFileBrowserView.PanelOrientation.LEFT) {
             this.leftTabs.addTab(tab.getTabTitle(), tab);
         } else {
             this.rightTabs.addTab(tab.getTabTitle(), tab);
@@ -207,10 +207,8 @@ public class FileBrowser extends Page {
                         });
                     }
                 }, defaultConflictAction, instance);
-        holder.startFileTransferModal(e -> {
-            this.ongoingFileTransfer.close();
-        });
-        holder.EXECUTOR.submit(this.ongoingFileTransfer);
+        holder.startFileTransferModal(e -> this.ongoingFileTransfer.close());
+        holder.executor.submit(this.ongoingFileTransfer);
     }
 
     private void reloadView() {
@@ -239,11 +237,11 @@ public class FileBrowser extends Page {
             return;
         }
         init.set(true);
-        SshFileBrowserView left = new SshFileBrowserView(this, null, AbstractFileBrowserView.PanelOrientation.Left);
+        SshFileBrowserView left = new SshFileBrowserView(this, null, AbstractFileBrowserView.PanelOrientation.LEFT);
         this.leftTabs.addTab(left.getTabTitle(), left);
 
         LocalFileBrowserView right = new LocalFileBrowserView(this, System.getProperty("user.home"),
-                AbstractFileBrowserView.PanelOrientation.Right);
+                AbstractFileBrowserView.PanelOrientation.RIGHT);
         this.rightTabs.addTab(right.getTabTitle(), right);
     }
 
@@ -265,7 +263,7 @@ public class FileBrowser extends Page {
     }
 
     public void openPath(String path) {
-        openSshFileBrowserView(path, AbstractFileBrowserView.PanelOrientation.Left);
+        openSshFileBrowserView(path, AbstractFileBrowserView.PanelOrientation.LEFT);
     }
 
     public boolean isSessionClosed() {
@@ -280,6 +278,7 @@ public class FileBrowser extends Page {
 
     public boolean handleLocalDrop(DndTransferData transferData, SessionInfo info, FileSystem currentFileSystem,
                                    String currentPath) {
+        // TODO i18n
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
                 && JOptionPane.showConfirmDialog(null, "Move/copy files?") != JOptionPane.YES_OPTION) {
             return false;

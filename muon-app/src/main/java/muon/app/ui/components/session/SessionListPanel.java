@@ -156,10 +156,10 @@ public class SessionListPanel extends JPanel {
             lblHost = new JLabel();
             lblClose = new JLabel();
 
-            lblIcon.setFont(App.SKIN.getIconFont().deriveFont(24.0f));
-            lblText.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
-            lblHost.setFont(App.SKIN.getDefaultFont().deriveFont(12.0f));
-            lblClose.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+            lblIcon.setFont(App.skin.getIconFont().deriveFont(24.0f));
+            lblText.setFont(App.skin.getDefaultFont().deriveFont(14.0f));
+            lblHost.setFont(App.skin.getDefaultFont().deriveFont(12.0f));
+            lblClose.setFont(App.skin.getIconFont().deriveFont(16.0f));
 
             lblText.setText("Sample server");
             lblHost.setText("server host");
@@ -177,7 +177,7 @@ public class SessionListPanel extends JPanel {
             panel.add(textHolder);
 
             panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-            panel.setBackground(App.SKIN.getDefaultBackground());
+            panel.setBackground(App.skin.getDefaultBackground());
             panel.setOpaque(true);
 
             Dimension d = panel.getPreferredSize();
@@ -198,15 +198,15 @@ public class SessionListPanel extends JPanel {
             lblClose.setText(FontAwesomeContants.FA_EJECT);
 
             if (isSelected) {
-                panel.setBackground(App.SKIN.getDefaultSelectionBackground());
-                lblText.setForeground(App.SKIN.getDefaultSelectionForeground());
-                lblHost.setForeground(App.SKIN.getDefaultSelectionForeground());
-                lblIcon.setForeground(App.SKIN.getDefaultSelectionForeground());
+                panel.setBackground(App.skin.getDefaultSelectionBackground());
+                lblText.setForeground(App.skin.getDefaultSelectionForeground());
+                lblHost.setForeground(App.skin.getDefaultSelectionForeground());
+                lblIcon.setForeground(App.skin.getDefaultSelectionForeground());
             } else {
-                panel.setBackground(App.SKIN.getDefaultBackground());
-                lblText.setForeground(App.SKIN.getDefaultForeground());
-                lblHost.setForeground(App.SKIN.getInfoTextForeground());
-                lblIcon.setForeground(App.SKIN.getDefaultForeground());
+                panel.setBackground(App.skin.getDefaultBackground());
+                lblText.setForeground(App.skin.getDefaultForeground());
+                lblHost.setForeground(App.skin.getInfoTextForeground());
+                lblIcon.setForeground(App.skin.getDefaultForeground());
             }
             return panel;
         }

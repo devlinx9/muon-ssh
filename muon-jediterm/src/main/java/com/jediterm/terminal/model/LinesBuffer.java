@@ -4,7 +4,10 @@ import com.jediterm.terminal.StyledTextConsumer;
 import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.model.TerminalLine.TextEntry;
 import com.jediterm.terminal.model.hyperlinks.TextProcessing;
-import org.apache.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,7 @@ import java.util.List;
  * Holds styled characters lines
  */
 public class LinesBuffer {
-  private static final Logger LOG = Logger.getLogger(LinesBuffer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(LinesBuffer.class);
 
   public static final int DEFAULT_MAX_LINES_COUNT = 5000;
 
@@ -22,14 +25,14 @@ public class LinesBuffer {
 
   private ArrayList<TerminalLine> myLines = new ArrayList<>();
 
-  
+  @Nullable
   private final TextProcessing myTextProcessing;
 
-  public LinesBuffer( TextProcessing textProcessing) {
+  public LinesBuffer(@Nullable TextProcessing textProcessing) {
     myTextProcessing = textProcessing;
   }
 
-  public LinesBuffer(int bufferMaxLinesCount,  TextProcessing textProcessing) {
+  public LinesBuffer(int bufferMaxLinesCount, @Nullable TextProcessing textProcessing) {
     myBufferMaxLinesCount = bufferMaxLinesCount;
     myTextProcessing = textProcessing;
   }
@@ -52,16 +55,16 @@ public class LinesBuffer {
   }
 
 
-  public synchronized void addNewLine( TextStyle style,  CharBuffer characters) {
+  public synchronized void addNewLine(@NotNull TextStyle style, @NotNull CharBuffer characters) {
     addNewLine(new TerminalLine.TextEntry(style, characters));
   }
 
 
-  private synchronized void addNewLine( TerminalLine.TextEntry entry) {
+  private synchronized void addNewLine(@NotNull TerminalLine.TextEntry entry) {
     addLine(new TerminalLine(entry));
   }
 
-  private synchronized void addLine( TerminalLine line) {
+  private synchronized void addLine(@NotNull TerminalLine line) {
     if (myBufferMaxLinesCount > 0 && myLines.size() >= myBufferMaxLinesCount) {
       removeTopLines(1);
     }
@@ -87,7 +90,7 @@ public class LinesBuffer {
     return line.getText();
   }
 
-  public synchronized void insertLines(int y, int count, int lastLine,  TextEntry filler) {
+  public synchronized void insertLines(int y, int count, int lastLine, @NotNull TextEntry filler) {
     LinesBuffer tail = new LinesBuffer(myTextProcessing);
 
     if (lastLine < getLineCount() - 1) {
@@ -110,7 +113,7 @@ public class LinesBuffer {
     tail.moveTopLinesTo(tail.getLineCount(), this);
   }
 
-  public synchronized LinesBuffer deleteLines(int y, int count, int lastLine,  TextEntry filler) {
+  public synchronized LinesBuffer deleteLines(int y, int count, int lastLine, @NotNull TextEntry filler) {
     LinesBuffer tail = new LinesBuffer(myTextProcessing);
 
     if (lastLine < getLineCount() - 1) {
@@ -138,7 +141,7 @@ public class LinesBuffer {
     return removed;
   }
 
-  public synchronized void writeString(int x, int y, CharBuffer str,  TextStyle style) {
+  public synchronized void writeString(int x, int y, CharBuffer str, @NotNull TextStyle style) {
     TerminalLine line = getLine(y);
 
     line.writeString(x, str, style);
@@ -148,7 +151,7 @@ public class LinesBuffer {
     }
   }
 
-  public synchronized void clearLines(int startRow, int endRow,  TextEntry filler) {
+  public synchronized void clearLines(int startRow, int endRow, @NotNull TextEntry filler) {
     for (int i = startRow; i <= endRow; i++) {
       getLine(i).clear(filler);
     }
@@ -159,30 +162,30 @@ public class LinesBuffer {
     myLines.clear();
   }
 
-  public synchronized void deleteCharacters(int x, int y, int count,  TextStyle style) {
+  public synchronized void deleteCharacters(int x, int y, int count, @NotNull TextStyle style) {
     TerminalLine line = getLine(y);
     line.deleteCharacters(x, count, style);
   }
 
-  public synchronized void insertBlankCharacters(final int x, final int y, final int count, final int maxLen,  TextStyle style) {
+  public synchronized void insertBlankCharacters(final int x, final int y, final int count, final int maxLen, @NotNull TextStyle style) {
     TerminalLine line = getLine(y);
     line.insertBlankCharacters(x, count, maxLen, style);
   }
 
-  public synchronized void clearArea(int leftX, int topY, int rightX, int bottomY,  TextStyle style) {
+  public synchronized void clearArea(int leftX, int topY, int rightX, int bottomY, @NotNull TextStyle style) {
     for (int y = topY; y < bottomY; y++) {
       TerminalLine line = getLine(y);
       line.clearArea(leftX, rightX, style);
     }
   }
 
-  public synchronized void processLines(final int yStart, final int yCount,  final StyledTextConsumer consumer) {
+  public synchronized void processLines(final int yStart, final int yCount, @NotNull final StyledTextConsumer consumer) {
     processLines(yStart, yCount, consumer, -getLineCount());
   }
 
   public synchronized void processLines(final int firstLine,
                                         final int count,
-                                         final StyledTextConsumer consumer,
+                                        @NotNull final StyledTextConsumer consumer,
                                         final int startRow) {
     if (firstLine<0) {
       throw new IllegalArgumentException("firstLine=" + firstLine + ", should be >0");
@@ -192,13 +195,13 @@ public class LinesBuffer {
     }
   }
 
-  public synchronized void moveTopLinesTo(int count, final  LinesBuffer buffer) {
+  public synchronized void moveTopLinesTo(int count, final @NotNull LinesBuffer buffer) {
     count = Math.min(count, getLineCount());
     buffer.addLines(myLines.subList(0, count));
     removeTopLines(count);
   }
 
-  public synchronized void addLines( List<TerminalLine> lines) {
+  public synchronized void addLines(@NotNull List<TerminalLine> lines) {
     if (myBufferMaxLinesCount > 0) {
       // adding more lines than max size
       if (lines.size() >= myBufferMaxLinesCount) {
@@ -216,7 +219,7 @@ public class LinesBuffer {
     myLines.addAll(lines);
   }
 
-  
+  @NotNull
   public synchronized TerminalLine getLine(int row) {
     if (row<0) {
       LOG.error("Negative line number: " + row);
@@ -230,14 +233,14 @@ public class LinesBuffer {
     return myLines.get(row);
   }
 
-  public synchronized void moveBottomLinesTo(int count, final  LinesBuffer buffer) {
+  public synchronized void moveBottomLinesTo(int count, final @NotNull LinesBuffer buffer) {
     count = Math.min(count, getLineCount());
     buffer.addLinesFirst(myLines.subList(getLineCount() - count, getLineCount()));
 
     removeBottomLines(count);
   }
 
-  private synchronized void addLinesFirst( List<TerminalLine> lines) {
+  private synchronized void addLinesFirst(@NotNull List<TerminalLine> lines) {
     List<TerminalLine> list = new ArrayList<>(lines);
     list.addAll(myLines);
     myLines = new ArrayList<>(list);
@@ -258,5 +261,15 @@ public class LinesBuffer {
     }
 
     return i;
+  }
+
+  synchronized int findLineIndex(@NotNull TerminalLine line) {
+    return myLines.indexOf(line);
+  }
+
+  public synchronized void clearTypeAheadPredictions() {
+    for (TerminalLine line : myLines) {
+      line.myTypeAheadLine = null;
+    }
   }
 }

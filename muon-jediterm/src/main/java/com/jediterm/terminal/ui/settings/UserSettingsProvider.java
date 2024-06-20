@@ -3,6 +3,8 @@ package com.jediterm.terminal.ui.settings;
 import com.jediterm.terminal.HyperlinkStyle;
 import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.emulator.ColorPalette;
+import com.jediterm.terminal.model.TerminalTypeAheadSettings;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -13,7 +15,20 @@ public interface UserSettingsProvider {
 
   float getTerminalFontSize();
 
-  float getLineSpace();
+  /**
+   * @return vertical scaling factor
+   */
+  default float getLineSpacing() {
+    return 1.0f;
+  }
+
+  default boolean shouldDisableLineSpacingForAlternateScreenBuffer() {
+    return false;
+  }
+
+  default boolean shouldFillCharacterBackgroundIncludingLineSpacing() {
+    return true;
+  }
 
   TextStyle getDefaultStyle();
 
@@ -54,4 +69,8 @@ public interface UserSettingsProvider {
   boolean altSendsEscape();
 
   boolean ambiguousCharsAreDoubleWidth();
+
+  @NotNull TerminalTypeAheadSettings getTypeAheadSettings();
+
+  boolean sendArrowKeysInAlternativeMode();
 }

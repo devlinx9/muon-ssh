@@ -13,8 +13,8 @@ import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
 public class ClosableTabbedPanel extends JPanel {
-    private final Color unselectedBg = App.SKIN.getSelectedTabColor();
-    private final Color selectedBg = App.SKIN.getDefaultBackground();
+    private final Color unselectedBg = App.skin.getSelectedTabColor();
+    private final Color selectedBg = App.skin.getDefaultBackground();
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final JPanel tabHolder;
@@ -41,18 +41,18 @@ public class ClosableTabbedPanel extends JPanel {
 
         JButton btn = new JButton();
         btn.setToolTipText("New tab");
-        btn.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+        btn.setFont(App.skin.getIconFont().deriveFont(16.0f));
         btn.setText(FontAwesomeContants.FA_PLUS_SQUARE);
         btn.putClientProperty("Nimbus.Overrides",
-                App.SKIN.createTabButtonSkin());
-        btn.setForeground(App.SKIN.getInfoTextForeground());
+                App.skin.createTabButtonSkin());
+        btn.setForeground(App.skin.getInfoTextForeground());
         btn.addActionListener(e -> {
             System.out.println("Callback called");
             newTabCallback.accept(btn);
         });
         buttonsBox = new JPanel(new GridLayout(1, 0));
         buttonsBox.setOpaque(true);
-        buttonsBox.setBackground(App.SKIN.getDefaultBackground());
+        buttonsBox.setBackground(App.skin.getDefaultBackground());
         buttonsBox.setBorder(new EmptyBorder(0, 0, 0, 0));
         buttonsBox.add(btn);
         tabTop.add(buttonsBox, BorderLayout.EAST);
@@ -213,7 +213,7 @@ public class ClosableTabbedPanel extends JPanel {
     }
 
     public enum NewTabType {
-        LocalTab, RemoteTab
+        LOCAL_TAB, REMOTE_TAB
     }
 
     public static class TabTitle {
@@ -256,7 +256,7 @@ public class ClosableTabbedPanel extends JPanel {
 
             if (closable) {
                 tabCloseButton = new TabCloseButton();
-                tabCloseButton.setForeground(App.SKIN.getInfoTextForeground());
+                tabCloseButton.setForeground(App.skin.getInfoTextForeground());
                 this.add(tabCloseButton, BorderLayout.EAST);
             }
         }

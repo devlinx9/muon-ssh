@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static muon.app.App.bundle;
+import static util.Constants.TRANSFER_HOSTS;
+import static util.Constants.configDir;
 
 public class Remote2RemoteTransferDialog extends JDialog {
     private final DefaultListModel<RemoteServerEntry> remoteHostModel;
@@ -52,10 +54,10 @@ public class Remote2RemoteTransferDialog extends JDialog {
         remoteHostList = new JList<RemoteServerEntry>(remoteHostModel);
         remoteHostList.setCellRenderer(new RemoteHostRenderer());
 
-        remoteHostList.setBackground(App.SKIN.getTextFieldBackground());
+        remoteHostList.setBackground(App.skin.getTextFieldBackground());
 
         SkinnedScrollPane scrollPane = new SkinnedScrollPane(remoteHostList);
-        scrollPane.setBorder(new MatteBorder(0, 0, 1, 0, App.SKIN.getDefaultBorderColor()));
+        scrollPane.setBorder(new MatteBorder(0, 0, 1, 0, App.skin.getDefaultBorderColor()));
 
         this.add(scrollPane);
         if (remoteHostModel.size() > 0) {
@@ -137,14 +139,14 @@ public class Remote2RemoteTransferDialog extends JDialog {
 
         Box top = Box.createHorizontalBox();
         JLabel lblSearch = new JLabel(FontAwesomeContants.FA_SEARCH);
-        lblSearch.setFont(App.SKIN.getIconFont());
+        lblSearch.setFont(App.skin.getIconFont());
         JTextField txtSearch = new SkinnedTextField(30);
-        txtSearch.setBackground(App.SKIN.getDefaultBackground());
+        txtSearch.setBackground(App.skin.getDefaultBackground());
         txtSearch.setBorder(new EmptyBorder(10, 10, 10, 10));
         top.add(lblSearch);
         top.add(txtSearch);
         top.setBorder(new CompoundBorder(new EmptyBorder(0, 10, 10, 10),
-                new MatteBorder(0, 0, 1, 0, App.SKIN.getDefaultSelectionBackground())));
+                new MatteBorder(0, 0, 1, 0, App.skin.getDefaultSelectionBackground())));
 
         this.add(top, BorderLayout.NORTH);
 
@@ -195,6 +197,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             spPort.setValue(port);
         }
 
+        // TODO i18n
         while (JOptionPane.showOptionDialog(this,
                 new Object[]{"Host", txtHost, "User", txtUser, "Copy to ( target directory)", txtPath, "Port",
                         spPort},
@@ -204,7 +207,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             user = txtUser.getText();
             path = txtPath.getText();
             port = (Integer) spPort.getValue();
-            if (host.length() < 1 || user.length() < 1 || path.length() < 1 || port <= 0) {
+            if (host.isEmpty() || user.isEmpty() || path.length() < 1 || port <= 0) {
                 JOptionPane.showMessageDialog(this, "Invalid input: all fields mandatory");
                 continue;
             }
@@ -241,7 +244,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
         for (int i = 0; i < remoteHostModel.size(); i++) {
             list.add(remoteHostModel.get(i));
         }
-        File file = new File(App.CONFIG_DIR, App.TRANSFER_HOSTS);
+        File file = new File(configDir, TRANSFER_HOSTS);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(file, list);
@@ -253,7 +256,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
     }
 
     private List<RemoteServerEntry> load() {
-        File file = new File(App.CONFIG_DIR, App.TRANSFER_HOSTS);
+        File file = new File(configDir, TRANSFER_HOSTS);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {

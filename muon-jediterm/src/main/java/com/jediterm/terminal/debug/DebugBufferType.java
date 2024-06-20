@@ -1,40 +1,45 @@
 package com.jediterm.terminal.debug;
 
 import com.jediterm.terminal.LoggingTtyConnector;
+import com.jediterm.terminal.LoggingTtyConnector.TerminalState;
 import com.jediterm.terminal.ui.TerminalSession;
+
+import java.util.List;
 
 /**
  * @author traff
  */
 public enum DebugBufferType {
   Back() {
-    public String getValue(TerminalSession session) {
-      return session.getTerminalTextBuffer().getScreenLines();
+    public String getValue(TerminalSession session, int stateIndex) {
+      List<TerminalState> states = ((LoggingTtyConnector) session.getTtyConnector()).getStates();
+      if (stateIndex == states.size()) {
+        return session.getTerminalTextBuffer().getScreenLines();
+      } else {
+        return states.get(stateIndex).myScreenLines;
+      }
     }
   },
   BackStyle() {
-    public String getValue(TerminalSession session) {
-      return session.getTerminalTextBuffer().getStyleLines();
+    public String getValue(TerminalSession session, int stateIndex) {
+      List<TerminalState> states = ((LoggingTtyConnector) session.getTtyConnector()).getStates();
+      if (stateIndex == states.size()) {
+        return session.getTerminalTextBuffer().getStyleLines();
+      } else {
+        return states.get(stateIndex).myStyleLines;
+      }
     }
   },
   Scroll() {
-    public String getValue(TerminalSession session) {
-      return session.getTerminalTextBuffer().getHistoryBuffer().getLines();
-    }
-  },
-
-  ControlSequences() {
-    private ControlSequenceVisualizer myVisualizer = new ControlSequenceVisualizer();
-
-    public String getValue(TerminalSession session) {
-      if (session.getTtyConnector() instanceof LoggingTtyConnector) {
-        return myVisualizer.getVisualizedString(((LoggingTtyConnector) session.getTtyConnector()).getChunks());
+    public String getValue(TerminalSession session, int stateIndex) {
+      List<TerminalState> states = ((LoggingTtyConnector) session.getTtyConnector()).getStates();
+      if (stateIndex == states.size()) {
+        return session.getTerminalTextBuffer().getHistoryBuffer().getLines();
       } else {
-        return "Control sequences aren't logged";
+        return states.get(stateIndex).myHistoryLines;
       }
     }
   };
 
-
-  public abstract String getValue(TerminalSession session);
+  public abstract String getValue(TerminalSession session, int stateIndex);
 }

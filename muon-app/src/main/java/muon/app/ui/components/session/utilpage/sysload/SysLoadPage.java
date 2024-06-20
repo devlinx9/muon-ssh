@@ -23,7 +23,7 @@ public class SysLoadPage extends UtilPageItemView {
     private JSpinner spInterval;
     private Timer timer;
     private LinuxMetrics metrics;
-    private String OS;
+    private String os;
 
     /**
      *
@@ -36,18 +36,16 @@ public class SysLoadPage extends UtilPageItemView {
      *
      */
     private void fetchSystemLoad() {
-        holder.EXECUTOR.submit(() -> {
+        holder.executor.submit(() -> {
             try {
                 if (holder.isSessionClosed()) {
-                    SwingUtilities.invokeAndWait(() -> {
-                        timer.stop();
-                    });
+                    SwingUtilities.invokeAndWait(() -> timer.stop());
                     return;
                 }
                 System.out.println("Getting system metrics");
                 this.metrics
                         .updateMetrics(this.holder.getRemoteSessionInstance());
-                if ("Linux".equals(this.metrics.getOS())) {
+                if ("Linux".equals(this.metrics.getOs())) {
                     SwingUtilities.invokeAndWait(() -> {
                         // update ui stat
                         systemLoadPanel.setCpuUsage(this.metrics.getCpuUsage());
@@ -65,11 +63,11 @@ public class SysLoadPage extends UtilPageItemView {
                         systemLoadPanel.refreshUi();
                     });
                 } else {
-                    this.OS = this.metrics.getOS();
+                    this.os = this.metrics.getOs();
                     this.metrics = null;
                     SwingUtilities.invokeLater(() -> {
                         this.timer.stop();
-                        JLabel lblError = new JLabel("Unsupported OS " + this.OS
+                        JLabel lblError = new JLabel("Unsupported OS " + this.os
                                 + ", currently only Linux is supported");
                         lblError.setHorizontalAlignment(JLabel.CENTER);
                         lblError.setVerticalAlignment(JLabel.CENTER);
@@ -135,9 +133,7 @@ public class SysLoadPage extends UtilPageItemView {
         this.add(topPanel, BorderLayout.NORTH);
         this.add(systemLoadPanel);
 
-        timer = new Timer(this.sleepInterval.get() * 1000, e -> {
-            fetchSystemLoad();
-        });
+        timer = new Timer(this.sleepInterval.get() * 1000, e -> fetchSystemLoad());
         timer.setInitialDelay(0);
         timer.setCoalesce(true);
 

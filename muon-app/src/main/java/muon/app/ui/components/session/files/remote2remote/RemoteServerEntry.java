@@ -8,7 +8,10 @@ package muon.app.ui.components.session.files.remote2remote;
  *
  */
 public class RemoteServerEntry {
-    private String id, host, user, path;
+    private String id;
+    private String host;
+    private String user;
+    private String path;
     private int port;
 
     public RemoteServerEntry(String host, int port, String user, String path) {

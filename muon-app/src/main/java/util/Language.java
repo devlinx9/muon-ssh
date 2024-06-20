@@ -4,6 +4,7 @@ public enum Language {
     ENGLISH("en", "English"),
     CHINESE("cn", "Chinese"),
     SPANISH("es", "Español"),
+    CATALAN("ca", "Català"),
     PORTUGUESE("pt", "Portuguese"),
     RUSSIAN("ru", "Русский"),
     GERMAN("de", "Deutsch"),

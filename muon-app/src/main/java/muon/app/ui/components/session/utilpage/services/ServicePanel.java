@@ -24,7 +24,6 @@ import static muon.app.App.bundle;
 
 /**
  * @author subhro
- *
  */
 public class ServicePanel extends UtilPageItemView {
     private static final Pattern SERVICE_PATTERN = Pattern
@@ -231,9 +230,7 @@ public class ServicePanel extends UtilPageItemView {
 
         JLabel lbl1 = new JLabel(bundle.getString("search"));
         txtFilter = new SkinnedTextField(30);
-        txtFilter.addActionListener(e -> {
-            filter();
-        });
+        txtFilter.addActionListener(e -> filter());
         btnFilter = new JButton(bundle.getString("search"));
 
         Box b1 = Box.createHorizontalBox();
@@ -245,9 +242,7 @@ public class ServicePanel extends UtilPageItemView {
 
         add(b1, BorderLayout.NORTH);
 
-        btnFilter.addActionListener(e -> {
-            filter();
-        });
+        btnFilter.addActionListener(e -> filter());
         table.setAutoCreateRowSorter(true);
         add(new SkinnedScrollPane(table));
 
@@ -284,35 +279,22 @@ public class ServicePanel extends UtilPageItemView {
 
         add(box, BorderLayout.SOUTH);
 
-        this.setStartServiceActionListener(e -> {
-            performServiceAction(1);
-        });
-        this.setStopServiceActionListener(e -> {
-            performServiceAction(2);
-        });
-        this.setEnableServiceActionListener(e -> {
-            performServiceAction(3);
-        });
-        this.setDisableServiceActionListener(e -> {
-            performServiceAction(4);
-        });
-        this.setReloadServiceActionListener(e -> {
-            performServiceAction(5);
-        });
-        this.setRestartServiceActionListener(e -> {
-            performServiceAction(6);
-        });
+        this.setStartServiceActionListener(e -> performServiceAction(1));
+        this.setStopServiceActionListener(e -> performServiceAction(2));
+        this.setEnableServiceActionListener(e -> performServiceAction(3));
+        this.setDisableServiceActionListener(e -> performServiceAction(4));
+        this.setReloadServiceActionListener(e -> performServiceAction(5));
+        this.setRestartServiceActionListener(e -> performServiceAction(6));
 
-        btnRefresh.addActionListener(e -> {
-            holder.EXECUTOR.submit(() -> {
-                AtomicBoolean stopFlag = new AtomicBoolean(false);
-                holder.disableUi(stopFlag);
-                updateView(stopFlag);
-                holder.enableUi();
-            });
-        });
+        btnRefresh.addActionListener(e ->
+                holder.executor.submit(() -> {
+                    AtomicBoolean stopFlag = new AtomicBoolean(false);
+                    holder.disableUi(stopFlag);
+                    updateView(stopFlag);
+                    holder.enableUi();
+                }));
 
-        holder.EXECUTOR.submit(() -> {
+        holder.executor.submit(() -> {
             AtomicBoolean stopFlag = new AtomicBoolean(false);
             holder.disableUi(stopFlag);
             updateView(stopFlag);
@@ -363,13 +345,13 @@ public class ServicePanel extends UtilPageItemView {
 
         boolean elevated = this.getUseSuperUser();
         if (cmd != null) {
-            holder.EXECUTOR.submit(() -> {
+            holder.executor.submit(() -> {
                 try {
                     if (elevated) {
                         try {
                             if (this.runCommandWithSudo(
                                     holder.getRemoteSessionInstance(), stopFlag,
-                                    cmd,holder.getInfo().getPassword())) {
+                                    cmd, holder.getInfo().getPassword())) {
                                 updateView(stopFlag);
                                 return;
                             }
@@ -424,9 +406,7 @@ public class ServicePanel extends UtilPageItemView {
             if (ret == 0) {
                 List<ServiceEntry> list = ServicePanel
                         .parseServiceEntries(output);
-                SwingUtilities.invokeAndWait(() -> {
-                    setServiceData(list);
-                });
+                SwingUtilities.invokeAndWait(() -> setServiceData(list));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -12,11 +12,11 @@ import java.util.Scanner;
 public class SSHConfigImporter {
 
 
-    static String HOST_TEXT = "Host";
-    static String IP_TEXT = "HostName";
-    static String PORT_TEXT = "Port";
-    static String IDENTITY_FILE_TEXT = "IdentityFile";
-    static String USER_TEXT = "User";
+    static final String HOST_TEXT = "Host";
+    static final String IP_TEXT = "HostName";
+    static final String PORT_TEXT = "Port";
+    static final String IDENTITY_FILE_TEXT = "IdentityFile";
+    static final String USER_TEXT = "User";
 
     public static List<SessionInfo> getSessionFromFile(File file) throws FileNotFoundException {
         List<SessionInfo> sessionInfoList = new ArrayList<>();

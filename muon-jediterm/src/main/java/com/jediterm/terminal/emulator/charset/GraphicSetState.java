@@ -1,6 +1,7 @@
 package com.jediterm.terminal.emulator.charset;
 
 
+import org.jetbrains.annotations.NotNull;
 
 public class GraphicSetState {
   private final GraphicSet[] myGraphicSets;
@@ -28,7 +29,7 @@ public class GraphicSetState {
    * @param graphicSet the graphic set to designate;
    * @param designator the designator of the character set.
    */
-  public void designateGraphicSet( GraphicSet graphicSet, char designator) {
+  public void designateGraphicSet(@NotNull GraphicSet graphicSet, char designator) {
     graphicSet.setDesignation(CharacterSet.valueOf(designator));
   }
 
@@ -40,7 +41,7 @@ public class GraphicSetState {
   /**
    * Returns the (possibly overridden) GL graphic set.
    */
-  
+  @NotNull
   public GraphicSet getGL() {
     GraphicSet result = myGL;
     if (myGlOverride != null) {
@@ -53,7 +54,7 @@ public class GraphicSetState {
   /**
    * Returns the GR graphic set.
    */
-  
+  @NotNull
   public GraphicSet getGR() {
     return myGR;
   }
@@ -63,7 +64,7 @@ public class GraphicSetState {
    *
    * @param index the index of the graphic set, 0..3.
    */
-  
+  @NotNull
   public GraphicSet getGraphicSet(int index) {
     return myGraphicSets[index % 4];
   }

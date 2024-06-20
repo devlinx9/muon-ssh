@@ -25,7 +25,7 @@ public class DisabledPanel extends JPanel {
         setLayout(layout);
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
-        btn.setFont(App.SKIN.getIconFont().deriveFont(20.0f));
+        btn.setFont(App.skin.getIconFont().deriveFont(20.0f));
         btn.setForeground(Color.WHITE);
         btn.setText("\uf00d");
         btn.setAlignmentX(Box.CENTER_ALIGNMENT);
@@ -43,8 +43,9 @@ public class DisabledPanel extends JPanel {
         timer = new Timer(20, e -> {
             angle += Math.toRadians(5); // 5 degrees per 100 ms = 50
             // degrees/second
-            while (angle > 2 * Math.PI)
+            while (angle > 2 * Math.PI) {
                 angle -= 2 * Math.PI; // keep angle in reasonable range.
+            }
             int x = getWidth() / 2 - size / 2;
             int y = getHeight() / 2 - size / 2;
             repaint(x, y, size, size);

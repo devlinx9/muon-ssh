@@ -5,7 +5,6 @@ package muon.app.ui.components;
 
 /**
  * @author subhro
- *
  */
 
 import muon.app.App;
@@ -30,20 +29,20 @@ import java.util.HashMap;
  * component must use the same line height for each line. TextLineNumber
  * supports wrapped lines and will highlight the line number of the current line
  * in the text component.
- *
+ * <p>
  * This class was designed to be used as a component added to the row header of
  * a JScrollPane.
  */
 //https://tips4java.wordpress.com/2009/05/23/text-component-line-number/
 public class TextLineNumber extends JPanel
         implements CaretListener, DocumentListener, PropertyChangeListener {
-    public final static float LEFT = 0.0f;
-    public final static float CENTER = 0.5f;
-    public final static float RIGHT = 1.0f;
+    public static final float LEFT = 0.0f;
+    public static final float CENTER = 0.5f;
+    public static final float RIGHT = 1.0f;
 
-    private final static Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
+    private static final Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
 
-    private final static int HEIGHT = Integer.MAX_VALUE - 1000000;
+    private static final int HEIGHT = Integer.MAX_VALUE - 1000000;
 
     // Text component this TextTextLineNumber component is in sync with
 
@@ -241,7 +240,7 @@ public class TextLineNumber extends JPanel
         Graphics2D g = (Graphics2D) gr;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(App.SKIN.getDefaultBackground());
+        g.setColor(App.skin.getDefaultBackground());
         g.fillRect(0, 0, getWidth(), getHeight());
 
         // Determine the width of the space available to draw the line number
@@ -259,10 +258,11 @@ public class TextLineNumber extends JPanel
 
         while (rowStartOffset <= endOffset) {
             try {
-                if (isCurrentLine(rowStartOffset))
+                if (isCurrentLine(rowStartOffset)) {
                     g.setColor(getCurrentLineForeground());
-                else
+                } else {
                     g.setColor(getForeground());
+                }
 
                 // Get the line number as a string and then determine the
                 // "X" and "Y" offsets for drawing the string.
@@ -304,10 +304,11 @@ public class TextLineNumber extends JPanel
         int index = root.getElementIndex(rowStartOffset);
         Element line = root.getElement(index);
 
-        if (line.getStartOffset() == rowStartOffset)
+        if (line.getStartOffset() == rowStartOffset) {
             return String.valueOf(index + 1);
-        else
+        } else {
             return "";
+        }
     }
 
     /*

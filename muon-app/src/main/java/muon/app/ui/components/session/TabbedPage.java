@@ -27,10 +27,10 @@ public class TabbedPage extends JPanel {
     private final JLabel lblText;
     private final Border selectedBorder = new CompoundBorder(
             new MatteBorder(0, 0, 2, 0,
-                    App.SKIN.getDefaultSelectionBackground()),
+                    App.skin.getDefaultSelectionBackground()),
             new EmptyBorder(10, 0, 10, 0));
     private final Border normalBorder = new CompoundBorder(
-            new MatteBorder(0, 0, 2, 0, App.SKIN.getDefaultBackground()),
+            new MatteBorder(0, 0, 2, 0, App.skin.getDefaultBackground()),
             new EmptyBorder(10, 0, 10, 0));
 
     public TabbedPage(Page page, PageHolder holder) {
@@ -60,16 +60,16 @@ public class TabbedPage extends JPanel {
             }
         });
 
-        lblIcon.setForeground(App.SKIN.getInfoTextForeground());
-        lblText.setForeground(App.SKIN.getInfoTextForeground());
+        lblIcon.setForeground(App.skin.getInfoTextForeground());
+        lblText.setForeground(App.skin.getInfoTextForeground());
 
         int prefW = lblText.getPreferredSize().width + 20;
 
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         lblText.setHorizontalAlignment(JLabel.CENTER);
 
-        lblIcon.setFont(App.SKIN.getIconFont().deriveFont(24.0f));
-        lblText.setFont(App.SKIN.getDefaultFont().deriveFont(12.0f));
+        lblIcon.setFont(App.skin.getIconFont().deriveFont(24.0f));
+        lblText.setFont(App.skin.getDefaultFont().deriveFont(12.0f));
 
         this.add(lblIcon);
         this.add(lblText, BorderLayout.SOUTH);
@@ -84,10 +84,10 @@ public class TabbedPage extends JPanel {
 
     public void setSelected(boolean selected) {
         this.setBorder(selected ? selectedBorder : normalBorder);
-        this.lblIcon.setForeground(selected ? App.SKIN.getDefaultForeground()
-                : App.SKIN.getInfoTextForeground());
-        this.lblText.setForeground(selected ? App.SKIN.getDefaultForeground()
-                : App.SKIN.getInfoTextForeground());
+        this.lblIcon.setForeground(selected ? App.skin.getDefaultForeground()
+                : App.skin.getInfoTextForeground());
+        this.lblText.setForeground(selected ? App.skin.getDefaultForeground()
+                : App.skin.getInfoTextForeground());
         this.revalidate();
         this.repaint();
     }

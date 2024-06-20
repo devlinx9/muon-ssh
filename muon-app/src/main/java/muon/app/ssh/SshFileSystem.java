@@ -52,7 +52,7 @@ public class SshFileSystem implements FileSystem {
             try {
                 if (f.getType() == FileType.Directory) {
                     List<FileInfo> list = list(f.getPath());
-                    if (list != null && list.size() > 0) {
+                    if (list != null && !list.isEmpty()) {
                         for (FileInfo fc : list) {
                             delete(fc);
                         }
@@ -104,12 +104,11 @@ public class SshFileSystem implements FileSystem {
                 attrs = sftp.stat(pathToResolve);
 
                 if (attrs.getType() != Type.SYMLINK) {
-                    FileInfo e = new FileInfo(name, pathToResolve,
+                    return new FileInfo(name, pathToResolve,
                             (attrs.getType() == Type.DIRECTORY ? -1 : attrs.getSize()),
                             attrs.getType() == Type.DIRECTORY ? FileType.DirLink : FileType.FileLink,
                             attrs.getMtime() * 1000, FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
                             getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName, name.startsWith("."));
-                    return e;
                 }
             }
         } catch (SFTPException e) {
@@ -137,7 +136,7 @@ public class SshFileSystem implements FileSystem {
                     path = this.getHome();
                 }
                 List<RemoteResourceInfoWrapper> files = ls(path);
-                if (files.size() > 0) {
+                if (!files.isEmpty()) {
                     for (int i = 0; i < files.size(); i++) {
                         RemoteResourceInfo ent = files.get(i).getInfo();
                         String longName = files.get(i).getLongPath();
@@ -181,7 +180,8 @@ public class SshFileSystem implements FileSystem {
     @Override
     public void close() throws Exception {
         this.closed.set(true);
-        this.sftp.close();
+        if(this.sftp != null)
+            this.sftp.close();
     }
 
     @Override
@@ -220,11 +220,10 @@ public class SshFileSystem implements FileSystem {
                     return resolveSymlink(PathUtils.getFileName(path), path, attrs, null);
                 } else {
                     String name = PathUtils.getFileName(path);
-                    FileInfo e = new FileInfo(name, path, (attrs.getType() == Type.DIRECTORY ? -1 : attrs.getSize()),
+                    return new FileInfo(name, path, (attrs.getType() == Type.DIRECTORY ? -1 : attrs.getSize()),
                             attrs.getType() == Type.DIRECTORY ? FileType.Directory : FileType.File,
                             attrs.getMtime() * 1000, FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
                             getPermissionStr(attrs.getPermissions()), attrs.getAtime(), null, name.startsWith("."));
-                    return e;
                 }
             } catch (SFTPException e) {
                 if (e.getStatusCode() == Response.StatusCode.NO_SUCH_FILE
@@ -391,7 +390,7 @@ public class SshFileSystem implements FileSystem {
         synchronized (ssh) {
             ensureConnected();
             try {
-                InputTransferChannel tc = new InputTransferChannel() {
+                return new InputTransferChannel() {
                     @Override
                     public InputStream getInputStream(String path) throws Exception {
                         RemoteFile remoteFile = sftp.open(path, EnumSet.of(OpenMode.READ));
@@ -409,7 +408,6 @@ public class SshFileSystem implements FileSystem {
                         return getInfo(path).getSize();
                     }
                 };
-                return tc;
             } catch (Exception e) {
                 if (ssh.isConnected()) {
                     throw new FileNotFoundException();
@@ -424,7 +422,7 @@ public class SshFileSystem implements FileSystem {
         synchronized (ssh) {
             ensureConnected();
             try {
-                OutputTransferChannel tc = new OutputTransferChannel() {
+                return new OutputTransferChannel() {
                     @Override
                     public OutputStream getOutputStream(String path) throws Exception {
                         try {
@@ -445,7 +443,6 @@ public class SshFileSystem implements FileSystem {
                         return "/";
                     }
                 };
-                return tc;
             } catch (Exception e) {
                 if (ssh.isConnected()) {
                     throw new FileNotFoundException();

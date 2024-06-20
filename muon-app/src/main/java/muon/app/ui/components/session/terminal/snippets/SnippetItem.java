@@ -7,7 +7,9 @@ import java.util.UUID;
  */
 public class SnippetItem {
 
-    private String name, command, id;
+    private String name;
+    private String command;
+    private String id;
 
     /**
      *

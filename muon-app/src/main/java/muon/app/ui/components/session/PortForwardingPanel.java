@@ -33,11 +33,11 @@ public class PortForwardingPanel extends JPanel {
 
         Box b1 = Box.createVerticalBox();
         JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.SKIN.getIconFont());
+        btnAdd.setFont(App.skin.getIconFont());
         JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.SKIN.getIconFont());
+        btnDel.setFont(App.skin.getIconFont());
         JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.SKIN.getIconFont());
+        btnEdit.setFont(App.skin.getIconFont());
 
         btnAdd.addActionListener(e -> {
             PortForwardingRule ent = addOrEditEntry(null);
@@ -90,7 +90,7 @@ public class PortForwardingPanel extends JPanel {
     }
 
     private PortForwardingRule addOrEditEntry(PortForwardingRule r) {
-        JComboBox<String> cmbPFType = new JComboBox<String>(new String[]{bundle.getString("local"), bundle.getString("remote")});
+        JComboBox<String> cmbPFType = new JComboBox<>(new String[]{bundle.getString("local"), bundle.getString("remote")});
 
         JTextField txtHost = new SkinnedTextField(30);
 
@@ -171,8 +171,9 @@ public class PortForwardingPanel extends JPanel {
                     return pf.getTargetPort();
                 case 4:
                     return pf.getBindHost();
+                default:
+                    return "";
             }
-            return "";
         }
 
         private List<PortForwardingRule> getRules() {

@@ -38,7 +38,7 @@ public class RemoteKeyPanel extends JPanel {
         JLabel lblTitle = new JLabel(bundle.getString("public_key_file"));
         txtKeyFile = new SkinnedTextField(20);
         txtKeyFile.setBorder(null);
-        txtKeyFile.setBackground(App.SKIN.getDefaultBackground());
+        txtKeyFile.setBackground(App.skin.getDefaultBackground());
         txtKeyFile.setEditable(false);
         Box hbox = Box.createHorizontalBox();
         hbox.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -54,13 +54,9 @@ public class RemoteKeyPanel extends JPanel {
         btnGenNewKey = new JButton(bundle.getString("generate_new_key"));
         btnRefresh = new JButton(bundle.getString("generate"));
 
-        btnGenNewKey.addActionListener(e -> {
-            callback1.accept(null);
-        });
+        btnGenNewKey.addActionListener(e -> callback1.accept(null));
 
-        btnRefresh.addActionListener(e -> {
-            callback2.accept(null);
-        });
+        btnRefresh.addActionListener(e -> callback2.accept(null));
 
         Box hbox1 = Box.createHorizontalBox();
         hbox1.add(Box.createHorizontalGlue());
@@ -76,7 +72,7 @@ public class RemoteKeyPanel extends JPanel {
 
         model = new DefaultListModel<>();
         jList = new JList<>(model);
-        jList.setBackground(App.SKIN.getTextFieldBackground());
+        jList.setBackground(App.skin.getTextFieldBackground());
 
         btnAdd = new JButton(bundle.getString("add"));
         btnEdit = new JButton(bundle.getString("edit"));

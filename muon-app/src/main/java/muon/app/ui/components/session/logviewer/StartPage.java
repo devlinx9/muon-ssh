@@ -53,7 +53,7 @@ public class StartPage extends JPanel {
         pinnedLogsModel.addAll(finalPinnedLogs);
         pinnedLogList = new JList<>(pinnedLogsModel);
         pinnedLogList.setCellRenderer(new PinnedLogsRenderer());
-        pinnedLogList.setBackground(App.SKIN.getSelectedTabColor());
+        pinnedLogList.setBackground(App.skin.getSelectedTabColor());
         JScrollPane jsp = new SkinnedScrollPane(pinnedLogList);
         jsp.setBorder(new EmptyBorder(0, 10, 0, 10));
         this.add(jsp);
@@ -154,7 +154,7 @@ public class StartPage extends JPanel {
             setOpaque(true);
             setBorder(new CompoundBorder(
                     new MatteBorder(0, 0, 2, 0,
-                            App.SKIN.getDefaultBackground()),
+                            App.skin.getDefaultBackground()),
                     new EmptyBorder(10, 10, 10, 10)));
         }
 
@@ -162,9 +162,9 @@ public class StartPage extends JPanel {
         public Component getListCellRendererComponent(
                 JList<? extends String> list, String value, int index,
                 boolean isSelected, boolean cellHasFocus) {
-            setBackground(isSelected ? App.SKIN.getDefaultSelectionBackground()
+            setBackground(isSelected ? App.skin.getDefaultSelectionBackground()
                     : list.getBackground());
-            setForeground(isSelected ? App.SKIN.getDefaultSelectionForeground()
+            setForeground(isSelected ? App.skin.getDefaultSelectionForeground()
                     : list.getForeground());
             setText(value);
             return this;

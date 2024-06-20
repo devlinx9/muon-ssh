@@ -546,7 +546,7 @@ public class SshMenuHandler {
     }
 
     private void renameAsync(String oldName, String newName, String baseFolder) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.rename(oldName, newName, fileBrowserView.getFileSystem(),
@@ -569,7 +569,7 @@ public class SshMenuHandler {
         }
         if (!delete)
             return;
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.delete(targetList, fileBrowserView.getFileSystem(),
@@ -587,7 +587,7 @@ public class SshMenuHandler {
     }
 
     public void newFile(String baseFolder, FileInfo[] files) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.newFile(files, fileBrowserView.getFileSystem(), baseFolder,
@@ -605,7 +605,7 @@ public class SshMenuHandler {
     }
 
     public void newFolder(String baseFolder, FileInfo[] files) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.newFolder(files, baseFolder, fileBrowserView.getFileSystem(),
@@ -623,7 +623,7 @@ public class SshMenuHandler {
     }
 
     public void createLink(String baseFolder, FileInfo[] files) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.createLink(files, fileBrowserView.getFileSystem(), fileBrowserView.getSshClient())) {
@@ -646,9 +646,7 @@ public class SshMenuHandler {
                 if (transferData != null) {
                     fileBrowserView.handleDrop(transferData);
                 }
-            } catch (UnsupportedFlavorException e1) {
-                e1.printStackTrace();
-            } catch (IOException e1) {
+            } catch (UnsupportedFlavorException | IOException e1) {
                 e1.printStackTrace();
             }
         } else {
@@ -672,7 +670,7 @@ public class SshMenuHandler {
     }
 
     public void copy(List<FileInfo> files, String targetFolder) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.copyTo(fileBrowserView.getSshClient(), files, targetFolder,
@@ -688,7 +686,7 @@ public class SshMenuHandler {
     }
 
     public void move(List<FileInfo> files, String targetFolder) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.moveTo(fileBrowserView.getSshClient(), files, targetFolder,
@@ -744,9 +742,7 @@ public class SshMenuHandler {
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(path), null);
         });
 
-        mBookmark.addActionListener(e -> {
-            addToFavourites();
-        });
+        mBookmark.addActionListener(e -> addToFavourites());
         return popupMenu;
     }
 
@@ -759,7 +755,7 @@ public class SshMenuHandler {
     }
 
     private void openRunInBackground(String folder, String file) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.runScriptInBackground(fileBrowserView.getSshClient(),
@@ -773,7 +769,7 @@ public class SshMenuHandler {
     }
 
     private void extractArchive(String archive, String folder, String currentFolder) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             AtomicBoolean stopFlag = new AtomicBoolean(false);
             fileBrowser.disableUi(stopFlag);
             try {
@@ -790,7 +786,7 @@ public class SshMenuHandler {
     }
 
     private void createArchive(List<String> files, String folder, String currentFolder) {
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             AtomicBoolean stopFlag = new AtomicBoolean(false);
             fileBrowser.disableUi(stopFlag);
             try {
@@ -844,7 +840,7 @@ public class SshMenuHandler {
     }
 
     public void openEditorConfig() {
-        App.openSettings(SettingsPageName.Editor);
+        App.openSettings(SettingsPageName.EDITOR);
     }
 
     private void sendFilesViaLocal() {

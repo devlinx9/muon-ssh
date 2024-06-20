@@ -6,12 +6,12 @@ import java.awt.*;
 public class WrappedLabel extends JComponent {
 
     private String text;
-    private final int rows = 3;
+    private static final int ROWS = 3;
 
     public void setText(String text) {
         this.text = text;
         FontMetrics fm = getFontMetrics(getFont());
-        Dimension d = new Dimension(10, fm.getHeight() * rows);
+        Dimension d = new Dimension(10, fm.getHeight() * ROWS);
         setPreferredSize(d);
         revalidate();
         repaint(0);
@@ -35,7 +35,7 @@ public class WrappedLabel extends JComponent {
         int dotWidth = fm.stringWidth("...");
         int width = getWidth() - dotWidth;
 
-        StringBuilder[] sb = new StringBuilder[rows];
+        StringBuilder[] sb = new StringBuilder[ROWS];
         for (int i = 0; i < sb.length; i++) {
             sb[i] = new StringBuilder();
         }
@@ -46,7 +46,7 @@ public class WrappedLabel extends JComponent {
             int charWidth = fm.charWidth(text.charAt(i));
             if (lineWidth + charWidth > width) {
                 c++;
-                if (c > rows - 1) {
+                if (c > ROWS - 1) {
                     sb[c - 1].append("...");
                     break;
                 }

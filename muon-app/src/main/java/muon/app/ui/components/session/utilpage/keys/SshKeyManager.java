@@ -33,8 +33,9 @@ public class SshKeyManager {
 
     private static void loadLocalKey(String pubKeyPath, SshKeyHolder holder) {
         try {
+            String homeDir = "user.home";
             Path defaultPath = pubKeyPath == null
-                    ? Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa.pub").toAbsolutePath()
+                    ? Paths.get(System.getProperty(homeDir), ".ssh", "id_rsa.pub").toAbsolutePath()
                     : Paths.get(pubKeyPath);
             byte[] bytes = Files.readAllBytes(defaultPath);
             holder.setLocalPublicKey(new String(bytes, StandardCharsets.UTF_8));
@@ -82,23 +83,20 @@ public class SshKeyManager {
 
     public static void generateKeys(SshKeyHolder holder, RemoteSessionInstance instance, boolean local)
             throws Exception {
-        if (holder.getLocalPublicKey() != null) {
-            if (JOptionPane.showConfirmDialog(null,
-                    "WARNING: This will overwrite the existing SSH key"
-                            + "\n\nIf the key was being used to connect to other servers," + "\nconnection will fail."
-                            + "\nYou have to reconfigure all the servers"
-                            + "\nto use the new key\nDo you still want to continue?",
-                    "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
-                return;
-            }
+        if (holder.getLocalPublicKey() != null && JOptionPane.showConfirmDialog(null,
+                "WARNING: This will overwrite the existing SSH key"
+                        + "\n\nIf the key was being used to connect to other servers," + "\nconnection will fail."
+                        + "\nYou have to reconfigure all the servers"
+                        + "\nto use the new key\nDo you still want to continue?",
+                "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
+            return;
         }
+
 
         JCheckBox chkGenPassPhrase = new JCheckBox("Use passphrase to protect private key (Optional)");
         JPasswordField txtPassPhrase = new JPasswordField(30);
         txtPassPhrase.setEditable(false);
-        chkGenPassPhrase.addActionListener(e -> {
-            txtPassPhrase.setEditable(chkGenPassPhrase.isSelected());
-        });
+        chkGenPassPhrase.addActionListener(e -> txtPassPhrase.setEditable(chkGenPassPhrase.isSelected()));
 
         String passPhrase = new String(txtPassPhrase.getPassword());
 

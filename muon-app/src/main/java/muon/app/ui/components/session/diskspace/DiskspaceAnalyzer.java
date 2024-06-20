@@ -77,12 +77,12 @@ public class DiskspaceAnalyzer extends Page {
     private Component createFirstPanel() {
         JRadioButton radFolder = new JRadioButton(bundle.getString("analyze_folder"));
         JRadioButton radVolume = new JRadioButton(bundle.getString("analyze_volume"));
-        radFolder.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
-        radVolume.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
+        radFolder.setFont(App.skin.getDefaultFont().deriveFont(14.0f));
+        radVolume.setFont(App.skin.getDefaultFont().deriveFont(14.0f));
         radFolder.setHorizontalAlignment(JRadioButton.LEFT);
         radVolume.setHorizontalAlignment(JRadioButton.LEFT);
         JLabel lblIcon = new JLabel();
-        lblIcon.setFont(App.SKIN.getIconFont().deriveFont(128.0f));
+        lblIcon.setFont(App.skin.getIconFont().deriveFont(128.0f));
         lblIcon.setText(FontAwesomeContants.FA_HDD_O);
         JButton btnNext = new JButton(bundle.getString("next"));
         btnNext.addActionListener(e -> {
@@ -138,7 +138,7 @@ public class DiskspaceAnalyzer extends Page {
         table.setDefaultRenderer(Object.class, r1);
         table.setDefaultRenderer(Double.class, r2);
         table.setRowHeight(Math.max(r1.getPreferredSize().height, r2.getPreferredSize().height));
-        table.setSelectionForeground(App.SKIN.getDefaultSelectionForeground());
+        table.setSelectionForeground(App.skin.getDefaultSelectionForeground());
         JScrollPane jsp = new SkinnedScrollPane(table);
 
         JButton btnBack = new JButton(bundle.getString("back"));
@@ -153,7 +153,6 @@ public class DiskspaceAnalyzer extends Page {
                 analyze(model.get(r).getMountPoint());
             } else {
                 JOptionPane.showMessageDialog(this, bundle.getString("select_partition"));
-                return;
             }
         });
 
@@ -230,7 +229,7 @@ public class DiskspaceAnalyzer extends Page {
 
     private void listVolumes() {
         AtomicBoolean stopFlag = new AtomicBoolean(false);
-        holder.EXECUTOR.submit(() -> {
+        holder.executor.submit(() -> {
             try {
                 holder.disableUi(stopFlag);
                 System.out.println("Listing partitions");
@@ -261,7 +260,7 @@ public class DiskspaceAnalyzer extends Page {
         }, holder.getRemoteSessionInstance());
         cardLayout.show(this, "Results");
         holder.disableUi(stopFlag);
-        holder.EXECUTOR.submit(task);
+        holder.executor.submit(task);
     }
 
     private void createTree(DefaultMutableTreeNode treeNode, DiskUsageEntry entry) {

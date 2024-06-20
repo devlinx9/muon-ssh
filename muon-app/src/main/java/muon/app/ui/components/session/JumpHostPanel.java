@@ -15,28 +15,29 @@ import java.util.UUID;
 import static muon.app.App.bundle;
 
 public class JumpHostPanel extends JPanel {
-    private final DefaultListModel<HopEntry> hopModel = new DefaultListModel<HopEntry>();
-    private final JList<HopEntry> hopList = new JList<HopEntry>(hopModel);
+    private final DefaultListModel<HopEntry> hopModel = new DefaultListModel<>();
+    private final JList<HopEntry> hopList = new JList<>(hopModel);
     private SessionInfo info;
 
     public JumpHostPanel() {
         super(new BorderLayout(5, 5));
+        // TODO i18n
         JLabel lblTitle = new JLabel("Intermediate hops");
-        hopList.setBackground(App.SKIN.getTableBackgroundColor());
+        hopList.setBackground(App.skin.getTableBackgroundColor());
 
         JScrollPane scrollPane = new SkinnedScrollPane(hopList);
 
         Box b1 = Box.createVerticalBox();
         JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.SKIN.getIconFont());
+        btnAdd.setFont(App.skin.getIconFont());
         JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.SKIN.getIconFont());
+        btnDel.setFont(App.skin.getIconFont());
         JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.SKIN.getIconFont());
+        btnEdit.setFont(App.skin.getIconFont());
         JButton btnUp = new JButton(FontAwesomeContants.FA_ARROW_UP);
-        btnUp.setFont(App.SKIN.getIconFont());
+        btnUp.setFont(App.skin.getIconFont());
         JButton btnDown = new JButton(FontAwesomeContants.FA_ARROW_DOWN);
-        btnDown.setFont(App.SKIN.getIconFont());
+        btnDown.setFont(App.skin.getIconFont());
 
         btnAdd.addActionListener(e -> {
             HopEntry ent = addOrEditEntry(null);
@@ -106,7 +107,7 @@ public class JumpHostPanel extends JPanel {
     }
 
     private List<HopEntry> getJumpHosts() {
-        List<HopEntry> list = new ArrayList<HopEntry>();
+        List<HopEntry> list = new ArrayList<>();
         for (int i = 0; i < this.hopModel.size(); i++) {
             HopEntry ent = this.hopModel.get(i);
             list.add(ent);

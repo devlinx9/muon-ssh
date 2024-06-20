@@ -21,7 +21,7 @@ public class FolderViewListCellRenderer extends JPanel implements ListCellRender
         lblIcon.setBorder(new EmptyBorder(0, 20, 0, 20));
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         lblIcon.setVerticalAlignment(JLabel.CENTER);
-        lblIcon.setFont(App.SKIN.getIconFont().deriveFont(Font.PLAIN, 48.f));
+        lblIcon.setFont(App.skin.getIconFont().deriveFont(Font.PLAIN, 48.f));
         lblIcon.setText(FontAwesomeContants.FA_FOLDER);
 
         this.lblText = new WrappedLabel();

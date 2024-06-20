@@ -39,7 +39,7 @@ public class SysInfoPanel extends UtilPageItemView {
 
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         holder.disableUi(stopFlag);
-        holder.EXECUTOR.submit(() -> {
+        holder.executor.submit(() -> {
             try {
                 StringBuilder output = new StringBuilder();
                 int ret = holder

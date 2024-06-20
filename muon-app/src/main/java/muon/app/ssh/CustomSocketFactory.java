@@ -7,14 +7,15 @@ import javax.net.SocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
  * @author subhro
- *
  */
 public class CustomSocketFactory extends SocketFactory {
 
@@ -96,8 +97,7 @@ public class CustomSocketFactory extends SocketFactory {
             }
         }
 
-        Socket socket = new Socket(proxy);
-        return socket;
+        return new Socket(proxy);
     }
 
     private void connectToProxy(Socket socket) throws IOException {

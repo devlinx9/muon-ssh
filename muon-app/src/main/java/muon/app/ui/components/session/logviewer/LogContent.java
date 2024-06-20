@@ -39,7 +39,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
     private File indexFile;
     private RandomAccessFile raf;
     private long totalLines;
-    private final int linePerPage = 50;
+    private final static int LINE_PER_PAGE = 50;
     private long currentPage;
     private long pageCount;
     private final JButton btnNextPage;
@@ -70,47 +70,39 @@ public class LogContent extends JPanel implements ClosableTabContent {
         lblTotalPage = new JLabel();
         lblTotalPage.setHorizontalAlignment(JLabel.CENTER);
 
-        UIDefaults skin = App.SKIN.createToolbarSkin();
+        UIDefaults skin = App.skin.createToolbarSkin();
 
         btnFirstPage = new JButton();
         btnFirstPage.setToolTipText("First page");
         btnFirstPage.putClientProperty("Nimbus.Overrides", skin);
-        btnFirstPage.setFont(App.SKIN.getIconFont());
+        btnFirstPage.setFont(App.skin.getIconFont());
         btnFirstPage.setText(FontAwesomeContants.FA_FAST_BACKWARD);
-        btnFirstPage.addActionListener(e -> {
-            firstPage();
-        });
+        btnFirstPage.addActionListener(e -> firstPage());
 
         btnNextPage = new JButton();
         btnNextPage.setToolTipText("Next page");
         btnNextPage.putClientProperty("Nimbus.Overrides", skin);
-        btnNextPage.setFont(App.SKIN.getIconFont());
+        btnNextPage.setFont(App.skin.getIconFont());
         btnNextPage.setText(FontAwesomeContants.FA_STEP_FORWARD);
-        btnNextPage.addActionListener(e -> {
-            nextPage();
-        });
+        btnNextPage.addActionListener(e -> nextPage());
 
         btnPrevPage = new JButton("");
         btnPrevPage.setToolTipText("Previous page");
         btnPrevPage.putClientProperty("Nimbus.Overrides", skin);
-        btnPrevPage.setFont(App.SKIN.getIconFont());
+        btnPrevPage.setFont(App.skin.getIconFont());
         btnPrevPage.setText(FontAwesomeContants.FA_STEP_BACKWARD);
-        btnPrevPage.addActionListener(e -> {
-            previousPage();
-        });
+        btnPrevPage.addActionListener(e -> previousPage());
 
         btnLastPage = new JButton();
         btnLastPage.setToolTipText("Last page");
         btnLastPage.putClientProperty("Nimbus.Overrides", skin);
-        btnLastPage.setFont(App.SKIN.getIconFont());
+        btnLastPage.setFont(App.skin.getIconFont());
         btnLastPage.setText(FontAwesomeContants.FA_FAST_FORWARD);
-        btnLastPage.addActionListener(e -> {
-            lastPage();
-        });
+        btnLastPage.addActionListener(e -> lastPage());
 
         textArea = new SkinnedTextArea();
         textArea.setEditable(false);
-        textArea.setBackground(App.SKIN.getSelectedTabColor());
+        textArea.setBackground(App.skin.getSelectedTabColor());
         textArea.setWrapStyleWord(true);
         textArea.setFont(textArea.getFont().deriveFont(
                 (float) App.getGlobalSettings().getLogViewerFont()));
@@ -151,7 +143,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         JButton btnReload = new JButton();
         btnReload.setToolTipText("Reload");
         btnReload.putClientProperty("Nimbus.Overrides", skin);
-        btnReload.setFont(App.SKIN.getIconFont());
+        btnReload.setFont(App.skin.getIconFont());
         btnReload.setText(FontAwesomeContants.FA_UNDO);
         btnReload.addActionListener(e -> {
             try {
@@ -171,15 +163,13 @@ public class LogContent extends JPanel implements ClosableTabContent {
         JButton btnBookMark = new JButton();
         btnBookMark.setToolTipText("Add to bookmark/pin");
         btnBookMark.putClientProperty("Nimbus.Overrides", skin);
-        btnBookMark.setFont(App.SKIN.getIconFont());
+        btnBookMark.setFont(App.skin.getIconFont());
         btnBookMark.setText(FontAwesomeContants.FA_BOOKMARK);
-        btnBookMark.addActionListener(e -> {
-            startPage.pinLog(remoteLogFile);
-        });
+        btnBookMark.addActionListener(e -> startPage.pinLog(remoteLogFile));
 
         Box toolbar = Box.createHorizontalBox();
         toolbar.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 1, 0, App.SKIN.getDefaultBorderColor()),
+                new MatteBorder(0, 0, 1, 0, App.skin.getDefaultBorderColor()),
                 new EmptyBorder(5, 10, 5, 10)));
         toolbar.add(btnFirstPage);
         toolbar.add(btnPrevPage);
@@ -205,14 +195,12 @@ public class LogContent extends JPanel implements ClosableTabContent {
             public void search(String text) {
                 AtomicBoolean stopFlag = new AtomicBoolean(false);
                 holder.disableUi(stopFlag);
-                holder.EXECUTOR.execute(() -> {
+                holder.executor.execute(() -> {
                     try {
                         RandomAccessFile searchIndex = LogContent.this
                                 .search(text, stopFlag);
                         long len = searchIndex.length();
-                        SwingUtilities.invokeLater(() -> {
-                            logSearchPanel.setResults(searchIndex, len);
-                        });
+                        SwingUtilities.invokeLater(() -> logSearchPanel.setResults(searchIndex, len));
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
@@ -224,8 +212,8 @@ public class LogContent extends JPanel implements ClosableTabContent {
             @Override
             public void select(long index) {
                 System.out.println("Search item found on line: " + index);
-                int page = (int) index / linePerPage;
-                int line = (int) (index % linePerPage);
+                int page = (int) index / LINE_PER_PAGE;
+                int line = (int) (index % LINE_PER_PAGE);
                 System.out.println("Found on page: " + page + " line: " + line);
                 if (currentPage == page) {
                     if (line < textArea.getLineCount() && line != -1) {
@@ -240,7 +228,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         this.add(logSearchPanel, BorderLayout.SOUTH);
 
         painter = new DefaultHighlighter.DefaultHighlightPainter(
-                App.SKIN.getAddressBarSelectionBackground());
+                App.skin.getAddressBarSelectionBackground());
 
         initPages();
     }
@@ -255,7 +243,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
     private void initPages() {
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         holder.disableUi(stopFlag);
-        holder.EXECUTOR.execute(() -> {
+        holder.executor.execute(() -> {
             try {
                 if ((indexFile(true, stopFlag))
                         || (indexFile(false, stopFlag))) {
@@ -263,7 +251,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     System.out.println("Total lines: " + this.totalLines);
                     if (this.totalLines > 0) {
                         this.pageCount = (long) Math
-                                .ceil((double) totalLines / linePerPage);
+                                .ceil((double) totalLines / LINE_PER_PAGE);
                         System.out
                                 .println("Number of pages: " + this.pageCount);
                         if (this.currentPage > this.pageCount) {
@@ -303,8 +291,8 @@ public class LogContent extends JPanel implements ClosableTabContent {
 
     private String getPageText(long page, AtomicBoolean stopFlag)
             throws Exception {
-        long lineStart = page * linePerPage;
-        long lineEnd = lineStart + linePerPage - 1;
+        long lineStart = page * LINE_PER_PAGE;
+        long lineEnd = lineStart + LINE_PER_PAGE - 1;
 
         StringBuilder command = new StringBuilder();
 
@@ -337,22 +325,22 @@ public class LogContent extends JPanel implements ClosableTabContent {
         if (startOffset < 8192) {
             command.append("dd if=\"" + this.remoteFile + "\" ibs=1 skip="
                     + startOffset + " count=" + byteRange
-                    + " 2>/dev/null | sed -ne '1," + linePerPage + "p;"
-                    + (linePerPage + 1) + "q'");
+                    + " 2>/dev/null | sed -ne '1," + LINE_PER_PAGE + "p;"
+                    + (LINE_PER_PAGE + 1) + "q'");
         } else {
             long blockToSkip = startOffset / 8192;
             long bytesToSkip = startOffset % 8192;
             int blocks = (int) Math.ceil((double) byteRange / 8192);
 
 
-            if (blocks * 8192 - bytesToSkip < byteRange) {
+            if (blocks * 8192L - bytesToSkip < byteRange) {
                 blocks++;
             }
             command.append("dd if=\"" + this.remoteFile + "\" ibs=8192 skip="
                     + blockToSkip + " count=" + blocks
                     + " 2>/dev/null | dd bs=1 skip=" + bytesToSkip
-                    + " 2>/dev/null | sed -ne '1," + linePerPage + "p;"
-                    + (linePerPage + 1) + "q'");
+                    + " 2>/dev/null | sed -ne '1," + LINE_PER_PAGE + "p;"
+                    + (LINE_PER_PAGE + 1) + "q'");
         }
 
         System.out.println("Command: " + command);
@@ -457,7 +445,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
     public void loadPage(int line) {
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         holder.disableUi(stopFlag);
-        holder.EXECUTOR.execute(() -> {
+        holder.executor.execute(() -> {
             try {
                 String pageText = getPageText(this.currentPage, stopFlag);
                 SwingUtilities.invokeLater(() -> {
@@ -471,7 +459,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     if (line < textArea.getLineCount() && line != -1) {
                         highlightLine(line);
                     }
-                    long lineStart = this.currentPage * linePerPage;
+                    long lineStart = this.currentPage * LINE_PER_PAGE;
                     gutter.setLineStart(lineStart + 1);
                 });
             } catch (Exception e) {

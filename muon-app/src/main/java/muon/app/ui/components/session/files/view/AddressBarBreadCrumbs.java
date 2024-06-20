@@ -69,8 +69,7 @@ public class AddressBarBreadCrumbs extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        Dimension d = getLayout().preferredLayoutSize(this);
-        return d;
+        return getLayout().preferredLayoutSize(this);
     }
 
     public void setPath(String path) {
@@ -119,7 +118,7 @@ public class AddressBarBreadCrumbs extends JPanel {
                               int height) {
                 if (object
                         .getClientProperty("path.index.last") == Boolean.TRUE) {
-                    g.setColor(App.SKIN.getAddressBarSelectionBackground());
+                    g.setColor(App.skin.getAddressBarSelectionBackground());
                     g.fillRect(0, 0, width - 1, height - 1);
                 }
             }
@@ -129,7 +128,7 @@ public class AddressBarBreadCrumbs extends JPanel {
             @Override
             public void paint(Graphics2D g, JButton object, int width,
                               int height) {
-                g.setColor(App.SKIN.getAddressBarRolloverBackground());
+                g.setColor(App.skin.getAddressBarRolloverBackground());
                 g.fillRect(0, 0, width - 1, height - 1);
             }
         };
@@ -138,7 +137,7 @@ public class AddressBarBreadCrumbs extends JPanel {
             @Override
             public void paint(Graphics2D g, JButton object, int width,
                               int height) {
-                g.setColor(App.SKIN.getAddressBarSelectionBackground());
+                g.setColor(App.skin.getAddressBarSelectionBackground());
                 g.fillRect(0, 0, width - 1, height - 1);
             }
         };

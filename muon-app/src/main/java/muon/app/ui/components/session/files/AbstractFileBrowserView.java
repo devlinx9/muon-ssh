@@ -33,7 +33,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         this.orientation = orientation;
         this.tabTitle = new TabTitle();
 
-        UIDefaults toolbarButtonSkin = App.SKIN.createToolbarSkin();
+        UIDefaults toolbarButtonSkin = App.skin.createToolbarSkin();
 
         overflowMenuHandler = new OverflowMenuHandler(this, fileBrowser);
         history = new NavigationHistory();
@@ -69,7 +69,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         btnBack = new JButton();
         btnBack.putClientProperty("Nimbus.Overrides", toolbarButtonSkin);
-        btnBack.setFont(App.SKIN.getIconFont());
+        btnBack.setFont(App.skin.getIconFont());
         btnBack.setText("\uf060");
         btnBack.addActionListener(e -> {
             String item = history.prevElement();
@@ -79,7 +79,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         btnNext = new JButton();
         btnNext.putClientProperty("Nimbus.Overrides", toolbarButtonSkin);
-        btnNext.setFont(App.SKIN.getIconFont());
+        btnNext.setFont(App.skin.getIconFont());
         btnNext.setText("\uf061");
         btnNext.addActionListener(e -> {
             String item = history.nextElement();
@@ -89,7 +89,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         JButton btnHome = new JButton();
         btnHome.putClientProperty("Nimbus.Overrides", toolbarButtonSkin);
-        btnHome.setFont(App.SKIN.getIconFont());
+        btnHome.setFont(App.skin.getIconFont());
         btnHome.setText("\uf015");
         btnHome.addActionListener(e -> {
             addBack(this.path);
@@ -99,7 +99,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         JButton btnUp = new JButton();
         btnUp.putClientProperty("Nimbus.Overrides", toolbarButtonSkin);
         btnUp.addActionListener(upAction);
-        btnUp.setFont(App.SKIN.getIconFont());
+        btnUp.setFont(App.skin.getIconFont());
         btnUp.setText("\uf062");
 
         smallToolbar.add(Box.createHorizontalStrut(5));
@@ -107,13 +107,13 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         JButton btnReload = new JButton();
         btnReload.putClientProperty("Nimbus.Overrides", toolbarButtonSkin);
         btnReload.addActionListener(reloadAction);
-        btnReload.setFont(App.SKIN.getIconFont());
+        btnReload.setFont(App.skin.getIconFont());
         btnReload.setText("\uf021");
 
 
         JButton btnMore = new JButton();
         btnMore.putClientProperty("Nimbus.Overrides", toolbarButtonSkin);
-        btnMore.setFont(App.SKIN.getIconFont());
+        btnMore.setFont(App.skin.getIconFont());
         btnMore.setText("\uf142");
         btnMore.addActionListener(e -> {
             JPopupMenu popupMenu = overflowMenuHandler.getOverflowMenu();
@@ -145,9 +145,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         add(toolBar, BorderLayout.NORTH);
 
-        folderView = new FolderView(this, text -> {
-            this.fileBrowser.updateRemoteStatus(text);
-        });
+        folderView = new FolderView(this, text -> this.fileBrowser.updateRemoteStatus(text));
 
         this.overflowMenuHandler.setFolderView(folderView);
 
@@ -169,6 +167,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
     public abstract String getPathText();
 
+    @Override
     public abstract String toString();
 
     public boolean close() {
@@ -236,7 +235,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
     }
 
     public enum PanelOrientation {
-        Left, Right
+        LEFT, RIGHT
     }
 
 }

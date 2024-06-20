@@ -18,7 +18,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -48,7 +47,7 @@ public class FolderView extends JPanel {
         TableCellLabelRenderer r1 = new TableCellLabelRenderer();
 
         table = new JTable(folderViewModel);
-        table.setSelectionForeground(App.SKIN.getDefaultSelectionForeground());
+        table.setSelectionForeground(App.skin.getDefaultSelectionForeground());
         table.setDefaultRenderer(FileInfo.class, r1);
         table.setDefaultRenderer(Long.class, r1);
         table.setDefaultRenderer(LocalDateTime.class, r1);
@@ -273,7 +272,7 @@ public class FolderView extends JPanel {
         System.out.println("Row height: " + r1.getHeight());
 
         fileList = new JList<>(folderViewModel);
-        fileList.setBackground(App.SKIN.getTableBackgroundColor());
+        fileList.setBackground(App.skin.getTableBackgroundColor());
         fileList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         fileList.setVisibleRowCount(-1);
         fileList.setCellRenderer(new FolderViewListCellRenderer());
@@ -429,7 +428,7 @@ public class FolderView extends JPanel {
     }
 
     public void sort(int index, SortOrder sortOrder) {
-        sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(index, sortOrder)));
+        sorter.setSortKeys(List.of(new SortKey(index, sortOrder)));
         sorter.sort();
     }
 

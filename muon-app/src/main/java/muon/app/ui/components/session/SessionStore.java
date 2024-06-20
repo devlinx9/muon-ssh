@@ -3,7 +3,6 @@ package muon.app.ui.components.session;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import muon.app.App;
 import muon.app.PasswordStore;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -14,14 +13,17 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
 
+import static util.Constants.SESSION_DB_FILE;
+import static util.Constants.configDir;
+
 public class SessionStore {
 
-    public synchronized static SavedSessionTree load() {
-        File file = Paths.get(App.CONFIG_DIR, App.SESSION_DB_FILE).toFile();
+    public static synchronized SavedSessionTree load() {
+        File file = Paths.get(configDir, SESSION_DB_FILE).toFile();
         return load(file);
     }
 
-    public synchronized static SavedSessionTree load(File file) {
+    public static synchronized SavedSessionTree load(File file) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -47,24 +49,20 @@ public class SessionStore {
         }
     }
 
-    public synchronized static void save(SessionFolder folder, String lastSelectionPath) {
-        File file = Paths.get(App.CONFIG_DIR, App.SESSION_DB_FILE).toFile();
+    public static synchronized void save(SessionFolder folder, String lastSelectionPath) {
+        File file = Paths.get(configDir, SESSION_DB_FILE).toFile();
         save(folder, lastSelectionPath, file);
     }
 
-    public synchronized static void save(SessionFolder folder, String lastSelectionPath, File file) {
+    public static synchronized void save(SessionFolder folder, String lastSelectionPath, File file) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             SavedSessionTree tree = new SavedSessionTree();
             tree.setFolder(folder);
             tree.setLastSelection(lastSelectionPath);
             objectMapper.writeValue(file, tree);
-            try {
-                PasswordStore.getSharedInstance().savePasswords(tree);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } catch (IOException e) {
+            PasswordStore.getSharedInstance().savePasswords(tree);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -85,7 +83,7 @@ public class SessionStore {
         return folder;
     }
 
-    public synchronized static DefaultMutableTreeNode getNode(SessionFolder folder) {
+    public static synchronized DefaultMutableTreeNode getNode(SessionFolder folder) {
         NamedItem item = new NamedItem();
         item.setName(folder.getName());
         item.setId(folder.getId());
@@ -102,7 +100,7 @@ public class SessionStore {
         return node;
     }
 
-    public synchronized static void updateFavourites(String id, List<String> localFolders, List<String> remoteFolders) {
+    public static synchronized void updateFavourites(String id, List<String> localFolders, List<String> remoteFolders) {
         SavedSessionTree tree = load();
         SessionFolder folder = tree.getFolder();
 

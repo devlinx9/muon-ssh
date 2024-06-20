@@ -1,10 +1,16 @@
 package muon.app.ui.components.session.processview;
 
 public class ProcessTableEntry {
-    private String name, user, time, tty,
-            args;
-    private float cpu, memory;
-    private int pid, ppid, nice;
+    private String name;
+    private String user;
+    private String time;
+    private String tty;
+    private String args;
+    private float cpu;
+    private float memory;
+    private int pid;
+    private int ppid;
+    private int nice;
 
     public String getName() {
         return name;

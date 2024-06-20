@@ -6,7 +6,6 @@ import muon.app.ssh.SshClient2;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.connection.ConnectionException;
-import net.schmizz.sshj.connection.channel.direct.PTYMode;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Shell;
 import net.schmizz.sshj.connection.channel.direct.SessionChannel;
@@ -58,9 +57,9 @@ public class SshTtyConnector implements DisposableTtyConnector {
             this.channel.allocatePTY(App.getGlobalSettings().getTerminalType(), App.getGlobalSettings().getTermWidth(),
                     App.getGlobalSettings().getTermHeight(), 0, 0, Collections.emptyMap());
 
-            try{
+            try {
                 this.channel.setEnvVar("LANG", "en_US.UTF-8");
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("Cannot set environment variable Lang: " + e.getMessage());
             }
@@ -203,5 +202,10 @@ public class SshTtyConnector implements DisposableTtyConnector {
     public boolean isInitialized() {
         return isInitiated.get();
     }
+
+     @Override
+      public boolean ready() throws IOException {
+        return myInputStreamReader.ready();
+      }
 
 }

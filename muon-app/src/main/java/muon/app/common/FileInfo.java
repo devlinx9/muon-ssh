@@ -49,8 +49,7 @@ public class FileInfo implements Serializable {
             if (this.extra != null && this.extra.length() > 0) {
                 Matcher matcher = USER_REGEX.matcher(this.extra);
                 if (matcher.find()) {
-                    String user = matcher.group(1);
-                    return user;
+                    return matcher.group(1);
                 }
             }
         } catch (Exception e) {

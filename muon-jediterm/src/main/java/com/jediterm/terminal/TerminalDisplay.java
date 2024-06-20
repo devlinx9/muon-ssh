@@ -1,10 +1,11 @@
 package com.jediterm.terminal;
 
-import com.jediterm.terminal.model.JediTerminal;
-import com.jediterm.terminal.model.TerminalSelection;
+import com.jediterm.core.Color;
+import com.jediterm.core.util.TermSize;
 import com.jediterm.terminal.emulator.mouse.MouseMode;
-
-import java.awt.*;
+import com.jediterm.terminal.model.JediTerminal;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface TerminalDisplay {
   // Size information
@@ -18,14 +19,8 @@ public interface TerminalDisplay {
 
   void beep();
 
-  @SuppressWarnings("DeprecatedIsStillUsed")
-  @Deprecated
-  Dimension requestResize(Dimension pendingResize, RequestOrigin origin, int cursorY, JediTerminal.ResizeHandler resizeHandler);
-
-  default Dimension requestResize(Dimension pendingResize, RequestOrigin origin, int cursorX, int cursorY,
-                                  JediTerminal.ResizeHandler resizeHandler) {
-    return requestResize(pendingResize, origin, cursorY, resizeHandler);
-  }
+  void requestResize(@NotNull TermSize newWinSize, RequestOrigin origin, int cursorX, int cursorY,
+                     JediTerminal.ResizeHandler resizeHandler);
 
   void scrollArea(final int scrollRegionTop, final int scrollRegionSize, int dy);
 
@@ -35,13 +30,21 @@ public interface TerminalDisplay {
 
   void setBlinkingCursor(boolean enabled);
 
-  void setWindowTitle(String name);
+  String getWindowTitle();
 
-  void setCurrentPath(String path);
+  void setWindowTitle(String name);
 
   void terminalMouseModeSet(MouseMode mode);
 
-  TerminalSelection getSelection();
-  
   boolean ambiguousCharsAreDoubleWidth();
+
+  default void setBracketedPasteMode(boolean enabled) {}
+
+  default @Nullable Color getWindowForeground() {
+    return null;
+  }
+
+  default @Nullable Color getWindowBackground() {
+    return null;
+  }
 }

@@ -1,41 +1,43 @@
 package com.jediterm.terminal;
 
 import com.jediterm.terminal.model.hyperlinks.LinkInfo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author traff
  */
-public class HyperlinkStyle extends TextStyle implements Runnable {
-  
+public class HyperlinkStyle extends TextStyle {
+  @NotNull
   private final LinkInfo myLinkInfo;
 
-  
+  @NotNull
   private final TextStyle myHighlightStyle;
 
-  
+  @Nullable
   private final TextStyle myPrevTextStyle;
 
-  
+  @NotNull
   private final HighlightMode myHighlightMode;
 
-  public HyperlinkStyle( TextStyle prevTextStyle,  LinkInfo hyperlinkInfo) {
+  public HyperlinkStyle(@NotNull TextStyle prevTextStyle, @NotNull LinkInfo hyperlinkInfo) {
     this(prevTextStyle.getForeground(), prevTextStyle.getBackground(), hyperlinkInfo, HighlightMode.HOVER, prevTextStyle);
   }
 
-  public HyperlinkStyle( TerminalColor foreground,
-                         TerminalColor background,
-                         LinkInfo hyperlinkInfo,
-                         HighlightMode mode,
-                         TextStyle prevTextStyle) {
+  public HyperlinkStyle(@Nullable TerminalColor foreground,
+                        @Nullable TerminalColor background,
+                        @NotNull LinkInfo hyperlinkInfo,
+                        @NotNull HighlightMode mode,
+                        @Nullable TextStyle prevTextStyle) {
     this(false, foreground, background, hyperlinkInfo, mode, prevTextStyle);
   }
 
   private HyperlinkStyle(boolean keepColors,
-                          TerminalColor foreground,
-                          TerminalColor background,
-                          LinkInfo hyperlinkInfo,
-                          HighlightMode mode,
-                          TextStyle prevTextStyle) {
+                         @Nullable TerminalColor foreground,
+                         @Nullable TerminalColor background,
+                         @NotNull LinkInfo hyperlinkInfo,
+                         @NotNull HighlightMode mode,
+                         @Nullable TextStyle prevTextStyle) {
     super(keepColors ? foreground : null, keepColors ? background : null);
     myHighlightStyle = new TextStyle.Builder()
         .setBackground(background)
@@ -47,32 +49,27 @@ public class HyperlinkStyle extends TextStyle implements Runnable {
     myPrevTextStyle = prevTextStyle;
   }
 
-  
+  @Nullable
   public TextStyle getPrevTextStyle() {
     return myPrevTextStyle;
   }
 
-  @Override
-  public void run() {
-    myLinkInfo.navigate();
-  }
-
-  
+  @NotNull
   public TextStyle getHighlightStyle() {
     return myHighlightStyle;
   }
 
-  
+  @NotNull
   public LinkInfo getLinkInfo() {
     return myLinkInfo;
   }
 
-  
+  @NotNull
   public HighlightMode getHighlightMode() {
     return myHighlightMode;
   }
 
-  
+  @NotNull
   @Override
   public Builder toBuilder() {
     return new Builder(this);
@@ -84,31 +81,31 @@ public class HyperlinkStyle extends TextStyle implements Runnable {
 
   public static class Builder extends TextStyle.Builder {
 
-    
-    private final LinkInfo myLinkInfo;
+    @NotNull
+    private LinkInfo myLinkInfo;
 
-    
-    private final TextStyle myHighlightStyle;
+    @NotNull
+    private TextStyle myHighlightStyle;
 
-    
-    private final TextStyle myPrevTextStyle;
+    @Nullable
+    private TextStyle myPrevTextStyle;
 
-    
-    private final HighlightMode myHighlightMode;
+    @NotNull
+    private HighlightMode myHighlightMode;
 
-    private Builder( HyperlinkStyle style) {
+    private Builder(@NotNull HyperlinkStyle style) {
       myLinkInfo = style.myLinkInfo;
       myHighlightStyle = style.myHighlightStyle;
       myPrevTextStyle = style.myPrevTextStyle;
       myHighlightMode = style.myHighlightMode;
     }
 
-    
+    @NotNull
     public HyperlinkStyle build() {
       return build(false);
     }
 
-    
+    @NotNull
     public HyperlinkStyle build(boolean keepColors) {
       TerminalColor foreground = myHighlightStyle.getForeground();
       TerminalColor background = myHighlightStyle.getBackground();

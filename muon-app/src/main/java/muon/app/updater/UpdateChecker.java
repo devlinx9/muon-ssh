@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.markusbernhardt.proxy.ProxySearch;
-import muon.app.App;
+import util.Constants;
 
 import java.net.ProxySelector;
 import java.net.URL;
@@ -31,7 +31,7 @@ public class UpdateChecker {
                     new TypeReference<VersionEntry>() {
                     });
             System.out.println("Latest release: " + latestRelease);
-            return latestRelease.compareTo(App.VERSION) > 0;
+            return latestRelease.compareTo(Constants.VERSION) > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -82,7 +82,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
         tree.setEditable(false);
         jsp = new JScrollPane(tree);
-        jsp.setBorder(new LineBorder(App.SKIN.getDefaultBorderColor(), 1));
+        jsp.setBorder(new LineBorder(App.skin.getDefaultBorderColor(), 1));
 
         btnNewHost = new JButton(bundle.getString("new_site"));
         btnNewHost.addActionListener(this);
@@ -426,7 +426,6 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
             JOptionPane.showMessageDialog(this, App.bundle.getString("no_hostname"));
             this.info = null;
             System.out.println("Returned");
-            return;
         } else {
             System.out.println("Returned disposing");
             dispose();

@@ -29,7 +29,7 @@ public class LocalKeyPanel extends JPanel {
         this.callback2 = callback2;
         JLabel lblTitle = new JLabel(bundle.getString("public_key_file"));
         txtKeyFile = new SkinnedTextField(20);
-        txtKeyFile.setBackground(App.SKIN.getDefaultBackground());
+        txtKeyFile.setBackground(App.skin.getDefaultBackground());
         txtKeyFile.setBorder(null);
         txtKeyFile.setEditable(false);
         Box hbox = Box.createHorizontalBox();
@@ -48,13 +48,9 @@ public class LocalKeyPanel extends JPanel {
         btnGenNewKey = new JButton(bundle.getString("generate_new_key"));
         btnRefresh = new JButton(bundle.getString("refresh"));
 
-        btnGenNewKey.addActionListener(e -> {
-            callback1.accept(null);
-        });
+        btnGenNewKey.addActionListener(e -> callback1.accept(null));
 
-        btnRefresh.addActionListener(e -> {
-            callback2.accept(null);
-        });
+        btnRefresh.addActionListener(e -> callback2.accept(null));
 
         Box hbox1 = Box.createHorizontalBox();
         hbox1.add(Box.createHorizontalGlue());

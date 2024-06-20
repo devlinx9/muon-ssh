@@ -32,13 +32,13 @@ public class SnippetPanel extends JPanel {
 
     public SnippetPanel(Consumer<String> callback, Consumer<String> callback2) {
         super(new BorderLayout());
-        setBorder(new LineBorder(App.SKIN.getDefaultBorderColor(), 1));
+        setBorder(new LineBorder(App.skin.getDefaultBorderColor(), 1));
         Box topBox = Box.createHorizontalBox();
         topBox.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 1, 0, App.SKIN.getDefaultBorderColor()),
+                new MatteBorder(0, 0, 1, 0, App.skin.getDefaultBorderColor()),
                 new EmptyBorder(10, 10, 10, 10)));
         JLabel lblSearch = new JLabel();
-        lblSearch.setFont(App.SKIN.getIconFont());
+        lblSearch.setFont(App.skin.getIconFont());
         lblSearch.setText(FontAwesomeContants.FA_SEARCH);
         topBox.add(lblSearch);
         topBox.add(Box.createHorizontalStrut(10));
@@ -64,7 +64,7 @@ public class SnippetPanel extends JPanel {
         topBox.add(searchTextField);
 
         listView.setCellRenderer(new SnippetListRenderer());
-        listView.setBackground(App.SKIN.getTableBackgroundColor());
+        listView.setBackground(App.skin.getTableBackgroundColor());
 
         btnAdd = new JButton(bundle.getString("add"));
         btnEdit = new JButton(bundle.getString("edit"));
@@ -172,7 +172,7 @@ public class SnippetPanel extends JPanel {
 
         Box bottomBox = Box.createHorizontalBox();
         bottomBox.setBorder(new CompoundBorder(
-                new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()),
+                new MatteBorder(1, 0, 0, 0, App.skin.getDefaultBorderColor()),
                 new EmptyBorder(10, 10, 10, 10)));
         bottomBox.add(btnInsert);
         bottomBox.add(Box.createHorizontalStrut(5));

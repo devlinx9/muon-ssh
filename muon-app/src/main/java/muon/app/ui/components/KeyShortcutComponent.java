@@ -61,7 +61,7 @@ public class KeyShortcutComponent extends JComponent {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(getBackground());
         g2.fillRect(0, 0, getWidth(), getHeight());
-        g2.setColor(App.SKIN.getSelectedTabColor());
+        g2.setColor(App.skin.getSelectedTabColor());
 
         Insets inset = getInsets();
 

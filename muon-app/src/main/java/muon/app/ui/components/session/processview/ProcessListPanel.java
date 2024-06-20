@@ -38,9 +38,7 @@ public class ProcessListPanel extends JPanel {
         model = new ProcessTableModel();
         table = new JTable(model);
 
-        table.getSelectionModel().addListSelectionListener(e -> {
-            enableProcessesButtons();
-        });
+        table.getSelectionModel().addListSelectionListener(e -> enableProcessesButtons());
 
         ProcessListRenderer renderer = new ProcessListRenderer();
         table.setDefaultRenderer(Object.class, renderer);
@@ -71,7 +69,7 @@ public class ProcessListPanel extends JPanel {
             }
         };
 
-        TableRowSorter<ProcessTableModel> sorter = new TableRowSorter<ProcessTableModel>(
+        TableRowSorter<ProcessTableModel> sorter = new TableRowSorter<>(
                 model);
         sorter.setRowFilter(rowFilter);
         table.setRowSorter(sorter);
@@ -108,9 +106,7 @@ public class ProcessListPanel extends JPanel {
 
         JButton btnRefresh = new JButton(bundle.getString("refresh"));
         b1.add(btnRefresh);
-        btnRefresh.addActionListener(e -> {
-            this.consumer.accept(null, CommandMode.LIST_PROCESS);
-        });
+        btnRefresh.addActionListener(e -> this.consumer.accept(null, CommandMode.LIST_PROCESS));
 
         killPopup = new JPopupMenu();
 

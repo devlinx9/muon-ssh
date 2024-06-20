@@ -88,7 +88,7 @@ public class ProcessViewer extends Page {
         holder.disableUi(stopFlag);
         switch (mode) {
             case KILL_AS_USER:
-                holder.EXECUTOR.execute(() -> {
+                holder.executor.execute(() -> {
                     try {
                         if (holder.getRemoteSessionInstance().exec(cmd, stopFlag, new StringBuilder(),
                                 new StringBuilder()) != 0) {
@@ -107,7 +107,7 @@ public class ProcessViewer extends Page {
 
                 break;
             case KILL_AS_ROOT:
-                holder.EXECUTOR.execute(() -> {
+                holder.executor.execute(() -> {
                     if (SudoUtils.runSudo(cmd, holder.getRemoteSessionInstance(),holder.getInfo().getPassword()) != 0) {
                         if (!holder.isSessionClosed()) {
                             JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
@@ -120,7 +120,7 @@ public class ProcessViewer extends Page {
 
                 break;
             case LIST_PROCESS:
-                holder.EXECUTOR.execute(() -> {
+                holder.executor.execute(() -> {
                     updateProcessList(stopFlag);
                     holder.enableUi();
                 });
@@ -130,7 +130,8 @@ public class ProcessViewer extends Page {
 
     public List<ProcessTableEntry> getProcessList(RemoteSessionInstance instance, AtomicBoolean stopFlag)
             throws Exception {
-        StringBuilder out = new StringBuilder(), err = new StringBuilder();
+        StringBuilder out = new StringBuilder();
+        StringBuilder err = new StringBuilder();
         int ret = instance.exec(ScriptLoader.loadShellScript("/scripts/ps.sh"),
                 // "ps -e -o pid=pid -o pcpu -o rss -o etime -o ppid -o user -o nice -o args -ww
                 // --sort pid",

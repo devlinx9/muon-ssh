@@ -22,7 +22,7 @@ public class SearchTableRenderer implements TableCellRenderer {
         this.textLabel = new JLabel();
         this.iconLabel = new JLabel();
         this.iconLabel
-                .setFont(App.SKIN.getIconFont().deriveFont(Font.PLAIN, 20));
+                .setFont(App.skin.getIconFont().deriveFont(Font.PLAIN, 20));
         panel.add(iconLabel, BorderLayout.WEST);
         panel.add(textLabel);
     }
@@ -31,8 +31,8 @@ public class SearchTableRenderer implements TableCellRenderer {
                                                    boolean isSelected, boolean hasFocus, int row, int column) {
         SearchResult ent = this.model.getItemAt(row);
         if (column == 0) {
-            iconLabel.setText(ent.getType() == "Folder" ? "\uf114"
-                    : (ent.getType() == "File" ? "\uf016" : "\uf0c1"));
+            iconLabel.setText(ent.getType().equals("Folder") ? "\uf114"
+                    : (ent.getType().equals("File") ? "\uf016" : "\uf0c1"));
             textLabel.setText(ent.getName());
         } else {
             label.setText(value.toString());

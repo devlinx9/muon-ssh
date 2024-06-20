@@ -50,11 +50,8 @@ public class BackgroundTransferPanel extends JPanel {
     public void removePendingTransfers(int sessionId) {
         if (!SwingUtilities.isEventDispatchThread()) {
             try {
-                SwingUtilities.invokeAndWait(() -> {
-                    stopSession(sessionId);
-                });
+                SwingUtilities.invokeAndWait(() -> stopSession(sessionId));
             } catch (InvocationTargetException | InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } else {
@@ -90,7 +87,7 @@ public class BackgroundTransferPanel extends JPanel {
             progressLabel = new JLabel("Waiting...");
             progressLabel.setBorder(new EmptyBorder(5, 0, 5, 5));
             JLabel removeLabel = new JLabel();
-            removeLabel.setFont(App.SKIN.getIconFont());
+            removeLabel.setFont(App.skin.getIconFont());
             removeLabel.setText(FontAwesomeContants.FA_TRASH);
 
             removeLabel.addMouseListener(new MouseAdapter() {
@@ -129,19 +126,16 @@ public class BackgroundTransferPanel extends JPanel {
         @Override
         public void progress(long processedBytes, long totalBytes, long processedCount, long totalCount,
                              FileTransfer fileTransfer) {
-            SwingUtilities.invokeLater(() -> {
-                progressBar.setValue(totalBytes > 0 ? ((int) ((processedBytes * 100) / totalBytes)) : 0);
-            });
+            SwingUtilities.invokeLater(() ->
+                    progressBar.setValue(totalBytes > 0 ? ((int) ((processedBytes * 100) / totalBytes)) : 0));
         }
 
         @Override
         public void error(String cause, FileTransfer fileTransfer) {
             transferCount.decrementAndGet();
             callback.accept(transferCount.get());
-            SwingUtilities.invokeLater(() -> {
-                progressLabel.setText(String.format("Error while copying from %s to %s", fileTransfer.getSourceName(),
-                        fileTransfer.getTargetName()));
-            });
+            SwingUtilities.invokeLater(() -> progressLabel.setText(String.format("Error while copying from %s to %s", fileTransfer.getSourceName(),
+                    fileTransfer.getTargetName())));
         }
 
         @Override

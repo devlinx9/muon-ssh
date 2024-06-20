@@ -8,7 +8,6 @@ import com.sun.jna.platform.win32.WinReg;
 import util.RegUtil;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -18,16 +17,15 @@ import java.util.Map;
 
 /**
  * @author subhro
- *
  */
 public class WinScpImporter {
-    private static final String WinSCPRegKey = "Software\\Martin Prikryl\\WinSCP 2\\Sessions";
+    private static final String WIN_SCP_REG_KEY = "Software\\Martin Prikryl\\WinSCP 2\\Sessions";
 
     public static Map<String, String> getKeyNames() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         try {
             String[] keys = Advapi32Util
-                    .registryGetKeys(WinReg.HKEY_CURRENT_USER, WinSCPRegKey);
+                    .registryGetKeys(WinReg.HKEY_CURRENT_USER, WIN_SCP_REG_KEY);
             for (String key : keys) {
                 String decodedKey = key.replace("%20", " ");
                 map.put(key, decodedKey);
@@ -46,30 +44,30 @@ public class WinScpImporter {
 
         for (String key : keys) {
             if (RegUtil.regGetInt(WinReg.HKEY_CURRENT_USER,
-                    WinSCPRegKey + "\\" + key, "FSProtocol") == 0) {
+                    WIN_SCP_REG_KEY + "\\" + key, "FSProtocol") == 0) {
                 String host = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        WinSCPRegKey + "\\" + key, "HostName");
+                        WIN_SCP_REG_KEY + "\\" + key, "HostName");
                 int port = RegUtil.regGetInt(WinReg.HKEY_CURRENT_USER,
-                        WinSCPRegKey + "\\" + key, "PortNumber");
+                        WIN_SCP_REG_KEY + "\\" + key, "PortNumber");
                 if (port == 0)
                     port = 22;
                 String user = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        WinSCPRegKey + "\\" + key, "UserName");
+                        WIN_SCP_REG_KEY + "\\" + key, "UserName");
                 String keyfile = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        WinSCPRegKey + "\\" + key, "PublicKeyFile");
+                        WIN_SCP_REG_KEY + "\\" + key, "PublicKeyFile");
 
                 String proxyHost = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        WinSCPRegKey + "\\" + key, "ProxyHost");
+                        WIN_SCP_REG_KEY + "\\" + key, "ProxyHost");
                 int proxyPort = RegUtil.regGetInt(WinReg.HKEY_CURRENT_USER,
-                        WinSCPRegKey + "\\" + key, "ProxyPort");
+                        WIN_SCP_REG_KEY + "\\" + key, "ProxyPort");
                 String proxyUser = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        WinSCPRegKey + "\\" + key, "ProxyUsername");
+                        WIN_SCP_REG_KEY + "\\" + key, "ProxyUsername");
 
                 String proxyPass = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        WinSCPRegKey + "\\" + key, "ProxyPassword");
+                        WIN_SCP_REG_KEY + "\\" + key, "ProxyPassword");
 
                 int proxyType = RegUtil.regGetInt(WinReg.HKEY_CURRENT_USER,
-                        WinSCPRegKey + "\\" + key, "ProxyMethod");
+                        WIN_SCP_REG_KEY + "\\" + key, "ProxyMethod");
                 if (proxyType == 1) {
                     proxyType = 2;
                 } else if (proxyType == 2) {

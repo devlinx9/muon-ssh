@@ -87,7 +87,7 @@ public class UtilityPage extends Page {
         LayoutUtilities.equalizeSize(b1, b2, b3, b4, b5, b6);
 
         vbox.setBorder(
-                new MatteBorder(0, 0, 0, 1, App.SKIN.getDefaultBorderColor()));
+                new MatteBorder(0, 0, 0, 1, App.skin.getDefaultBorderColor()));
 
         b1.setAlignmentX(Box.LEFT_ALIGNMENT);
         vbox.add(b1);
@@ -127,29 +127,17 @@ public class UtilityPage extends Page {
         revalidate();
         repaint();
 
-        b1.addActionListener(e -> {
-            cardLayout.show(cardPanel, "SYS_INFO");
-        });
+        b1.addActionListener(e -> cardLayout.show(cardPanel, "SYS_INFO"));
 
-        b2.addActionListener(e -> {
-            cardLayout.show(cardPanel, "SYS_LOAD");
-        });
+        b2.addActionListener(e -> cardLayout.show(cardPanel, "SYS_LOAD"));
 
-        b3.addActionListener(e -> {
-            cardLayout.show(cardPanel, "SYSTEMD_SERVICES");
-        });
+        b3.addActionListener(e -> cardLayout.show(cardPanel, "SYSTEMD_SERVICES"));
 
-        b4.addActionListener(e -> {
-            cardLayout.show(cardPanel, "PROC_PORT");
-        });
+        b4.addActionListener(e -> cardLayout.show(cardPanel, "PROC_PORT"));
 
-        b5.addActionListener(e -> {
-            cardLayout.show(cardPanel, "SSH_KEYS");
-        });
+        b5.addActionListener(e -> cardLayout.show(cardPanel, "SSH_KEYS"));
 
-        b6.addActionListener(e -> {
-            cardLayout.show(cardPanel, "NET_TOOLS");
-        });
+        b6.addActionListener(e -> cardLayout.show(cardPanel, "NET_TOOLS"));
 
         JPanel p1 = new SysInfoPanel(holder);
         JPanel p2 = new SysLoadPage(holder);

@@ -29,8 +29,8 @@ public class FontItemRenderer extends JLabel implements ListCellRenderer<String>
         Font font = FontUtils.loadTerminalFont(value).deriveFont(Font.PLAIN, 14);
         setFont(font);
         setText(FontUtils.TERMINAL_FONTS.get(value));
-        setBackground(isSelected ? App.SKIN.getAddressBarSelectionBackground() : App.SKIN.getSelectedTabColor());
-        setForeground(isSelected ? App.SKIN.getDefaultSelectionForeground() : App.SKIN.getDefaultForeground());
+        setBackground(isSelected ? App.skin.getAddressBarSelectionBackground() : App.skin.getSelectedTabColor());
+        setForeground(isSelected ? App.skin.getDefaultSelectionForeground() : App.skin.getDefaultForeground());
         return this;
     }
 

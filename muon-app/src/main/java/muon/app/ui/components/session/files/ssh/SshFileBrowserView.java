@@ -121,7 +121,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
     public void render(String path, boolean useCache) {
         System.out.println("Rendering: " + path + " caching: " + useCache);
         this.path = path;
-        fileBrowser.getHolder().EXECUTOR.submit(() -> {
+        fileBrowser.getHolder().executor.submit(() -> {
             this.fileBrowser.disableUi();
             try {
                 while (!fileBrowser.isCloseRequested()) {
@@ -147,6 +147,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                         this.fileBrowser.getHolder().reconnect();
 
                         e.printStackTrace();
+                        // TODO i18n
                         if (JOptionPane.showConfirmDialog(null,
                                 "Unable to connect to server " + this.fileBrowser.getInfo().getName() + " at "
                                         + this.fileBrowser.getInfo().getHost()

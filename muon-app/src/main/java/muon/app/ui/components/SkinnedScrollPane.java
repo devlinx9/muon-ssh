@@ -41,4 +41,19 @@ public class SkinnedScrollPane extends JScrollPane {
 
     }
 
+    @Override
+    public JScrollBar createHorizontalScrollBar() {
+        JScrollBar sb = super.createHorizontalScrollBar();
+        sb.setUnitIncrement(10);
+        sb.setBlockIncrement(20);
+        return sb;
+    }
+
+    @Override
+    public JScrollBar createVerticalScrollBar() {
+        JScrollBar sb = super.createVerticalScrollBar();
+        sb.setUnitIncrement(10);
+        sb.setBlockIncrement(20);
+        return sb;
+    }
 }

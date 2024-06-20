@@ -36,10 +36,10 @@ public class TerminalHolder extends Page implements AutoCloseable {
         btn.addActionListener(e -> {
             showSnippets();
         });
-        btn.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+        btn.setFont(App.skin.getIconFont().deriveFont(16.0f));
         btn.setText(FontAwesomeContants.FA_BOOKMARK);
-        btn.putClientProperty("Nimbus.Overrides", App.SKIN.createTabButtonSkin());
-        btn.setForeground(App.SKIN.getInfoTextForeground());
+        btn.putClientProperty("Nimbus.Overrides", App.skin.createTabButtonSkin());
+        btn.setForeground(App.skin.getInfoTextForeground());
         tabs.getButtonsBox().add(btn);
 
         long t1 = System.currentTimeMillis();

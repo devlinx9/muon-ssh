@@ -18,7 +18,7 @@ public class FolderViewKeyHandler extends KeyAdapter {
     private String typedString = "";
     private long lastTime = 0L;
 
-    private final long timeFactor = 1000L;
+    private final static long TIME_FACTOR = 1000L;
 
     public FolderViewKeyHandler(JTable table, FolderViewTableModel model) {
         super();
@@ -65,7 +65,7 @@ public class FolderViewKeyHandler extends KeyAdapter {
                 table.getSelectedRows().length > 0 ? table.getSelectedRows()[0]
                         : -1,
                 table);
-        if (time - lastTime < timeFactor) {
+        if (time - lastTime < TIME_FACTOR) {
             typedString += c;
             if ((prefix.length() == 1) && (c == prefix.charAt(0))) {
                 // Subsequent same key presses move the keyboard focus to the

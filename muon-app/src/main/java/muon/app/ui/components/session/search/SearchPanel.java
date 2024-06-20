@@ -38,7 +38,7 @@ import static muon.app.App.bundle;
  *
  */
 public class SearchPanel extends Page {
-    private static final String lsRegex1 = "([dflo])\\|(.*)";
+    private static final String LS_REGEX_1 = "([dflo])\\|(.*)";
     private final SessionContentPanel holder;
     private final AtomicBoolean init = new AtomicBoolean(false);
     private JTextField txtName;
@@ -51,12 +51,15 @@ public class SearchPanel extends Page {
     private JButton btnSearch;
     private SearchTableModel model;
     private JTable table;
-    private JLabel lblStat, lblCount;
+    private JLabel lblStat;
+    private JLabel lblCount;
     private Pattern pattern;
-    private JRadioButton radFileName, radFileContents;
+    private JRadioButton radFileName;
+    private JRadioButton radFileContents;
     private JCheckBox chkIncludeCompressed;
     private String searchScript;
-    private JButton btnShowInBrowser, btnCopyPath;
+    private JButton btnShowInBrowser;
+    private JButton btnCopyPath;
 
     /**
      *
@@ -179,9 +182,7 @@ public class SearchPanel extends Page {
 
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         this.holder.disableUi(stopFlag);
-        holder.EXECUTOR.submit(() -> {
-            findAsync(scriptBuffer, stopFlag);
-        });
+        holder.executor.submit(() -> findAsync(scriptBuffer, stopFlag));
     }
 
     private void findAsync(StringBuilder scriptBuffer, AtomicBoolean stopFlag) {
@@ -242,7 +243,7 @@ public class SearchPanel extends Page {
 
     private SearchResult parseOutput(String text) {
         if (this.pattern == null) {
-            this.pattern = Pattern.compile(lsRegex1);
+            this.pattern = Pattern.compile(LS_REGEX_1);
         }
 
         Matcher matcher = this.pattern.matcher(text);
@@ -311,9 +312,7 @@ public class SearchPanel extends Page {
         JLabel lblName = new JLabel(bundle.getString("search_for"));
         lblName.setAlignmentX(LEFT_ALIGNMENT);
         txtName = new SkinnedTextField(20);
-        txtName.addActionListener(e -> {
-            find();
-        });
+        txtName.addActionListener(e -> find());
         Dimension pref = txtName.getPreferredSize();
         txtName.setMaximumSize(pref);
         txtName.setAlignmentX(LEFT_ALIGNMENT);
@@ -437,9 +436,7 @@ public class SearchPanel extends Page {
         btnSearch = new JButton(bundle.getString("search"));
         btnSearch.setAlignmentX(LEFT_ALIGNMENT);
 
-        btnSearch.addActionListener(e -> {
-            find();
-        });
+        btnSearch.addActionListener(e -> find());
 
         model = new SearchTableModel();
 
@@ -554,7 +551,7 @@ public class SearchPanel extends Page {
         statBox.add(lblCount);
         statBox.add(Box.createRigidArea(new Dimension(10, 25)));
         statBox.setBorder(
-                new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()));
+                new MatteBorder(1, 0, 0, 0, App.skin.getDefaultBorderColor()));
 
         btnShowInBrowser = new JButton(bundle.getString("show_location"));
         btnCopyPath = new JButton(bundle.getString("copy_path"));
@@ -605,7 +602,7 @@ public class SearchPanel extends Page {
 
         JPanel pp = new JPanel(new BorderLayout());
         pp.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 0, 1, App.SKIN.getSelectedTabColor()),
+                new MatteBorder(0, 0, 0, 1, App.skin.getSelectedTabColor()),
                 new EmptyBorder(5, 5, 5, 5)));
         pp.add(jspB1);
 

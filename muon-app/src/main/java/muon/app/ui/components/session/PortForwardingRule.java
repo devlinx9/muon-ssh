@@ -6,8 +6,10 @@ package muon.app.ui.components.session;
 public class PortForwardingRule {
 
     private PortForwardingType type;
-    private String host, bindHost;
-    private int sourcePort, targetPort;
+    private String host;
+    private String bindHost;
+    private int sourcePort;
+    private int targetPort;
 
     /**
      * @param type       Local or remote

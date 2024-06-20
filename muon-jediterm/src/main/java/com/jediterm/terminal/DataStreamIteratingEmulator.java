@@ -32,7 +32,6 @@ public abstract class DataStreamIteratingEmulator implements Emulator {
   public void next() throws IOException {
     try {
       char b = myDataStream.getChar();
-
       processChar(b, myTerminal);
     }
     catch (TerminalDataStream.EOF e) {
