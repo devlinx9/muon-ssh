@@ -26,8 +26,17 @@ public class LocalMenuHandler {
     private final FileBrowser fileBrowser;
     private final LocalFileOperations fileOperations;
     private final LocalFileBrowserView fileBrowserView;
-    private JMenuItem mOpenInNewTab, mRename, mDelete, mNewFile, mNewFolder, mCopy, mPaste, mCut, mAddToFav, mOpen,
-            mOpenInFileExplorer;
+    private JMenuItem mOpenInNewTab;
+    private JMenuItem mRename;
+    private JMenuItem mDelete;
+    private JMenuItem mNewFile;
+    private JMenuItem mNewFolder;
+    private JMenuItem mCopy;
+    private JMenuItem mPaste;
+    private JMenuItem mCut;
+    private JMenuItem mAddToFav;
+    private JMenuItem mOpen;
+    private JMenuItem mOpenInFileExplorer;
     private FolderView folderView;
 
     public LocalMenuHandler(FileBrowser fileBrowser, LocalFileBrowserView fileBrowserView) {
@@ -137,7 +146,6 @@ public class LocalMenuHandler {
         popup.removeAll();
 
         //create Common Menu Items
-        popup.add(mDelete);
         popup.add(mNewFolder);
         popup.add(mNewFile);
         // check only if folder is selected
@@ -155,6 +163,7 @@ public class LocalMenuHandler {
             }
             popup.add(mRename);
         }
+        popup.add(mDelete);
     }
 
     private void open() {
@@ -198,9 +207,16 @@ public class LocalMenuHandler {
      * Delete files and refresh folder view.
      *
      * @param selectedFiles Files need to be deleted.
-     * @param baseFolder Used to refresh the folder view.
+     * @param baseFolder    Used to refresh the folder view.
      */
     private void delete(FileInfo[] selectedFiles, String baseFolder) {
+        boolean delete = true;
+        if (App.getGlobalSettings().isConfirmBeforeDelete()) {
+            delete = JOptionPane.showConfirmDialog(null, "Delete selected files?") == JOptionPane.YES_OPTION;
+        }
+        if (!delete) {
+            return;
+        }
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             fileBrowser.disableUi();
             for (FileInfo f : selectedFiles) {
@@ -245,8 +261,8 @@ public class LocalMenuHandler {
         if (arr.length > 0) {
             BookmarkManager.addEntry(null,
                                      Arrays.stream(arr)
-                            .filter(a -> a.getType() == FileType.DIR_LINK || a.getType() == FileType.DIRECTORY)
-                            .map(a -> a.getPath()).collect(Collectors.toList()));
+                                             .filter(a -> a.getType() == FileType.DIR_LINK || a.getType() == FileType.DIRECTORY)
+                                             .map(a -> a.getPath()).collect(Collectors.toList()));
         } else if (arr.length == 0) {
             BookmarkManager.addEntry(null, fileBrowserView.getCurrentDirectory());
         }
