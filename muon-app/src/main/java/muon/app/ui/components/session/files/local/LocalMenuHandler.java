@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -39,10 +40,21 @@ public class LocalMenuHandler {
         this.folderView = folderView;
         InputMap map = folderView.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap act = folderView.getActionMap();
-        this.initMenuItems();
+        this.initMenuItems(map, act);
     }
 
-    private void initMenuItems() {
+    /**
+     * Add shortcut for menu item
+     */
+    private static void addShortcut(JMenuItem menuItem, KeyStroke keyStroke, InputMap inputMap,
+                                    ActionMap actionMap, String actionKey, Action action) {
+        menuItem.addActionListener(action);
+        inputMap.put(keyStroke, actionKey);
+        actionMap.put(actionKey, action);
+        menuItem.setAccelerator(keyStroke);
+    }
+
+    private void initMenuItems(InputMap map, ActionMap act) {
         mOpen = new JMenuItem(bundle.getString("open"));
         mOpen.addActionListener(new ActionListener() {
             @Override
@@ -81,7 +93,19 @@ public class LocalMenuHandler {
         });
 
         mDelete = new JMenuItem(bundle.getString("delete"));
-        mDelete.addActionListener(e -> delete(folderView.getSelectedFiles()));
+        AbstractAction aDelete = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                delete(folderView.getSelectedFiles(), fileBrowserView.getCurrentDirectory());
+            }
+        };
+
+        // create delete file shortcut
+        mDelete.addActionListener(aDelete);
+        KeyStroke ksDelete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
+        map.put(ksDelete, "ksDelete");
+        act.put("ksDelete", aDelete);
+        mDelete.setAccelerator(ksDelete);
 
         mNewFile = new JMenuItem(bundle.getString("new_file"));
         mNewFile.addActionListener(e -> newFile());
@@ -111,30 +135,26 @@ public class LocalMenuHandler {
 
     private void createMenuContext(JPopupMenu popup, FileInfo[] files) {
         popup.removeAll();
-        int selectionCount = files.length;
-        createBuitinItems1(selectionCount, popup, files);
-        createBuitinItems2(selectionCount, popup);
-    }
 
-    private void createBuitinItems1(int selectionCount, JPopupMenu popup, FileInfo[] selectedFiles) {
+        //create Common Menu Items
+        popup.add(mDelete);
+        popup.add(mNewFolder);
+        popup.add(mNewFile);
+        // check only if folder is selected
+        popup.add(mAddToFav);
+
+        int selectionCount = files.length;
+        //create Menu Items For Single Selection
         if (selectionCount == 1) {
-            if (selectedFiles[0].getType() == FileType.FILE || selectedFiles[0].getType() == FileType.FILE_LINK) {
+            if (files[0].getType() == FileType.FILE || files[0].getType() == FileType.FILE_LINK) {
                 popup.add(mOpen);
             }
-            if (selectedFiles[0].getType() == FileType.DIRECTORY || selectedFiles[0].getType() == FileType.DIR_LINK) {
+            if (files[0].getType() == FileType.DIRECTORY || files[0].getType() == FileType.DIR_LINK) {
                 popup.add(mOpenInNewTab);
                 popup.add(mOpenInFileExplorer);
             }
             popup.add(mRename);
         }
-
-    }
-
-    private void createBuitinItems2(int selectionCount, JPopupMenu popup) {
-        popup.add(mNewFolder);
-        popup.add(mNewFile);
-        // check only if folder is selected
-        popup.add(mAddToFav);
     }
 
     private void open() {
@@ -174,7 +194,13 @@ public class LocalMenuHandler {
         });
     }
 
-    private void delete(FileInfo[] selectedFiles) {
+    /**
+     * Delete files and refresh folder view.
+     *
+     * @param selectedFiles Files need to be deleted.
+     * @param baseFolder Used to refresh the folder view.
+     */
+    private void delete(FileInfo[] selectedFiles, String baseFolder) {
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             fileBrowser.disableUi();
             for (FileInfo f : selectedFiles) {
@@ -184,6 +210,7 @@ public class LocalMenuHandler {
                     e.printStackTrace();
                 }
             }
+            fileBrowserView.render(baseFolder);
             fileBrowser.enableUi();
         });
     }

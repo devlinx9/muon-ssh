@@ -453,9 +453,8 @@ public class SshClient2 implements Closeable {
         return this.sshj.newLocalPortForwarder(parameters, serverSocket);
     }
 
-    @SuppressWarnings("deprecation")
     public RemotePortForwarder getRemotePortForwarder() {
-        this.sshj.getTransport().setHeartbeatInterval(30);
+        this.sshj.getConnection().getKeepAlive().setKeepAliveInterval(30);
         return this.sshj.getRemotePortForwarder();
     }
 
