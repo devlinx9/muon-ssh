@@ -52,12 +52,12 @@ public class LineGraph extends JComponent {
             double min = Float.MAX_VALUE;
             double max = Float.MIN_VALUE;
 
-            for (int i = 0; i < values.length; i++) {
-                if (values[i] < min) {
-                    min = values[i];
+            for (double value : values) {
+                if (value < min) {
+                    min = value;
                 }
-                if (values[i] > max) {
-                    max = values[i];
+                if (value > max) {
+                    max = value;
                 }
             }
 
@@ -76,7 +76,7 @@ public class LineGraph extends JComponent {
 
         int height = getHeight() - 6;
 
-        float stepy = height / 4;
+        float stepy = (float) height / 4;
 
         int ascent = g2.getFontMetrics().getAscent();
 

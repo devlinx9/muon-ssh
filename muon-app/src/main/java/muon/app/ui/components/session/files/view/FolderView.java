@@ -31,8 +31,8 @@ public class FolderView extends JPanel {
     private final JList<FileInfo> fileList;
     private final FolderViewEventListener listener;
     private final JPopupMenu popup;
-    private final TableRowSorter<? extends Object> sorter;
-    private boolean showHiddenFiles = false;
+    private final TableRowSorter<?> sorter;
+    private boolean showHiddenFiles;
     private List<FileInfo> files;
 
     public FolderView(FolderViewEventListener listener, Consumer<String> statusCallback) {
@@ -251,7 +251,7 @@ public class FolderView extends JPanel {
 
         resizeColumnWidth(table);
 
-        log.debug("Row height: " + r1.getHeight());
+        log.debug("Row height: {}", r1.getHeight());
 
         fileList = new JList<>(folderViewModel);
         fileList.setBackground(App.SKIN.getTableBackgroundColor());
@@ -300,7 +300,7 @@ public class FolderView extends JPanel {
 
     private void selectRow(MouseEvent e) {
         int r = table.rowAtPoint(e.getPoint());
-        log.debug("Row at point: " + r);
+        log.debug("Row at point: {}", r);
         if (r == -1) {
             table.clearSelection();
         } else {
@@ -318,7 +318,7 @@ public class FolderView extends JPanel {
 
     private void selectListRow(MouseEvent e) {
         int r = fileList.locationToIndex(e.getPoint());
-        log.debug("Row at point: " + r);
+        log.debug("Row at point: {}", r);
         if (r == -1) {
             fileList.clearSelection();
         } else {

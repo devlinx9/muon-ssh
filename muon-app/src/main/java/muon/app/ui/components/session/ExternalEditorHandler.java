@@ -104,10 +104,10 @@ public class ExternalEditorHandler extends JDialog {
         for (FileModificationInfo info : files) {
             totalSize += info.localFile.length();
         }
-        log.info("Total size: " + totalSize);
+        log.info("Total size: {}", totalSize);
         long totalBytes = 0L;
         for (FileModificationInfo info : files) {
-            log.info("Total size: " + totalSize + " opcying: " + info);
+            log.info("Total size: {} opcying: {}", totalSize, info);
             totalBytes += saveRemoteFile(info, totalSize, totalBytes);
         }
         fileWatcher.resumeWatching();
@@ -148,11 +148,7 @@ public class ExternalEditorHandler extends JDialog {
                 final int progress = (int) ((totalBytes * 100) / total);
                 SwingUtilities.invokeLater(() -> progressBar.setValue(progress));
             }
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            log.error(e.getMessage(), e);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             log.error(e.getMessage(), e);
         }
         return info.remoteFile.getSize();

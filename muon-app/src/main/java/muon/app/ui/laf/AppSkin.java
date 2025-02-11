@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.RoundedButtonPainter;
+import muon.app.ui.components.session.files.view.AddressBarBreadCrumbs;
 import util.Language;
 
 import javax.swing.*;
@@ -20,17 +21,11 @@ import java.io.InputStream;
 @Slf4j
 public abstract class AppSkin {
     protected UIDefaults defaults;
-    /**
-     * -- GETTER --
-     *
-     * @return the laf
-     */
+
     @Getter
     protected NimbusLookAndFeel laf;
 
-    /**
-     *
-     */
+
     public AppSkin() {
         initDefaults();
     }
@@ -132,7 +127,7 @@ public abstract class AppSkin {
 
     public UIDefaults getSplitPaneSkin() {
         UIDefaults uiDefaults = new UIDefaults();
-        Painter<? extends Object> painter = (Painter<Object>) (g, object, width, height) -> {
+        Painter<?> painter = (Painter<Object>) (g, object, width, height) -> {
             g.setColor(defaults.getColor("control"));
             g.fill(new Rectangle(0, 0, width, height));
         };
@@ -403,20 +398,7 @@ public abstract class AppSkin {
 
         toolBarButtonSkin.put("Button.foreground", UIManager.getColor("scrollbar"));
 
-        toolBarButtonSkin.put("Button[Enabled].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Focused].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Default].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Default+Focused].backgroundPainter", toolBarButtonPainterNormal);
-
-        toolBarButtonSkin.put("Button[Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Focused+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Default+Focused+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Default+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-
-        toolBarButtonSkin.put("Button[MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Focused+MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Default+MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Default+Focused+MouseOver].backgroundPainter", toolBarButtonPainterHot);
+        AddressBarBreadCrumbs.setTolbarButtonSkin(toolBarButtonPainterNormal, toolBarButtonPainterHot, toolBarButtonPainterPressed, toolBarButtonSkin);
 
         return toolBarButtonSkin;
     }
@@ -443,26 +425,13 @@ public abstract class AppSkin {
         toolBarButtonSkin.put("Button[Disabled].backgroundPainter", toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Disabled].textForeground", Color.LIGHT_GRAY);
 
-        toolBarButtonSkin.put("Button[Enabled].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Focused].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Default].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Default+Focused].backgroundPainter", toolBarButtonPainterNormal);
-
-        toolBarButtonSkin.put("Button[Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Focused+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Default+Focused+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Default+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-
-        toolBarButtonSkin.put("Button[MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Focused+MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Default+MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Default+Focused+MouseOver].backgroundPainter", toolBarButtonPainterHot);
+        AddressBarBreadCrumbs.setTolbarButtonSkin(toolBarButtonPainterNormal, toolBarButtonPainterHot, toolBarButtonPainterPressed, toolBarButtonSkin);
 
         return toolBarButtonSkin;
     }
 
     public void createTableHeaderSkin(UIDefaults uiDefaults) {
-        Painter<? extends Object> painterNormal = (Graphics2D g, Object object, int width, int height) -> {
+        Painter<?> painterNormal = (Graphics2D g, Object object, int width, int height) -> {
 
         };
         uiDefaults.put("TableHeader.font", new Font(Font.DIALOG, Font.PLAIN, 14));
@@ -652,7 +621,7 @@ public abstract class AppSkin {
         };
 
         uiDefaults.put("ProgressBar.horizontalSize", new Dimension(150, 10));
-        uiDefaults.put("ProgressBar.vertictalSize", new Dimension(10, 150));
+        uiDefaults.put("ProgressBar.verticalSize", new Dimension(10, 150));
 
         uiDefaults.put("ProgressBar[Disabled+Finished].foregroundPainter", painter2);
         uiDefaults.put("ProgressBar[Disabled].foregroundPainter", painter2);

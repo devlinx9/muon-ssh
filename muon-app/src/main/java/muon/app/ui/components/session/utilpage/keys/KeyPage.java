@@ -31,7 +31,7 @@ public class KeyPage extends UtilPageItemView {
     }
 
     private void setKeyData(SshKeyHolder holder) {
-        log.debug("Holder: " + holder);
+        log.debug("Holder: {}", holder);
         this.localKeyPanel.setKeyData(holder);
         this.remoteKeyPanel.setKeyData(holder);
     }
@@ -126,13 +126,11 @@ public class KeyPage extends UtilPageItemView {
 
     @Override
     protected void onComponentVisible() {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     protected void onComponentHide() {
-        // TODO Auto-generated method stub
 
     }
 }

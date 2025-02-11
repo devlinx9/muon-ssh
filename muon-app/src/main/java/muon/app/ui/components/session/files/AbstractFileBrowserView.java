@@ -49,7 +49,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         createAddressBar();
         addressBar.addActionListener(e -> {
             String text = e.getActionCommand();
-            log.info("Address changed: " + text + " old: " + this.path);
+            log.info("Address changed: {} old: {}", text, this.path);
             if (PathUtils.isSamePath(this.path, text)) {
                 log.info("Same text");
                 return;
@@ -153,9 +153,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         add(toolBar, BorderLayout.NORTH);
 
-        folderView = new FolderView(this, text -> {
-            this.fileBrowser.updateRemoteStatus(text);
-        });
+        folderView = new FolderView(this, text -> this.fileBrowser.updateRemoteStatus(text));
 
         this.overflowMenuHandler.setFolderView(folderView);
 
@@ -216,7 +214,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         btnNext.setEnabled(history.hasNextElement());
     }
 
-    public abstract FileSystem getFileSystem() throws Exception;
+    public abstract FileSystem getFileSystem();
 
     public void refreshViewMode() {
         this.folderView.refreshViewMode();

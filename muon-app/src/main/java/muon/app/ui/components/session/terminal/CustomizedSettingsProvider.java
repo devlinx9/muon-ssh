@@ -96,11 +96,6 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     }
 
     @Override
-    public boolean enableMouseReporting() {
-        return true;
-    }
-
-    @Override
     public boolean pasteOnMiddleMouseClick() {
         return App.getGlobalSettings().isPuttyLikeCopyPaste();
     }
@@ -112,7 +107,7 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public Font getTerminalFont() {
-        log.debug("Called terminal font: " + App.getGlobalSettings().getTerminalFontName());
+        log.debug("Called terminal font: {}", App.getGlobalSettings().getTerminalFontName());
         return FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalFontName()).deriveFont(Font.PLAIN,
                 App.getGlobalSettings().getTerminalFontSize());
     }

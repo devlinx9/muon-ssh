@@ -84,7 +84,7 @@ public class LocalFileSystem implements FileSystem {
 
     @Override
     public void rename(String oldName, String newName) throws Exception {
-        log.info("Renaming from " + oldName + " to: " + newName);
+        log.info("Renaming from {} to: {}", oldName, newName);
         if (!new File(oldName).renameTo(new File(newName))) {
             throw new FileNotFoundException();
         }
@@ -104,7 +104,7 @@ public class LocalFileSystem implements FileSystem {
 
     @Override
     public void mkdir(String path) throws Exception {
-        log.info("Creating folder: " + path);
+        log.info("Creating folder: {}", path);
         new File(path).mkdirs();
     }
 
@@ -126,7 +126,7 @@ public class LocalFileSystem implements FileSystem {
     public long getAllFiles(String dir, String baseDir, Map<String, String> fileMap, Map<String, String> folderMap)
             throws Exception {
         long size = 0;
-        log.info("get files: " + dir);
+        log.info("get files: {}", dir);
         String parentFolder = PathUtils.combineUnix(baseDir, PathUtils.getFileName(dir));
 
         folderMap.put(dir, parentFolder);

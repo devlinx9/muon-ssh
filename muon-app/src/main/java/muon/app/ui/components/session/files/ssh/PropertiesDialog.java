@@ -224,7 +224,7 @@ public class PropertiesDialog extends JDialog {
     public void setDetails(FileInfo details) {
         this.details = new FileInfo[1];
         this.details[0] = details;
-        log.info("Extra: " + details.getExtra());
+        log.info("Extra: {}", details.getExtra());
         btnCalculate2.setEnabled(details.getType() == FileType.DIRECTORY
                 || details.getType() == FileType.DIR_LINK);
         this.permissions = details.getPermission();
@@ -334,7 +334,7 @@ public class PropertiesDialog extends JDialog {
         calcSize(details, (a, b) -> SwingUtilities.invokeLater(() -> {
             dlg.dispose();
             disposed.set(true);
-            log.info("Total size: " + a);
+            log.info("Total size: {}", a);
             if (Boolean.TRUE.equals(b)) {
                 txtSize.setText(
                         FormatUtils.humanReadableByteCount(a, true));
@@ -365,7 +365,7 @@ public class PropertiesDialog extends JDialog {
         calcFreeSpace(details, (a, b) -> SwingUtilities.invokeLater(() -> {
             dlg.dispose();
             disposed.set(true);
-            log.info("Total size: " + a);
+            log.info("Total size: {}", a);
             if (Boolean.TRUE.equals(b)) {
                 txtFreeSpace.setText(a);
             }
@@ -381,9 +381,9 @@ public class PropertiesDialog extends JDialog {
         command.append(
                 "export POSIXLY_CORRECT=1; export BLOCKSIZE=512; du -s ");
         for (FileInfo fileInfo : files) {
-            command.append("\"" + fileInfo.getPath() + "\" ");
+            command.append("\"").append(fileInfo.getPath()).append("\" ");
         }
-        log.info("Command to execute: " + command);
+        log.info("Command to execute: {}", command);
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             try {
                 long total = 0;
@@ -418,10 +418,8 @@ public class PropertiesDialog extends JDialog {
     public void calcFreeSpace(FileInfo[] files,
                               BiConsumer<String, Boolean> biConsumer, AtomicBoolean stopFlag) {
         StringBuilder command = new StringBuilder();
-        command.append(
-                "export POSIXLY_CORRECT=1; export BLOCKSIZE=1024; df -P -k \""
-                        + files[0].getPath() + "\"");
-        log.info("Command to execute: " + command);
+        command.append("export POSIXLY_CORRECT=1; export BLOCKSIZE=1024; df -P -k \"").append(files[0].getPath()).append("\"");
+        log.info("Command to execute: {}", command);
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             try {
                 StringBuilder output = new StringBuilder();

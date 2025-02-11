@@ -11,8 +11,8 @@ import java.security.cert.X509Certificate;
 
 @Slf4j
 public class CertificateValidator {
-    public static final synchronized void registerCertificateHook() {
-        SSLContext sslContext = null;
+    public static synchronized void registerCertificateHook() {
+        SSLContext sslContext;
         try {
             try {
                 sslContext = SSLContext.getInstance("TLS");
@@ -25,7 +25,7 @@ public class CertificateValidator {
 
                 @Override
                 public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                    // TODO Auto-generated method stub
+
 
                 }
 
@@ -45,21 +45,21 @@ public class CertificateValidator {
 
                 @Override
                 public X509Certificate[] getAcceptedIssuers() {
-                    // TODO Auto-generated method stub
+
                     return null;
                 }
 
                 @Override
                 public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket)
                         throws CertificateException {
-                    // TODO Auto-generated method stub
+
 
                 }
 
                 @Override
                 public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine engine)
                         throws CertificateException {
-                    // TODO Auto-generated method stub
+
 
                 }
 

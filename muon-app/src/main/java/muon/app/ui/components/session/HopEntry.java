@@ -23,7 +23,6 @@ public class HopEntry {
         this.keypath = keypath;
     }
     public HopEntry() {
-        // TODO Auto-generated constructor stub
     }
 
     @Override

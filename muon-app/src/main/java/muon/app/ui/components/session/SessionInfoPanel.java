@@ -284,9 +284,7 @@ public class SessionInfoPanel extends JPanel {
         lblProxyPass = new JLabel(bundle.getString("proxy_password") + bundle.getString("warning_plain_text"));
 
         cmbProxy = new JComboBox<>(new String[]{"NONE", "HTTP", "SOCKS"});
-        cmbProxy.addActionListener(e -> {
-            info.setProxyType(cmbProxy.getSelectedIndex());
-        });
+        cmbProxy.addActionListener(e -> info.setProxyType(cmbProxy.getSelectedIndex()));
 
         inpProxyHostName = new SkinnedTextField(10);// new
         inpProxyHostName.getDocument().addDocumentListener(new DocumentListener() {

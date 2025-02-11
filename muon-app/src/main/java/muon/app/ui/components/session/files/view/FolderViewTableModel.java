@@ -20,7 +20,7 @@ public class FolderViewTableModel extends AbstractTableModel implements ListMode
     private final List<FileInfo> files = new ArrayList<>();
     private final String[] columns = {bundle.getString("name"), bundle.getString("modified"), bundle.getString("size"), bundle.getString("type"), bundle.getString("permission"), bundle.getString("owner")};
     protected EventListenerList listenerList = new EventListenerList();
-    private boolean local = false;
+    private final boolean local;
 
     public FolderViewTableModel(boolean local) {
         this.local = local;
@@ -73,8 +73,7 @@ public class FolderViewTableModel extends AbstractTableModel implements ListMode
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        FileInfo ent = files.get(rowIndex);
-        return ent;
+        return files.get(rowIndex);
     }
 
     @Override

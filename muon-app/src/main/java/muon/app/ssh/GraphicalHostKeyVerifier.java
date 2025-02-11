@@ -60,7 +60,8 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
                 + "IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!\n"
                 + "Someone could be eavesdropping on you right now (man-in-the-middle attack)!\n"
                 + "It is also possible that the host key has just been changed.\n"
-                + "The fingerprint for the %s key sent by the remote host is\n" + "%s.\n"
+                + "The fingerprint for the %s key sent by the remote host is\n %s.\n"
+                + "Review the file %s.\n"
                 + "Do you still want to connect to this server?", type, fp, path);
         return JOptionPane.showConfirmDialog(null, msg) == JOptionPane.YES_OPTION;
     }

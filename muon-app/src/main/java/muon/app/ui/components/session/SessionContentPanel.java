@@ -30,7 +30,6 @@ import util.LayoutUtilities;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.io.File;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.concurrent.*;
@@ -39,7 +38,6 @@ import java.util.function.Consumer;
 
 /**
  * @author subhro
- *
  */
 @Slf4j
 public class SessionContentPanel extends JPanel implements PageHolder, CachedCredentialProvider {
@@ -91,13 +89,13 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         processViewer = new ProcessViewer(this);
         utilityPage = new UtilityPage(this);
 
-        Page[] pageArr = null;
+        Page[] pageArr;
         if (App.getGlobalSettings().isFirstFileBrowserView()) {
             pageArr = new Page[]{fileBrowser, terminalHolder, logViewer, searchPanel, diskspaceAnalyzer,
-                    processViewer, utilityPage};
+                                 processViewer, utilityPage};
         } else {
             pageArr = new Page[]{terminalHolder, fileBrowser, logViewer, searchPanel, diskspaceAnalyzer,
-                    processViewer, utilityPage};
+                                 processViewer, utilityPage};
         }
 
         this.cardLayout = new CardLayout();
@@ -205,10 +203,6 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         return this.hashCode();
     }
 
-    public void downloadFileToLocal(FileInfo remoteFile, Consumer<File> callback) {
-
-    }
-
     public void openLog(FileInfo remoteFile) {
         showPage(this.logViewer.getClientProperty("pageId") + "");
         logViewer.openLog(remoteFile);
@@ -272,7 +266,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         FileSystem sourceFs = new LocalFileSystem();
         FileSystem targetFs = instance.getSshFs();
         FileTransfer transfer = new FileTransfer(sourceFs, targetFs, localFiles, targetRemoteDirectory, null,
-                confiAction, instance);
+                                                 confiAction, instance);
         App.addUpload(new BackgroundFileTransfer(transfer, instance, this));
     }
 
@@ -281,7 +275,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         RemoteSessionInstance instance = createBackgroundSession();
         SshFileSystem sourceFs = instance.getSshFs();
         FileTransfer transfer = new FileTransfer(sourceFs, targetFs, remoteFiles, targetLocalDirectory, null,
-                confiAction, instance);
+                                                 confiAction, instance);
         App.addDownload(new BackgroundFileTransfer(transfer, instance, this));
     }
 

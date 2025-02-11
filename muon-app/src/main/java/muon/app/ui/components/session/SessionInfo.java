@@ -79,11 +79,6 @@ public class SessionInfo extends NamedItem implements Serializable {
 
     private String password;
 
-    @Override
-    public String toString() {
-        return name;
-    }
-
     /**
      * @return the id
      */

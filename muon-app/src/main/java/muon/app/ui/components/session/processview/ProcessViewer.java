@@ -98,7 +98,7 @@ public class ProcessViewer extends Page {
                             updateProcessList(stopFlag);
                         }
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
+                        
                         log.error(e.getMessage(), e);
                     }
                     holder.enableUi();

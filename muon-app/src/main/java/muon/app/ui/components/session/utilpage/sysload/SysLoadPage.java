@@ -41,9 +41,7 @@ public class SysLoadPage extends UtilPageItemView {
         holder.EXECUTOR.submit(() -> {
             try {
                 if (holder.isSessionClosed()) {
-                    SwingUtilities.invokeAndWait(() -> {
-                        timer.stop();
-                    });
+                    SwingUtilities.invokeAndWait(() -> timer.stop());
                     return;
                 }
                 log.info("Getting system metrics");
@@ -112,7 +110,7 @@ public class SysLoadPage extends UtilPageItemView {
         spInterval.setMaximumSize(spInterval.getPreferredSize());
         spInterval.addChangeListener(e -> {
             int interval = (Integer) spInterval.getValue();
-            log.info("New interval: " + interval);
+            log.info("New interval: {}", interval);
             this.sleepInterval.set(interval);
             timer.stop();
             timer.setDelay(this.sleepInterval.get() * 1000);
@@ -137,9 +135,7 @@ public class SysLoadPage extends UtilPageItemView {
         this.add(topPanel, BorderLayout.NORTH);
         this.add(systemLoadPanel);
 
-        timer = new Timer(this.sleepInterval.get() * 1000, e -> {
-            fetchSystemLoad();
-        });
+        timer = new Timer(this.sleepInterval.get() * 1000, e -> fetchSystemLoad());
         timer.setInitialDelay(0);
         timer.setCoalesce(true);
 

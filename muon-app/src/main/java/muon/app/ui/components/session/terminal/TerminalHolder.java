@@ -44,7 +44,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
         TerminalComponent tc = new TerminalComponent(info, c + "", null, sessionContentPanel);
         this.tabs.addTab(tc.getTabTitle(), tc);
         long t2 = System.currentTimeMillis();
-        log.debug("Terminal init in: " + (t2 - t1) + " ms");
+        log.debug("Terminal init in: {} ms", t2 - t1);
 
         snippetPanel = new SnippetPanel(e -> {
             TerminalComponent tc1 = (TerminalComponent) tabs.getSelectedContent();
@@ -58,13 +58,13 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
             @Override
             public void ancestorRemoved(AncestorEvent event) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public void ancestorMoved(AncestorEvent event) {
-                // TODO Auto-generated method stub
+                
 
             }
 
@@ -119,7 +119,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
         Component[] components = tabs.getTabContents();
         for (Component c : components) {
             if (c instanceof TerminalComponent) {
-                log.info("Closing terminal: " + c);
+                log.info("Closing terminal: {}", c);
                 ((TerminalComponent) c).close();
             }
         }

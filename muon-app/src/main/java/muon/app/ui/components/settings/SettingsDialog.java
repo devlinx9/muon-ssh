@@ -235,7 +235,7 @@ public class SettingsDialog extends JDialog {
                 cmbTermType);
 
 
-        cmbLanguage = new JComboBox();
+        cmbLanguage = new JComboBox<>();
         cmbLanguage.setModel(new DefaultComboBoxModel(Language.values()));
         cmbLanguage.setEditable(true);
         d = new Dimension(Math.max(100, cmbLanguage.getPreferredSize().width * 2),
@@ -305,8 +305,8 @@ public class SettingsDialog extends JDialog {
         });
 
         JPanel paletteGrid = new JPanel(new GridLayout(2, 8, 10, 10));
-        for (int i = 0; i < paletteButtons.length; i++) {
-            paletteGrid.add(paletteButtons[i]);
+        for (ColorSelectorButton paletteButton : paletteButtons) {
+            paletteGrid.add(paletteButton);
         }
         paletteGrid.setAlignmentX(Box.LEFT_ALIGNMENT);
 

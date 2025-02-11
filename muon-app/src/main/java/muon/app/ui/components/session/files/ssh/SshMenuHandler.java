@@ -104,9 +104,9 @@ public class SshMenuHandler {
                 FileInfo fileInfo = folderView.getSelectedFiles()[0];
                 try {
                     App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                            fileBrowser.getActiveSessionId(), false, null);
+                                                                  fileBrowser.getActiveSessionId(), false, null);
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
+
                     log.error(e1.getMessage(), e1);
                 }
             }
@@ -126,9 +126,9 @@ public class SshMenuHandler {
                 try {
                     log.info("Called open with");
                     App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                            fileBrowser.getActiveSessionId(), true, null);
+                                                                  fileBrowser.getActiveSessionId(), true, null);
                 } catch (IOException e1) {
-                    // TODO Auto-generated catch block
+
                     log.error(e1.getMessage(), e1);
                 }
             });
@@ -313,15 +313,13 @@ public class SshMenuHandler {
         mCreateLink.setAccelerator(ksCreateLink);
 
         mExtractHere = new JMenuItem(bundle.getString("extract_here"));
-        mExtractHere.addActionListener(e -> {
-            extractArchive(folderView.getSelectedFiles()[0].getPath(), fileBrowserView.getCurrentDirectory(),
-                    fileBrowserView.getCurrentDirectory());
-        });
+        mExtractHere.addActionListener(e -> extractArchive(folderView.getSelectedFiles()[0].getPath(), fileBrowserView.getCurrentDirectory(),
+                                                           fileBrowserView.getCurrentDirectory()));
 
         mExtractTo = new JMenuItem(bundle.getString("extract_to"));
         mExtractTo.addActionListener(e -> {
             String text = JOptionPane.showInputDialog(bundle.getString("select_target"),
-                    fileBrowserView.getCurrentDirectory());
+                                                      fileBrowserView.getCurrentDirectory());
             if (text == null || text.isEmpty()) {
                 return;
             }
@@ -351,9 +349,9 @@ public class SshMenuHandler {
     }
 
     private void changePermission(FileInfo[] selectedFiles, String currentDirectory) {
-        log.info("Showing property of: " + selectedFiles.length);
+        log.info("Showing property of: {}", selectedFiles.length);
         PropertiesDialog propertiesDialog = new PropertiesDialog(fileBrowser,
-                SwingUtilities.windowForComponent(fileBrowserView), selectedFiles.length > 1);
+                                                                 SwingUtilities.windowForComponent(fileBrowserView), selectedFiles.length > 1);
         if (selectedFiles.length > 1) {
             propertiesDialog.setMultipleDetails(selectedFiles);
         } else if (selectedFiles.length == 1) {
@@ -367,7 +365,7 @@ public class SshMenuHandler {
     private void copyToClipboard(boolean cut) {
         FileInfo[] selectedFiles = folderView.getSelectedFiles();
         DndTransferData transferData = new DndTransferData(fileBrowser.getInfo().hashCode(), selectedFiles,
-                fileBrowserView.getCurrentDirectory(), fileBrowserView.hashCode(), DndTransferData.DndSourceType.SSH);
+                                                           fileBrowserView.getCurrentDirectory(), fileBrowserView.hashCode(), DndTransferData.DndSourceType.SSH);
         transferData.setTransferAction(cut ? DndTransferData.TransferAction.CUT : DndTransferData.TransferAction.COPY);
 
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new Transferable() {
@@ -485,7 +483,7 @@ public class SshMenuHandler {
         if (selectionCount == 1) {
             FileInfo fileInfo = selectedFiles[0];
             if ((selectedFiles[0].getType() == FileType.FILE || selectedFiles[0].getType() == FileType.FILE_LINK)
-                    && this.archiveOperation.isSupportedArchive(fileInfo.getName())) {
+                && this.archiveOperation.isSupportedArchive(fileInfo.getName())) {
                 popup.add(mExtractHere);
                 popup.add(mExtractTo);
             }
@@ -500,7 +498,7 @@ public class SshMenuHandler {
         }
 
         if (selectionCount < 1 || (selectionCount == 1
-                && (selectedFiles[0].getType() == FileType.FILE || selectedFiles[0].getType() == FileType.FILE_LINK))) {
+                                   && (selectedFiles[0].getType() == FileType.FILE || selectedFiles[0].getType() == FileType.FILE_LINK))) {
             popup.add(mUpload);
             count += 1;
         }
@@ -535,8 +533,6 @@ public class SshMenuHandler {
             FileInfo file = files[0];
             if (file.getType() == FileType.DIRECTORY || file.getType() == FileType.DIR_LINK) {
                 fileBrowser.openSshFileBrowserView(file.getPath(), this.fileBrowserView.getOrientation());
-            } else {
-
             }
         }
     }
@@ -553,7 +549,7 @@ public class SshMenuHandler {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.rename(oldName, newName, fileBrowserView.getFileSystem(),
-                        fileBrowserView.getSshClient(), fileBrowser.getInfo().getPassword())) {
+                                          fileBrowserView.getSshClient(), fileBrowser.getInfo().getPassword())) {
                     fileBrowserView.render(baseFolder);
                 } else {
                     fileBrowser.enableUi();
@@ -570,13 +566,14 @@ public class SshMenuHandler {
         if (App.getGlobalSettings().isConfirmBeforeDelete()) {
             delete = JOptionPane.showConfirmDialog(null, "Delete selected files?") == JOptionPane.YES_OPTION;
         }
-        if (!delete)
+        if (!delete) {
             return;
+        }
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.delete(targetList, fileBrowserView.getFileSystem(),
-                        fileBrowserView.getSshClient(), fileBrowser.getInfo().getPassword())) {
+                                          fileBrowserView.getSshClient(), fileBrowser.getInfo().getPassword())) {
                     fileBrowserView.render(baseFolder);
                 } else {
                     fileBrowser.enableUi();
@@ -594,7 +591,7 @@ public class SshMenuHandler {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.newFile(files, fileBrowserView.getFileSystem(), baseFolder,
-                        fileBrowserView.getSshClient(), fileBrowser.getInfo().getPassword())) {
+                                           fileBrowserView.getSshClient(), fileBrowser.getInfo().getPassword())) {
                     fileBrowserView.render(baseFolder);
                 } else {
                     fileBrowser.enableUi();
@@ -612,7 +609,7 @@ public class SshMenuHandler {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.newFolder(files, baseFolder, fileBrowserView.getFileSystem(),
-                        fileBrowserView.getSshClient(), fileBrowser.getInfo().getPassword())) {
+                                             fileBrowserView.getSshClient(), fileBrowser.getInfo().getPassword())) {
                     fileBrowserView.render(baseFolder);
                 } else {
                     fileBrowser.enableUi();
@@ -649,9 +646,7 @@ public class SshMenuHandler {
                 if (transferData != null) {
                     fileBrowserView.handleDrop(transferData);
                 }
-            } catch (UnsupportedFlavorException e1) {
-                log.error(e1.getMessage(), e1);
-            } catch (IOException e1) {
+            } catch (UnsupportedFlavorException | IOException e1) {
                 log.error(e1.getMessage(), e1);
             }
         } else {
@@ -666,11 +661,12 @@ public class SshMenuHandler {
 
     private boolean hasSupportedContentOnClipboard() {
         boolean ret = (Toolkit.getDefaultToolkit().getSystemClipboard()
-                .isDataFlavorAvailable(DndTransferHandler.DATA_FLAVOR_DATA_FILE)
-                || Toolkit.getDefaultToolkit().getSystemClipboard()
-                .isDataFlavorAvailable(DataFlavor.javaFileListFlavor));
-        if (!ret)
+                               .isDataFlavorAvailable(DndTransferHandler.DATA_FLAVOR_DATA_FILE)
+                       || Toolkit.getDefaultToolkit().getSystemClipboard()
+                               .isDataFlavorAvailable(DataFlavor.javaFileListFlavor));
+        if (!ret) {
             log.info("Nothing on clipboard");
+        }
         return ret;
     }
 
@@ -679,7 +675,7 @@ public class SshMenuHandler {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.copyTo(fileBrowserView.getSshClient(), files, targetFolder,
-                        fileBrowserView.getFileSystem(), fileBrowser.getInfo().getPassword())) {
+                                          fileBrowserView.getFileSystem(), fileBrowser.getInfo().getPassword())) {
                     fileBrowserView.render(targetFolder);
                 } else {
                     fileBrowser.enableUi();
@@ -695,7 +691,7 @@ public class SshMenuHandler {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.moveTo(fileBrowserView.getSshClient(), files, targetFolder,
-                        fileBrowserView.getFileSystem(), fileBrowser.getInfo().getPassword())) {
+                                          fileBrowserView.getFileSystem(), fileBrowser.getInfo().getPassword())) {
                     fileBrowserView.render(targetFolder);
                 } else {
                     fileBrowser.enableUi();
@@ -712,9 +708,9 @@ public class SshMenuHandler {
         if (arr.length > 0) {
             BookmarkManager.addEntry(fileBrowser.getInfo().getId(),
                                      Arrays.stream(arr)
-                            .filter(a -> a.getType() == FileType.DIR_LINK || a.getType() == FileType.DIRECTORY)
-                            .map(FileInfo::getPath).collect(Collectors.toList()));
-        } else if (arr.length == 0) {
+                                             .filter(a -> a.getType() == FileType.DIR_LINK || a.getType() == FileType.DIRECTORY)
+                                             .map(FileInfo::getPath).collect(Collectors.toList()));
+        } else {
             BookmarkManager.addEntry(fileBrowser.getInfo().getId(), fileBrowserView.getCurrentDirectory());
         }
 
@@ -764,7 +760,7 @@ public class SshMenuHandler {
             fileBrowser.disableUi();
             try {
                 if (fileOperations.runScriptInBackground(fileBrowserView.getSshClient(),
-                        "cd \"" + folder + "\"; nohup \"" + file + "\" &", new AtomicBoolean())) {
+                                                         "cd \"" + folder + "\"; nohup \"" + file + "\" &", new AtomicBoolean())) {
                 }
                 fileBrowser.enableUi();
             } catch (Exception e) {
@@ -828,7 +824,7 @@ public class SshMenuHandler {
                     }
                 }
                 DndTransferData uploadData = new DndTransferData(0, list.toArray(new FileInfo[0]), files[0].getParent(),
-                        0, DndTransferData.DndSourceType.LOCAL);
+                                                                 0, DndTransferData.DndSourceType.LOCAL);
                 fileBrowserView.handleDrop(uploadData);
             }
         }
@@ -838,7 +834,7 @@ public class SshMenuHandler {
         FileInfo fileInfo = folderView.getSelectedFiles()[0];
         try {
             App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                    fileBrowser.getActiveSessionId(), false, path);
+                                                          fileBrowser.getActiveSessionId(), false, path);
         } catch (IOException e1) {
             log.error(e1.getMessage(), e1);
         }
@@ -855,7 +851,7 @@ public class SshMenuHandler {
 
     private void sendFilesViaSSH() {
         Remote2RemoteTransferDialog r2rt = new Remote2RemoteTransferDialog(App.getAppWindow(),
-                this.fileBrowser.getHolder(), folderView.getSelectedFiles(), fileBrowserView.getCurrentDirectory());
+                                                                           this.fileBrowser.getHolder(), folderView.getSelectedFiles(), fileBrowserView.getCurrentDirectory());
         r2rt.setLocationRelativeTo(App.getAppWindow());
         r2rt.setVisible(true);
     }

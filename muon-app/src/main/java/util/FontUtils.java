@@ -25,7 +25,7 @@ public class FontUtils {
             Font font = Font.createFont(Font.TRUETYPE_FONT, is);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            log.info("Font loaded: " + font.getFontName() + " of family: " + font.getFamily());
+            log.info("Font loaded: {} of family: {}", font.getFontName(), font.getFamily());
             return font.deriveFont(Font.PLAIN, 12.0f);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -34,12 +34,12 @@ public class FontUtils {
     }
 
     public static Font loadTerminalFont(String name) {
-        log.debug("Loading font: " + name);
+        log.debug("Loading font: {}", name);
         try (InputStream is = AppSkin.class.getResourceAsStream(String.format("/fonts/terminal/%s.ttf", name))) {
             Font font = Font.createFont(Font.TRUETYPE_FONT, is);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            log.debug("Font loaded: " + font.getFontName() + " of family: " + font.getFamily());
+            log.debug("Font loaded: {} of family: {}", font.getFontName(), font.getFamily());
             return font.deriveFont(Font.PLAIN, 12.0f);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

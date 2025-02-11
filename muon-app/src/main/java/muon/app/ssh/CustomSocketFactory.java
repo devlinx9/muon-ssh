@@ -41,7 +41,7 @@ public class CustomSocketFactory extends SocketFactory {
         this.proxyType = proxyType;
     }
 
-    public static final int getResponseCode(String statusLine) {
+    public static int getResponseCode(String statusLine) {
         String[] arr = statusLine.split(" ");
         if (arr.length < 2) {
             return 400;
@@ -92,9 +92,9 @@ public class CustomSocketFactory extends SocketFactory {
             proxy = new Proxy(Proxy.Type.SOCKS,
                               new InetSocketAddress(proxyHost, proxyPort));
         } else if (this.proxyType == Proxy.Type.HTTP && (proxyUser == null || proxyUser.isEmpty())) {
-                proxy = new Proxy(Proxy.Type.HTTP,
-                                  new InetSocketAddress(proxyHost, proxyPort));
-            }
+            proxy = new Proxy(Proxy.Type.HTTP,
+                              new InetSocketAddress(proxyHost, proxyPort));
+        }
 
 
         return new Socket(proxy);
@@ -104,13 +104,10 @@ public class CustomSocketFactory extends SocketFactory {
         InputStream in = socket.getInputStream();
         OutputStream out = socket.getOutputStream();
         StringBuilder requestHeaders = new StringBuilder();
-        requestHeaders
-                .append("HTTP " + proxyHost + ":" + proxyPort + " HTTP/1.1\r\n")
-                .append("Host: " + proxyHost + ":" + proxyPort + "\r\n");
+        requestHeaders.append("HTTP ").append(proxyHost).append(":").append(proxyPort).append(" HTTP/1.1\r\n").append("Host: ").append(proxyHost).append(":").append(proxyPort).append("\r\n");
         String proxyAuth = getBasicAuthStr();
         if (proxyAuth != null) {
-            requestHeaders
-                    .append("Proxy-Authorization: basic " + proxyAuth + "\r\n");
+            requestHeaders.append("Proxy-Authorization: basic ").append(proxyAuth).append("\r\n");
         }
         requestHeaders.append("\r\n");
         out.write(requestHeaders.toString().getBytes(StandardCharsets.UTF_8));

@@ -43,20 +43,22 @@ public class SSHRemoteFileOutputStream extends OutputStream {
 
     @Override
     public void close() throws IOException {
-        log.info(this.getClass().getName() + " closing");
+        log.debug("{} closing", this.getClass().getName());
         try {
             this.remoteFile.close();
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
         try {
             this.remoteFileOutputStream.close();
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void flush() throws IOException {
-        log.info(this.getClass().getName() + " flushing");
+        log.debug("{} flushing", this.getClass().getName());
         this.remoteFileOutputStream.flush();
     }
 

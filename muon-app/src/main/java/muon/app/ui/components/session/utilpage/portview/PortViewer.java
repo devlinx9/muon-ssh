@@ -50,7 +50,7 @@ public class PortViewer extends UtilPageItemView {
     private void filter() {
         String text = txtFilter.getText();
         model.clear();
-        if (text.length() > 0) {
+        if (!text.isEmpty()) {
             List<SocketEntry> filteredList = new ArrayList<>();
             for (SocketEntry entry : list) {
                 if (entry.getApp().contains(text)
@@ -72,13 +72,13 @@ public class PortViewer extends UtilPageItemView {
     }
 
     public List<SocketEntry> parseSocketList(String text) {
-        log.debug("text: " + text);
+        log.debug("text: {}", text);
         List<SocketEntry> list = new ArrayList<>();
         SocketEntry ent = null;
         boolean start = false;
         for (String line1 : text.split("\n")) {
             String line = line1.trim();
-            log.debug("LINE=" + line);
+            log.debug("LINE={}", line);
             if (!start) {
                 if (line.trim().equals(SEPARATOR)) {
                     start = true;
@@ -172,13 +172,13 @@ public class PortViewer extends UtilPageItemView {
 
     @Override
     protected void onComponentVisible() {
-        // TODO Auto-generated method stub
+        
 
     }
 
     @Override
     protected void onComponentHide() {
-        // TODO Auto-generated method stub
+        
 
     }
 
@@ -199,36 +199,30 @@ public class PortViewer extends UtilPageItemView {
                                     new StringBuilder(),holder.getInfo().getPassword()) == 0) {
                                 java.util.List<SocketEntry> list = this
                                         .parseSocketList(output.toString());
-                                SwingUtilities.invokeAndWait(() -> {
-                                    setSocketData(list);
-                                });
+                                SwingUtilities.invokeAndWait(() -> setSocketData(list));
                                 return;
                             }
                         } catch (Exception ex) {
                             log.error(ex.getMessage(), ex);
                         }
-                        if (!holder.isSessionClosed()) {
-                            JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
-                        }
                     } else {
-                        log.debug("Command was: " + cmd);
+                        log.debug("Command was: {}", cmd);
                         try {
                             if (holder.getRemoteSessionInstance().exec(cmd,
                                     stopFlag, output) == 0) {
-                                log.debug(
-                                        "Command was: " + cmd + " " + output);
+                                log.debug("Command was: {} {}", cmd, output);
                                 java.util.List<SocketEntry> list = this
                                         .parseSocketList(output.toString());
                                 SwingUtilities.invokeAndWait(() -> setSocketData(list));
                                 return;
                             }
-                            log.error("Error: " + output);
+                            log.error("Error: {}", output);
                         } catch (Exception ex) {
                             log.error(ex.getMessage(), ex);
                         }
-                        if (!holder.isSessionClosed()) {
-                            JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
-                        }
+                    }
+                    if (!holder.isSessionClosed()) {
+                        JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
                     }
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);

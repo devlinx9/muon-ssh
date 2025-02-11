@@ -36,13 +36,13 @@ public class PortForwardingSession {
             try {
                 this.ssh.close();
             } catch (IOException e) {
-                // TODO: handle exception
+                log.error("Failed to close ssh", e);
             }
             for (ServerSocket ss : ssList) {
                 try {
                     ss.close();
                 } catch (Exception e2) {
-                    // TODO: handle exception
+                    log.error("Failed to close ss", e2);
                 }
             }
         });
@@ -106,7 +106,7 @@ public class PortForwardingSession {
                 // Something to hang on to so that the forwarding stays
                 ssh.getTransport().join();
             } catch (ConnectionException | TransportException e) {
-                // TODO Auto-generated catch block
+                
                 log.error(e.getMessage(), e);
             }
         });

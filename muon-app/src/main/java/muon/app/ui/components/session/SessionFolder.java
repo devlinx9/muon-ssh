@@ -16,25 +16,6 @@ public class SessionFolder extends NamedItem {
 
     private List<SessionInfo> items = new ArrayList<>();
 
-    @Override
-    public String toString() {
-        return name;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public SessionFolder copy() {
         SessionFolder folder = new SessionFolder();
         folder.setId(UUID.randomUUID().toString());

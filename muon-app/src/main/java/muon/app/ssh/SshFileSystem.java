@@ -54,7 +54,7 @@ public class SshFileSystem implements FileSystem {
             try {
                 if (f.getType() == FileType.DIRECTORY) {
                     List<FileInfo> list = list(f.getPath());
-                    if (list != null && list.size() > 0) {
+                    if (list != null && !list.isEmpty()) {
                         for (FileInfo fc : list) {
                             delete(fc);
                         }
@@ -98,20 +98,19 @@ public class SshFileSystem implements FileSystem {
     private FileInfo resolveSymlink(String name, String pathToResolve, FileAttributes attrs, String longName)
             throws Exception {
         try {
-            log.info("Following symlink: " + pathToResolve);
+            log.info("Following symlink: {}", pathToResolve);
             while (true) {
                 String str = sftp.readlink(pathToResolve);
-                log.info("Read symlink: " + pathToResolve + "=" + str);
-                log.info("Getting link attrs: " + pathToResolve);
+                log.info("Read symlink: {}={}", pathToResolve, str);
+                log.info("Getting link attrs: {}", pathToResolve);
                 attrs = sftp.stat(pathToResolve);
 
                 if (attrs.getType() != Type.SYMLINK) {
-                    FileInfo e = new FileInfo(name, pathToResolve,
-                            (attrs.getType() == Type.DIRECTORY ? -1 : attrs.getSize()),
+                    return new FileInfo(name, pathToResolve,
+                                        (attrs.getType() == Type.DIRECTORY ? -1 : attrs.getSize()),
                             attrs.getType() == Type.DIRECTORY ? FileType.DIR_LINK : FileType.FILE_LINK,
                             attrs.getMtime() * 1000, FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
-                            getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName, name.startsWith("."));
-                    return e;
+                                        getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName, name.startsWith("."));
                 }
             }
         } catch (SFTPException e) {
@@ -132,17 +131,17 @@ public class SshFileSystem implements FileSystem {
 
     private List<FileInfo> listFiles(String path) throws Exception {
         synchronized (this.ssh) {
-            log.info("Listing file: " + path);
+            log.info("Listing file: {}", path);
             List<FileInfo> childs = new ArrayList<>();
             try {
                 if (path == null || path.isEmpty()) {
                     path = this.getHome();
                 }
                 List<RemoteResourceInfoWrapper> files = ls(path);
-                if (files.size() > 0) {
-                    for (int i = 0; i < files.size(); i++) {
-                        RemoteResourceInfo ent = files.get(i).getInfo();
-                        String longName = files.get(i).getLongPath();
+                if (!files.isEmpty()) {
+                    for (RemoteResourceInfoWrapper file : files) {
+                        RemoteResourceInfo ent = file.getInfo();
+                        String longName = file.getLongPath();
 
                         FileAttributes attrs = ent.getAttributes();
 
@@ -156,7 +155,7 @@ public class SshFileSystem implements FileSystem {
                             FileInfo e = new FileInfo(ent.getName(), ent.getPath(),
                                                       (ent.isDirectory() ? -1 : attrs.getSize()),
                                                       ent.isDirectory() ? FileType.DIRECTORY : FileType.FILE, attrs.getMtime() * 1000,
-                                                      net.schmizz.sshj.xfer.FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
+                                                      FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
                                                       getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName,
                                                       ent.getName().startsWith("."));
                             childs.add(e);
@@ -188,7 +187,7 @@ public class SshFileSystem implements FileSystem {
 
     @Override
     public String getHome() throws Exception {
-        log.debug("Getting home directory... on " + Thread.currentThread().getName());
+        log.debug("Getting home directory... on {}", Thread.currentThread().getName());
         if (home != null) {
             return home;
         }
@@ -222,11 +221,10 @@ public class SshFileSystem implements FileSystem {
                     return resolveSymlink(PathUtils.getFileName(path), path, attrs, null);
                 } else {
                     String name = PathUtils.getFileName(path);
-                    FileInfo e = new FileInfo(name, path, (attrs.getType() == Type.DIRECTORY ? -1 : attrs.getSize()),
+                    return new FileInfo(name, path, (attrs.getType() == Type.DIRECTORY ? -1 : attrs.getSize()),
                             attrs.getType() == Type.DIRECTORY ? FileType.DIRECTORY : FileType.FILE,
                             attrs.getMtime() * 1000, FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
-                            getPermissionStr(attrs.getPermissions()), attrs.getAtime(), null, name.startsWith("."));
-                    return e;
+                                        getPermissionStr(attrs.getPermissions()), attrs.getAtime(), null, name.startsWith("."));
                 }
             } catch (SFTPException e) {
                 if (e.getStatusCode() == Response.StatusCode.NO_SUCH_FILE
@@ -326,7 +324,7 @@ public class SshFileSystem implements FileSystem {
     public boolean mkdirs(String absPath) throws Exception {
         synchronized (ssh) {
             ensureConnected();
-            log.info("mkdirs: " + absPath);
+            log.info("mkdirs: {}", absPath);
             if (absPath.equals("/")) {
                 return true;
             }
@@ -340,7 +338,7 @@ public class SshFileSystem implements FileSystem {
                 }
             }
 
-            log.info("Folder does not exists: " + absPath);
+            log.info("Folder does not exists: {}", absPath);
 
             String parent = PathUtils.getParent(absPath);
 
@@ -358,7 +356,7 @@ public class SshFileSystem implements FileSystem {
         synchronized (ssh) {
             ensureConnected();
             long size = 0;
-            log.info("get files: " + dir);
+            log.info("get files: {}", dir);
             String parentFolder = PathUtils.combine(baseDir, PathUtils.getFileName(dir), File.separator);
 
             folderMap.put(dir, parentFolder);
@@ -393,7 +391,7 @@ public class SshFileSystem implements FileSystem {
         synchronized (ssh) {
             ensureConnected();
             try {
-                InputTransferChannel tc = new InputTransferChannel() {
+                return new InputTransferChannel() {
                     @Override
                     public InputStream getInputStream(String path) throws Exception {
                         RemoteFile remoteFile = sftp.open(path, EnumSet.of(OpenMode.READ));
@@ -411,7 +409,6 @@ public class SshFileSystem implements FileSystem {
                         return getInfo(path).getSize();
                     }
                 };
-                return tc;
             } catch (Exception e) {
                 if (ssh.isConnected()) {
                     throw new FileNotFoundException();
@@ -426,7 +423,7 @@ public class SshFileSystem implements FileSystem {
         synchronized (ssh) {
             ensureConnected();
             try {
-                OutputTransferChannel tc = new OutputTransferChannel() {
+                return new OutputTransferChannel() {
                     @Override
                     public OutputStream getOutputStream(String path) throws Exception {
                         try {
@@ -447,7 +444,6 @@ public class SshFileSystem implements FileSystem {
                         return "/";
                     }
                 };
-                return tc;
             } catch (Exception e) {
                 if (ssh.isConnected()) {
                     throw new FileNotFoundException();
@@ -460,9 +456,6 @@ public class SshFileSystem implements FileSystem {
 
     public String getSeparator() {
         return "/";
-    }
-
-    public void statFs() throws Exception {
     }
 
     private List<RemoteResourceInfoWrapper> ls(String path) throws Exception {

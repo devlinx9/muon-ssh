@@ -39,7 +39,6 @@ public class SessionStore {
                 PasswordStore.getSharedInstance().populatePassword(savedSessionTree);
                 log.debug("Loading passwords... done");
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 log.error(e.getMessage(), e);
             }
             return savedSessionTree;
@@ -121,11 +120,11 @@ public class SessionStore {
         for (SessionInfo info : folder.getItems()) {
             if (info.id.equals(id)) {
                 if (remoteFolders != null) {
-                    log.info("Remote folders saving: " + remoteFolders);
+                    log.info("Remote folders saving: {}", remoteFolders);
                     info.setFavouriteRemoteFolders(remoteFolders);
                 }
                 if (localFolders != null) {
-                    log.info("Local folders saving: " + localFolders);
+                    log.info("Local folders saving: {}", localFolders);
                     info.setFavouriteLocalFolders(localFolders);
                 }
                 return true;

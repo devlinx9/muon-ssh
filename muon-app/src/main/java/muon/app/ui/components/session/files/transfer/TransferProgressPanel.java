@@ -1,5 +1,8 @@
 package muon.app.ui.components.session.files.transfer;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -18,6 +21,9 @@ public class TransferProgressPanel extends JPanel {
     private final AlphaComposite alphaComposite1 = AlphaComposite.SrcOver
             .derive(1.0f);
     private final Box b12 = Box.createVerticalBox();
+
+    @Setter
+    @Getter
     private Consumer<Boolean> stopCallback;
 
     public TransferProgressPanel() {
@@ -33,8 +39,9 @@ public class TransferProgressPanel extends JPanel {
         b1.add(Box.createHorizontalStrut(10));
         stop = new JButton("Stop");
         stop.addActionListener(e -> {
-            if (stopCallback != null)
+            if (stopCallback != null) {
                 stopCallback.accept(Boolean.TRUE);
+            }
         });
         b1.add(stop);
         add(Box.createVerticalGlue());
@@ -82,7 +89,7 @@ public class TransferProgressPanel extends JPanel {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+                            RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setComposite(alphaComposite);
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, getWidth(), getHeight());
@@ -95,17 +102,4 @@ public class TransferProgressPanel extends JPanel {
         g.fillRoundRect(x - 10, y - 10, w + 20, h + 20, 5, 5);
     }
 
-    /**
-     * @return the stopCallback
-     */
-    public Consumer<Boolean> getStopCallback() {
-        return stopCallback;
-    }
-
-    /**
-     * @param stopCallback the stopCallback to set
-     */
-    public void setStopCallback(Consumer<Boolean> stopCallback) {
-        this.stopCallback = stopCallback;
-    }
 }

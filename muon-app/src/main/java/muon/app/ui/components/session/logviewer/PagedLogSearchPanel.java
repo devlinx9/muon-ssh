@@ -56,9 +56,9 @@ public class PagedLogSearchPanel extends JPanel {
                 index++;
             }
 
-            log.info("Index: " + index);
+            log.info("Index: {}", index);
             long lineNo = getLineNumber();
-            log.info("Line number: " + lineNo);
+            log.info("Line number: {}", lineNo);
             if (lineNo != -1) {
                 searchListener.select(lineNo);
                 this.lblResults.setText((index + 1) + "/" + this.resultCount);
@@ -78,7 +78,7 @@ public class PagedLogSearchPanel extends JPanel {
                 index--;
             }
             long lineNo = getLineNumber();
-            log.info("Line number: " + lineNo);
+            log.info("Line number: {}", lineNo);
             if (lineNo != -1) {
                 searchListener.select(lineNo);
                 this.lblResults.setText((index + 1) + "/" + this.resultCount);
@@ -132,7 +132,7 @@ public class PagedLogSearchPanel extends JPanel {
         this.raf = raf;
         this.index = 0;
         this.resultCount = len / 8;
-        log.info("Total items found: " + this.resultCount);
+        log.info("Total items found: {}", this.resultCount);
         this.lblResults
                 .setText(resultCount > 0 ? 1 + "/" + resultCount : "0/0");
         if (resultCount > 0) {

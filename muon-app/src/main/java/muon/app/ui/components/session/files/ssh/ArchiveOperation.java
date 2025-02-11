@@ -89,7 +89,7 @@ public class ArchiveOperation {
             throws Exception {
         String command = getExtractCommand(archivePath);
         if (command == null) {
-            log.info("Unsupported file: " + archivePath);
+            log.info("Unsupported file: {}", archivePath);
             return false;
         }
         command = String
@@ -99,10 +99,10 @@ public class ArchiveOperation {
                                 getArchiveFileName(PathUtils
                                         .getFileName(archivePath)))
                                 : targetFolder);
-        log.info("Invoke command: " + command);
+        log.info("Invoke command: {}", command);
         StringBuilder output = new StringBuilder();
         boolean ret = client.exec(command, stopFlag, output) == 0;
-        log.info("output: " + output);
+        log.info("output: {}", output);
         return ret;
     }
 
@@ -123,7 +123,7 @@ public class ArchiveOperation {
 
             StringBuilder sb = new StringBuilder();
             for (String s : files) {
-                sb.append(" \"" + s + "\"");
+                sb.append(" \"").append(s).append("\"");
             }
 
             String ext = comboBox.getSelectedItem() + "";
@@ -133,10 +133,10 @@ public class ArchiveOperation {
                     PathUtils.combineUnix(txtTargetFolder.getText(),
                             txtFileName.getText() + "." + ext));
             String cd = String.format("cd \"%s\";", txtTargetFolder.getText());
-            log.info(cd + compressCmd);
+            log.info("{}{}", cd, compressCmd);
             StringBuilder output = new StringBuilder();
             boolean ret = client.exec(cd + compressCmd, stopFlag, output) == 0;
-            log.info("output: " + output);
+            log.info("output: {}", output);
             return ret;
         }
         return true;

@@ -92,7 +92,7 @@ public class App {
         String muonPath = System.getProperty("muonPath");
         boolean isMuonPath = false;
         if (muonPath != null && !muonPath.isEmpty()) {
-            log.info("Muon path: " + muonPath);
+            log.info("Muon path: {}", muonPath);
             CONFIG_DIR = muonPath;
             isMuonPath = true;
         }
@@ -101,7 +101,7 @@ public class App {
         if (!appDir.exists()) {
             //Validate if the config directory can be created
             if (!appDir.mkdirs()) {
-                log.error("The config directory for moun cannot be created: " + CONFIG_DIR);
+                log.error("The config directory for moun cannot be created: {}", CONFIG_DIR);
                 System.exit(1);
             }
             firstRun = true;
@@ -136,7 +136,7 @@ public class App {
 
         try {
             int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
-            log.info("maxKeySize: " + maxKeySize);
+            log.info("maxKeySize: {}", maxKeySize);
             if (maxKeySize < Integer.MAX_VALUE) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("unlimited cryptography"));
             }
@@ -163,7 +163,6 @@ public class App {
             File knownHostFile = new File(App.CONFIG_DIR, "known_hosts");
             HOST_KEY_VERIFIER = new GraphicalHostKeyVerifier(knownHostFile);
         } catch (Exception e2) {
-            // TODO: handle exception
             log.error(e2.getMessage(), e2);
         }
 

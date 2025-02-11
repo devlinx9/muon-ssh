@@ -103,7 +103,7 @@ public final class PasswordStore {
                 .generateSecret(new PBEKeySpec(serializePasswordMap(this.passwordMap)));
         keyStore.setEntry("passwords", new SecretKeyEntry(generatedSecret), protParam);
 
-        log.info("Password protection: " + protParam.getProtectionAlgorithm());
+        log.info("Password protection: {}", protParam.getProtectionAlgorithm());
 
         try (OutputStream out = new FileOutputStream(new File(App.CONFIG_DIR, "passwords.pfx"))) {
             keyStore.store(out, protParam.getPassword());
@@ -146,7 +146,7 @@ public final class PasswordStore {
                 if (password != null) {
                     info.setPassword(new String(password));
                 } else {
-                    log.debug("The info " + info.getHost()  + " has no password");
+                    log.debug("The info {} has no password", info.getHost());
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);

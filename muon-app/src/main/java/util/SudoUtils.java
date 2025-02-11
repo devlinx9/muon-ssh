@@ -22,8 +22,7 @@ public class SudoUtils {
         try {
             AtomicBoolean firstTime = new AtomicBoolean(true);
             String fullCommand = "sudo -S -p '" + prompt + "' " + command;
-            log.info(
-                    "Full sudo: " + fullCommand + "\nprompt: " + prompt);
+            log.info("Full sudo: {}\nprompt: {}", fullCommand, prompt);
             return instance.exec(fullCommand, cmd -> {
                 try {
                     InputStream in = cmd.getInputStream();
@@ -40,7 +39,7 @@ public class SudoUtils {
                             sb.append(b, 0, x);
                         }
 
-                        log.info("buffer: " + sb);
+                        log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (firstTime.get() || JOptionPane.showOptionDialog(null,
                                     new Object[]{"User password",
@@ -84,8 +83,7 @@ public class SudoUtils {
         String prompt = UUID.randomUUID().toString();
         try {
             String fullCommand = "sudo -S -p '" + prompt + "' " + command;
-            log.info(
-                    "Full sudo: " + fullCommand + "\nprompt: " + prompt);
+            log.info("Full sudo: {}\nprompt: {}", fullCommand, prompt);
             return instance.exec(fullCommand, cmd -> {
                 try {
                     InputStream in = cmd.getInputStream();
@@ -102,7 +100,7 @@ public class SudoUtils {
                             sb.append(b, 0, x);
                         }
 
-                        log.info("buffer: " + sb);
+                        log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (JOptionPane.showOptionDialog(null,
                                     new Object[]{"User password",
@@ -143,8 +141,7 @@ public class SudoUtils {
         String prompt = UUID.randomUUID().toString();
         try {
             String fullCommand = "sudo -S -p '" + prompt + "' " + command;
-            log.info(
-                    "Full sudo: " + fullCommand + "\nprompt: " + prompt);
+            log.info("Full sudo: {}\nprompt: {}", fullCommand, prompt);
             return instance.exec(fullCommand, cmd -> {
                 try {
                     InputStream in = cmd.getInputStream();
@@ -161,7 +158,7 @@ public class SudoUtils {
                         sb.append((char) ch);
                         output.append((char) ch);
 
-                        log.info("buffer: " + sb);
+                        log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
                             sb = new StringBuilder();
                             out.write(

@@ -53,7 +53,7 @@ public class SessionListPanel extends JPanel {
                         int y = e.getPoint().y;
 
                         if (x > r.x + r.width - 30 && x < r.x + r.width && y > r.y + 10 && y < r.y + r.height - 10) {
-                            log.info("Clicked on: " + index);
+                            log.info("Clicked on: {}", index);
                             removeSession(index);
                         }
                     }
@@ -87,8 +87,7 @@ public class SessionListPanel extends JPanel {
         });
 
         sessionList.addListSelectionListener(e -> {
-            log.debug("called for index: " + sessionList.getSelectedIndex() + " " + e.getFirstIndex() + " "
-                               + e.getLastIndex() + e.getValueIsAdjusting());
+            log.debug("called for index: {} {} {}{}", sessionList.getSelectedIndex(), e.getFirstIndex(), e.getLastIndex(), e.getValueIsAdjusting());
             if (!e.getValueIsAdjusting()) {
                 int index = sessionList.getSelectedIndex();
                 if (index != -1) {
@@ -237,19 +236,11 @@ public class SessionListPanel extends JPanel {
                 if (rendererComponent instanceof JPanel) {
                     JPanel cellPanel = (JPanel) rendererComponent;
                     for (Component component : cellPanel.getComponents()) {
-//                        if (component instanceof JLabel) {
-//                            JLabel label = (JLabel) component;
-//                            if (label.getName() != null && (label.getName().equals("lblText") ||
-//                                                            label.getName().equals("lblHost"))) {
-//                                label.setVisible(isVisible);
-//                            }
-//                        }
                         if (component instanceof JPanel) {
                             component.setVisible(isVisible);
                             ((JPanel) component).getComponents();
 
                         }
-//                        component.setVisible(isVisible);
                     }
                 }
             }

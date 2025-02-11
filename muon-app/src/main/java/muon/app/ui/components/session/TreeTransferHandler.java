@@ -24,7 +24,7 @@ class TreeTransferHandler extends TransferHandler {
             nodesFlavor = new DataFlavor(mimeType);
             flavors[0] = nodesFlavor;
         } catch (ClassNotFoundException e) {
-            log.info("ClassNotFound: " + e.getMessage());
+            log.info("ClassNotFound: {}", e.getMessage());
         }
     }
 
@@ -41,8 +41,8 @@ class TreeTransferHandler extends TransferHandler {
         JTree tree = (JTree) support.getComponent();
         int dropRow = tree.getRowForPath(dl.getPath());
         int[] selRows = tree.getSelectionRows();
-        for (int i = 0; i < selRows.length; i++) {
-            if (selRows[i] == dropRow) {
+        for (int selRow : selRows) {
+            if (selRow == dropRow) {
                 return false;
             }
         }
@@ -64,9 +64,6 @@ class TreeTransferHandler extends TransferHandler {
     }
 
 
-    protected void exportDone(JComponent source, Transferable data, int action) {
-    }
-
     public int getSourceActions(JComponent c) {
         return COPY_OR_MOVE;
     }
@@ -81,9 +78,9 @@ class TreeTransferHandler extends TransferHandler {
             Transferable t = support.getTransferable();
             node = (DefaultMutableTreeNode) t.getTransferData(nodesFlavor);
         } catch (UnsupportedFlavorException ufe) {
-            log.info("UnsupportedFlavor: " + ufe.getMessage());
+            log.info("UnsupportedFlavor: {}", ufe.getMessage());
         } catch (java.io.IOException ioe) {
-            log.info("I/O error: " + ioe.getMessage());
+            log.info("I/O error: {}", ioe.getMessage());
         }
         // Get drop location info.
         JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();

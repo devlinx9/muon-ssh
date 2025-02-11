@@ -3,6 +3,7 @@
  */
 package muon.app.ui;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.session.NewSessionDlg;
@@ -44,6 +45,8 @@ public class AppWindow extends JFrame {
     private final BackgroundTransferPanel uploadPanel;
     private final BackgroundTransferPanel downloadPanel;
     private final Component bottomPanel;
+
+    @Getter
     private SessionListPanel sessionListPanel;
     private JLabel lblUploadCount;
     private JLabel lblDownloadCount;
@@ -68,8 +71,8 @@ public class AppWindow extends JFrame {
 
         Dimension screenD = Toolkit.getDefaultToolkit().getScreenSize();
 
-        int screenWidth = (screenD.width - inset.left - inset.right)/2;
-        int screenHeight = (screenD.height - inset.top - inset.bottom)*2/3;
+        int screenWidth = (screenD.width - inset.left - inset.right) / 2;
+        int screenHeight = (screenD.height - inset.top - inset.bottom) * 2 / 3;
 
         if (screenWidth < 1024 || screenHeight < 650 || App.getGlobalSettings().isStartMaximized()) {
             setSize(screenWidth, screenHeight);
@@ -176,13 +179,6 @@ public class AppWindow extends JFrame {
         sessionCard.show(cardPanel, sessionContentPanel.hashCode() + "");
         revalidate();
         repaint();
-    }
-
-    /**
-     * @return the sessionListPanel
-     */
-    public SessionListPanel getSessionListPanel() {
-        return sessionListPanel;
     }
 
     /**

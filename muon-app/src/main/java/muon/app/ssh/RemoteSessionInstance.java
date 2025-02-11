@@ -145,7 +145,7 @@ public class RemoteSessionInstance {
                         }
                         while (cmd.isOpen());
 
-                        log.debug(cmd.isOpen() + " " + cmd.isEOF() + " " + cmd.getExitStatus());
+                        log.debug("{} {} {}", cmd.isOpen(), cmd.isEOF(), cmd.getExitStatus());
 
                         log.debug("Command and Session closed");
 

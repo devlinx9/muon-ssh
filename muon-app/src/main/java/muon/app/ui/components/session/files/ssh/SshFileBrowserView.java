@@ -17,8 +17,6 @@ import util.Constants;
 import util.PathUtils;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Arrays;
@@ -35,7 +33,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
         this.menuHandler = new SshMenuHandler(fileBrowser, this);
         this.menuHandler.initMenuHandler(this.folderView);
         this.transferHandler = new DndTransferHandler(this.folderView, this.fileBrowser.getInfo(), this,
-                DndTransferData.DndSourceType.SSH, this.fileBrowser);
+                                                      DndTransferData.DndSourceType.SSH, this.fileBrowser);
         this.folderView.setTransferHandler(transferHandler);
         this.folderView.setFolderViewTransferHandler(transferHandler);
         this.addressPopup = menuHandler.createAddressPopup();
@@ -44,7 +42,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
             if (this.path != null && this.path.trim().isEmpty()) {
                 this.path = null;
             }
-            log.info("Path: " + path);
+            log.info("Path: {}", path);
         } else {
             this.path = initialPath;
         }
@@ -52,23 +50,13 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
         this.render(path, App.getGlobalSettings().isDirectoryCache());
     }
 
-    private void openDefaultAction() {
-    }
-
-    private void openNewTab() {
-
-    }
-
     public void createAddressBar() {
-        addressBar = new AddressBar('/', new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedPath = e.getActionCommand();
-                addressPopup.setName(selectedPath);
-                MouseEvent me = (MouseEvent) e.getSource();
-                addressPopup.show(me.getComponent(), me.getX(), me.getY());
-                log.info("clicked");
-            }
+        addressBar = new AddressBar('/', e -> {
+            String selectedPath = e.getActionCommand();
+            addressPopup.setName(selectedPath);
+            MouseEvent me = (MouseEvent) e.getSource();
+            addressPopup.show(me.getComponent(), me.getX(), me.getY());
+            log.info("clicked");
         });
         if (App.getGlobalSettings().isShowPathBar()) {
             addressBar.switchToPathBar();
@@ -80,15 +68,16 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
     @Override
     public String toString() {
         return this.fileBrowser.getInfo().getName()
-                + (this.path == null || this.path.isEmpty() ? "" : " [" + this.path + "]");
+               + (this.path == null || this.path.isEmpty() ? "" : " [" + this.path + "]");
     }
 
     private String trimPath(String path) {
-        if (path.equals("/"))
+        if (path.equals("/")) {
             return path;
+        }
         if (path.endsWith("/")) {
             String trim = path.substring(0, path.length() - 1);
-            log.info("Trimmed path: " + trim);
+            log.info("Trimmed path: {}", trim);
             return trim;
         }
         return path;
@@ -107,7 +96,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
         }
         if (list != null) {
             final List<FileInfo> list2 = list;
-            log.info("New file list: " + list2);
+            log.info("New file list: {}", list2);
             SwingUtilities.invokeLater(() -> {
                 addressBar.setText(path);
                 folderView.setItems(list2);
@@ -121,7 +110,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
     @Override
     public void render(String path, boolean useCache) {
-        log.debug("Rendering: " + path + " caching: " + useCache);
+        log.debug("Rendering: {} caching: {}", path, useCache);
         this.path = path;
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             this.fileBrowser.disableUi();
@@ -144,16 +133,16 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                         if (this.fileBrowser.isSessionClosed()) {
                             return;
                         }
-                        log.info("Exception caught in sftp file browser: " + e.getMessage());
+                        log.info("Exception caught in sftp file browser: {}", e.getMessage());
 
                         this.fileBrowser.getHolder().reconnect();
 
                         log.error(e.getMessage(), e);
                         if (JOptionPane.showConfirmDialog(null,
-                                "Unable to connect to server " + this.fileBrowser.getInfo().getName() + " at "
-                                        + this.fileBrowser.getInfo().getHost()
-                                        + (e.getMessage() != null ? "\n\nReason: " + e.getMessage() : "\n")
-                                        + "\n\nDo you want to retry?") == JOptionPane.YES_OPTION) {
+                                                          "Unable to connect to server " + this.fileBrowser.getInfo().getName() + " at "
+                                                          + this.fileBrowser.getInfo().getHost()
+                                                          + (e.getMessage() != null ? "\n\nReason: " + e.getMessage() : "\n")
+                                                          + "\n\nDo you want to retry?") == JOptionPane.YES_OPTION) {
                             continue;
                         }
                         break;
@@ -176,9 +165,8 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
         FileInfo fileInfo = folderView.getSelectedFiles()[0];
         try {
             App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                    fileBrowser.getActiveSessionId(), false, null);
+                                                          fileBrowser.getActiveSessionId(), false, null);
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
             log.error(e1.getMessage(), e1);
         }
 
@@ -212,42 +200,42 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
     public boolean handleDrop(DndTransferData transferData) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-                && JOptionPane.showConfirmDialog(null, "Move/copy files?") != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(null, "Move/copy files?") != JOptionPane.YES_OPTION) {
             return false;
         }
         try {
             int sessionHashCode = transferData.getInfo();
-            log.info("Session hash code: " + sessionHashCode);
+            log.info("Session hash code: {}", sessionHashCode);
             FileSystem sourceFs = null;
             if (sessionHashCode == 0 && transferData.getSourceType() == DndTransferData.DndSourceType.LOCAL) {
                 log.info("Source fs is local");
                 sourceFs = new LocalFileSystem();
             } else if (transferData.getSourceType() == DndTransferData.DndSourceType.SSH
-                    && sessionHashCode == this.fileBrowser.getInfo().hashCode()) {
+                       && sessionHashCode == this.fileBrowser.getInfo().hashCode()) {
                 log.info("Source fs is remote");
                 sourceFs = this.fileBrowser.getSSHFileSystem();
             }
 
             if (sourceFs instanceof LocalFileSystem) {
-                log.info("Dropped: " + transferData);
+                log.debug("Dropped: {}", transferData);
                 FileBrowser.ResponseHolder holder = new FileBrowser.ResponseHolder();
                 if (!this.fileBrowser.selectTransferModeAndConflictAction(holder)) {
                     return false;
                 }
                 if (holder.transferMode == Constants.TransferMode.BACKGROUND) {
                     this.fileBrowser.getHolder().uploadInBackground(transferData.getFiles(), this.path,
-                            holder.conflictAction);
+                                                                    holder.conflictAction);
                     return true;
                 }
                 FileSystem targetFs = this.fileBrowser.getSSHFileSystem();
                 this.fileBrowser.newFileTransfer(sourceFs, targetFs, transferData.getFiles(), this.path,
-                        this.hashCode(), holder.conflictAction, null);
+                                                 this.hashCode(), holder.conflictAction, null);
             } else if (sourceFs instanceof SshFileSystem && (sourceFs == this.fileBrowser.getSSHFileSystem())) {
-                log.info("SshFs is of same instance: " + (sourceFs == this.fileBrowser.getSSHFileSystem()));
+                log.info("SshFs is of same instance: {}", sourceFs == this.fileBrowser.getSSHFileSystem());
                 if (transferData.getFiles().length > 0) {
                     FileInfo fileInfo = transferData.getFiles()[0];
                     String parent = PathUtils.getParent(fileInfo.getPath());
-                    log.info("Parent: " + parent + " == " + this.getCurrentDirectory());
+                    log.info("Parent: {} == {}", parent, this.getCurrentDirectory());
                     if (!parent.endsWith("/")) {
                         parent += "/";
                     }
@@ -267,9 +255,9 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                     menuHandler.move(Arrays.asList(transferData.getFiles()), getCurrentDirectory());
                 }
             } else if (sourceFs instanceof SshFileSystem
-                    && (transferData.getSourceType() == DndTransferData.DndSourceType.SFTP)) {
+                       && (transferData.getSourceType() == DndTransferData.DndSourceType.SFTP)) {
             }
-            log.info("12345: " + (sourceFs instanceof SshFileSystem) + " " + transferData.getSourceType());
+            log.info("12345: {} {}", sourceFs instanceof SshFileSystem, transferData.getSourceType());
             return true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -277,11 +265,11 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
         }
     }
 
-    public FileSystem getFileSystem() throws Exception {
+    public FileSystem getFileSystem() {
         return this.fileBrowser.getSSHFileSystem();
     }
 
-    public RemoteSessionInstance getSshClient() throws Exception {
+    public RemoteSessionInstance getSshClient() {
         return this.fileBrowser.getSessionInstance();
     }
 

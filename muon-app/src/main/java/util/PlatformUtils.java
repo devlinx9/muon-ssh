@@ -142,7 +142,7 @@ public class PlatformUtils {
     }
 
     public static List<EditorEntry> getKnownEditors() {
-        List<EditorEntry> list = new ArrayList<EditorEntry>();
+        List<EditorEntry> list = new ArrayList<>();
         if (App.IS_WINDOWS) {
             try {
                 String vscode = detectVSCode(false);

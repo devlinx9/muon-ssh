@@ -12,11 +12,11 @@
 # TYPE					--type of file ( file or folder or both
 
 display_file_info(){
-	if [ -d $1 ]; then
+	if [ -d "$1" ]; then
 		echo "d|$1"
-	elif [ -f $1 ]; then
+	elif [ -f "$1" ]; then
 		echo "f|$1"
-	elif [ -L $1 ]; then
+	elif [ -L "$1" ]; then
 		echo "l|$1"
 	else
 		echo "o|$1"
@@ -24,7 +24,7 @@ display_file_info(){
 }
 
 search_in_file(){
-	if [ ! -z $UNCOMPRESS ];then
+	if [ ! -z "$UNCOMPRESS" ];then
 		if gunzip -c "$1" 2>/dev/null|grep -q "$2" ; then
 			FILE=$1
 		elif unzip -p "$1" 2>/dev/null|grep -q "$2" ; then
@@ -36,14 +36,14 @@ search_in_file(){
 		fi
 	fi
 	
-	if [ -z $FILE ]; then
+	if [ -z "$FILE" ]; then
 		if grep -q "$2" "$1" ; then
 			FILE=$1
 		fi
 	fi
 
-	if [ ! -z $FILE ]; then
-		display_file_info $FILE
+	if [ ! -z "$FILE" ]; then
+		display_file_info "$FILE"
 	fi
 
 }
@@ -54,7 +54,7 @@ search_in_file(){
 if [ -z "$CONTENT" ]; then
 	#search only in file name and other attributes
 	if [ ! -z "$NAME" ]; then
-		find "$LOCATION" -name "$NAME" $CRITERIA  -exec sh -c 'display_file_info(){
+		find "$LOCATION" -name "$NAME" "$CRITERIA"  -exec sh -c 'display_file_info(){
 																	if [ -d "$1" ]; then
 																		echo "d|$1"
 																	elif [ -f "$1" ]; then
@@ -67,7 +67,7 @@ if [ -z "$CONTENT" ]; then
 																}
 																display_file_info "$0" ' {} \;
 	else
-		find "$LOCATION" $CRITERIA  -exec sh -c 'display_file_info(){
+		find "$LOCATION" "$CRITERIA"  -exec sh -c 'display_file_info(){
 													if [ -d "$1" ]; then
 														echo "d|$1"
 													elif [ -f "$1" ]; then
@@ -82,7 +82,7 @@ if [ -z "$CONTENT" ]; then
 	fi
 else
 	#search within contents and other attributes
-	find  "$LOCATION" $CRITERIA -exec sh -c 'display_file_info(){
+	find  "$LOCATION" "$CRITERIA" -exec sh -c 'display_file_info(){
 													if [ -d "$1" ]; then
 														echo "d|$1"
 													elif [ -f "$1" ]; then

@@ -13,8 +13,6 @@ import muon.app.ui.components.session.files.view.DndTransferHandler;
 import util.PathUtils;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Files;
@@ -33,7 +31,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
         this.menuHandler = new LocalMenuHandler(fileBrowser, this);
         this.menuHandler.initMenuHandler(this.folderView);
         this.transferHandler = new DndTransferHandler(this.folderView, null, this, DndTransferData.DndSourceType.LOCAL,
-                this.fileBrowser);
+                                                      this.fileBrowser);
         this.folderView.setTransferHandler(transferHandler);
         this.folderView.setFolderViewTransferHandler(transferHandler);
         this.addressPopup = menuHandler.createAddressPopup();
@@ -44,14 +42,14 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
             this.path = initialPath;
         }
 
-        log.info("Path: " + path);
+        log.info("Path: {}", path);
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             try {
                 this.fs = new LocalFileSystem();
                 //Validate if local path exists, if not set the home path
                 if (this.path == null || Files.notExists(Paths.get(this.path)) || !Files.isDirectory(Paths.get(this.path))) {
-                    log.error("The file path doesn't exists " + this.path);
-                    log.info("Setting to " + fs.getHome());
+                    log.error("The file path doesn't exists {}", this.path);
+                    log.info("Setting to {}", fs.getHome());
 
                     path = fs.getHome();
                 }
@@ -68,15 +66,12 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
     }
 
     public void createAddressBar() {
-        addressBar = new AddressBar(File.separatorChar, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedPath = e.getActionCommand();
-                addressPopup.setName(selectedPath);
-                MouseEvent me = (MouseEvent) e.getSource();
-                addressPopup.show(me.getComponent(), me.getX(), me.getY());
-                log.info("clicked");
-            }
+        addressBar = new AddressBar(File.separatorChar, e -> {
+            String selectedPath = e.getActionCommand();
+            addressPopup.setName(selectedPath);
+            MouseEvent me = (MouseEvent) e.getSource();
+            addressPopup.show(me.getComponent(), me.getX(), me.getY());
+            log.info("clicked");
         });
         if (App.getGlobalSettings().isShowPathBar()) {
             addressBar.switchToPathBar();
@@ -157,14 +152,14 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
     }
 
     public boolean handleDrop(DndTransferData transferData) {
-        log.info("### " + transferData.getSource() + " " + this.hashCode());
+        log.info("### {} {}", transferData.getSource(), this.hashCode());
         if (transferData.getSource() == this.hashCode()) {
             return false;
         }
         return this.fileBrowser.handleLocalDrop(transferData, fileBrowser.getInfo(), this.fs, this.path);
     }
 
-    public FileSystem getFileSystem() throws Exception {
+    public FileSystem getFileSystem() {
         return new LocalFileSystem();
     }
 }

@@ -54,7 +54,7 @@ public class BackgroundTransferPanel extends JPanel {
             try {
                 SwingUtilities.invokeAndWait(() -> stopSession(sessionId));
             } catch (InvocationTargetException | InterruptedException e) {
-                // TODO Auto-generated catch block
+                
                 log.error(e.getMessage(), e);
             }
         } else {

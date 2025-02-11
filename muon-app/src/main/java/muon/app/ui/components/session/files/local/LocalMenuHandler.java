@@ -15,7 +15,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
@@ -68,41 +67,22 @@ public class LocalMenuHandler {
 
     private void initMenuItems(InputMap map, ActionMap act) {
         mOpen = new JMenuItem(bundle.getString("open"));
-        mOpen.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                open();
-            }
-        });
+        mOpen.addActionListener(e -> open());
         mOpenInNewTab = new JMenuItem(bundle.getString("open_new_tab"));
-        mOpenInNewTab.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                openNewTab();
-            }
-        });
+        mOpenInNewTab.addActionListener(e -> openNewTab());
 
         mOpenInFileExplorer = new JMenuItem(
                 App.IS_WINDOWS ? "Open in Windows Explorer" : (App.IS_MAC ? "Open in Finder" : "Open in File Browser"));
-        mOpenInFileExplorer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    PlatformUtils.openFolderInExplorer(folderView.getSelectedFiles()[0].getPath(), null);
-                } catch (FileNotFoundException e1) {
-                    // TODO Auto-generated catch block
-                    log.error(e1.getMessage(), e1);
-                }
+        mOpenInFileExplorer.addActionListener(e -> {
+            try {
+                PlatformUtils.openFolderInExplorer(folderView.getSelectedFiles()[0].getPath(), null);
+            } catch (FileNotFoundException e1) {
+                log.error(e1.getMessage(), e1);
             }
         });
 
         mRename = new JMenuItem(bundle.getString("rename"));
-        mRename.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                rename(folderView.getSelectedFiles()[0], fileBrowserView.getCurrentDirectory());
-            }
-        });
+        mRename.addActionListener(e -> rename(folderView.getSelectedFiles()[0], fileBrowserView.getCurrentDirectory()));
 
         mDelete = new JMenuItem(bundle.getString("delete"));
         AbstractAction aDelete = new AbstractAction() {
@@ -249,9 +229,8 @@ public class LocalMenuHandler {
     private void newFolder(String currentDirectory) {
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             fileBrowser.disableUi();
-            String baseFolder = currentDirectory;
-            if (fileOperations.newFolder(baseFolder)) {
-                fileBrowserView.render(baseFolder);
+            if (fileOperations.newFolder(currentDirectory)) {
+                fileBrowserView.render(currentDirectory);
             } else {
                 fileBrowser.enableUi();
             }
@@ -265,8 +244,8 @@ public class LocalMenuHandler {
             BookmarkManager.addEntry(null,
                                      Arrays.stream(arr)
                                              .filter(a -> a.getType() == FileType.DIR_LINK || a.getType() == FileType.DIRECTORY)
-                                             .map(a -> a.getPath()).collect(Collectors.toList()));
-        } else if (arr.length == 0) {
+                                             .map(FileInfo::getPath).collect(Collectors.toList()));
+        } else {
             BookmarkManager.addEntry(null, fileBrowserView.getCurrentDirectory());
         }
 

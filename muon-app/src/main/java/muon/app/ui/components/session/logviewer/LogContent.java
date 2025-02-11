@@ -38,11 +38,7 @@ import java.util.zip.GZIPInputStream;
 @Slf4j
 public class LogContent extends JPanel implements ClosableTabContent {
     private final SessionContentPanel holder;
-    /**
-     * -- GETTER --
-     *
-     * @return the remoteFile
-     */
+
     @Getter
     private final String remoteFile;
     private File indexFile;
@@ -86,18 +82,14 @@ public class LogContent extends JPanel implements ClosableTabContent {
         btnFirstPage.putClientProperty("Nimbus.Overrides", skin);
         btnFirstPage.setFont(App.SKIN.getIconFont());
         btnFirstPage.setText(FontAwesomeContants.FA_FAST_BACKWARD);
-        btnFirstPage.addActionListener(e -> {
-            firstPage();
-        });
+        btnFirstPage.addActionListener(e -> firstPage());
 
         btnNextPage = new JButton();
         btnNextPage.setToolTipText("Next page");
         btnNextPage.putClientProperty("Nimbus.Overrides", skin);
         btnNextPage.setFont(App.SKIN.getIconFont());
         btnNextPage.setText(FontAwesomeContants.FA_STEP_FORWARD);
-        btnNextPage.addActionListener(e -> {
-            nextPage();
-        });
+        btnNextPage.addActionListener(e -> nextPage());
 
         btnPrevPage = new JButton("");
         btnPrevPage.setToolTipText("Previous page");
@@ -224,10 +216,10 @@ public class LogContent extends JPanel implements ClosableTabContent {
 
             @Override
             public void select(long index) {
-                log.info("Search item found on line: " + index);
+                log.info("Search item found on line: {}", index);
                 int page = (int) index / linePerPage;
                 int line = (int) (index % linePerPage);
-                log.info("Found on page: " + page + " line: " + line);
+                log.info("Found on page: {} line: {}", page, line);
                 if (currentPage == page) {
                     if (line < textArea.getLineCount() && line != -1) {
                         highlightLine(line);
@@ -261,7 +253,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 if ((indexFile(true, stopFlag))
                         || (indexFile(false, stopFlag))) {
                     this.totalLines = this.raf.length() / 16;
-                    log.info("Total lines: " + this.totalLines);
+                    log.info("Total lines: {}", this.totalLines);
                     if (this.totalLines > 0) {
                         this.pageCount = (long) Math
                                 .ceil((double) totalLines / linePerPage);
@@ -336,10 +328,17 @@ public class LogContent extends JPanel implements ClosableTabContent {
         long byteRange = endOffset - startOffset;
 
         if (startOffset < 8192) {
-            command.append("dd if=\"" + this.remoteFile + "\" ibs=1 skip="
-                    + startOffset + " count=" + byteRange
-                    + " 2>/dev/null | sed -ne '1," + linePerPage + "p;"
-                    + (linePerPage + 1) + "q'");
+            command.append("dd if=\"")
+                    .append(this.remoteFile)
+                    .append("\" ibs=1 skip=")
+                    .append(startOffset)
+                    .append(" count=")
+                    .append(byteRange)
+                    .append(" 2>/dev/null | sed -ne '1,")
+                    .append(linePerPage)
+                    .append("p;")
+                    .append(linePerPage + 1)
+                    .append("q'");
         } else {
             long blockToSkip = startOffset / 8192;
             long bytesToSkip = startOffset % 8192;
@@ -349,14 +348,22 @@ public class LogContent extends JPanel implements ClosableTabContent {
             if (blocks * 8192L - bytesToSkip < byteRange) {
                 blocks++;
             }
-            command.append("dd if=\"" + this.remoteFile + "\" ibs=8192 skip="
-                    + blockToSkip + " count=" + blocks
-                    + " 2>/dev/null | dd bs=1 skip=" + bytesToSkip
-                    + " 2>/dev/null | sed -ne '1," + linePerPage + "p;"
-                    + (linePerPage + 1) + "q'");
+            command.append("dd if=\"")
+                    .append(this.remoteFile)
+                    .append("\" ibs=8192 skip=")
+                    .append(blockToSkip)
+                    .append(" count=")
+                    .append(blocks)
+                    .append(" 2>/dev/null | dd bs=1 skip=")
+                    .append(bytesToSkip)
+                    .append(" 2>/dev/null | sed -ne '1,")
+                    .append(linePerPage)
+                    .append("p;")
+                    .append(linePerPage + 1)
+                    .append("q'");
         }
 
-        log.debug("Command: " + command);
+        log.debug("Command: {}", command);
         StringBuilder output = new StringBuilder();
 
         if (holder.getRemoteSessionInstance().exec(command.toString(), stopFlag,
@@ -370,11 +377,11 @@ public class LogContent extends JPanel implements ClosableTabContent {
         try {
             File tempFile = Files.createTempFile(
                     "muon" + UUID.randomUUID(), "index").toFile();
-            log.info("Temp file: " + tempFile);
+            log.info("Temp file: {}", tempFile);
             try (OutputStream outputStream = new FileOutputStream(tempFile)) {
                 String command = "LANG=C awk '{len=length($0); print len; }' \""
                         + remoteFile + "\" | " + (xz ? "xz" : "gzip") + " |cat";
-                log.debug("Command: " + command);
+                log.debug("Command: {}", command);
 
                 if (holder.getRemoteSessionInstance().execBin(command, stopFlag,
                         outputStream, null) == 0) {
@@ -508,10 +515,8 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 .createTempFile("muon" + UUID.randomUUID(), "index")
                 .toFile();
         StringBuilder command = new StringBuilder();
-        command.append("awk '{if(index(tolower($0),\""
-                + text.toLowerCase(Locale.ENGLISH) + "\")){ print NR}}' \""
-                + this.remoteFile + "\"");
-        log.debug("Command: " + command);
+        command.append("awk '{if(index(tolower($0),\"").append(text.toLowerCase(Locale.ENGLISH)).append("\")){ print NR}}' \"").append(this.remoteFile).append("\"");
+        log.debug("Command: {}", command);
         try (OutputStream outputStream = new FileOutputStream(tempFile)) {
 
             File searchIndexes = Files.createTempFile(
@@ -545,7 +550,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         try {
             int startIndex = textArea.getLineStartOffset(lineNumber);
             int endIndex = textArea.getLineEndOffset(lineNumber);
-            log.info("selection: " + startIndex + " " + endIndex);
+            log.info("selection: {} {}", startIndex, endIndex);
             textArea.setCaretPosition(startIndex);
             textArea.getHighlighter().removeAllHighlights();
             textArea.getHighlighter().addHighlight(startIndex, endIndex,

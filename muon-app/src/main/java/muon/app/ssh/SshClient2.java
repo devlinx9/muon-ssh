@@ -44,11 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SshClient2 implements Closeable {
     private static final int CONNECTION_TIMEOUT = App.getGlobalSettings().getConnectionTimeout() * 1000;
     private final AtomicBoolean closed = new AtomicBoolean(false);
-    /**
-     * -- GETTER --
-     *
-     * @return the info
-     */
+
     @Getter
     private final SessionInfo info;
     private final PasswordFinderDialog passwordFinder;
@@ -97,10 +93,8 @@ public class SshClient2 implements Closeable {
         } catch (OperationCancelledException e) {
             throw e;
         } catch (Exception e) {
-            for (String method : sshj.getUserAuth().getAllowedMethods()) {
-                allowedMethods.add(method);
-            }
-            log.info("List of allowed authentications: " + allowedMethods);
+            allowedMethods.addAll(sshj.getUserAuth().getAllowedMethods());
+            log.info("List of allowed authentications: {}", allowedMethods);
         }
     }
 
@@ -110,8 +104,8 @@ public class SshClient2 implements Closeable {
             File keyFile = new File(info.getPrivateKeyFile());
             if (keyFile.exists()) {
                 provider = sshj.loadKeys(info.getPrivateKeyFile(), passwordFinder);
-                log.info("Key provider: " + provider);
-                log.info("Key type: " + provider.getType());
+                log.info("Key provider: {}", provider);
+                log.info("Key type: {}", provider.getType());
             }
         }
 
@@ -169,10 +163,7 @@ public class SshClient2 implements Closeable {
     }
 
     public void connect() throws IOException, OperationCancelledException {
-        Deque<HopEntry> hopStack = new ArrayDeque<>();
-        for (HopEntry e : this.info.getJumpHosts()) {
-            hopStack.add(e);
-        }
+        Deque<HopEntry> hopStack = new ArrayDeque<>(this.info.getJumpHosts());
         this.connect(hopStack);
     }
 
@@ -243,7 +234,7 @@ public class SshClient2 implements Closeable {
                     throw new OperationCancelledException();
                 }
 
-                log.info("Trying auth method: " + authMethod);
+                log.info("Trying auth method: {}", authMethod);
 
                 switch (authMethod) {
                     case "publickey":
@@ -354,7 +345,7 @@ public class SshClient2 implements Closeable {
     @Override
     public void close() throws IOException {
         try {
-            log.info("Wrapper closing for: " + info);
+            log.info("Wrapper closing for: {}", info);
             disconnect();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -363,7 +354,7 @@ public class SshClient2 implements Closeable {
 
     public void disconnect() {
         if (closed.get()) {
-            log.info("Already closed: " + info);
+            log.info("Already closed: {}", info);
             return;
         }
         closed.set(true);
@@ -442,10 +433,7 @@ public class SshClient2 implements Closeable {
                 log.error(e.getMessage(), e);
             }
         }).start();
-        while (true) {
-            if (ss.isBound()) {
-                break;
-            }
+        while (!ss.isBound()) {
             Thread.sleep(100);
         }
         this.sshj.connect("127.0.0.1", port);

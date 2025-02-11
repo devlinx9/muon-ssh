@@ -198,7 +198,7 @@ public class SnippetPanel extends JPanel {
     public void loadSnippets() {
         this.snippetList.clear();
         this.snippetList.addAll(App.SNIPPET_MANAGER.getSnippetItems());
-        log.info("Snippet size: " + snippetList.size());
+        log.info("Snippet size: {}", snippetList.size());
         filter();
     }
 

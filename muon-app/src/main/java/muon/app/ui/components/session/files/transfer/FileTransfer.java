@@ -44,7 +44,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
     private long processedBytes;
     private int processedFilesCount;
     private long totalFiles;
-    private Constants.ConflictAction conflictAction = ConflictAction.PROMPT; // 0 -> overwrite, 1 -> auto rename, 2
+    private Constants.ConflictAction conflictAction; // 0 -> overwrite, 1 -> auto rename, 2
 
     public FileTransfer(FileSystem sourceFs, FileSystem targetFs, FileInfo[] files, String targetFolder,
                         FileTransferProgress callback, Constants.ConflictAction defaultConflictAction, RemoteSessionInstance instance) {
@@ -61,14 +61,14 @@ public class FileTransfer implements Runnable, AutoCloseable {
     }
 
     private void transfer(String targetFolder, RemoteSessionInstance instance1) throws Exception {
-        log.info("Copying to " + targetFolder);
+        log.info("Copying to {}", targetFolder);
         List<FileInfoHolder> fileList = new ArrayList<>();
         List<FileInfo> list = targetFs.list(targetFolder);
         List<FileInfo> dupList = new ArrayList<>();
 
         if (this.conflictAction == Constants.ConflictAction.PROMPT) {
             this.conflictAction = checkForConflict(dupList);
-            if (dupList.size() > 0 && this.conflictAction == ConflictAction.CANCEL) {
+            if (!dupList.isEmpty() && this.conflictAction == ConflictAction.CANCEL) {
                 log.info("Operation cancelled by user");
                 return;
             }
@@ -84,7 +84,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
             if (isDuplicate(list, file.getName())) {
                 if (this.conflictAction == ConflictAction.AUTORENAME) {
                     proposedName = generateNewName(list, file.getName());
-                    log.info("new name: " + proposedName);
+                    log.info("new name: {}", proposedName);
                 } else if (this.conflictAction == ConflictAction.SKIP) {
                     continue;
                 }
@@ -103,13 +103,13 @@ public class FileTransfer implements Runnable, AutoCloseable {
         InputTransferChannel inc = sourceFs.inputTransferChannel();
         OutputTransferChannel outc = targetFs.outputTransferChannel();
         for (FileInfoHolder file : fileList) {
-            log.info("Copying: " + file.info.getPath());
+            log.info("Copying: {}", file.info.getPath());
             if (stopFlag.get()) {
                 log.info("Operation cancelled by user");
                 return;
             }
             copyFile(file.info, file.targetPath, file.proposedName, inc, outc);
-            log.info("Copying done: " + file.info.getPath());
+            log.info("Copying done: {}", file.info.getPath());
             processedFilesCount++;
         }
 
@@ -134,9 +134,9 @@ public class FileTransfer implements Runnable, AutoCloseable {
                     }
 
                     if (!App.getGlobalSettings().isPromptForSudo() ||
-                            JOptionPane.showConfirmDialog(null,
-                                    "Permission denied, do you want to copy files from the temporary folder to destination with sudo?",
-                                    App.bundle.getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        JOptionPane.showConfirmDialog(null,
+                                                      "Permission denied, do you want to copy files from the temporary folder to destination with sudo?",
+                                                      App.bundle.getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
                         if (!App.getGlobalSettings().isTransferTemporaryDirectory()) {
                             targetFs.mkdir(tmpDir);
@@ -145,7 +145,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
 
                         String command = "sh -c  \"cd '" + tmpDir + "'; cp -r * '" + this.targetFolder + "'\"";
 
-                        log.info("Invoke sudo: " + command);
+                        log.info("Invoke sudo: {}", command);
                         int ret = SudoUtils.runSudo(command, instance);
                         if (ret == 0) {
                             callback.done(this);
@@ -193,9 +193,9 @@ public class FileTransfer implements Runnable, AutoCloseable {
                                        InputTransferChannel inc, OutputTransferChannel outc) throws Exception {
 
         String outPath = PathUtils.combine(targetDirectory, proposedName == null ? file.getName() : proposedName,
-                outc.getSeparator());
+                                           outc.getSeparator());
         String inPath = file.getPath();
-        log.info("Copying -- " + inPath + " to " + outPath);
+        log.info("Copying -- {} to {}", inPath, outPath);
         try (InputStream in = inc.getInputStream(inPath); OutputStream out = outc.getOutputStream(outPath)) {
             long len = inc.getSize(inPath);
             log.info("Initiate write");
@@ -203,7 +203,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
             int bufferCapacity = BUF_SIZE;
             if (in instanceof SSHRemoteFileInputStream && out instanceof SSHRemoteFileOutputStream) {
                 bufferCapacity = Math.min(((SSHRemoteFileInputStream) in).getBufferCapacity(),
-                        ((SSHRemoteFileOutputStream) out).getBufferCapacity());
+                                          ((SSHRemoteFileOutputStream) out).getBufferCapacity());
             } else if (in instanceof SSHRemoteFileInputStream) {
                 bufferCapacity = ((SSHRemoteFileInputStream) in).getBufferCapacity();
             } else if (out instanceof SSHRemoteFileOutputStream) {
@@ -214,17 +214,18 @@ public class FileTransfer implements Runnable, AutoCloseable {
 
             while (len > 0 && !stopFlag.get()) {
                 int x = in.read(buf);
-                if (x == -1)
+                if (x == -1) {
                     throw new IOException("Unexpected EOF");
+                }
                 out.write(buf, 0, x);
                 len -= x;
                 processedBytes += x;
                 callback.progress(processedBytes, totalSize, processedFilesCount, totalFiles, this);
             }
-            log.info("Copy done before stream closing");
+            log.debug("Copy done before stream closing");
             out.flush();
         }
-        log.info("Copy done");
+        log.debug("Copy done");
     }
 
     public void stop() {
@@ -259,9 +260,9 @@ public class FileTransfer implements Runnable, AutoCloseable {
             JComboBox<Constants.ConflictAction> cmbs = new JComboBox<>(conflictOptionsCmb);
 
             if (JOptionPane.showOptionDialog(null,
-                    new Object[]{"Some file with the same name already exists. Please choose an action", cmbs},
-                    App.bundle.getString("action_required"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                    null) == JOptionPane.YES_OPTION) {
+                                             new Object[]{"Some file with the same name already exists. Please choose an action", cmbs},
+                                             App.bundle.getString("action_required"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
+                                             null) == JOptionPane.YES_OPTION) {
                 action = (ConflictAction) cmbs.getSelectedItem();
             }
         }
@@ -271,12 +272,12 @@ public class FileTransfer implements Runnable, AutoCloseable {
 
     private boolean isDuplicate(List<FileInfo> list, String name) {
         for (FileInfo s : list) {
-            log.info("Checking for duplicate: " + s.getName() + " --- " + name);
+            log.debug("Checking for duplicate: {} --- {}", s.getName(), name);
             if (s.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }
-        log.info("Not duplicate: " + name);
+        log.info("Not duplicate: {}", name);
         return false;
     }
 

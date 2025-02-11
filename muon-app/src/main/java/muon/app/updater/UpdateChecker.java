@@ -32,7 +32,7 @@ public class UpdateChecker {
             VersionEntry latestRelease = objectMapper.readValue(new URL(API_UPDATE_URL).openStream(),
                                                                 new TypeReference<>() {
                                                                 });
-            log.info("Latest release: " + latestRelease);
+            log.info("Latest release: {}", latestRelease);
             return latestRelease.compareTo(App.VERSION) > 0;
         } catch (Exception e) {
             log.error(e.getMessage(), e);

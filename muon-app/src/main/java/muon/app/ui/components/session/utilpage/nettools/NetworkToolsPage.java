@@ -134,7 +134,7 @@ public class NetworkToolsPage extends UtilPageItemView {
                 if (holder.getRemoteSessionInstance().execBin(cmd, stopFlag,
                         bout, null) == 0) {
                     outText.append(bout.toString(StandardCharsets.UTF_8)).append("\n");
-                    log.info("Command stdout: " + outText);
+                    log.info("Command stdout: {}", outText);
                 } else {
                     JOptionPane.showMessageDialog(this,
                             bundle.getString("executed_errors"));
@@ -150,13 +150,13 @@ public class NetworkToolsPage extends UtilPageItemView {
 
     @Override
     protected void onComponentVisible() {
-        // TODO Auto-generated method stub
+        
 
     }
 
     @Override
     protected void onComponentHide() {
-        // TODO Auto-generated method stub
+        
 
     }
 }

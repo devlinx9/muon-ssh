@@ -27,8 +27,7 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
 
     @Override
     public void init(Resource resource, String name, String instruction) {
-        log.info("ChallengeResponseProvider init - resource: "
-                + resource + " name: " + name + " instruction: " + instruction);
+        log.info("ChallengeResponseProvider init - resource: {} name: {} instruction: {}", resource, name, instruction);
         if ((name != null && !name.isEmpty())
                 || (instruction != null && !instruction.isEmpty())) {
             JOptionPane.showMessageDialog(null, name + "\n" + instruction);
@@ -37,7 +36,7 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
 
     @Override
     public char[] getResponse(String prompt, boolean echo) {
-        log.info("prompt: " + prompt + " echo: " + echo);
+        log.info("prompt: {} echo: {}", prompt, echo);
 
         if (echo) {
             String str = JOptionPane.showInputDialog(prompt);

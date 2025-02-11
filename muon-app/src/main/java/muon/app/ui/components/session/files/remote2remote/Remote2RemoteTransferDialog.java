@@ -221,16 +221,16 @@ public class Remote2RemoteTransferDialog extends JDialog {
 
     private String createSftpFileList(RemoteServerEntry e) {
         StringBuilder sb = new StringBuilder();
-        sb.append("sftp " + e.getUser() + "@" + e.getHost() + "<<EOF\n");
-        sb.append("lcd \"" + this.currentDirectory + "\"\n");
-        sb.append("cd \"" + e.getPath() + "\"\n");
+        sb.append("sftp ").append(e.getUser()).append("@").append(e.getHost()).append("<<EOF\n");
+        sb.append("lcd \"").append(this.currentDirectory).append("\"\n");
+        sb.append("cd \"").append(e.getPath()).append("\"\n");
 
         for (FileInfo finfo : selectedFiles) {
             if (finfo.getType() == FileType.DIRECTORY) {
-                sb.append("mkdir \"" + finfo.getName() + "\"\n");
-                sb.append("put -r \"" + finfo.getName() + "\"\n");
+                sb.append("mkdir \"").append(finfo.getName()).append("\"\n");
+                sb.append("put -r \"").append(finfo.getName()).append("\"\n");
             } else if (finfo.getType() == FileType.FILE) {
-                sb.append("put -P \"" + finfo.getName() + "\"\n");
+                sb.append("put -P \"").append(finfo.getName()).append("\"\n");
             }
         }
         sb.append("bye\n");

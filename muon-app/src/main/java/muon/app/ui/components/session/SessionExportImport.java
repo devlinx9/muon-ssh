@@ -36,8 +36,6 @@ public class SessionExportImport {
                     out.write(Files.readAllBytes(f.toPath()));
                     out.closeEntry();
                 }
-            } catch (FileNotFoundException e) {
-                log.error(e.getMessage(), e);
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
             }
@@ -66,8 +64,6 @@ public class SessionExportImport {
                     out.write(b, 0, x);
                 }
             }
-        } catch (FileNotFoundException e) {
-            log.error(e.getMessage(), e);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

@@ -47,7 +47,7 @@ public class CustomJediterm extends JediTermWidget {
 
     @Override
     public Dimension getPreferredSize() {
-        // TODO Auto-generated method stub
+        
         return super.getPreferredSize();
     }
 

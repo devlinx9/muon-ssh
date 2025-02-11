@@ -48,9 +48,7 @@ public class OverflowMenuHandler {
             }
         };
 
-        mShowHiddenFiles.addActionListener(e -> {
-            hideOptAction();
-        });
+        mShowHiddenFiles.addActionListener(e -> hideOptAction());
         mShowHiddenFiles.setAccelerator(ksHideShow);
 
         ButtonGroup bg1 = new ButtonGroup();
@@ -92,9 +90,7 @@ public class OverflowMenuHandler {
             JMenuItem item = new JMenuItem(PathUtils.getFileName(path));
             item.setName(path);
             this.favouriteLocations.add(item);
-            item.addActionListener(e -> {
-                fileBrowserView.render(item.getName());
-            });
+            item.addActionListener(e -> fileBrowserView.render(item.getName()));
         }
     }
 
@@ -105,9 +101,7 @@ public class OverflowMenuHandler {
     private JRadioButtonMenuItem createSortMenuItem(String text, Integer index, ButtonGroup bg) {
         JRadioButtonMenuItem mSortItem = new JRadioButtonMenuItem(text);
         mSortItem.putClientProperty("sort.index", index);
-        mSortItem.addActionListener(e -> {
-            sortMenuClicked(mSortItem);
-        });
+        mSortItem.addActionListener(e -> sortMenuClicked(mSortItem));
         bg.add(mSortItem);
         return mSortItem;
     }

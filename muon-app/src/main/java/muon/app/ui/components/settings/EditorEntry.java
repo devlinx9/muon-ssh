@@ -10,7 +10,7 @@ public class EditorEntry {
     private String path;
 
     public EditorEntry() {
-        // TODO Auto-generated constructor stub
+        
     }
     public EditorEntry(String name, String path) {
         super();

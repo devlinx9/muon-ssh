@@ -20,7 +20,7 @@ public class SnippetItem {
      *
      */
     public SnippetItem() {
-        // TODO Auto-generated constructor stub
+        
     }
 
     public SnippetItem(String name, String command) {

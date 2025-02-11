@@ -18,7 +18,7 @@ public final class Win32DragHandler {
         for (File drive : File.listRoots()) {
             if (fsv.isDrive(drive)) {
                 try {
-                    log.info("Adding to watch: " + drive.getAbsolutePath());
+                    log.info("Adding to watch: {}", drive.getAbsolutePath());
                     fileMonitor.addWatch(drive, W32FileMonitor.FILE_RENAMED | W32FileMonitor.FILE_CREATED, true);
                 } catch (IOException e) {
                     log.error(e.getMessage(), e);

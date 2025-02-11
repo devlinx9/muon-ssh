@@ -241,7 +241,7 @@ public class DiskspaceAnalyzer extends Page {
     }
 
     private void analyze(String path) {
-        log.info("Analyzing path: " + path);
+        log.info("Analyzing path: {}", path);
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         DiskAnalysisTask task = new DiskAnalysisTask(path, stopFlag, res -> {
             SwingUtilities.invokeLater(() -> {

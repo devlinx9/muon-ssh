@@ -53,7 +53,7 @@ public class AddressBar extends JPanel {
             log.info("calling action listener");
             String item = (String) txtAddressBar.getSelectedItem();
             if (e.getActionCommand().equals("comboBoxEdited")) {
-                log.info("Editted");
+                log.info("Edited");
                 ComboBoxModel<String> model = txtAddressBar.getModel();
                 boolean found = false;
                 for (int i = 0; i < model.getSize(); i++) {
@@ -81,7 +81,7 @@ public class AddressBar extends JPanel {
             }
         };
         txtAddressBar.setEditor(cmdEdit);
-        log.debug("Editor: " + txtAddressBar.getEditor());
+        log.debug("Editor: {}", txtAddressBar.getEditor());
         addressBar = new AddressBarBreadCrumbs(separator == '/', popupTriggeredListener);
         addressBar.addActionListener(e -> {
             if (a != null) {
@@ -144,12 +144,12 @@ public class AddressBar extends JPanel {
     }
 
     public void setText(String text) {
-        log.debug("Setting text: " + text);
+        log.debug("Setting text: {}", text);
         updating = true;
         txtAddressBar.setSelectedItem(text);
         addressBar.setPath(text);
         updating = false;
-        log.debug("Setting text done: " + text);
+        log.debug("Setting text done: {}", text);
     }
 
     public void addActionListener(ActionListener e) {

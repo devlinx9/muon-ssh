@@ -35,7 +35,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
 
     public TerminalComponent(SessionInfo info, String name, String command, SessionContentPanel sessionContentPanel) {
         setLayout(new BorderLayout());
-        log.debug("Current terminal font: " + App.getGlobalSettings().getTerminalFontName());
+        log.debug("Current terminal font: {}", App.getGlobalSettings().getTerminalFontName());
         this.name = name;
         this.tabTitle = new TabTitle();
         contentPane = new JPanel(new BorderLayout());
@@ -87,14 +87,14 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
 
             @Override
             public void onTitleChanged(String title) {
-                log.debug("new title: " + title);
+                log.debug("new title: {}", title);
                 TerminalComponent.this.name = title;
                 SwingUtilities.invokeLater(() -> tabTitle.getCallback().accept(title));
             }
 
             @Override
             public void onSessionChanged(TerminalSession currentSession) {
-                log.info("currentSession: " + currentSession);
+                log.info("currentSession: {}", currentSession);
             }
 
             @Override
@@ -112,7 +112,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
 
     @Override
     public boolean close() {
-        log.info("Closing terminal..." + name);
+        log.info("Closing terminal...{}", name);
         this.term.close();
         return true;
     }

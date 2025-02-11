@@ -200,7 +200,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
             private void updateName() {
                 selectedInfo.setName(txtName.getText());
                 TreePath parentPath = tree.getSelectionPath();
-                DefaultMutableTreeNode parentNode = null;
+                DefaultMutableTreeNode parentNode;
 
                 if (parentPath != null) {
                     parentNode = (DefaultMutableTreeNode) (parentPath.getLastPathComponent());
@@ -241,7 +241,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
             if (this.lastSelected != null) {
                 selectNode(lastSelected, rootNode);
             } else {
-                DefaultMutableTreeNode n = null;
+                DefaultMutableTreeNode n;
                 n = findFirstInfoNode(rootNode);
                 if (n == null) {
                     SessionInfo sessionInfo = new SessionInfo();
@@ -367,7 +367,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
                     SessionFolder newFolder = new SessionFolder();
                     newFolder.setId(UUID.randomUUID().toString());
                     newFolder.setName("Copy of " + ((NamedItem) node1.getUserObject()).getName());
-                    Enumeration childrens = node1.children();
+                    Enumeration<TreeNode> childrens = node1.children();
                     DefaultMutableTreeNode newFolderTree = new DefaultMutableTreeNode(newFolder);
                     while (childrens.hasMoreElements()) {
                         DefaultMutableTreeNode defaultMutableTreeNode = (DefaultMutableTreeNode) childrens.nextElement();
@@ -496,19 +496,16 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
     @Override
     public void treeNodesInserted(TreeModelEvent e) {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void treeNodesRemoved(TreeModelEvent e) {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void treeStructureChanged(TreeModelEvent e) {
-        // TODO Auto-generated method stub
 
     }
 

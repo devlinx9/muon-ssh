@@ -54,7 +54,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
                     log.info("New monitor");
                     this.win32DragHandler = new Win32DragHandler();
                     this.win32DragHandler.listenForDrop(tempDir.getName(), file -> {
-                        log.error("Dropped on " + file.getParent());
+                        log.error("Dropped on {}", file.getParent());
                         this.fileBrowser.handleLocalDrop(transferData, info, new LocalFileSystem(), file.getParent());
                     });
                 } catch (IOException e1) {
@@ -65,7 +65,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
 
         DndTransferData data = new DndTransferData(info == null ? 0 : info.hashCode(), folderView.getSelectedFiles(),
                 this.fileBrowserView.getCurrentDirectory(), this.fileBrowserView.hashCode(), sourceType);
-        log.info("Exporting drag " + data + " hashcode: " + data.hashCode());
+        log.info("Exporting drag {} hashcode: {}", data, data.hashCode());
         this.transferData = data;
         super.exportAsDrag(comp, e, action);
     }
@@ -73,10 +73,10 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
     @Override
     public boolean canImport(TransferSupport support) {
 
-        log.info("Data flavors: " + support.getDataFlavors().length);
+        log.debug("Data flavors: {}", support.getDataFlavors().length);
         boolean isDataFile = false, isJavaFileList = false;
         for (DataFlavor f : support.getDataFlavors()) {
-            log.info("Data flavor: " + f);
+            log.debug("Data flavor: {}", f);
             if (f.isFlavorJavaFileListType()) {
                 isJavaFileList = this.info != null;
             }
@@ -86,7 +86,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
         }
 
         try {
-            log.info("Dropped java file list: " + isJavaFileList);
+            log.debug("Dropped java file list: {}", isJavaFileList);
             if (isDataFile) {
                 if (support.isDataFlavorSupported(DATA_FLAVOR_DATA_FILE)) {
                     return (support.getTransferable()
@@ -98,7 +98,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        log.info("drop not supported");
+        log.error("drop not supported");
         return false;
 
     }
@@ -109,7 +109,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
     }
 
     protected void exportDone(JComponent c, Transferable data, int action) {
-        log.info("Export complete: " + action + " " + Arrays.asList(data.getTransferDataFlavors()));
+        log.info("Export complete: {} {}", action, Arrays.asList(data.getTransferDataFlavors()));
         if (this.win32DragHandler != null) {
             this.win32DragHandler.dispose();
         }
@@ -127,7 +127,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
 
         boolean isDataFile = false, isJavaFileList = false;
         for (DataFlavor f : info.getDataFlavors()) {
-            log.info("Data flavor: " + f);
+            log.debug("Data flavor: {}", f);
             if (f.isFlavorJavaFileListType()) {
                 isJavaFileList = this.info != null;
             }
@@ -142,9 +142,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
             try {
                 DndTransferData transferData = (DndTransferData) t.getTransferData(DATA_FLAVOR_DATA_FILE);
                 return this.fileBrowserView.handleDrop(transferData);
-            } catch (UnsupportedFlavorException e) {
-                log.error(e.getMessage(), e);
-            } catch (IOException e) {
+            } catch (UnsupportedFlavorException | IOException e) {
                 log.error(e.getMessage(), e);
             }
         } else if (isJavaFileList) {
@@ -177,7 +175,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
 
                     DndTransferData data = new DndTransferData(0, infoArr, this.fileBrowserView.getCurrentDirectory(),
                             this.fileBrowserView.hashCode(), DndTransferData.DndSourceType.LOCAL);
-                    log.info("Exporting drag " + data + " hashcode: " + data.hashCode());
+                    log.info("Exporting drag {} hashcode: {}", data, data.hashCode());
                     return this.fileBrowserView.handleDrop(data);
                 }
             } catch (Exception e) {

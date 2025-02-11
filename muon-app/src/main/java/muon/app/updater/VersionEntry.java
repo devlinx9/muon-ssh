@@ -12,7 +12,7 @@ public class VersionEntry implements Comparable<VersionEntry> {
     private int value;
 
     public VersionEntry() {
-        // TODO Auto-generated constructor stub
+        
     }
 
     public VersionEntry(String tagName) {

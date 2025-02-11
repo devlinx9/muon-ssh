@@ -96,7 +96,7 @@ public class FolderViewKeyHandler extends KeyAdapter {
         }
         int index = getNextMatch(prefix, startIndex);
         if (index >= 0) {
-            log.info("Selecting column: " + index);
+            log.info("Selecting column: {}", index);
             table.setRowSelectionInterval(index, index);
             table.scrollRectToVisible(
                     new Rectangle(table.getCellRect(index, 0, true)));

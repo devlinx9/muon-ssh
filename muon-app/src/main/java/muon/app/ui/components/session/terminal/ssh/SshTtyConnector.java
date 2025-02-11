@@ -63,7 +63,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
                 this.channel.setEnvVar("LANG", "en_US.UTF-8");
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                log.error("Cannot set environment variable Lang: " + e.getMessage());
+                log.error("Cannot set environment variable Lang: {}", e.getMessage());
             }
 
 
@@ -149,7 +149,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
         try {
             shell.join();
         } catch (ConnectionException e) {
-            // TODO Auto-generated catch block
+            
             log.error(e.getMessage(), e);
         }
         return shell.getExitStatus();
@@ -190,12 +190,12 @@ public class SshTtyConnector implements DisposableTtyConnector {
     }
 
     private void setPtySize(Shell shell, int col, int row, int wp, int hp) {
-        log.debug("Exec pty resized:- col: " + col + " row: " + row + " wp: " + wp + " hp: " + hp);
+        log.debug("Exec pty resized:- col: {} row: {} wp: {} hp: {}", col, row, wp, hp);
         if (shell != null) {
             try {
                 shell.changeWindowDimensions(col, row, wp, hp);
             } catch (TransportException e) {
-                // TODO Auto-generated catch block
+                
                 log.error(e.getMessage(), e);
             }
         }

@@ -113,7 +113,7 @@ public class TabbedPanel extends JPanel {
     @Deprecated
     @Override
     public Component add(Component comp) {
-        // TODO Auto-generated method stub
+        
         return super.add(comp);
     }
 }

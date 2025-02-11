@@ -217,12 +217,12 @@ public class FileBrowser extends Page {
 
     public void reloadView() {
         Component c = leftTabs.getSelectedContent();
-        log.info("c1 " + c);
+        log.info("c1 {}", c);
         if (c instanceof AbstractFileBrowserView) {
             ((AbstractFileBrowserView) c).reload();
         }
         c = rightTabs.getSelectedContent();
-        log.info("c2 " + c);
+        log.info("c2 {}", c);
         if (c instanceof AbstractFileBrowserView) {
             ((AbstractFileBrowserView) c).reload();
         }
@@ -269,7 +269,7 @@ public class FileBrowser extends Page {
         return this.holder.isSessionClosed();
     }
 
-    public boolean selectTransferModeAndConflictAction(ResponseHolder holder) throws Exception {
+    public boolean selectTransferModeAndConflictAction(ResponseHolder holder) {
         holder.transferMode = App.getGlobalSettings().getFileTransferMode();
         holder.conflictAction = App.getGlobalSettings().getConflictAction();
         return true;
@@ -290,10 +290,10 @@ public class FileBrowser extends Page {
                 return false;
             }
 
-            log.info("Dropped: " + transferData);
+            log.info("Dropped: {}", transferData);
             int sessionHashCode = transferData.getInfo();
             if (sessionHashCode == 0) {
-                log.info("Session hash code: " + sessionHashCode);
+                log.info("Session hash code: {}", sessionHashCode);
                 return true;
             }
 
@@ -306,8 +306,7 @@ public class FileBrowser extends Page {
                 if (sourceFs == null) {
                     return false;
                 }
-                FileSystem targetFs = currentFileSystem;
-                this.newFileTransfer(sourceFs, targetFs, transferData.getFiles(), currentPath, this.hashCode(),
+                this.newFileTransfer(sourceFs, currentFileSystem, transferData.getFiles(), currentPath, this.hashCode(),
                                      holder.conflictAction, this.getSessionInstance());
             }
             return true;

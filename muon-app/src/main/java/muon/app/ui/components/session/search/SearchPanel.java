@@ -134,7 +134,7 @@ public class SearchPanel extends Page {
             }
             try {
                 long size = Long.parseLong(txtSize.getText()) * sizeFactor;
-                criteriaBuffer.append(size + "c");
+                criteriaBuffer.append(size).append("c");
                 criteriaBuffer.append(" ");
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(null, "Invalid size");
@@ -169,20 +169,20 @@ public class SearchPanel extends Page {
             long days1 = ChronoUnit.DAYS.between(date1, now);
             long days2 = ChronoUnit.DAYS.between(date2, now);
 
-            criteriaBuffer.append(" -mtime +" + days2 + " -a -mtime -" + days1);
+            criteriaBuffer.append(" -mtime +").append(days2).append(" -a -mtime -").append(days1);
         }
 
         StringBuilder scriptBuffer = new StringBuilder();
 
         if (!txtName.getText().isEmpty() && radFileName.isSelected()) {
-            scriptBuffer.append("export NAME='" + txtName.getText() + "'\n");
+            scriptBuffer.append("export NAME='").append(txtName.getText()).append("'\n");
         }
 
-        scriptBuffer.append("export LOCATION=\"" + folder + "\"\n");
-        scriptBuffer.append("export CRITERIA='" + criteriaBuffer + "'\n");
+        scriptBuffer.append("export LOCATION=\"").append(folder).append("\"\n");
+        scriptBuffer.append("export CRITERIA='").append(criteriaBuffer).append("'\n");
         if (radFileContents.isSelected()) {
             scriptBuffer.append("export CONTENT=1\n");
-            scriptBuffer.append("export PATTERN='" + txtName.getText() + "'\n");
+            scriptBuffer.append("export PATTERN='").append(txtName.getText()).append("'\n");
             if (chkIncludeCompressed.isSelected()) {
                 scriptBuffer.append("export UNCOMPRESS=1\n");
             }
@@ -220,7 +220,7 @@ public class SearchPanel extends Page {
                 log.info("Error in search");
             }
 
-            log.info("search output\n" + output);
+            log.info("search output\n{}", output);
 
             String[] lines = output.toString().split("\n");
             SwingUtilities.invokeLater(() -> {
@@ -320,9 +320,7 @@ public class SearchPanel extends Page {
         JLabel lblName = new JLabel(bundle.getString("search_for"));
         lblName.setAlignmentX(LEFT_ALIGNMENT);
         txtName = new SkinnedTextField(20);
-        txtName.addActionListener(e -> {
-            find();
-        });
+        txtName.addActionListener(e -> find());
         Dimension pref = txtName.getPreferredSize();
         txtName.setMaximumSize(pref);
         txtName.setAlignmentX(LEFT_ALIGNMENT);

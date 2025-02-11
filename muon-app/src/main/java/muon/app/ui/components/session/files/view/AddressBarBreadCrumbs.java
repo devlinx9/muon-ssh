@@ -31,7 +31,7 @@ public class AddressBarBreadCrumbs extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 String selectedPath = calculatePath(
                         (JComponent) e.getComponent());
-                log.info("Selected path: " + selectedPath);
+                log.info("Selected path: {}", selectedPath);
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     if (popupTriggerListener != null) {
                         popupTriggerListener.actionPerformed(
@@ -133,31 +133,35 @@ public class AddressBarBreadCrumbs extends JPanel {
         };
 
         toolBarButtonSkin.put("Button.contentMargins", new Insets(2, 8, 2, 8));
+        setTolbarButtonSkin(toolBarButtonPainterNormal, toolBarButtonPainterHot, toolBarButtonPainterPressed, toolBarButtonSkin);
+    }
+
+    public static void setTolbarButtonSkin(Painter<JButton> toolBarButtonPainterNormal, Painter<JButton> toolBarButtonPainterHot, Painter<JButton> toolBarButtonPainterPressed, UIDefaults toolBarButtonSkin) {
         toolBarButtonSkin.put("Button[Enabled].backgroundPainter",
-                toolBarButtonPainterNormal);
+                              toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Focused].backgroundPainter",
-                toolBarButtonPainterNormal);
+                              toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Default].backgroundPainter",
-                toolBarButtonPainterNormal);
+                              toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Default+Focused].backgroundPainter",
-                toolBarButtonPainterNormal);
+                              toolBarButtonPainterNormal);
 
         toolBarButtonSkin.put("Button[Pressed].backgroundPainter",
-                toolBarButtonPainterPressed);
+                              toolBarButtonPainterPressed);
         toolBarButtonSkin.put("Button[Focused+Pressed].backgroundPainter",
-                toolBarButtonPainterPressed);
+                              toolBarButtonPainterPressed);
         toolBarButtonSkin.put(
                 "Button[Default+Focused+Pressed].backgroundPainter",
                 toolBarButtonPainterPressed);
         toolBarButtonSkin.put("Button[Default+Pressed].backgroundPainter",
-                toolBarButtonPainterPressed);
+                              toolBarButtonPainterPressed);
 
         toolBarButtonSkin.put("Button[MouseOver].backgroundPainter",
-                toolBarButtonPainterHot);
+                              toolBarButtonPainterHot);
         toolBarButtonSkin.put("Button[Focused+MouseOver].backgroundPainter",
-                toolBarButtonPainterHot);
+                              toolBarButtonPainterHot);
         toolBarButtonSkin.put("Button[Default+MouseOver].backgroundPainter",
-                toolBarButtonPainterHot);
+                              toolBarButtonPainterHot);
         toolBarButtonSkin.put(
                 "Button[Default+Focused+MouseOver].backgroundPainter",
                 toolBarButtonPainterHot);
