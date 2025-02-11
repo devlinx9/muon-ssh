@@ -30,6 +30,7 @@ public class Settings {
     private boolean confirmBeforeMoveOrCopy = false;
     private boolean showHiddenFilesByDefault = false;
     private boolean firstFileBrowserView = false;
+    private boolean firstLocalViewInFileBrowser = false;
     private boolean transferTemporaryDirectory = false;
     private boolean useSudo = false;
     private boolean promptForSudo = false;

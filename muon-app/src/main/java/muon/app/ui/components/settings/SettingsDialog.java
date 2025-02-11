@@ -39,20 +39,43 @@ public class SettingsDialog extends JDialog {
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final JList<String> navList;
-    private JSpinner spTermWidth, spTermHeight, spFontSize;
-    private JCheckBox chkAudibleBell, chkPuttyLikeCopyPaste;
-    private JComboBox<String> cmbFonts, cmbTermType, cmbTermPalette, cmbLanguage;
+    private JSpinner spTermWidth;
+    private JSpinner spTermHeight;
+    private JSpinner spFontSize;
+    private JCheckBox chkAudibleBell;
+    private JCheckBox chkPuttyLikeCopyPaste;
+    private JComboBox<String> cmbFonts;
+    private JComboBox<String> cmbTermType;
+    private JComboBox<String> cmbTermPalette;
+    private JComboBox<String> cmbLanguage;
     private JComboBox<TerminalTheme> cmbTermTheme;
     private ColorSelectorButton[] paletteButtons;
-    private ColorSelectorButton defaultColorFg, defaultColorBg, defaultSelectionFg, defaultSelectionBg, defaultFoundFg,
-            defaultFoundBg;
-    private JCheckBox chkConfirmBeforeDelete, chkConfirmBeforeMoveOrCopy, chkShowHiddenFilesByDefault, chkFirstFileBrowserView,
-            chkUseSudo, chkPromptForSudo, chkTransferTemporaryDirectory,
-            chkDirectoryCache, chkShowPathBar, chkConfirmBeforeTerminalClosing, chkShowMessagePrompt, chkStartMaximized,
-            chkUseGlobalDarkTheme, spConnectionKeepAlive;
+    private ColorSelectorButton defaultColorFg;
+    private ColorSelectorButton defaultColorBg;
+    private ColorSelectorButton defaultSelectionFg;
+    private ColorSelectorButton defaultSelectionBg;
+    private ColorSelectorButton defaultFoundFg;
+    private ColorSelectorButton defaultFoundBg;
+    private JCheckBox chkConfirmBeforeDelete;
+    private JCheckBox chkConfirmBeforeMoveOrCopy;
+    private JCheckBox chkShowHiddenFilesByDefault;
+    private JCheckBox chkFirstFileBrowserView;
+    private JCheckBox chkFirstLocalViewInFileBrowserView;
+    private JCheckBox chkUseSudo;
+    private JCheckBox chkPromptForSudo;
+    private JCheckBox chkTransferTemporaryDirectory;
+    private JCheckBox chkDirectoryCache;
+    private JCheckBox chkShowPathBar;
+    private JCheckBox chkConfirmBeforeTerminalClosing;
+    private JCheckBox chkShowMessagePrompt;
+    private JCheckBox chkStartMaximized;
+    private JCheckBox chkUseGlobalDarkTheme;
+    private JCheckBox spConnectionKeepAlive;
     private KeyShortcutComponent[] kcc;
     private JCheckBox chkLogWrap;
-    private JSpinner spLogLinesPerPage, spLogFontSize, spConnectionTimeout;
+    private JSpinner spLogLinesPerPage;
+    private JSpinner spLogFontSize;
+    private JSpinner spConnectionTimeout;
     private JSpinner spSysLoadInterval;
     private JComboBox<Constants.TransferMode> cmbTransferMode;
     private JComboBox<Constants.ConflictAction> cmbConflictAction;
@@ -384,7 +407,8 @@ public class SettingsDialog extends JDialog {
         chkConfirmBeforeDelete = new JCheckBox(App.bundle.getString("confirm_delete_files"));
         chkConfirmBeforeMoveOrCopy = new JCheckBox(App.bundle.getString("confirm_move_files"));
         chkShowHiddenFilesByDefault = new JCheckBox(App.bundle.getString("show_hidden_files"));
-        chkFirstFileBrowserView = new JCheckBox(App.bundle.getString("show_filebrowser_first")); //todo devlinx9
+        chkFirstFileBrowserView = new JCheckBox(App.bundle.getString("show_filebrowser_first"));
+        chkFirstLocalViewInFileBrowserView = new JCheckBox(App.bundle.getString("show_local_view_first_in_filebrowser"));
         chkPromptForSudo = new JCheckBox(App.bundle.getString("prompt_for_sudo"));
         chkUseSudo = new JCheckBox(App.bundle.getString("use_sudo_if_fails"));
         chkTransferTemporaryDirectory = new JCheckBox(App.bundle.getString("transfer_temporary_directory"));
@@ -428,6 +452,7 @@ public class SettingsDialog extends JDialog {
         chkConfirmBeforeMoveOrCopy.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkShowHiddenFilesByDefault.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkFirstFileBrowserView.setAlignmentX(Box.LEFT_ALIGNMENT);
+        chkFirstLocalViewInFileBrowserView.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkTransferTemporaryDirectory.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkUseSudo.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkPromptForSudo.setAlignmentX(Box.LEFT_ALIGNMENT);
@@ -451,6 +476,8 @@ public class SettingsDialog extends JDialog {
         vbox.add(chkShowHiddenFilesByDefault);
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkFirstFileBrowserView);
+        vbox.add(Box.createRigidArea(new Dimension(10, 10)));
+        vbox.add(chkFirstLocalViewInFileBrowserView);
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkTransferTemporaryDirectory);
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
@@ -550,6 +577,7 @@ public class SettingsDialog extends JDialog {
         settings.setConfirmBeforeMoveOrCopy(chkConfirmBeforeMoveOrCopy.isSelected());
         settings.setShowHiddenFilesByDefault(chkShowHiddenFilesByDefault.isSelected());
         settings.setFirstFileBrowserView(chkFirstFileBrowserView.isSelected());
+        settings.setFirstLocalViewInFileBrowser(chkFirstLocalViewInFileBrowserView.isSelected());
         settings.setUseSudo(chkUseSudo.isSelected());
         settings.setTransferTemporaryDirectory(chkTransferTemporaryDirectory.isSelected());
         settings.setPromptForSudo(chkPromptForSudo.isSelected());
@@ -636,6 +664,7 @@ public class SettingsDialog extends JDialog {
         chkConfirmBeforeMoveOrCopy.setSelected(settings.isConfirmBeforeMoveOrCopy());
         chkShowHiddenFilesByDefault.setSelected(settings.isShowHiddenFilesByDefault());
         chkFirstFileBrowserView.setSelected(settings.isFirstFileBrowserView());
+        chkFirstLocalViewInFileBrowserView.setSelected(settings.isFirstLocalViewInFileBrowser());
         chkTransferTemporaryDirectory.setSelected(settings.isTransferTemporaryDirectory());
         chkUseSudo.setSelected(settings.isUseSudo());
         chkUseSudo.addActionListener(e -> setStatusCheckBox(chkPromptForSudo, chkUseSudo.isSelected()));
