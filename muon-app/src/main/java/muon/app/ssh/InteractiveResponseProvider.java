@@ -3,6 +3,7 @@
  */
 package muon.app.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import net.schmizz.sshj.userauth.method.ChallengeResponseProvider;
 import net.schmizz.sshj.userauth.password.Resource;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @author subhro
  *
  */
+@Slf4j
 public class InteractiveResponseProvider implements ChallengeResponseProvider {
 
     private boolean retry = true;
@@ -25,7 +27,7 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
 
     @Override
     public void init(Resource resource, String name, String instruction) {
-        System.out.println("ChallengeResponseProvider init - resource: "
+        log.info("ChallengeResponseProvider init - resource: "
                 + resource + " name: " + name + " instruction: " + instruction);
         if ((name != null && !name.isEmpty())
                 || (instruction != null && !instruction.isEmpty())) {
@@ -35,7 +37,7 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
 
     @Override
     public char[] getResponse(String prompt, boolean echo) {
-        System.out.println("prompt: " + prompt + " echo: " + echo);
+        log.info("prompt: " + prompt + " echo: " + echo);
 
         if (echo) {
             String str = JOptionPane.showInputDialog(prompt);

@@ -2,13 +2,15 @@ package com.jediterm.terminal.ui;
 
 import com.jediterm.terminal.Questioner;
 import com.jediterm.terminal.Terminal;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+@Slf4j
 public class PreConnectHandler implements Questioner, KeyListener {
-  private Object mySync = new Object();
-  private Terminal myTerminal;
+  private final Object mySync = new Object();
+  private final Terminal myTerminal;
   private StringBuffer myAnswer;
   private boolean myVisible;
 
@@ -37,7 +39,7 @@ public class PreConnectHandler implements Questioner, KeyListener {
       try {
         mySync.wait();
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        log.error(e.getMessage(), e);
       }
       String answerStr = myAnswer.toString();
       myAnswer = null;

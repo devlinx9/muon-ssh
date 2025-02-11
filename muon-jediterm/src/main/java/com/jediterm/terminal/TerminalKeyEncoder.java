@@ -2,7 +2,7 @@ package com.jediterm.terminal;
 
 import com.jediterm.terminal.ui.UIUtil;
 import com.jediterm.terminal.util.CharUtils;
-
+import lombok.extern.slf4j.Slf4j;
 import muon.terminal.Ascii;
 
 import java.awt.event.InputEvent;
@@ -15,6 +15,7 @@ import static java.awt.event.KeyEvent.*;
 /**
  * @author traff
  */
+@Slf4j
 public class TerminalKeyEncoder {
   private static final int ESC = Ascii.ESC;
 

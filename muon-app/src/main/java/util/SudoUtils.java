@@ -1,5 +1,6 @@
 package util;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ssh.RemoteSessionInstance;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
+@Slf4j
 public class SudoUtils {
     private static final JPasswordField passwordField = new JPasswordField(30);
 
@@ -20,7 +22,7 @@ public class SudoUtils {
         try {
             AtomicBoolean firstTime = new AtomicBoolean(true);
             String fullCommand = "sudo -S -p '" + prompt + "' " + command;
-            System.out.println(
+            log.info(
                     "Full sudo: " + fullCommand + "\nprompt: " + prompt);
             return instance.exec(fullCommand, cmd -> {
                 try {
@@ -38,7 +40,7 @@ public class SudoUtils {
                             sb.append(b, 0, x);
                         }
 
-                        System.out.println("buffer: " + sb);
+                        log.info("buffer: " + sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (firstTime.get() || JOptionPane.showOptionDialog(null,
                                     new Object[]{"User password",
@@ -68,12 +70,12 @@ public class SudoUtils {
                     cmd.close();
                     return cmd.getExitStatus();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                     return -1;
                 }
             }, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return -1;
         }
     }
@@ -82,7 +84,7 @@ public class SudoUtils {
         String prompt = UUID.randomUUID().toString();
         try {
             String fullCommand = "sudo -S -p '" + prompt + "' " + command;
-            System.out.println(
+            log.info(
                     "Full sudo: " + fullCommand + "\nprompt: " + prompt);
             return instance.exec(fullCommand, cmd -> {
                 try {
@@ -100,7 +102,7 @@ public class SudoUtils {
                             sb.append(b, 0, x);
                         }
 
-                        System.out.println("buffer: " + sb);
+                        log.info("buffer: " + sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (JOptionPane.showOptionDialog(null,
                                     new Object[]{"User password",
@@ -125,12 +127,12 @@ public class SudoUtils {
                     cmd.close();
                     return cmd.getExitStatus();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                     return -1;
                 }
             }, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return -1;
         }
     }
@@ -141,7 +143,7 @@ public class SudoUtils {
         String prompt = UUID.randomUUID().toString();
         try {
             String fullCommand = "sudo -S -p '" + prompt + "' " + command;
-            System.out.println(
+            log.info(
                     "Full sudo: " + fullCommand + "\nprompt: " + prompt);
             return instance.exec(fullCommand, cmd -> {
                 try {
@@ -159,7 +161,7 @@ public class SudoUtils {
                         sb.append((char) ch);
                         output.append((char) ch);
 
-                        System.out.println("buffer: " + sb);
+                        log.info("buffer: " + sb);
                         if (sb.indexOf(prompt) != -1) {
                             sb = new StringBuilder();
                             out.write(
@@ -173,12 +175,12 @@ public class SudoUtils {
                     cmd.close();
                     return cmd.getExitStatus();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                     return -1;
                 }
             }, true);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return -1;
         }
     }

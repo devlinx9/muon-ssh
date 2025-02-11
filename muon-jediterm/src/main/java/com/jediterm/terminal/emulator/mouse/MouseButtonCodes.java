@@ -1,8 +1,11 @@
 package com.jediterm.terminal.emulator.mouse;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author traff
  */
+@Slf4j
 public class MouseButtonCodes {
   // X11 button number
   public static final int NONE = -1;       // no button

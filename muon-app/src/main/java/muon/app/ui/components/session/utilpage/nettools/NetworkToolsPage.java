@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.utilpage.nettools;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextArea;
@@ -23,6 +24,7 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class NetworkToolsPage extends UtilPageItemView {
     private JTextArea txtOutput;
     private DefaultComboBoxModel<String> modelHost;
@@ -132,13 +134,13 @@ public class NetworkToolsPage extends UtilPageItemView {
                 if (holder.getRemoteSessionInstance().execBin(cmd, stopFlag,
                         bout, null) == 0) {
                     outText.append(bout.toString(StandardCharsets.UTF_8)).append("\n");
-                    System.out.println("Command stdout: " + outText);
+                    log.info("Command stdout: " + outText);
                 } else {
                     JOptionPane.showMessageDialog(this,
                             bundle.getString("executed_errors"));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
                 SwingUtilities.invokeLater(() -> this.txtOutput.setText(outText.toString()));
                 holder.enableUi();

@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.local;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.common.FileSystem;
 import muon.app.common.local.LocalFileSystem;
 import util.PathUtils;
@@ -10,13 +11,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+@Slf4j
 public class LocalFileOperations {
     public boolean rename(String oldName, String newName) {
         try {
             Files.move(Paths.get(oldName), Paths.get(newName));
             return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }
@@ -31,7 +33,7 @@ public class LocalFileOperations {
             fs.createFile(PathUtils.combine(folder, text, File.separator));
             return true;
         } catch (Exception e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
             JOptionPane.showMessageDialog(null, "Unable to create new file");
         }
         return false;
@@ -47,7 +49,7 @@ public class LocalFileOperations {
             fs.mkdir(PathUtils.combine(folder, text, fs.getSeparator()));
             return true;
         } catch (Exception e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
             JOptionPane.showMessageDialog(null, "Unable to create new folder");
         }
         return false;

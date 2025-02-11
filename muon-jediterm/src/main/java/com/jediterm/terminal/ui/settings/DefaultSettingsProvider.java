@@ -6,12 +6,14 @@ import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.emulator.ColorPalette;
 import com.jediterm.terminal.model.LinesBuffer;
 import com.jediterm.terminal.ui.UIUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
+@Slf4j
 public class DefaultSettingsProvider implements SettingsProvider {
   @Override
   public KeyStroke[] getNewSessionKeyStrokes() {

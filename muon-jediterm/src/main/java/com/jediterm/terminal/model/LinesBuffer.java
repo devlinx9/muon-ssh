@@ -4,7 +4,7 @@ import com.jediterm.terminal.StyledTextConsumer;
 import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.model.TerminalLine.TextEntry;
 import com.jediterm.terminal.model.hyperlinks.TextProcessing;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import java.util.List;
 /**
  * Holds styled characters lines
  */
+@Slf4j
 public class LinesBuffer {
-  private static final Logger LOG = Logger.getLogger(LinesBuffer.class);
 
   public static final int DEFAULT_MAX_LINES_COUNT = 5000;
 
@@ -219,7 +219,7 @@ public class LinesBuffer {
   
   public synchronized TerminalLine getLine(int row) {
     if (row<0) {
-      LOG.error("Negative line number: " + row);
+      log.error("Negative line number: " + row);
       return TerminalLine.createEmpty();
     }
 

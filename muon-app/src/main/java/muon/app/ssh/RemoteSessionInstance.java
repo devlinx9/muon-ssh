@@ -4,6 +4,7 @@
 package muon.app.ssh;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
@@ -20,6 +21,7 @@ import java.util.function.Function;
 /**
  * @author subhro
  */
+@Slf4j
 public class RemoteSessionInstance {
     private final SshClient2 ssh;
     @Getter
@@ -52,7 +54,7 @@ public class RemoteSessionInstance {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             return 1;
         }
@@ -85,8 +87,8 @@ public class RemoteSessionInstance {
             if (this.closed.get()) {
                 throw new OperationCancelledException();
             }
-            System.out.println(Thread.currentThread().getName());
-            System.out.println(command);
+            log.debug(Thread.currentThread().getName());
+            log.debug(command);
             if (stopFlag.get()) {
                 return -1;
             }
@@ -97,7 +99,7 @@ public class RemoteSessionInstance {
                 try (Session session = ssh.openSession()) {
                     session.setAutoExpand(true);
                     try (final Command cmd = session.exec(command)) {
-                        System.out.println("Command and Session started");
+                        log.debug("Command and Session started");
 
                         InputStream in = cmd.getInputStream();
                         InputStream err = cmd.getErrorStream();
@@ -106,7 +108,7 @@ public class RemoteSessionInstance {
 
                         do {
                             if (stopFlag.get()) {
-                                System.out.println("stopflag");
+                                log.debug("stopflag");
                                 break;
                             }
 
@@ -143,16 +145,15 @@ public class RemoteSessionInstance {
                         }
                         while (cmd.isOpen());
 
-                        System.out.println(cmd.isOpen() + " " + cmd.isEOF() + " " + cmd.getExitStatus());
+                        log.debug(cmd.isOpen() + " " + cmd.isEOF() + " " + cmd.getExitStatus());
 
-                        System.out.println("Command and Session closed");
+                        log.debug("Command and Session closed");
 
-                        cmd.close();
                         return cmd.getExitStatus();
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             return 1;
         }
@@ -167,11 +168,11 @@ public class RemoteSessionInstance {
             try {
                 this.sshFs.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             this.ssh.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

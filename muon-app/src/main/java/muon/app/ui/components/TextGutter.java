@@ -4,6 +4,7 @@
 package muon.app.ui.components;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +13,7 @@ import java.awt.*;
  * @author subhro
  *
  */
+@Slf4j
 public class TextGutter extends JComponent {
     private final JTextArea textArea;
 
@@ -63,7 +65,7 @@ public class TextGutter extends JComponent {
                 g.drawString(lineNum, x, (int) (y + asc));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

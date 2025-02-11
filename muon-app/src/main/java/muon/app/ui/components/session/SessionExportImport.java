@@ -3,6 +3,7 @@ package muon.app.ui.components.session;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.session.importer.SSHConfigImporter;
 import util.Constants;
@@ -22,6 +23,7 @@ import static muon.app.App.bundle;
 import static muon.app.ui.components.session.SessionStore.load;
 import static muon.app.ui.components.session.SessionStore.save;
 
+@Slf4j
 public class SessionExportImport {
     public static synchronized void exportSessions() {
         JFileChooser jfc = new JFileChooser();
@@ -35,9 +37,9 @@ public class SessionExportImport {
                     out.closeEntry();
                 }
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
     }
@@ -65,9 +67,9 @@ public class SessionExportImport {
                 }
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return true;
     }
@@ -140,7 +142,7 @@ public class SessionExportImport {
                             "\nSkipped=" + skiped +
                             "\noverwrited=" + overwrited, "Session information", JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return true;
     }
@@ -158,7 +160,7 @@ public class SessionExportImport {
             Files.copy(Paths.get(System.getProperty("user.home"), "muon-ssh", "snippets.json"),
                     Paths.get(App.CONFIG_DIR, App.SNIPPETS_FILE));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

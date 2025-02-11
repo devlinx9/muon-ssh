@@ -4,6 +4,7 @@
 package muon.app.ui.laf;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.RoundedButtonPainter;
 import util.Language;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 /**
  * @author subhro
  */
+@Slf4j
 public abstract class AppSkin {
     protected UIDefaults defaults;
     /**
@@ -73,7 +75,7 @@ public abstract class AppSkin {
             ge.registerFont(font);
             return font.deriveFont(Font.PLAIN, 12.0f);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return null;
     }
@@ -83,7 +85,7 @@ public abstract class AppSkin {
             Font font = Font.createFont(Font.TRUETYPE_FONT, is);
             return font.deriveFont(Font.PLAIN, 14f);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return null;
     }

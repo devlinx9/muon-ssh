@@ -1,5 +1,7 @@
 package muon.app.updater;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.net.ssl.*;
 import javax.swing.*;
 import java.net.Socket;
@@ -7,6 +9,7 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+@Slf4j
 public class CertificateValidator {
     public static final synchronized void registerCertificateHook() {
         SSLContext sslContext = null;
@@ -14,7 +17,7 @@ public class CertificateValidator {
             try {
                 sslContext = SSLContext.getInstance("TLS");
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 sslContext = SSLContext.getInstance("SSL");
             }
 
@@ -33,7 +36,7 @@ public class CertificateValidator {
                             cert.checkValidity();
                         }
                     } catch (CertificateException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                         if (!confirmCert()) {
                             throw e;
                         }
@@ -68,7 +71,7 @@ public class CertificateValidator {
                             cert.checkValidity();
                         }
                     } catch (CertificateException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                         if (!confirmCert()) {
                             throw e;
                         }
@@ -83,7 +86,7 @@ public class CertificateValidator {
                             cert.checkValidity();
                         }
                     } catch (CertificateException e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                         if (!confirmCert()) {
                             throw e;
                         }
@@ -93,7 +96,7 @@ public class CertificateValidator {
             sslContext.init(null, trustAllCerts, new SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

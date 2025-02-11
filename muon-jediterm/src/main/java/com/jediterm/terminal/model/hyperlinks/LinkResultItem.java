@@ -1,9 +1,12 @@
 package com.jediterm.terminal.model.hyperlinks;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author traff
  */
+@Slf4j
 public class LinkResultItem {
   private final int myStartOffset;
   private final int myEndOffset;

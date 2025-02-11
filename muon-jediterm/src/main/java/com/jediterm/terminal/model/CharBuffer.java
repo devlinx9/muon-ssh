@@ -2,6 +2,7 @@ package com.jediterm.terminal.model;
 
 import com.jediterm.terminal.util.CharUtils;
 import com.jediterm.terminal.util.Pair;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import java.util.Iterator;
  *
  * @author traff
  */
+@Slf4j
 public class CharBuffer implements Iterable<Character>, CharSequence {
 
   public final static CharBuffer EMPTY = new CharBuffer(new char[0], 0, 0);

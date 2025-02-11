@@ -2,6 +2,7 @@ package muon.app.common;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import util.TimeUtils;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
 
 @Getter
 @Setter
+@Slf4j
 public class FileInfo implements Serializable {
     private static final Pattern USER_REGEX = Pattern
             .compile("^[^\\s]+\\s+[^\\s]+\\s+([^\\s]+)\\s+([^\\s]+)");
@@ -57,7 +59,7 @@ public class FileInfo implements Serializable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         return "";

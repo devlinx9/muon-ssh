@@ -3,6 +3,7 @@ package muon.app.ui.components.session.files.view;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.common.FileInfo;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+@Slf4j
 public class FolderViewKeyHandler extends KeyAdapter {
 
     @Setter
@@ -43,7 +45,7 @@ public class FolderViewKeyHandler extends KeyAdapter {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Table key press");
+        log.info("Table key press");
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             return;
         }
@@ -94,7 +96,7 @@ public class FolderViewKeyHandler extends KeyAdapter {
         }
         int index = getNextMatch(prefix, startIndex);
         if (index >= 0) {
-            System.out.println("Selecting column: " + index);
+            log.info("Selecting column: " + index);
             table.setRowSelectionInterval(index, index);
             table.scrollRectToVisible(
                     new Rectangle(table.getCellRect(index, 0, true)));

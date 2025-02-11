@@ -3,13 +3,16 @@
  */
 package com.jediterm.terminal;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 
 /**
  * Takes data from and sends it back to TTY input and output streams via {@link TtyConnector}
  */
+@Slf4j
 public class TtyBasedArrayDataStream extends ArrayTerminalDataStream {
-  private TtyConnector myTtyConnector;
+  private final TtyConnector myTtyConnector;
 
   public TtyBasedArrayDataStream(final TtyConnector ttyConnector) {
     super(new char[1024], 0, 0);

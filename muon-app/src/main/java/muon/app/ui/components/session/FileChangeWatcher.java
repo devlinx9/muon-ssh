@@ -1,5 +1,6 @@
 package muon.app.ui.components.session;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.common.FileInfo;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+@Slf4j
 public class FileChangeWatcher {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final List<FileModificationInfo> filesToWatch = new ArrayList<>();
@@ -54,7 +56,7 @@ public class FileChangeWatcher {
                 try {
                     Thread.sleep(interval);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
             }
         });

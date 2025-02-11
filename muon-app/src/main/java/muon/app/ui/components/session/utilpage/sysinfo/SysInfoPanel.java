@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.utilpage.sysinfo;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextArea;
 import muon.app.ui.components.session.SessionContentPanel;
@@ -17,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author subhro
  *
  */
+@Slf4j
 public class SysInfoPanel extends UtilPageItemView {
     /**
      *
@@ -54,7 +56,7 @@ public class SysInfoPanel extends UtilPageItemView {
                     });
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
                 holder.enableUi();
             }

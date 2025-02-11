@@ -4,6 +4,7 @@
 package muon.app.ui.components.session;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
@@ -40,6 +41,7 @@ import java.util.function.Consumer;
  * @author subhro
  *
  */
+@Slf4j
 public class SessionContentPanel extends JPanel implements PageHolder, CachedCredentialProvider {
     public final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
@@ -167,7 +169,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         SwingUtilities.invokeLater(() -> {
             this.disabledPanel.startAnimation(stopFlag);
             this.rootPane.setGlassPane(this.disabledPanel);
-            System.out.println("Showing disable panel");
+            log.debug("Showing disable panel");
             this.disabledPanel.setVisible(true);
         });
     }
@@ -175,7 +177,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     public void enableUi() {
         SwingUtilities.invokeLater(() -> {
             this.disabledPanel.stopAnimation();
-            System.out.println("Hiding disable panel");
+            log.debug("Hiding disable panel");
             this.disabledPanel.setVisible(false);
         });
     }
@@ -234,7 +236,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         try {
             this.terminalHolder.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         App.removePendingTransfers(this.getActiveSessionId());
         if (this.backgroundTransferPool != null) {
@@ -245,17 +247,17 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             try {
                 this.backgroundTransferPool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             } catch (InterruptedException e1) {
-                e1.printStackTrace();
+                log.error(e1.getMessage(), e1);
             }
             try {
                 this.remoteSessionInstance.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             try {
                 this.cachedSessions.forEach(RemoteSessionInstance::close);
             } catch (Exception e2) {
-                e2.printStackTrace();
+                log.error(e2.getMessage(), e2);
             }
         });
         EXECUTOR.shutdown();

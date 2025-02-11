@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.diskspace;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.session.Page;
@@ -25,6 +26,7 @@ import static muon.app.App.bundle;
 /**
  * @author subhro
  */
+@Slf4j
 public class DiskspaceAnalyzer extends Page {
     private final CardLayout cardLayout;
     private final SessionContentPanel holder;
@@ -216,9 +218,9 @@ public class DiskspaceAnalyzer extends Page {
                 });
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } finally {
-            System.out.println("Partition listing done");
+            log.info("Partition listing done");
         }
     }
 
@@ -227,24 +229,24 @@ public class DiskspaceAnalyzer extends Page {
         holder.EXECUTOR.submit(() -> {
             try {
                 holder.disableUi(stopFlag);
-                System.out.println("Listing partitions");
+                log.info("Listing partitions");
                 listPartitions(stopFlag);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
-                System.out.println("Enabling....");
+                log.debug("Enabling....");
                 holder.enableUi();
             }
         });
     }
 
     private void analyze(String path) {
-        System.out.println("Analyzing path: " + path);
+        log.info("Analyzing path: " + path);
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         DiskAnalysisTask task = new DiskAnalysisTask(path, stopFlag, res -> {
             SwingUtilities.invokeLater(() -> {
                 if (res != null) {
-                    System.out.println("Result found");
+                    log.info("Result found");
                     DefaultMutableTreeNode root = new DefaultMutableTreeNode(res, true);
                     root.setAllowsChildren(true);
                     createTree(root, res);

@@ -3,6 +3,7 @@
  */
 package muon.app.ui;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.session.NewSessionDlg;
 import muon.app.ui.components.session.SessionContentPanel;
@@ -36,6 +37,7 @@ import static util.Constants.*;
 /**
  * @author subhro
  */
+@Slf4j
 public class AppWindow extends JFrame {
     private final CardLayout sessionCard;
     private final JPanel cardPanel;
@@ -57,7 +59,7 @@ public class AppWindow extends JFrame {
         try {
             this.setIconImage(ImageIO.read(Objects.requireNonNull(AppWindow.class.getResource("/muon.png"))));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -211,7 +213,7 @@ public class AppWindow extends JFrame {
                     try {
                         Desktop.getDesktop().browse(new URI(REPOSITORY_URL));
                     } catch (IOException | URISyntaxException ex) {
-                        ex.printStackTrace();
+                        log.error(ex.getMessage(), ex);
                     }
                 }
             }
@@ -290,7 +292,7 @@ public class AppWindow extends JFrame {
                     try {
                         Desktop.getDesktop().browse(new URI(HELP_URL));
                     } catch (IOException | URISyntaxException ex) {
-                        ex.printStackTrace();
+                        log.error(ex.getMessage(), ex);
                     }
                 }
             }
@@ -337,7 +339,7 @@ public class AppWindow extends JFrame {
             try {
                 Desktop.getDesktop().browse(new URI(App.UPDATE_URL2));
             } catch (IOException | URISyntaxException ex) {
-                ex.printStackTrace();
+                log.error(ex.getMessage(), ex);
             }
         }
     }

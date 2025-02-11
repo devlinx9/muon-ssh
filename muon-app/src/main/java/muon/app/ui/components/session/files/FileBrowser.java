@@ -1,6 +1,7 @@
 package muon.app.ui.components.session.files;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
@@ -29,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class FileBrowser extends Page {
     private final JSplitPane horizontalSplitter;
     private final ClosableTabbedPanel leftTabs;
@@ -170,7 +172,7 @@ public class FileBrowser extends Page {
 
     public void newFileTransfer(FileSystem sourceFs, FileSystem targetFs, FileInfo[] files, String targetFolder,
                                 int dragsource, Constants.ConflictAction defaultConflictAction, RemoteSessionInstance instance) {
-        System.out.println("Initiating new file transfer...");
+        log.info("Initiating new file transfer...");
         this.ongoingFileTransfer = new FileTransfer(sourceFs, targetFs, files, targetFolder,
                                                     new FileTransferProgress() {
 
@@ -202,7 +204,7 @@ public class FileBrowser extends Page {
 
                                                         @Override
                                                         public void done(FileTransfer fileTransfer) {
-                                                            System.out.println("Done");
+                                                            log.info("Done");
                                                             SwingUtilities.invokeLater(() -> {
                                                                 holder.endFileTransfer();
                                                                 reloadView();
@@ -215,12 +217,12 @@ public class FileBrowser extends Page {
 
     public void reloadView() {
         Component c = leftTabs.getSelectedContent();
-        System.out.println("c1 " + c);
+        log.info("c1 " + c);
         if (c instanceof AbstractFileBrowserView) {
             ((AbstractFileBrowserView) c).reload();
         }
         c = rightTabs.getSelectedContent();
-        System.out.println("c2 " + c);
+        log.info("c2 " + c);
         if (c instanceof AbstractFileBrowserView) {
             ((AbstractFileBrowserView) c).reload();
         }
@@ -288,10 +290,10 @@ public class FileBrowser extends Page {
                 return false;
             }
 
-            System.out.println("Dropped: " + transferData);
+            log.info("Dropped: " + transferData);
             int sessionHashCode = transferData.getInfo();
             if (sessionHashCode == 0) {
-                System.out.println("Session hash code: " + sessionHashCode);
+                log.info("Session hash code: " + sessionHashCode);
                 return true;
             }
 
@@ -310,7 +312,7 @@ public class FileBrowser extends Page {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return false;
         }
     }

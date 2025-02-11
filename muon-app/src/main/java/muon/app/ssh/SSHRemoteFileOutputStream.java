@@ -5,6 +5,7 @@ package muon.app.ssh;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.schmizz.sshj.sftp.RemoteFile;
 
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.io.OutputStream;
  * @author subhro
  *
  */
+@Slf4j
 public class SSHRemoteFileOutputStream extends OutputStream {
     @Setter
     @Getter
@@ -41,7 +43,7 @@ public class SSHRemoteFileOutputStream extends OutputStream {
 
     @Override
     public void close() throws IOException {
-        System.out.println(this.getClass().getName() + " closing");
+        log.info(this.getClass().getName() + " closing");
         try {
             this.remoteFile.close();
         } catch (Exception e) {
@@ -54,7 +56,7 @@ public class SSHRemoteFileOutputStream extends OutputStream {
 
     @Override
     public void flush() throws IOException {
-        System.out.println(this.getClass().getName() + " flushing");
+        log.info(this.getClass().getName() + " flushing");
         this.remoteFileOutputStream.flush();
     }
 

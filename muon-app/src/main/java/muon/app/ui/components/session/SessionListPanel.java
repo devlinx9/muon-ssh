@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.AppWindow;
 import muon.app.ui.components.SkinnedScrollPane;
@@ -17,6 +18,7 @@ import java.awt.event.MouseEvent;
 /**
  * @author subhro
  */
+@Slf4j
 public class SessionListPanel extends JPanel {
     private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
     private static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -51,7 +53,7 @@ public class SessionListPanel extends JPanel {
                         int y = e.getPoint().y;
 
                         if (x > r.x + r.width - 30 && x < r.x + r.width && y > r.y + 10 && y < r.y + r.height - 10) {
-                            System.out.println("Clicked on: " + index);
+                            log.info("Clicked on: " + index);
                             removeSession(index);
                         }
                     }
@@ -85,7 +87,7 @@ public class SessionListPanel extends JPanel {
         });
 
         sessionList.addListSelectionListener(e -> {
-            System.out.println("called for index: " + sessionList.getSelectedIndex() + " " + e.getFirstIndex() + " "
+            log.debug("called for index: " + sessionList.getSelectedIndex() + " " + e.getFirstIndex() + " "
                                + e.getLastIndex() + e.getValueIsAdjusting());
             if (!e.getValueIsAdjusting()) {
                 int index = sessionList.getSelectedIndex();

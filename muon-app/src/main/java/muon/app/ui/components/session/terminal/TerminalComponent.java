@@ -5,6 +5,7 @@ import com.jediterm.terminal.ui.JediTermWidget;
 import com.jediterm.terminal.ui.TerminalPanelListener;
 import com.jediterm.terminal.ui.TerminalSession;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.ClosableTabContent;
 import muon.app.ui.components.ClosableTabbedPanel.TabTitle;
@@ -19,6 +20,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
+@Slf4j
 public class TerminalComponent extends JPanel implements ClosableTabContent {
     private final JPanel contentPane;
 
@@ -33,7 +35,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
 
     public TerminalComponent(SessionInfo info, String name, String command, SessionContentPanel sessionContentPanel) {
         setLayout(new BorderLayout());
-        System.out.println("Current terminal font: " + App.getGlobalSettings().getTerminalFontName());
+        log.debug("Current terminal font: " + App.getGlobalSettings().getTerminalFontName());
         this.name = name;
         this.tabTitle = new TabTitle();
         contentPane = new JPanel(new BorderLayout());
@@ -44,13 +46,13 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
-                System.out.println("Requesting focus");
+                log.debug("Requesting focus");
                 term.requestFocusInWindow();
             }
 
             @Override
             public void componentHidden(ComponentEvent e) {
-                System.out.println("Hiding focus");
+                log.info("Hiding focus");
             }
         });
 
@@ -73,7 +75,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         reconnectionBox.add(btnReconnect);
         reconnectionBox.setBorder(new EmptyBorder(10, 10, 10, 10));
         term.addListener((e) -> {
-            System.out.println("Disconnected");
+            log.info("Disconnected");
             SwingUtilities.invokeLater(() -> {
                 contentPane.add(reconnectionBox, BorderLayout.NORTH);
                 contentPane.revalidate();
@@ -85,14 +87,14 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
 
             @Override
             public void onTitleChanged(String title) {
-                System.out.println("new title: " + title);
+                log.debug("new title: " + title);
                 TerminalComponent.this.name = title;
                 SwingUtilities.invokeLater(() -> tabTitle.getCallback().accept(title));
             }
 
             @Override
             public void onSessionChanged(TerminalSession currentSession) {
-                System.out.println("currentSession: " + currentSession);
+                log.info("currentSession: " + currentSession);
             }
 
             @Override
@@ -110,7 +112,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
 
     @Override
     public boolean close() {
-        System.out.println("Closing terminal..." + name);
+        log.info("Closing terminal..." + name);
         this.term.close();
         return true;
     }

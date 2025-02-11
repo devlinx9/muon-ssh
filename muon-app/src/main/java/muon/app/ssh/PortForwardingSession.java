@@ -1,5 +1,6 @@
 package muon.app.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.PortForwardingRule;
 import muon.app.ui.components.session.PortForwardingRule.PortForwardingType;
 import muon.app.ui.components.session.SessionInfo;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 public class PortForwardingSession {
     private final SshClient2 ssh;
     private final SessionInfo info;
@@ -64,11 +66,11 @@ public class PortForwardingSession {
                         forwardRemotePort(r);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -83,7 +85,7 @@ public class PortForwardingSession {
                                 new Parameters(r.getBindHost(), r.getSourcePort(), r.getHost(), r.getTargetPort()), ss)
                         .listen();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -105,7 +107,7 @@ public class PortForwardingSession {
                 ssh.getTransport().join();
             } catch (ConnectionException | TransportException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }

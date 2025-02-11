@@ -2,6 +2,7 @@ package muon.app.ui.components.session.utilpage.keys;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.common.InputTransferChannel;
 import muon.app.common.OutputTransferChannel;
 import muon.app.ssh.RemoteSessionInstance;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public class SshKeyManager {
     public static SshKeyHolder getKeyDetails(SessionContentPanel content) throws Exception {
         SshKeyHolder holder = new SshKeyHolder();
@@ -40,7 +42,7 @@ public class SshKeyManager {
             holder.setLocalPublicKey(new String(bytes, StandardCharsets.UTF_8));
             holder.setLocalPubKeyFile(defaultPath.toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -177,7 +179,7 @@ public class SshKeyManager {
             fileSystem.getInfo(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));
             found = true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         if (!found) {
             fileSystem.mkdir(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));

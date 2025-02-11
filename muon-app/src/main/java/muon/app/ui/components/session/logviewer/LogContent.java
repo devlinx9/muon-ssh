@@ -4,6 +4,7 @@
 package muon.app.ui.components.session.logviewer;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.ClosableTabContent;
 import muon.app.ui.components.SkinnedScrollPane;
@@ -34,6 +35,7 @@ import java.util.zip.GZIPInputStream;
  * @author subhro
  *
  */
+@Slf4j
 public class LogContent extends JPanel implements ClosableTabContent {
     private final SessionContentPanel holder;
     /**
@@ -160,12 +162,12 @@ public class LogContent extends JPanel implements ClosableTabContent {
             try {
                 raf.close();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                log.error(ex.getMessage(), ex);
             }
             try {
                 Files.delete(this.indexFile.toPath());
             } catch (Exception ex) {
-                ex.printStackTrace();
+                log.error(ex.getMessage(), ex);
             }
             this.currentPage = 0;
             initPages();
@@ -213,7 +215,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                         long len = searchIndex.length();
                         SwingUtilities.invokeLater(() -> logSearchPanel.setResults(searchIndex, len));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                     } finally {
                         holder.enableUi();
                     }
@@ -222,10 +224,10 @@ public class LogContent extends JPanel implements ClosableTabContent {
 
             @Override
             public void select(long index) {
-                System.out.println("Search item found on line: " + index);
+                log.info("Search item found on line: " + index);
                 int page = (int) index / linePerPage;
                 int line = (int) (index % linePerPage);
-                System.out.println("Found on page: " + page + " line: " + line);
+                log.info("Found on page: " + page + " line: " + line);
                 if (currentPage == page) {
                     if (line < textArea.getLineCount() && line != -1) {
                         highlightLine(line);
@@ -259,7 +261,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 if ((indexFile(true, stopFlag))
                         || (indexFile(false, stopFlag))) {
                     this.totalLines = this.raf.length() / 16;
-                    System.out.println("Total lines: " + this.totalLines);
+                    log.info("Total lines: " + this.totalLines);
                     if (this.totalLines > 0) {
                         this.pageCount = (long) Math
                                 .ceil((double) totalLines / linePerPage);
@@ -293,7 +295,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
                 holder.enableUi();
             }
@@ -354,7 +356,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     + (linePerPage + 1) + "q'");
         }
 
-        System.out.println("Command: " + command);
+        log.debug("Command: " + command);
         StringBuilder output = new StringBuilder();
 
         if (holder.getRemoteSessionInstance().exec(command.toString(), stopFlag,
@@ -368,11 +370,11 @@ public class LogContent extends JPanel implements ClosableTabContent {
         try {
             File tempFile = Files.createTempFile(
                     "muon" + UUID.randomUUID(), "index").toFile();
-            System.out.println("Temp file: " + tempFile);
+            log.info("Temp file: " + tempFile);
             try (OutputStream outputStream = new FileOutputStream(tempFile)) {
                 String command = "LANG=C awk '{len=length($0); print len; }' \""
                         + remoteFile + "\" | " + (xz ? "xz" : "gzip") + " |cat";
-                System.out.println("Command: " + command);
+                log.debug("Command: " + command);
 
                 if (holder.getRemoteSessionInstance().execBin(command, stopFlag,
                         outputStream, null) == 0) {
@@ -389,7 +391,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }
@@ -474,7 +476,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     gutter.setLineStart(lineStart + 1);
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
                 holder.enableUi();
             }
@@ -488,12 +490,12 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 raf.close();
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
         try {
             Files.delete(this.indexFile.toPath());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
         callback.accept(remoteFile);
         return true;
@@ -509,7 +511,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         command.append("awk '{if(index(tolower($0),\""
                 + text.toLowerCase(Locale.ENGLISH) + "\")){ print NR}}' \""
                 + this.remoteFile + "\"");
-        System.out.println("Command: " + command);
+        log.debug("Command: " + command);
         try (OutputStream outputStream = new FileOutputStream(tempFile)) {
 
             File searchIndexes = Files.createTempFile(
@@ -543,14 +545,14 @@ public class LogContent extends JPanel implements ClosableTabContent {
         try {
             int startIndex = textArea.getLineStartOffset(lineNumber);
             int endIndex = textArea.getLineEndOffset(lineNumber);
-            System.out.println("selection: " + startIndex + " " + endIndex);
+            log.info("selection: " + startIndex + " " + endIndex);
             textArea.setCaretPosition(startIndex);
             textArea.getHighlighter().removeAllHighlights();
             textArea.getHighlighter().addHighlight(startIndex, endIndex,
                     painter);
-            System.out.println(textArea.modelToView2D(startIndex));
+            log.info(textArea.modelToView2D(startIndex).toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

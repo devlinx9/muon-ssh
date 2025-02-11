@@ -1,10 +1,13 @@
 package com.jediterm.terminal.util;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.reflect.Array;
 import java.util.BitSet;
 
 // In Java 5, the java.util.Arrays class has no copyOf() members...
+@Slf4j
 public class Util {
 	@SuppressWarnings("unchecked")
 	public static <T> T[] copyOf(T[] original, int newLength) {
@@ -139,7 +142,7 @@ public class Util {
 
 			int cmp;
 			if (p1.matches("\\d+") && p2.matches("\\d+")) {
-				cmp = new Integer(p1).compareTo(new Integer(p2));
+				cmp = Integer.valueOf(p1).compareTo(Integer.valueOf(p2));
 			} else {
 				cmp = part1[idx].compareTo(part2[idx]);
 			}

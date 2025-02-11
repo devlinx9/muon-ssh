@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.transfer;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import util.FontAwesomeContants;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+@Slf4j
 public class BackgroundTransferPanel extends JPanel {
     private final Box verticalBox;
     private final AtomicInteger transferCount = new AtomicInteger(0);
@@ -42,7 +44,7 @@ public class BackgroundTransferPanel extends JPanel {
                 transfer.getFileTransfer().run();
                 transfer.getSession().addToSessionCache(transfer.getInstance());
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -53,7 +55,7 @@ public class BackgroundTransferPanel extends JPanel {
                 SwingUtilities.invokeAndWait(() -> stopSession(sessionId));
             } catch (InvocationTargetException | InterruptedException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         } else {
             stopSession(sessionId);
@@ -143,7 +145,7 @@ public class BackgroundTransferPanel extends JPanel {
             transferCount.decrementAndGet();
             callback.accept(transferCount.get());
             this.fileTransfer.getSession().addToSessionCache(this.fileTransfer.getInstance());
-            System.out.println("done transfer");
+            log.info("done transfer");
 
             this.fileTransfer.getSession().fileBrowser.reloadView();
 

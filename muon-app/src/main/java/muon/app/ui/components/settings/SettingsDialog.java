@@ -4,6 +4,7 @@
 package muon.app.ui.components.settings;
 
 import com.jediterm.terminal.emulator.ColorPalette;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.PasswordStore;
 import muon.app.Settings;
@@ -27,6 +28,7 @@ import java.util.Map;
  * @author subhro
  *
  */
+@Slf4j
 public class SettingsDialog extends JDialog {
     private final EditorTableModel editorModel = new EditorTableModel();
     private final JButton btnSave;
@@ -802,7 +804,7 @@ public class SettingsDialog extends JDialog {
                         throw new Exception(App.bundle.getString("change_password_failed"));
                     }
                 } catch (Exception e1) {
-                    e1.printStackTrace();
+                    log.error(e1.getMessage(), e1);
                     JOptionPane.showMessageDialog(this, App.bundle.getString("error_operation"));
                 }
                 App.getGlobalSettings().setUsingMasterPassword(true);
@@ -812,7 +814,7 @@ public class SettingsDialog extends JDialog {
                 try {
                     PasswordStore.getSharedInstance().changeStorePassword(new char[0]);
                 } catch (Exception e1) {
-                    e1.printStackTrace();
+                    log.error(e1.getMessage(), e1);
                     JOptionPane.showMessageDialog(this, App.bundle.getString("error_operation"));
                 }
                 App.getGlobalSettings().setUsingMasterPassword(false);

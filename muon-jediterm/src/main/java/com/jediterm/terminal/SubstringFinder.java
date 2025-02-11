@@ -2,6 +2,7 @@ package com.jediterm.terminal;
 
 import com.jediterm.terminal.model.CharBuffer;
 import com.jediterm.terminal.util.Pair;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Map;
  *
  * @author traff
  */
+@Slf4j
 public class SubstringFinder {
 	private final String myPattern;
 	private final int myPatternHash;

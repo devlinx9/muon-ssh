@@ -1,5 +1,6 @@
 package muon.app.common.local;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.common.FileSystem;
 import muon.app.common.*;
 import util.PathUtils;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class LocalFileSystem implements FileSystem {
     public static final String PROTO_LOCAL_FILE = "local";
 
@@ -59,7 +61,7 @@ public class LocalFileSystem implements FileSystem {
                                              "", attrs.creationTime().toMillis(), "", f.isHidden());
                 list.add(info);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         return list;
@@ -82,7 +84,7 @@ public class LocalFileSystem implements FileSystem {
 
     @Override
     public void rename(String oldName, String newName) throws Exception {
-        System.out.println("Renaming from " + oldName + " to: " + newName);
+        log.info("Renaming from " + oldName + " to: " + newName);
         if (!new File(oldName).renameTo(new File(newName))) {
             throw new FileNotFoundException();
         }
@@ -102,7 +104,7 @@ public class LocalFileSystem implements FileSystem {
 
     @Override
     public void mkdir(String path) throws Exception {
-        System.out.println("Creating folder: " + path);
+        log.info("Creating folder: " + path);
         new File(path).mkdirs();
     }
 
@@ -124,7 +126,7 @@ public class LocalFileSystem implements FileSystem {
     public long getAllFiles(String dir, String baseDir, Map<String, String> fileMap, Map<String, String> folderMap)
             throws Exception {
         long size = 0;
-        System.out.println("get files: " + dir);
+        log.info("get files: " + dir);
         String parentFolder = PathUtils.combineUnix(baseDir, PathUtils.getFileName(dir));
 
         folderMap.put(dir, parentFolder);

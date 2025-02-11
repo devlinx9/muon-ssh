@@ -3,6 +3,7 @@ package muon.app;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.SavedSessionTree;
 import muon.app.ui.components.session.SessionFolder;
 import muon.app.ui.components.session.SessionInfo;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public final class PasswordStore {
     private static KeyStore keyStore;
     private static PasswordStore instance;
@@ -101,7 +103,7 @@ public final class PasswordStore {
                 .generateSecret(new PBEKeySpec(serializePasswordMap(this.passwordMap)));
         keyStore.setEntry("passwords", new SecretKeyEntry(generatedSecret), protParam);
 
-        System.out.println("Password protection: " + protParam.getProtectionAlgorithm());
+        log.info("Password protection: " + protParam.getProtectionAlgorithm());
 
         try (OutputStream out = new FileOutputStream(new File(App.CONFIG_DIR, "passwords.pfx"))) {
             keyStore.store(out, protParam.getPassword());
@@ -120,7 +122,7 @@ public final class PasswordStore {
                 unlockStore(new char[0]);
                 return true;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 return false;
             }
         }
@@ -144,10 +146,10 @@ public final class PasswordStore {
                 if (password != null) {
                     info.setPassword(new String(password));
                 } else {
-                    System.out.println("The info " + info.getHost()  + " has no password");
+                    log.debug("The info " + info.getHost()  + " has no password");
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         for (SessionFolder f : folder.getFolders()) {
@@ -165,7 +167,7 @@ public final class PasswordStore {
                 try {
                     unlockStore(new char[0]);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                     return;
                 }
             }
@@ -174,7 +176,7 @@ public final class PasswordStore {
         try {
             saveKeyStore();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -185,7 +187,7 @@ public final class PasswordStore {
                 try {
                     savePassword(info.getId(), password.toCharArray());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
             }
         }
@@ -211,7 +213,7 @@ public final class PasswordStore {
                     }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
 
             if (JOptionPane.showConfirmDialog(App.getAppWindow(),

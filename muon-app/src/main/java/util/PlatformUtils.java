@@ -11,6 +11,7 @@ import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.win32.StdCallLibrary;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.settings.EditorEntry;
 
@@ -23,6 +24,7 @@ import java.util.*;
  * @author subhro
  *
  */
+@Slf4j
 public class PlatformUtils {
     public static void openWithDefaultApp(File file, boolean openWith) throws IOException {
         String os = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH);
@@ -48,13 +50,13 @@ public class PlatformUtils {
 
         if (openWith) {
             try {
-                System.out.println("Opening with rulldll");
+                log.info("Opening with rulldll");
                 ProcessBuilder builder = new ProcessBuilder();
                 builder.command(Arrays.asList("rundll32", "shell32.dll,OpenAs_RunDLL", f.getAbsolutePath()));
                 builder.start();
                 return;
             } catch (IOException e1) {
-                e1.printStackTrace();
+                log.error(e1.getMessage(), e1);
             }
 
         }
@@ -65,13 +67,13 @@ public class PlatformUtils {
             WString file = new WString(f.getAbsolutePath());
             INSTANCE.ShellExecuteW(h, new WString("open"), file, null, null, 1);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             try {
                 ProcessBuilder builder = new ProcessBuilder();
                 builder.command(Arrays.asList("rundll32", "url.dll,FileProtocolHandler", f.getAbsolutePath()));
                 builder.start();
             } catch (IOException e1) {
-                e1.printStackTrace();
+                log.error(e1.getMessage(), e1);
             }
         }
 
@@ -86,7 +88,7 @@ public class PlatformUtils {
             pb.command("xdg-open", f.getAbsolutePath());
             pb.start();
         } catch (Exception e) {
-            System.out.println(e);
+            log.info(e.getMessage(), e);
         }
     }
 
@@ -101,7 +103,7 @@ public class PlatformUtils {
                 throw new FileNotFoundException();
             }
         } catch (Exception e) {
-            System.out.println(e);
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -125,7 +127,7 @@ public class PlatformUtils {
             builder.command(Arrays.asList("explorer", "/select,", f.getAbsolutePath()));
             builder.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -135,7 +137,7 @@ public class PlatformUtils {
             builder.command(Arrays.asList("explorer", folder));
             builder.start();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -149,7 +151,7 @@ public class PlatformUtils {
                     list.add(ent);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 String vscode = detectVSCode(true);
                 if (vscode != null) {
                     EditorEntry ent = new EditorEntry("Visual Studio Code", vscode);
@@ -163,7 +165,7 @@ public class PlatformUtils {
                 EditorEntry ent = new EditorEntry("Notepad++", npp);
                 list.add(ent);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
 
             try {
@@ -172,14 +174,14 @@ public class PlatformUtils {
                 EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
                 list.add(ent);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 try {
                     String atom = Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE,
                             "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
                     EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
                     list.add(ent);
                 } catch (Exception e1) {
-                    e1.printStackTrace();
+                    log.error(e1.getMessage(), e1);
                 }
             }
 

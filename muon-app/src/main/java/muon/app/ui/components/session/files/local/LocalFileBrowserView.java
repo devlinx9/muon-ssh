@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.local;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
@@ -20,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+@Slf4j
 public class LocalFileBrowserView extends AbstractFileBrowserView {
     private final LocalMenuHandler menuHandler;
     private final DndTransferHandler transferHandler;
@@ -42,14 +44,14 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
             this.path = initialPath;
         }
 
-        System.out.println("Path: " + path);
+        log.info("Path: " + path);
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             try {
                 this.fs = new LocalFileSystem();
                 //Validate if local path exists, if not set the home path
                 if (this.path == null || Files.notExists(Paths.get(this.path)) || !Files.isDirectory(Paths.get(this.path))) {
-                    System.err.println("The file path doesn't exists " + this.path);
-                    System.out.println("Setting to " + fs.getHome());
+                    log.error("The file path doesn't exists " + this.path);
+                    log.info("Setting to " + fs.getHome());
 
                     path = fs.getHome();
                 }
@@ -60,7 +62,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
                     tabTitle.getCallback().accept(PathUtils.getFileName(path));
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -73,7 +75,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
                 addressPopup.setName(selectedPath);
                 MouseEvent me = (MouseEvent) e.getSource();
                 addressPopup.show(me.getComponent(), me.getX(), me.getY());
-                System.out.println("clicked");
+                log.info("clicked");
             }
         });
         if (App.getGlobalSettings().isShowPathBar()) {
@@ -120,7 +122,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
                     tabTitle.getCallback().accept(PathUtils.getFileName(this.path));
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             fileBrowser.enableUi();
         });
@@ -155,7 +157,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
     }
 
     public boolean handleDrop(DndTransferData transferData) {
-        System.out.println("### " + transferData.getSource() + " " + this.hashCode());
+        log.info("### " + transferData.getSource() + " " + this.hashCode());
         if (transferData.getSource() == this.hashCode()) {
             return false;
         }

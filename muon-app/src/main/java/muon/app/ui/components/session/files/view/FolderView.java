@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.view;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileType;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+@Slf4j
 public class FolderView extends JPanel {
     private final FolderViewTableModel folderViewModel;
     private final JTable table;
@@ -210,9 +212,9 @@ public class FolderView extends JPanel {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println("Mouse click on table");
+                log.debug("Mouse click on table");
                 if (table.getSelectionModel().getValueIsAdjusting()) {
-                    System.out.println("Value adjusting");
+                    log.debug("Value adjusting");
                     selectRow(e);
                     return;
                 }
@@ -234,7 +236,7 @@ public class FolderView extends JPanel {
                     }
                 } else if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
                     selectRow(e);
-                    System.out.println("called");
+                    log.info("called");
                     listener.createMenu(popup, getSelectedFiles());
                     popup.pack();
                     popup.show(table, e.getX(), e.getY());
@@ -249,7 +251,7 @@ public class FolderView extends JPanel {
 
         resizeColumnWidth(table);
 
-        System.out.println("Row height: " + r1.getHeight());
+        log.debug("Row height: " + r1.getHeight());
 
         fileList = new JList<>(folderViewModel);
         fileList.setBackground(App.SKIN.getTableBackgroundColor());
@@ -261,9 +263,9 @@ public class FolderView extends JPanel {
         fileList.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                System.out.println("Mouse click on table");
+                log.debug("Mouse click on table");
                 if (fileList.getSelectionModel().getValueIsAdjusting()) {
-                    System.out.println("Value adjusting");
+                    log.debug("Value adjusting");
                     selectListRow(e);
                     return;
                 }
@@ -285,7 +287,7 @@ public class FolderView extends JPanel {
                     }
                 } else if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
                     selectRow(e);
-                    System.out.println("called");
+                    log.info("called");
                     listener.createMenu(popup, getSelectedFiles());
                     popup.pack();
                     popup.show(table, e.getX(), e.getY());
@@ -298,7 +300,7 @@ public class FolderView extends JPanel {
 
     private void selectRow(MouseEvent e) {
         int r = table.rowAtPoint(e.getPoint());
-        System.out.println("Row at point: " + r);
+        log.debug("Row at point: " + r);
         if (r == -1) {
             table.clearSelection();
         } else {
@@ -316,7 +318,7 @@ public class FolderView extends JPanel {
 
     private void selectListRow(MouseEvent e) {
         int r = fileList.locationToIndex(e.getPoint());
-        System.out.println("Row at point: " + r);
+        log.debug("Row at point: " + r);
         if (r == -1) {
             fileList.clearSelection();
         } else {

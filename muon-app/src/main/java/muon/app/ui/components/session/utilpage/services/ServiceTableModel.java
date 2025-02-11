@@ -11,7 +11,6 @@ import static muon.app.App.bundle;
 
 /**
  * @author subhro
- *
  */
 public class ServiceTableModel extends AbstractTableModel {
     private final String[] columns = {bundle.getString("name"), bundle.getString("status"), bundle.getString("state"), bundle.getString("description")};

@@ -1,5 +1,6 @@
 package muon.app.ui.components;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.MouseAdapter;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public class DisabledPanel extends JPanel {
     double angle = 0.0;
     JButton btn = new JButton();
@@ -31,7 +33,7 @@ public class DisabledPanel extends JPanel {
         btn.setAlignmentX(Box.CENTER_ALIGNMENT);
         setOpaque(false);
         btn.addActionListener(e -> {
-            System.out.println("Stop button clicked: " + stopFlag);
+            log.info("Stop button clicked: " + stopFlag);
             if (stopFlag != null) {
                 stopFlag.set(true);
             }

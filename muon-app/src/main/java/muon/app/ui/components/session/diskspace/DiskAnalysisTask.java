@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.diskspace;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ssh.RemoteSessionInstance;
 
 import java.util.Arrays;
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-
+@Slf4j
 public class DiskAnalysisTask implements Runnable {
     private final RemoteSessionInstance client;
     private final String folder;
@@ -33,7 +34,7 @@ public class DiskAnalysisTask implements Runnable {
                     : folder.length();
             root = duOutputParser.parseList(lines, prefixLen);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } finally {
             callback.accept(root);
         }

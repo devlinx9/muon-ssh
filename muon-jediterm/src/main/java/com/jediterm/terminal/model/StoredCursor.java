@@ -6,8 +6,10 @@ package com.jediterm.terminal.model;
 import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.emulator.charset.CharacterSet;
 import com.jediterm.terminal.emulator.charset.GraphicSetState;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public class StoredCursor {
 
   //Cursor position

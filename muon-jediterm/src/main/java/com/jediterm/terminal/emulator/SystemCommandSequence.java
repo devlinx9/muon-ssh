@@ -1,7 +1,7 @@
 package com.jediterm.terminal.emulator;
 
 import com.jediterm.terminal.TerminalDataStream;
-
+import lombok.extern.slf4j.Slf4j;
 import muon.terminal.Ascii;
 
 import java.io.IOException;
@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * @author traff
  */
+@Slf4j
 public class SystemCommandSequence {
   private final List<Object> myArgs = new ArrayList<>();
 

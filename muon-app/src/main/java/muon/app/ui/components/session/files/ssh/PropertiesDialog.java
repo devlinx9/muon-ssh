@@ -1,6 +1,7 @@
 package muon.app.ui.components.session.files.ssh;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileType;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class PropertiesDialog extends JDialog {
     public static final int S_IRUSR = 00400; // read by owner
     public static final int S_IWUSR = 00200; // write by owner
@@ -222,7 +224,7 @@ public class PropertiesDialog extends JDialog {
     public void setDetails(FileInfo details) {
         this.details = new FileInfo[1];
         this.details[0] = details;
-        System.out.println("Extra: " + details.getExtra());
+        log.info("Extra: " + details.getExtra());
         btnCalculate2.setEnabled(details.getType() == FileType.DIRECTORY
                 || details.getType() == FileType.DIR_LINK);
         this.permissions = details.getPermission();
@@ -332,7 +334,7 @@ public class PropertiesDialog extends JDialog {
         calcSize(details, (a, b) -> SwingUtilities.invokeLater(() -> {
             dlg.dispose();
             disposed.set(true);
-            System.out.println("Total size: " + a);
+            log.info("Total size: " + a);
             if (Boolean.TRUE.equals(b)) {
                 txtSize.setText(
                         FormatUtils.humanReadableByteCount(a, true));
@@ -363,7 +365,7 @@ public class PropertiesDialog extends JDialog {
         calcFreeSpace(details, (a, b) -> SwingUtilities.invokeLater(() -> {
             dlg.dispose();
             disposed.set(true);
-            System.out.println("Total size: " + a);
+            log.info("Total size: " + a);
             if (Boolean.TRUE.equals(b)) {
                 txtFreeSpace.setText(a);
             }
@@ -381,7 +383,7 @@ public class PropertiesDialog extends JDialog {
         for (FileInfo fileInfo : files) {
             command.append("\"" + fileInfo.getPath() + "\" ");
         }
-        System.out.println("Command to execute: " + command);
+        log.info("Command to execute: " + command);
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             try {
                 long total = 0;
@@ -407,7 +409,7 @@ public class PropertiesDialog extends JDialog {
                 biConsumer.accept(total, true);
                 return;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             biConsumer.accept(-1L, false);
         });
@@ -419,16 +421,16 @@ public class PropertiesDialog extends JDialog {
         command.append(
                 "export POSIXLY_CORRECT=1; export BLOCKSIZE=1024; df -P -k \""
                         + files[0].getPath() + "\"");
-        System.out.println("Command to execute: " + command);
+        log.info("Command to execute: " + command);
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             try {
                 StringBuilder output = new StringBuilder();
                 boolean ret = fileBrowser.getSessionInstance().exec(
                         command.toString(), stopFlag, output,
                         new StringBuilder()) == 0;
-                System.out.println(output);
+                log.info(output.toString());
                 if (stopFlag.get()) {
-                    System.out.println("stop flag");
+                    log.info("stop flag");
                     biConsumer.accept(null, false);
                     return;
                 }
@@ -456,12 +458,12 @@ public class PropertiesDialog extends JDialog {
                         biConsumer.accept(result, true);
                         return;
                     } else {
-                        System.out.println(
+                        log.info(
                                 "Did not match with [^\\s]+\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+%)\\s[^\\s+]+");
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             biConsumer.accept(null, false);
         });
@@ -488,11 +490,11 @@ public class PropertiesDialog extends JDialog {
             try {
                 for (FileInfo path : paths) {
                     fileBrowser.getSSHFileSystem().chmod(perm, path.getPath());
-                    System.out.println("Permissions changed");
+                    log.info("Permissions changed");
                 }
                 modified.set(true);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 if (!fileBrowser.isSessionClosed()) {
                     JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
                 }

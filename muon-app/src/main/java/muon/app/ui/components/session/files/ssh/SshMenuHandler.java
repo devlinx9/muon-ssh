@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileType;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class SshMenuHandler {
     private final FileBrowser fileBrowser;
     private final SshFileOperations fileOperations;
@@ -98,14 +100,14 @@ public class SshMenuHandler {
         aOpen = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Open app");
+                log.info("Open app");
                 FileInfo fileInfo = folderView.getSelectedFiles()[0];
                 try {
                     App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
                             fileBrowser.getActiveSessionId(), false, null);
                 } catch (IOException e1) {
                     // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    log.error(e1.getMessage(), e1);
                 }
             }
         };
@@ -122,12 +124,12 @@ public class SshMenuHandler {
             mOpenWithMenu.addActionListener(e -> {
                 FileInfo fileInfo = folderView.getSelectedFiles()[0];
                 try {
-                    System.out.println("Called open with");
+                    log.info("Called open with");
                     App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
                             fileBrowser.getActiveSessionId(), true, null);
                 } catch (IOException e1) {
                     // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    log.error(e1.getMessage(), e1);
                 }
             });
         }
@@ -343,13 +345,13 @@ public class SshMenuHandler {
             try {
                 uploadFiles();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                log.error(ex.getMessage(), ex);
             }
         });
     }
 
     private void changePermission(FileInfo[] selectedFiles, String currentDirectory) {
-        System.out.println("Showing property of: " + selectedFiles.length);
+        log.info("Showing property of: " + selectedFiles.length);
         PropertiesDialog propertiesDialog = new PropertiesDialog(fileBrowser,
                 SwingUtilities.windowForComponent(fileBrowserView), selectedFiles.length > 1);
         if (selectedFiles.length > 1) {
@@ -557,7 +559,7 @@ public class SshMenuHandler {
                     fileBrowser.enableUi();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 fileBrowser.enableUi();
             }
         });
@@ -580,7 +582,7 @@ public class SshMenuHandler {
                     fileBrowser.enableUi();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 fileBrowser.enableUi();
             }
 
@@ -598,7 +600,7 @@ public class SshMenuHandler {
                     fileBrowser.enableUi();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 fileBrowser.enableUi();
             }
 
@@ -616,7 +618,7 @@ public class SshMenuHandler {
                     fileBrowser.enableUi();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 fileBrowser.enableUi();
             }
 
@@ -633,7 +635,7 @@ public class SshMenuHandler {
                     fileBrowser.enableUi();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 fileBrowser.enableUi();
             }
         });
@@ -648,9 +650,9 @@ public class SshMenuHandler {
                     fileBrowserView.handleDrop(transferData);
                 }
             } catch (UnsupportedFlavorException e1) {
-                e1.printStackTrace();
+                log.error(e1.getMessage(), e1);
             } catch (IOException e1) {
-                e1.printStackTrace();
+                log.error(e1.getMessage(), e1);
             }
         } else {
             DataFlavor[] flavors = Toolkit.getDefaultToolkit().getSystemClipboard().getAvailableDataFlavors();
@@ -668,7 +670,7 @@ public class SshMenuHandler {
                 || Toolkit.getDefaultToolkit().getSystemClipboard()
                 .isDataFlavorAvailable(DataFlavor.javaFileListFlavor));
         if (!ret)
-            System.out.println("Nothing on clipboard");
+            log.info("Nothing on clipboard");
         return ret;
     }
 
@@ -683,7 +685,7 @@ public class SshMenuHandler {
                     fileBrowser.enableUi();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -699,7 +701,7 @@ public class SshMenuHandler {
                     fileBrowser.enableUi();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -766,7 +768,7 @@ public class SshMenuHandler {
                 }
                 fileBrowser.enableUi();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -783,7 +785,7 @@ public class SshMenuHandler {
                 }
                 fileBrowserView.render(currentFolder);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -800,7 +802,7 @@ public class SshMenuHandler {
                 }
                 fileBrowserView.render(currentFolder);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -814,7 +816,7 @@ public class SshMenuHandler {
         jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         jfc.setMultiSelectionEnabled(true);
         if (jfc.showOpenDialog(SwingUtilities.getWindowAncestor(fileBrowser)) == JFileChooser.APPROVE_OPTION) {
-            System.out.println("After file selection");
+            log.info("After file selection");
             File[] files = jfc.getSelectedFiles();
             if (files.length > 0) {
                 List<FileInfo> list = new ArrayList<>();
@@ -838,7 +840,7 @@ public class SshMenuHandler {
             App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
                     fileBrowser.getActiveSessionId(), false, path);
         } catch (IOException e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
         }
     }
 

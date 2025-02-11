@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.view;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class AddressBarBreadCrumbs extends JPanel {
     public UIDefaults toolBarButtonSkin = new UIDefaults();
     private final boolean unix;
@@ -29,7 +31,7 @@ public class AddressBarBreadCrumbs extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 String selectedPath = calculatePath(
                         (JComponent) e.getComponent());
-                System.out.println("Selected path: " + selectedPath);
+                log.info("Selected path: " + selectedPath);
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     if (popupTriggerListener != null) {
                         popupTriggerListener.actionPerformed(
@@ -37,7 +39,7 @@ public class AddressBarBreadCrumbs extends JPanel {
                     }
                 } else {
                     for (ActionListener l : listeners) {
-                        System.out.println("Performing action");
+                        log.info("Performing action");
                         l.actionPerformed(new ActionEvent(this, hashCode(),
                                 selectedPath));
                     }

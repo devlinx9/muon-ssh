@@ -3,6 +3,7 @@
  */
 package util;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.SkinnedTextField;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.awt.*;
  * @author subhro
  *
  */
+@Slf4j
 public class OptionPaneUtils {
     public static synchronized int showOptionDialog(Component owner, Object[] components, String title) {
         return JOptionPane.showOptionDialog(owner, components, title, JOptionPane.OK_CANCEL_OPTION,

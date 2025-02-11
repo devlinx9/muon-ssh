@@ -1,6 +1,7 @@
 package muon.app.ui.components.session.files.view;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileType;
@@ -11,7 +12,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-
+@Slf4j
 public class TableCellLabelRenderer implements TableCellRenderer {
     private final JPanel panel;
     private final JLabel textLabel;
@@ -47,7 +48,7 @@ public class TableCellLabelRenderer implements TableCellRenderer {
 
         panel.doLayout();
 
-        System.out.println(panel.getPreferredSize());
+        log.debug(panel.getPreferredSize().toString());
 
         label = new JLabel();
         label.setForeground(foreground);

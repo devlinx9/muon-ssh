@@ -1,15 +1,16 @@
 package com.jediterm.terminal.util;
 
-import com.jediterm.terminal.emulator.charset.*;
-import com.jediterm.terminal.model.*;
-
+import com.jediterm.terminal.emulator.charset.CharacterSets;
+import com.jediterm.terminal.model.CharBuffer;
+import lombok.extern.slf4j.Slf4j;
 import muon.terminal.Ascii;
 
-import java.util.*;
+import java.util.Arrays;
 
 /**
  * @author traff
  */
+@Slf4j
 public class CharUtils {
 	public static final int ESC = Ascii.ESC;
 	public static final int DEL = Ascii.DEL;

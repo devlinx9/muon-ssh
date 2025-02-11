@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ssh.GraphicalHostKeyVerifier;
 import muon.app.ssh.GraphicalInputBlocker;
 import muon.app.ssh.InputBlocker;
@@ -34,6 +35,7 @@ import java.util.concurrent.Executors;
 import static util.Constants.APPLICATION_VERSION;
 import static util.Constants.UPDATE_URL;
 
+@Slf4j
 public class App {
     public static final VersionEntry VERSION = new VersionEntry("v" + APPLICATION_VERSION);
     public static final String UPDATE_URL2 = UPDATE_URL + "/check-update.html?v="
@@ -82,7 +84,7 @@ public class App {
         Security.setProperty("networkaddress.cache.negative.ttl", "1");
         Security.setProperty("crypto.policy", "unlimited");
 
-        System.out.println(System.getProperty("java.version"));
+        log.info(System.getProperty("java.version"));
 
         boolean firstRun = false;
 
@@ -90,7 +92,7 @@ public class App {
         String muonPath = System.getProperty("muonPath");
         boolean isMuonPath = false;
         if (muonPath != null && !muonPath.isEmpty()) {
-            System.out.println("Muon path: " + muonPath);
+            log.info("Muon path: " + muonPath);
             CONFIG_DIR = muonPath;
             isMuonPath = true;
         }
@@ -99,7 +101,7 @@ public class App {
         if (!appDir.exists()) {
             //Validate if the config directory can be created
             if (!appDir.mkdirs()) {
-                System.err.println("The config directory for moun cannot be created: " + CONFIG_DIR);
+                log.error("The config directory for moun cannot be created: " + CONFIG_DIR);
                 System.exit(1);
             }
             firstRun = true;
@@ -117,10 +119,10 @@ public class App {
         }
 
         if (settings.getEditors().isEmpty()) {
-            System.out.println("Searching for known editors...");
+            log.info("Searching for known editors...");
             settings.setEditors(PlatformUtils.getKnownEditors());
             saveSettings();
-            System.out.println("Searching for known editors...done");
+            log.info("Searching for known editors...done");
         }
 
         setBundleLanguage();
@@ -134,12 +136,12 @@ public class App {
 
         try {
             int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
-            System.out.println("maxKeySize: " + maxKeySize);
+            log.info("maxKeySize: " + maxKeySize);
             if (maxKeySize < Integer.MAX_VALUE) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("unlimited cryptography"));
             }
         } catch (NoSuchAlgorithmException e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
         }
 
         // JediTerm seems to take a long time to load, this might make UI more
@@ -148,7 +150,7 @@ public class App {
             try {
                 Class.forName("com.jediterm.terminal.ui.JediTermWidget");
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
 
@@ -162,7 +164,7 @@ public class App {
             HOST_KEY_VERIFIER = new GraphicalHostKeyVerifier(knownHostFile);
         } catch (Exception e2) {
             // TODO: handle exception
-            e2.printStackTrace();
+            log.error(e2.getMessage(), e2);
         }
 
         mw.createFirstSessionPanel();
@@ -178,7 +180,7 @@ public class App {
                 });
                 return;
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         settings = new Settings();
@@ -194,7 +196,7 @@ public class App {
                 });
                 return settings;
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         settings = new Settings();
@@ -207,7 +209,7 @@ public class App {
         try {
             objectMapper.writeValue(file, settings);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -229,7 +231,7 @@ public class App {
                 });
                 return;
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         pinnedLogs = new HashMap<>();
@@ -241,7 +243,7 @@ public class App {
         try {
             objectMapper.writeValue(file, pinnedLogs);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

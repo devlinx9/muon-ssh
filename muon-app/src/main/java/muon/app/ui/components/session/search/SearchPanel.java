@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.search;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
@@ -37,6 +38,7 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class SearchPanel extends Page {
     private static final String LS_REGEX_1 = "([dflo])\\|(.*)";
     private final SessionContentPanel holder;
@@ -199,7 +201,7 @@ public class SearchPanel extends Page {
             disableButtons();
         });
 
-        System.out.println("Starting search.. ");
+        log.info("Starting search.. ");
         try {
             if (searchScript == null) {
                 searchScript = ScriptLoader
@@ -209,16 +211,16 @@ public class SearchPanel extends Page {
             scriptBuffer.append(searchScript);
 
             String findCmd = scriptBuffer.toString();
-            System.out.println(findCmd);
+            log.info(findCmd);
 
             StringBuilder output = new StringBuilder();
 
             if (holder.getRemoteSessionInstance().exec(findCmd, stopFlag,
                     output) != 0) {
-                System.out.println("Error in search");
+                log.info("Error in search");
             }
 
-            System.out.println("search output\n" + output);
+            log.info("search output\n" + output);
 
             String[] lines = output.toString().split("\n");
             SwingUtilities.invokeLater(() -> {
@@ -236,7 +238,7 @@ public class SearchPanel extends Page {
 
             lblStat.setText(bundle.getString("idle"));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } finally {
             SwingUtilities.invokeLater(() -> {
                 lblStat.setText(bundle.getString("idle"));

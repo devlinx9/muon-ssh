@@ -3,6 +3,7 @@ package muon.app.ui.components.session.files.remote2remote;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileType;
@@ -27,6 +28,7 @@ import java.util.List;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class Remote2RemoteTransferDialog extends JDialog {
     private final DefaultListModel<RemoteServerEntry> remoteHostModel;
     private final JList<RemoteServerEntry> remoteHostList;
@@ -246,7 +248,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
         try {
             objectMapper.writeValue(file, list);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         this.list.clear();
         this.list.addAll(load());
@@ -261,7 +263,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
                 return objectMapper.readValue(file, new TypeReference<>() {
                 });
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         return new ArrayList<>();

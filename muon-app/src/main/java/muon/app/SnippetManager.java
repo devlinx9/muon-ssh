@@ -6,6 +6,7 @@ package muon.app;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.terminal.snippets.SnippetItem;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import java.util.List;
 /**
  * @author subhro
  */
+@Slf4j
 public class SnippetManager {
     private List<SnippetItem> snippetItems = new ArrayList<>();
 
@@ -30,7 +32,7 @@ public class SnippetManager {
                 });
                 return;
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         snippetItems = new ArrayList<>();
@@ -42,7 +44,7 @@ public class SnippetManager {
         try {
             objectMapper.writeValue(file, snippetItems);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 

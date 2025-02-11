@@ -15,6 +15,6 @@ public class ProcessTableEntry {
     private float memory;
     private int pid;
     private int ppid;
-    private int nice;
+    private String nice;
 
 }

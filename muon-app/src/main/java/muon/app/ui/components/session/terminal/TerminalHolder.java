@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.terminal;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.ClosableTabbedPanel;
 import muon.app.ui.components.session.Page;
@@ -16,6 +17,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public class TerminalHolder extends Page implements AutoCloseable {
     private final ClosableTabbedPanel tabs;
     private JPopupMenu snippetPopupMenu;
@@ -42,7 +44,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
         TerminalComponent tc = new TerminalComponent(info, c + "", null, sessionContentPanel);
         this.tabs.addTab(tc.getTabTitle(), tc);
         long t2 = System.currentTimeMillis();
-        System.out.println("Terminal init in: " + (t2 - t1) + " ms");
+        log.debug("Terminal init in: " + (t2 - t1) + " ms");
 
         snippetPanel = new SnippetPanel(e -> {
             TerminalComponent tc1 = (TerminalComponent) tabs.getSelectedContent();
@@ -68,7 +70,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
             @Override
             public void ancestorAdded(AncestorEvent event) {
-                System.err.println("Terminal ancestor component shown");
+                log.debug("Terminal ancestor component shown");
                 focusTerminal();
             }
         });
@@ -83,7 +85,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     private void focusTerminal() {
         tabs.requestFocusInWindow();
-        System.err.println("Terminal component shown");
+        log.debug("Terminal component shown");
         TerminalComponent comp = (TerminalComponent) tabs.getSelectedContent();
         if (comp != null) {
             comp.requestFocusInWindow();
@@ -117,7 +119,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
         Component[] components = tabs.getTabContents();
         for (Component c : components) {
             if (c instanceof TerminalComponent) {
-                System.out.println("Closing terminal: " + c);
+                log.info("Closing terminal: " + c);
                 ((TerminalComponent) c).close();
             }
         }

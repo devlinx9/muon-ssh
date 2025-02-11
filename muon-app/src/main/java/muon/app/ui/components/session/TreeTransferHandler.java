@@ -1,5 +1,7 @@
 package muon.app.ui.components.session;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -8,6 +10,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 
+@Slf4j
 class TreeTransferHandler extends TransferHandler {
     DataFlavor nodesFlavor;
     DataFlavor[] flavors = new DataFlavor[1];
@@ -21,7 +24,7 @@ class TreeTransferHandler extends TransferHandler {
             nodesFlavor = new DataFlavor(mimeType);
             flavors[0] = nodesFlavor;
         } catch (ClassNotFoundException e) {
-            System.out.println("ClassNotFound: " + e.getMessage());
+            log.info("ClassNotFound: " + e.getMessage());
         }
     }
 
@@ -78,9 +81,9 @@ class TreeTransferHandler extends TransferHandler {
             Transferable t = support.getTransferable();
             node = (DefaultMutableTreeNode) t.getTransferData(nodesFlavor);
         } catch (UnsupportedFlavorException ufe) {
-            System.out.println("UnsupportedFlavor: " + ufe.getMessage());
+            log.info("UnsupportedFlavor: " + ufe.getMessage());
         } catch (java.io.IOException ioe) {
-            System.out.println("I/O error: " + ioe.getMessage());
+            log.info("I/O error: " + ioe.getMessage());
         }
         // Get drop location info.
         JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
@@ -104,7 +107,7 @@ class TreeTransferHandler extends TransferHandler {
         return getClass().getName();
     }
 
-    public class NodesTransferable implements Transferable {
+public class NodesTransferable implements Transferable {
         DefaultMutableTreeNode node;
 
         public NodesTransferable(DefaultMutableTreeNode node) {

@@ -7,7 +7,7 @@ import com.jediterm.terminal.model.LinesBuffer;
 import com.jediterm.terminal.model.TerminalLine;
 import com.jediterm.terminal.model.TerminalTextBuffer;
 import com.jediterm.terminal.util.CharUtils;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,10 @@ import java.util.List;
 /**
  * @author traff
  */
+@Slf4j
 public class TextProcessing {
 
-  private static final Logger LOG = Logger.getLogger(TextProcessing.class);
+
 
   private final List<HyperlinkFilter> myHyperlinkFilter;
   private final TextStyle myHyperlinkColor;
@@ -48,7 +49,7 @@ public class TextProcessing {
         // When lines arrive fast enough, the line might be pushed to the history buffer already.
         updatedLineInd = findHistoryLineInd(myTerminalTextBuffer.getHistoryBuffer(), updatedLine);
         if (updatedLineInd == -1) {
-          LOG.debug("Cannot find line for links processing");
+          log.debug("Cannot find line for links processing");
           return;
         }
         buffer = myTerminalTextBuffer.getHistoryBuffer();

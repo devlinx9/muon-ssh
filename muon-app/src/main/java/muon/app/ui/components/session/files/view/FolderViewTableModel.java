@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.view;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.common.FileInfo;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class FolderViewTableModel extends AbstractTableModel implements ListModel<FileInfo> {
 
     private static final long serialVersionUID = 7212506492710233442L;
@@ -87,7 +89,7 @@ public class FolderViewTableModel extends AbstractTableModel implements ListMode
 
     @Override
     public void addListDataListener(ListDataListener l) {
-        System.out.println("addListDataListener");
+        log.debug("addListDataListener");
         listenerList.add(ListDataListener.class, l);
     }
 

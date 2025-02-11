@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.ssh.SSHRemoteFileInputStream;
@@ -30,6 +31,7 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class ExternalEditorHandler extends JDialog {
     private final JProgressBar progressBar;
     private final JLabel progressLabel;
@@ -79,10 +81,10 @@ public class ExternalEditorHandler extends JDialog {
                 this.fileWatcher.stopWatching();
                 App.EXECUTOR.submit(() -> {
                     try {
-                        System.out.println("In app executor");
+                        log.info("In app executor");
                         this.saveRemoteFiles(files);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                     }
                 });
             }
@@ -102,14 +104,14 @@ public class ExternalEditorHandler extends JDialog {
         for (FileModificationInfo info : files) {
             totalSize += info.localFile.length();
         }
-        System.out.println("Total size: " + totalSize);
+        log.info("Total size: " + totalSize);
         long totalBytes = 0L;
         for (FileModificationInfo info : files) {
-            System.out.println("Total size: " + totalSize + " opcying: " + info);
+            log.info("Total size: " + totalSize + " opcying: " + info);
             totalBytes += saveRemoteFile(info, totalSize, totalBytes);
         }
         fileWatcher.resumeWatching();
-        System.out.println("Transfer complete");
+        log.info("Transfer complete");
         SwingUtilities.invokeLater(() -> setVisible(false));
     }
 
@@ -120,14 +122,14 @@ public class ExternalEditorHandler extends JDialog {
      * @return
      */
     private long saveRemoteFile(FileModificationInfo info, long total, long totalBytes) {
-        System.out.println("Init transfer...1");
+        log.info("Init transfer...1");
         SessionContentPanel scp = App.getSessionContainer(info.activeSessionId);
         if (scp == null) {
-            System.out.println("No session found");
+            log.info("No session found");
             return info.remoteFile.getSize();
         }
 
-        System.out.println("Init transfer...2");
+        log.info("Init transfer...2");
         try (OutputStream out = scp.getRemoteSessionInstance().getSshFs().outputTransferChannel()
                 .getOutputStream(info.remoteFile.getPath()); InputStream in = new FileInputStream(info.localFile)) {
             int cap = 8192;
@@ -135,7 +137,7 @@ public class ExternalEditorHandler extends JDialog {
                 cap = ((SSHRemoteFileOutputStream) out).getBufferCapacity();
             }
             byte[] b = new byte[cap];
-            System.out.println("Init transfer...");
+            log.info("Init transfer...");
             while (!this.stopFlag.get()) {
                 int x = in.read(b);
                 if (x == -1) {
@@ -148,10 +150,10 @@ public class ExternalEditorHandler extends JDialog {
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return info.remoteFile.getSize();
     }
@@ -198,7 +200,7 @@ public class ExternalEditorHandler extends JDialog {
                 localFile.setLastModified(TimeUtils.toEpochMilli(remoteFile.getLastModified()));
                 fileWatcher.addForMonitoring(remoteFile, localFilePath.toAbsolutePath().toString(), activeSessionId);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
                 fileWatcher.resumeWatching();
                 SwingUtilities.invokeLater(() -> {
@@ -209,7 +211,7 @@ public class ExternalEditorHandler extends JDialog {
                             PlatformUtils.openWithApp(localFilePath.toFile(), app);
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                     }
                     setVisible(false);
                 });

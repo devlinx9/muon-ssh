@@ -3,12 +3,14 @@ package muon.app.ui.components.session;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+@Slf4j
 public final class BookmarkManager {
     public static synchronized Map<String, List<String>> getAll() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -21,7 +23,7 @@ public final class BookmarkManager {
                                                                                });
                 return Collections.synchronizedMap(bookmarkMap);
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         return Collections.synchronizedMap(new HashMap<>());
@@ -33,7 +35,7 @@ public final class BookmarkManager {
         try {
             objectMapper.writeValue(bookmarkFile, bookmarks);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -83,7 +85,7 @@ public final class BookmarkManager {
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         return new ArrayList<>();

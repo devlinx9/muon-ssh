@@ -1,5 +1,6 @@
 package muon.app.ui.components.session;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.SkinnedTextArea;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.TabbedPanel;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class SessionInfoPanel extends JPanel {
 
     public static final int DEFAULT_MAX_PORT = 65535;
@@ -829,7 +831,7 @@ public class SessionInfoPanel extends JPanel {
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }

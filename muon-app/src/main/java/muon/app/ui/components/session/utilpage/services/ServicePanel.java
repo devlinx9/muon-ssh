@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.utilpage.services;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
@@ -26,6 +27,7 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class ServicePanel extends UtilPageItemView {
     private static final Pattern SERVICE_PATTERN = Pattern
             .compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+([\\S]+.*)");
@@ -374,7 +376,7 @@ public class ServicePanel extends UtilPageItemView {
                                 return;
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            log.error(ex.getMessage(), ex);
                         }
                         if (!holder.isSessionClosed()) {
                             JOptionPane.showMessageDialog(null,
@@ -389,7 +391,7 @@ public class ServicePanel extends UtilPageItemView {
                                 return;
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            log.error(ex.getMessage(), ex);
                         }
                         if (!holder.isSessionClosed()) {
                             JOptionPane.showMessageDialog(null,
@@ -397,7 +399,7 @@ public class ServicePanel extends UtilPageItemView {
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 } finally {
                     holder.enableUi();
                 }
@@ -429,7 +431,7 @@ public class ServicePanel extends UtilPageItemView {
                 });
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 }

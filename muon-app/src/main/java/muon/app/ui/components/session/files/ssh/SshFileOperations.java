@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public class SshFileOperations {
 
     public SshFileOperations() {
@@ -31,7 +33,7 @@ public class SshFileOperations {
             sb.append("\"" + file.getPath() + "\" ");
         }
 
-        System.out.println("Delete command1: " + sb);
+        log.info("Delete command1: " + sb);
 
         if (instance.exec(sb.toString(), new AtomicBoolean(false)) != 0) {
             throw new FileNotFoundException("Operation failed");
@@ -40,11 +42,11 @@ public class SshFileOperations {
 
     public boolean runScriptInBackground(RemoteSessionInstance instance,
                                          String command, AtomicBoolean stopFlag) throws Exception {
-        System.out.println("Invoke command: " + command);
+        log.info("Invoke command: " + command);
         StringBuilder output = new StringBuilder();
         boolean ret = instance.exec(command, stopFlag, output,
                 new StringBuilder()) == 0;
-        System.out.println("output: " + output);
+        log.info("output: " + output);
         return ret;
     }
 
@@ -95,7 +97,7 @@ public class SshFileOperations {
             }
         }
 
-        System.out.println("Move: " + command);
+        log.info("Move: " + command);
         if (instance.exec(command.toString(), new AtomicBoolean(false)) != 0) {
             if (!App.getGlobalSettings().isUseSudo()) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("access_denied"));
@@ -173,7 +175,7 @@ public class SshFileOperations {
             }
         }
 
-        System.out.println("Copy: " + command);
+        log.info("Copy: " + command);
         if (instance.exec(command.toString(), new AtomicBoolean(false)) != 0) {
             if (!App.getGlobalSettings().isUseSudo()) {
                 JOptionPane.showMessageDialog(null, "Access denied");
@@ -225,7 +227,7 @@ public class SshFileOperations {
             fs.rename(oldName, newName);
             return true;
         } catch (AccessDeniedException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
 
             if (!App.getGlobalSettings().isUseSudo()) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("access_denied"));
@@ -244,7 +246,7 @@ public class SshFileOperations {
             }
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             if (!instance.isSessionClosed()) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
             }
@@ -256,7 +258,7 @@ public class SshFileOperations {
                                         RemoteSessionInstance instance, String password) {
         StringBuilder command = new StringBuilder();
         command.append("mv \"" + oldName + "\" \"" + newName + "\"");
-        System.out.println("Invoke sudo: " + command);
+        log.info("Invoke sudo: " + command);
         int ret = SudoUtils.runSudo(command.toString(), instance, password);
         if (ret == -1) {
             if (!instance.isSessionClosed()) {
@@ -273,18 +275,18 @@ public class SshFileOperations {
                 delete(Arrays.asList(targetList), instance);
                 return true;
             } catch (FileNotFoundException e) {
-                System.out.println("delete: file not found");
-                e.printStackTrace();
+                log.info("delete: file not found");
+                log.error(e.getMessage(), e);
                 throw e;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 for (FileInfo s : targetList) {
                     fs.delete(s);
                 }
                 return true;
             }
         } catch (FileNotFoundException | AccessDeniedException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             if (!App.getGlobalSettings().isUseSudo()) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("access_denied"));
                 return false;
@@ -301,7 +303,7 @@ public class SshFileOperations {
             return false;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             if (!instance.isSessionClosed()) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("error_delete_file"));
             }
@@ -317,7 +319,7 @@ public class SshFileOperations {
             sb.append("\"" + file.getPath() + "\" ");
         }
 
-        System.out.println("Invoke sudo: " + sb);
+        log.info("Invoke sudo: " + sb);
         int ret = SudoUtils.runSudo(sb.toString(), instance, password);
         if (ret == -1) {
             JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
@@ -346,7 +348,7 @@ public class SshFileOperations {
             fs.createFile(PathUtils.combineUnix(folder, text));
             return true;
         } catch (AccessDeniedException e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
             if (!App.getGlobalSettings().isUseSudo()) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("access_denied"));
                 return false;
@@ -369,7 +371,7 @@ public class SshFileOperations {
 
             return false;
         } catch (Exception e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
             if (!instance.isSessionClosed()) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
             }
@@ -382,7 +384,7 @@ public class SshFileOperations {
         String file = PathUtils.combineUnix(path, newFile);
         StringBuilder command = new StringBuilder();
         command.append("touch \"" + file + "\"");
-        System.out.println("Invoke sudo: " + command);
+        log.info("Invoke sudo: " + command);
         int ret = SudoUtils.runSudo(command.toString(), instance, password);
         if (ret == -1) {
             if (!instance.isSessionClosed()) {
@@ -414,7 +416,7 @@ public class SshFileOperations {
             fs.mkdir(PathUtils.combineUnix(folder, text));
             return true;
         } catch (AccessDeniedException e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
             if (!App.getGlobalSettings().isUseSudo()) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("access_denied"));
                 return false;
@@ -437,7 +439,7 @@ public class SshFileOperations {
             return false;
 
         } catch (Exception e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
             if (!instance.isSessionClosed()) {
                 JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
             }
@@ -450,7 +452,7 @@ public class SshFileOperations {
         String file = PathUtils.combineUnix(path, newFolder);
         StringBuilder command = new StringBuilder();
         command.append("mkdir \"" + file + "\"");
-        System.out.println("Invoke sudo: " + command);
+        log.info("Invoke sudo: " + command);
         int ret = SudoUtils.runSudo(command.toString(), instance, password);
         if (ret == -1 && !instance.isSessionClosed()) {
             JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
@@ -493,7 +495,7 @@ public class SshFileOperations {
             fs.createLink(src, dst, hardLink);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }

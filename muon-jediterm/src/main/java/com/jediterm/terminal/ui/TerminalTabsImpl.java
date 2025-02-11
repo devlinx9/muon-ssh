@@ -1,5 +1,7 @@
 package com.jediterm.terminal.ui;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -10,6 +12,7 @@ import java.awt.event.ContainerListener;
 /**
  * @author traff
  */
+@Slf4j
 public class TerminalTabsImpl implements AbstractTabs<JediTermWidget> {
   protected JTabbedPane myTabbedPane = new JTabbedPane();
 

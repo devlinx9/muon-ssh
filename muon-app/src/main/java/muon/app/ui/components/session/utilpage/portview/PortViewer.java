@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.utilpage.portview;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
@@ -24,6 +25,7 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class PortViewer extends UtilPageItemView {
     private static final String SEPARATOR = UUID.randomUUID().toString();
     public static final String LSOF_COMMAND = "sh -c \"export PATH=$PATH:/usr/sbin; echo;echo "
@@ -70,13 +72,13 @@ public class PortViewer extends UtilPageItemView {
     }
 
     public List<SocketEntry> parseSocketList(String text) {
-        System.err.println("text: " + text);
+        log.debug("text: " + text);
         List<SocketEntry> list = new ArrayList<>();
         SocketEntry ent = null;
         boolean start = false;
         for (String line1 : text.split("\n")) {
             String line = line1.trim();
-            System.out.println("LINE=" + line);
+            log.debug("LINE=" + line);
             if (!start) {
                 if (line.trim().equals(SEPARATOR)) {
                     start = true;
@@ -203,33 +205,33 @@ public class PortViewer extends UtilPageItemView {
                                 return;
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            log.error(ex.getMessage(), ex);
                         }
                         if (!holder.isSessionClosed()) {
                             JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
                         }
                     } else {
-                        System.out.println("Command was: " + cmd);
+                        log.debug("Command was: " + cmd);
                         try {
                             if (holder.getRemoteSessionInstance().exec(cmd,
                                     stopFlag, output) == 0) {
-                                System.out.println(
+                                log.debug(
                                         "Command was: " + cmd + " " + output);
                                 java.util.List<SocketEntry> list = this
                                         .parseSocketList(output.toString());
                                 SwingUtilities.invokeAndWait(() -> setSocketData(list));
                                 return;
                             }
-                            System.out.println("Error: " + output);
+                            log.error("Error: " + output);
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            log.error(ex.getMessage(), ex);
                         }
                         if (!holder.isSessionClosed()) {
                             JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 } finally {
                     holder.enableUi();
                 }

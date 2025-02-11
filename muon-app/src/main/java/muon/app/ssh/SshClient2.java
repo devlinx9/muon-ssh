@@ -4,6 +4,7 @@
 package muon.app.ssh;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.HopEntry;
@@ -39,6 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author subhro
  *
  */
+@Slf4j
 public class SshClient2 implements Closeable {
     private static final int CONNECTION_TIMEOUT = App.getGlobalSettings().getConnectionTimeout() * 1000;
     private final AtomicBoolean closed = new AtomicBoolean(false);
@@ -84,7 +86,7 @@ public class SshClient2 implements Closeable {
 
     private void getAuthMethods(AtomicBoolean authenticated, List<String> allowedMethods)
             throws OperationCancelledException {
-        System.out.println("Trying to get allowed authentication methods...");
+        log.info("Trying to get allowed authentication methods...");
         try {
             String user = promptUser();
             if (user == null || user.isEmpty()) {
@@ -98,7 +100,7 @@ public class SshClient2 implements Closeable {
             for (String method : sshj.getUserAuth().getAllowedMethods()) {
                 allowedMethods.add(method);
             }
-            System.out.println("List of allowed authentications: " + allowedMethods);
+            log.info("List of allowed authentications: " + allowedMethods);
         }
     }
 
@@ -108,8 +110,8 @@ public class SshClient2 implements Closeable {
             File keyFile = new File(info.getPrivateKeyFile());
             if (keyFile.exists()) {
                 provider = sshj.loadKeys(info.getPrivateKeyFile(), passwordFinder);
-                System.out.println("Key provider: " + provider);
-                System.out.println("Key type: " + provider.getType());
+                log.info("Key provider: " + provider);
+                log.info("Key type: " + provider.getType());
             }
         }
 
@@ -160,7 +162,7 @@ public class SshClient2 implements Closeable {
                 // net.schmizz.sshj.userauth.password.PasswordUpdateProvider
                 return;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 password = null;
             }
         }
@@ -179,7 +181,7 @@ public class SshClient2 implements Closeable {
         try {
             defaultConfig = new DefaultConfig();
             if (App.getGlobalSettings().isShowMessagePrompt()) {
-                System.out.println("enabled KeepAliveProvider");
+                log.info("enabled KeepAliveProvider");
                 defaultConfig.setKeepAliveProvider(KeepAliveProvider.KEEP_ALIVE);
             }
             sshj = new SSHClient(defaultConfig);
@@ -192,20 +194,20 @@ public class SshClient2 implements Closeable {
                 sshj.connect(info.getHost(), info.getPort());
             } else {
                 try {
-                    System.out.println("Tunneling through...");
+                    log.info("Tunneling through...");
                     tunnelThrough(hopStack);
-                    System.out.println("adding host key verifier");
+                    log.info("adding host key verifier");
                     this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
-                    System.out.println("Host key verifier added");
+                    log.info("Host key verifier added");
                     if (this.info.getJumpType() == SessionInfo.JumpType.TCP_FORWARDING) {
-                        System.out.println("tcp forwarding...");
+                        log.info("tcp forwarding...");
                         this.connectViaTcpForwarding();
                     } else {
-                        System.out.println("port forwarding...");
+                        log.info("port forwarding...");
                         this.connectViaPortForwarding();
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                     disconnect();
                     throw new IOException(e);
                 }
@@ -241,7 +243,7 @@ public class SshClient2 implements Closeable {
                     throw new OperationCancelledException();
                 }
 
-                System.out.println("Trying auth method: " + authMethod);
+                log.info("Trying auth method: " + authMethod);
 
                 switch (authMethod) {
                     case "publickey":
@@ -252,7 +254,7 @@ public class SshClient2 implements Closeable {
                             disconnect();
                             throw e;
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            log.error(e.getMessage(), e);
                         }
                         break;
 
@@ -261,7 +263,7 @@ public class SshClient2 implements Closeable {
                             sshj.auth(promptUser(), new AuthKeyboardInteractive(new InteractiveResponseProvider()));
                             authenticated.set(true);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            log.error(e.getMessage(), e);
                         }
                         break;
 
@@ -273,7 +275,7 @@ public class SshClient2 implements Closeable {
                             disconnect();
                             throw e;
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            log.error(e.getMessage(), e);
                         }
                         break;
                 }
@@ -352,16 +354,16 @@ public class SshClient2 implements Closeable {
     @Override
     public void close() throws IOException {
         try {
-            System.out.println("Wrapper closing for: " + info);
+            log.info("Wrapper closing for: " + info);
             disconnect();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
     public void disconnect() {
         if (closed.get()) {
-            System.out.println("Already closed: " + info);
+            log.info("Already closed: " + info);
             return;
         }
         closed.set(true);
@@ -369,20 +371,20 @@ public class SshClient2 implements Closeable {
             if (sshj != null)
                 sshj.disconnect();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         try {
             if (previousHop != null)
                 previousHop.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         try {
             if (this.ss != null) {
                 this.ss.close();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -437,7 +439,7 @@ public class SshClient2 implements Closeable {
                                 new Parameters("127.0.0.1", port, this.info.getHost(), this.info.getPort()), ss)
                         .listen();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }).start();
         while (true) {

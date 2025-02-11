@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.terminal.snippets;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import util.FontAwesomeContants;
@@ -19,6 +20,7 @@ import java.util.function.Consumer;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class SnippetPanel extends JPanel {
     private final DefaultListModel<SnippetItem> listModel = new DefaultListModel<>();
     private final List<SnippetItem> snippetList = new ArrayList<>();
@@ -196,7 +198,7 @@ public class SnippetPanel extends JPanel {
     public void loadSnippets() {
         this.snippetList.clear();
         this.snippetList.addAll(App.SNIPPET_MANAGER.getSnippetItems());
-        System.out.println("Snippet size: " + snippetList.size());
+        log.info("Snippet size: " + snippetList.size());
         filter();
     }
 

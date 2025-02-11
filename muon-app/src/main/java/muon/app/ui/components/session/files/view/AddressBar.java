@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.view;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.files.AddressBarComboBoxEditor;
@@ -14,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+@Slf4j
 public class AddressBar extends JPanel {
     private final AddressBarBreadCrumbs addressBar;
     private final JComboBox<String> txtAddressBar;
@@ -48,10 +50,10 @@ public class AddressBar extends JPanel {
             if (updating) {
                 return;
             }
-            System.out.println("calling action listener");
+            log.info("calling action listener");
             String item = (String) txtAddressBar.getSelectedItem();
             if (e.getActionCommand().equals("comboBoxEdited")) {
-                System.out.println("Editted");
+                log.info("Editted");
                 ComboBoxModel<String> model = txtAddressBar.getModel();
                 boolean found = false;
                 for (int i = 0; i < model.getSize(); i++) {
@@ -79,11 +81,11 @@ public class AddressBar extends JPanel {
             }
         };
         txtAddressBar.setEditor(cmdEdit);
-        System.out.println("Editor: " + txtAddressBar.getEditor());
+        log.debug("Editor: " + txtAddressBar.getEditor());
         addressBar = new AddressBarBreadCrumbs(separator == '/', popupTriggeredListener);
         addressBar.addActionListener(e -> {
             if (a != null) {
-                System.out.println("Performing action");
+                log.debug("Performing action");
                 a.actionPerformed(new ActionEvent(this, 0, e.getActionCommand()));
             }
         });
@@ -142,12 +144,12 @@ public class AddressBar extends JPanel {
     }
 
     public void setText(String text) {
-        System.out.println("Setting text: " + text);
+        log.debug("Setting text: " + text);
         updating = true;
         txtAddressBar.setSelectedItem(text);
         addressBar.setPath(text);
         updating = false;
-        System.out.println("Setting text done: " + text);
+        log.debug("Setting text done: " + text);
     }
 
     public void addActionListener(ActionListener e) {

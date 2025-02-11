@@ -1,12 +1,14 @@
 package com.jediterm.terminal.model;
 
 import com.jediterm.terminal.util.Pair;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 
 /**
  * @author traff
  */
+@Slf4j
 public class TerminalSelection {
   private final Point myStart;
 

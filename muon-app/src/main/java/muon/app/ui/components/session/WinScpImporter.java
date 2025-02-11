@@ -5,6 +5,7 @@ package muon.app.ui.components.session;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import lombok.extern.slf4j.Slf4j;
 import util.RegUtil;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -18,6 +19,7 @@ import java.util.Map;
 /**
  * @author subhro
  */
+@Slf4j
 public class WinScpImporter {
     private static final String WIN_SCP_REG_KEY = "Software\\Martin Prikryl\\WinSCP 2\\Sessions";
 
@@ -31,10 +33,10 @@ public class WinScpImporter {
                 map.put(key, decodedKey);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
-        System.out.println(map);
+        log.info(map.toString());
 
         return map;
     }
@@ -124,7 +126,7 @@ public class WinScpImporter {
                     node1.setAllowsChildren(false);
                     parent.add(node1);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
             }
         }

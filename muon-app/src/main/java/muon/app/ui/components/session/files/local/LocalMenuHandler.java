@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.local;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileType;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 
 import static muon.app.App.bundle;
 
+
+@Slf4j
 public class LocalMenuHandler {
     private final FileBrowser fileBrowser;
     private final LocalFileOperations fileOperations;
@@ -88,7 +91,7 @@ public class LocalMenuHandler {
                     PlatformUtils.openFolderInExplorer(folderView.getSelectedFiles()[0].getPath(), null);
                 } catch (FileNotFoundException e1) {
                     // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    log.error(e1.getMessage(), e1);
                 }
             }
         });
@@ -223,7 +226,7 @@ public class LocalMenuHandler {
                 try {
                     new LocalFileSystem().delete(f);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
             }
             fileBrowserView.render(baseFolder);

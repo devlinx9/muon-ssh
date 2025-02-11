@@ -3,6 +3,7 @@
  */
 package muon.app.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import javax.swing.*;
  * @author subhro
  *
  */
+@Slf4j
 public class GraphicalInputBlocker extends JDialog implements InputBlocker {
     private final JFrame window;
 
@@ -31,7 +33,7 @@ public class GraphicalInputBlocker extends JDialog implements InputBlocker {
     @Override
     public void blockInput() {
         SwingUtilities.invokeLater(() -> {
-            System.out.println("Making visible...");
+            log.debug("Making visible...");
             this.setLocationRelativeTo(window);
             this.setUndecorated(true);
             connectingLabel.setHorizontalAlignment(SwingConstants.CENTER);

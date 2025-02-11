@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.PasswordStore;
 
@@ -16,6 +17,7 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
 
+@Slf4j
 public class SessionStore {
 
     public static synchronized SavedSessionTree load() {
@@ -33,16 +35,16 @@ public class SessionStore {
             SavedSessionTree savedSessionTree = objectMapper.readValue(preprocessJson(file), new TypeReference<>() {
             });
             try {
-                System.out.println("Loading passwords...");
+                log.debug("Loading passwords...");
                 PasswordStore.getSharedInstance().populatePassword(savedSessionTree);
-                System.out.println("Loading passwords... done");
+                log.debug("Loading passwords... done");
             } catch (Exception e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             return savedSessionTree;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             SessionFolder rootFolder = new SessionFolder();
             rootFolder.setName("My sites");
             SavedSessionTree tree = new SavedSessionTree();
@@ -66,10 +68,10 @@ public class SessionStore {
             try {
                 PasswordStore.getSharedInstance().savePasswords(tree);
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -119,11 +121,11 @@ public class SessionStore {
         for (SessionInfo info : folder.getItems()) {
             if (info.id.equals(id)) {
                 if (remoteFolders != null) {
-                    System.out.println("Remote folders saving: " + remoteFolders);
+                    log.info("Remote folders saving: " + remoteFolders);
                     info.setFavouriteRemoteFolders(remoteFolders);
                 }
                 if (localFolders != null) {
-                    System.out.println("Local folders saving: " + localFolders);
+                    log.info("Local folders saving: " + localFolders);
                     info.setFavouriteLocalFolders(localFolders);
                 }
                 return true;

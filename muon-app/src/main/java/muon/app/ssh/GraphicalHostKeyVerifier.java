@@ -3,6 +3,7 @@
  */
 package muon.app.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import net.schmizz.sshj.common.KeyType;
 import net.schmizz.sshj.common.SecurityUtils;
 import net.schmizz.sshj.transport.verification.OpenSSHKnownHosts;
@@ -16,6 +17,7 @@ import java.security.PublicKey;
  * @author subhro
  *
  */
+@Slf4j
 public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
     /**
      * @throws IOException
@@ -40,7 +42,7 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
                 this.entries.add(new HostEntry(null, hostname, KeyType.fromKey(key), key));
                 write();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             return true;
         }
@@ -71,7 +73,7 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return this.hostKeyUnverifiableAction(hostname, key);
         }
     }

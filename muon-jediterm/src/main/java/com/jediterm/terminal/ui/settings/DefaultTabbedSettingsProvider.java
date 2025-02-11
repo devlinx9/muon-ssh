@@ -2,6 +2,7 @@ package com.jediterm.terminal.ui.settings;
 
 import com.jediterm.terminal.TtyConnector;
 import com.jediterm.terminal.ui.UIUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.event.InputEvent;
@@ -10,6 +11,7 @@ import java.awt.event.KeyEvent;
 /**
  * @author traff
  */
+@Slf4j
 public class DefaultTabbedSettingsProvider extends DefaultSettingsProvider implements TabbedSettingsProvider {
   @Override
   public boolean shouldCloseTabOnLogout(TtyConnector ttyConnector) {

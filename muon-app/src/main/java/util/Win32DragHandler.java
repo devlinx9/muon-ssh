@@ -2,12 +2,14 @@ package util;
 
 import com.sun.jna.platform.FileMonitor;
 import com.sun.jna.platform.win32.W32FileMonitor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Consumer;
 
+@Slf4j
 public final class Win32DragHandler {
     private final FileMonitor fileMonitor = new W32FileMonitor();
 
@@ -16,16 +18,16 @@ public final class Win32DragHandler {
         for (File drive : File.listRoots()) {
             if (fsv.isDrive(drive)) {
                 try {
-                    System.out.println("Adding to watch: " + drive.getAbsolutePath());
+                    log.info("Adding to watch: " + drive.getAbsolutePath());
                     fileMonitor.addWatch(drive, W32FileMonitor.FILE_RENAMED | W32FileMonitor.FILE_CREATED, true);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
             }
         }
         fileMonitor.addFileListener(e -> {
             File file = e.getFile();
-            System.err.println(file);
+            log.info(file.getAbsolutePath());
             if (file.getName().startsWith(keyToListen)) {
                 callback.accept(file);
             }
@@ -33,7 +35,7 @@ public final class Win32DragHandler {
     }
 
     public synchronized void dispose() {
-        System.out.println("File watcher disposed");
+        log.info("File watcher disposed");
         this.fileMonitor.dispose();
     }
 }
