@@ -42,9 +42,7 @@ public class GraphicalInputBlocker extends JDialog implements InputBlocker {
 
     @Override
     public void unblockInput() {
-        SwingUtilities.invokeLater(() -> {
-            this.setVisible(false);
-        });
+        SwingUtilities.invokeLater(() -> this.setVisible(false));
     }
 
 }

@@ -3,6 +3,7 @@
  */
 package muon.app.ssh;
 
+import lombok.Getter;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
@@ -18,10 +19,10 @@ import java.util.function.Function;
 
 /**
  * @author subhro
- *
  */
 public class RemoteSessionInstance {
     private final SshClient2 ssh;
+    @Getter
     private final SshFileSystem sshFs;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -112,7 +113,7 @@ public class RemoteSessionInstance {
                             if (in.available() > 0) {
                                 int m = in.available();
                                 while (m > 0) {
-                                    int x = in.read(b, 0, m > b.length ? b.length : m);
+                                    int x = in.read(b, 0, Math.min(m, b.length));
                                     if (x == -1) {
                                         break;
                                     }
@@ -127,7 +128,7 @@ public class RemoteSessionInstance {
                             if (err.available() > 0) {
                                 int m = err.available();
                                 while (m > 0) {
-                                    int x = err.read(b, 0, m > b.length ? b.length : m);
+                                    int x = err.read(b, 0, Math.min(m, b.length));
                                     if (x == -1) {
                                         break;
                                     }
@@ -139,7 +140,8 @@ public class RemoteSessionInstance {
                                 }
                             }
 
-                        } while (cmd.isOpen());
+                        }
+                        while (cmd.isOpen());
 
                         System.out.println(cmd.isOpen() + " " + cmd.isEOF() + " " + cmd.getExitStatus());
 
@@ -171,14 +173,6 @@ public class RemoteSessionInstance {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * @return the sshFs
-     */
-    public SshFileSystem getSshFs() {
-        return sshFs;
-
     }
 
     public boolean isSessionClosed() {

@@ -1,6 +1,8 @@
 package muon.app.ui.components.session.files.view;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import muon.app.common.FileInfo;
 
 import javax.swing.*;
@@ -11,7 +13,11 @@ import java.awt.event.KeyEvent;
 
 public class FolderViewKeyHandler extends KeyAdapter {
 
+    @Setter
+    @Getter
     private JTable table;
+    @Setter
+    @Getter
     private FolderViewTableModel model;
 
     private String prefix = "";
@@ -52,7 +58,7 @@ public class FolderViewKeyHandler extends KeyAdapter {
     public void keyTyped(KeyEvent e) {
 
         if (table.getRowCount() == 0 || e.isAltDown()
-                || isMenuShortcutKeyDown(e) || isNavigationKey(e)) {
+            || isMenuShortcutKeyDown(e) || isNavigationKey(e)) {
             // Nothing to select
             return;
         }
@@ -63,7 +69,7 @@ public class FolderViewKeyHandler extends KeyAdapter {
         long time = e.getWhen();
         int startIndex = adjustIndex(
                 table.getSelectedRows().length > 0 ? table.getSelectedRows()[0]
-                        : -1,
+                                                   : -1,
                 table);
         if (time - lastTime < timeFactor) {
             typedString += c;
@@ -107,22 +113,6 @@ public class FolderViewKeyHandler extends KeyAdapter {
                 .getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         KeyStroke key = KeyStroke.getKeyStrokeForEvent(event);
         return inputMap != null && inputMap.get(key) != null;
-    }
-
-    public JTable getTable() {
-        return table;
-    }
-
-    public void setTable(JTable table) {
-        this.table = table;
-    }
-
-    public FolderViewTableModel getModel() {
-        return model;
-    }
-
-    public void setModel(FolderViewTableModel model) {
-        this.model = model;
     }
 
     private int getNextMatch(String prefix, int startIndex) {

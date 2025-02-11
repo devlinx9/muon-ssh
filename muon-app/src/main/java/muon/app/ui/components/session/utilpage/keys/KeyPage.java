@@ -44,9 +44,7 @@ public class KeyPage extends UtilPageItemView {
                 try {
                     SshKeyManager.generateKeys(keyHolder,
                             holder.getRemoteSessionInstance(), false);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -58,9 +56,7 @@ public class KeyPage extends UtilPageItemView {
             holder.EXECUTOR.submit(() -> {
                 try {
                     keyHolder = SshKeyManager.getKeyDetails(holder);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -75,9 +71,7 @@ public class KeyPage extends UtilPageItemView {
                     SshKeyManager.saveAuthorizedKeysFile(a,
                             holder.getRemoteSessionInstance().getSshFs());
                     keyHolder = SshKeyManager.getKeyDetails(holder);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -91,9 +85,7 @@ public class KeyPage extends UtilPageItemView {
                 try {
                     SshKeyManager.generateKeys(keyHolder,
                             holder.getRemoteSessionInstance(), true);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -105,9 +97,7 @@ public class KeyPage extends UtilPageItemView {
             holder.EXECUTOR.submit(() -> {
                 try {
                     keyHolder = SshKeyManager.getKeyDetails(holder);
-                    SwingUtilities.invokeLater(() -> {
-                        setKeyData(keyHolder);
-                    });
+                    SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -123,9 +113,7 @@ public class KeyPage extends UtilPageItemView {
             holder.disableUi();
             try {
                 keyHolder = SshKeyManager.getKeyDetails(holder);
-                SwingUtilities.invokeLater(() -> {
-                    setKeyData(keyHolder);
-                });
+                SwingUtilities.invokeLater(() -> setKeyData(keyHolder));
             } catch (Exception err) {
                 err.printStackTrace();
             } finally {

@@ -15,7 +15,6 @@ import java.util.List;
 
 /**
  * @author subhro
- *
  */
 public class SnippetManager {
     private List<SnippetItem> snippetItems = new ArrayList<>();
@@ -27,9 +26,8 @@ public class SnippetManager {
                 DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
             try {
-                snippetItems = objectMapper.readValue(file,
-                        new TypeReference<List<SnippetItem>>() {
-                        });
+                snippetItems = objectMapper.readValue(file, new TypeReference<>() {
+                });
                 return;
             } catch (IOException e) {
                 e.printStackTrace();

@@ -23,7 +23,7 @@ import static muon.app.ui.components.session.SessionStore.load;
 import static muon.app.ui.components.session.SessionStore.save;
 
 public class SessionExportImport {
-    public static synchronized final void exportSessions() {
+    public static synchronized void exportSessions() {
         JFileChooser jfc = new JFileChooser();
         if (jfc.showSaveDialog(App.getAppWindow()) == JFileChooser.APPROVE_OPTION) {
             File file = jfc.getSelectedFile();
@@ -42,7 +42,7 @@ public class SessionExportImport {
         }
     }
 
-    public static synchronized final boolean importSessions() {
+    public static synchronized boolean importSessions() {
         JFileChooser jfc = new JFileChooser();
         if (jfc.showOpenDialog(App.getAppWindow()) != JFileChooser.APPROVE_OPTION) {
             return false;
@@ -72,7 +72,7 @@ public class SessionExportImport {
         return true;
     }
 
-    public static synchronized final boolean importSessionsSSHConfig() {
+    public static synchronized boolean importSessionsSSHConfig() {
         JFileChooser jfc = new JFileChooser();
         if (jfc.showOpenDialog(App.getAppWindow()) != JFileChooser.APPROVE_OPTION) {
             return false;
@@ -145,13 +145,13 @@ public class SessionExportImport {
         return true;
     }
 
-    public static synchronized final void importOnFirstRun() {
+    public static synchronized void importOnFirstRun() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             SavedSessionTree savedSessionTree = objectMapper.readValue(new File(System.getProperty("user.home")
                             + File.separator + "muon-ssh" + File.separator + "session-store.json"),
-                    new TypeReference<SavedSessionTree>() {
+                    new TypeReference<>() {
                     });
             save(savedSessionTree.getFolder(), savedSessionTree.getLastSelection(),
                     new File(App.CONFIG_DIR, App.SESSION_DB_FILE));

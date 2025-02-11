@@ -27,15 +27,11 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     public TerminalHolder(SessionInfo info, SessionContentPanel sessionContentPanel) {
         this.sessionContentPanel = sessionContentPanel;
-        this.tabs = new ClosableTabbedPanel(e -> {
-            openNewTerminal(null);
-        });
+        this.tabs = new ClosableTabbedPanel(e -> openNewTerminal(null));
 
         btn = new JButton();
         btn.setToolTipText("Snippets");
-        btn.addActionListener(e -> {
-            showSnippets();
-        });
+        btn.addActionListener(e -> showSnippets());
         btn.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
         btn.setText(FontAwesomeContants.FA_BOOKMARK);
         btn.putClientProperty("Nimbus.Overrides", App.SKIN.createTabButtonSkin());
@@ -51,9 +47,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
         snippetPanel = new SnippetPanel(e -> {
             TerminalComponent tc1 = (TerminalComponent) tabs.getSelectedContent();
             tc1.sendCommand(e + "\n");
-        }, e -> {
-            this.snippetPopupMenu.setVisible(false);
-        });
+        }, e -> this.snippetPopupMenu.setVisible(false));
         snippetPopupMenu = new JPopupMenu();
         snippetPopupMenu.add(snippetPanel);
         this.add(tabs);
@@ -121,8 +115,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     public void close() {
         Component[] components = tabs.getTabContents();
-        for (int i = 0; i < components.length; i++) {
-            Component c = components[i];
+        for (Component c : components) {
             if (c instanceof TerminalComponent) {
                 System.out.println("Closing terminal: " + c);
                 ((TerminalComponent) c).close();

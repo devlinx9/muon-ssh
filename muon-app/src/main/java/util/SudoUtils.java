@@ -22,7 +22,7 @@ public class SudoUtils {
             String fullCommand = "sudo -S -p '" + prompt + "' " + command;
             System.out.println(
                     "Full sudo: " + fullCommand + "\nprompt: " + prompt);
-            int ret = instance.exec(fullCommand, cmd -> {
+            return instance.exec(fullCommand, cmd -> {
                 try {
                     InputStream in = cmd.getInputStream();
                     OutputStream out = cmd.getOutputStream();
@@ -72,7 +72,6 @@ public class SudoUtils {
                     return -1;
                 }
             }, true);
-            return ret;
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
@@ -85,7 +84,7 @@ public class SudoUtils {
             String fullCommand = "sudo -S -p '" + prompt + "' " + command;
             System.out.println(
                     "Full sudo: " + fullCommand + "\nprompt: " + prompt);
-            int ret = instance.exec(fullCommand, cmd -> {
+            return instance.exec(fullCommand, cmd -> {
                 try {
                     InputStream in = cmd.getInputStream();
                     OutputStream out = cmd.getOutputStream();
@@ -130,7 +129,6 @@ public class SudoUtils {
                     return -1;
                 }
             }, true);
-            return ret;
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
@@ -145,7 +143,7 @@ public class SudoUtils {
             String fullCommand = "sudo -S -p '" + prompt + "' " + command;
             System.out.println(
                     "Full sudo: " + fullCommand + "\nprompt: " + prompt);
-            int ret = instance.exec(fullCommand, cmd -> {
+            return instance.exec(fullCommand, cmd -> {
                 try {
                     InputStream in = cmd.getInputStream();
                     OutputStream out = cmd.getOutputStream();
@@ -179,7 +177,6 @@ public class SudoUtils {
                     return -1;
                 }
             }, true);
-            return ret;
         } catch (Exception e) {
             e.printStackTrace();
             return -1;

@@ -4,6 +4,7 @@ import com.jediterm.terminal.RequestOrigin;
 import com.jediterm.terminal.ui.JediTermWidget;
 import com.jediterm.terminal.ui.TerminalPanelListener;
 import com.jediterm.terminal.ui.TerminalSession;
+import lombok.Getter;
 import muon.app.App;
 import muon.app.ui.components.ClosableTabContent;
 import muon.app.ui.components.ClosableTabbedPanel.TabTitle;
@@ -20,10 +21,14 @@ import java.awt.event.ComponentEvent;
 
 public class TerminalComponent extends JPanel implements ClosableTabContent {
     private final JPanel contentPane;
+
+    @Getter
     private final JediTermWidget term = new CustomJediterm(new CustomizedSettingsProvider());
     private DisposableTtyConnector tty;
     private String name;
     private final Box reconnectionBox;
+
+    @Getter
     private final TabTitle tabTitle;
 
     public TerminalComponent(SessionInfo info, String name, String command, SessionContentPanel sessionContentPanel) {
@@ -114,21 +119,8 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         this.term.getTerminalStarter().sendString(command);
     }
 
-    /**
-     * @return the term
-     */
-    public JediTermWidget getTerm() {
-        return term;
-    }
-
     public void start() {
         term.start();
     }
 
-    /**
-     * @return the tabTitle
-     */
-    public TabTitle getTabTitle() {
-        return tabTitle;
-    }
 }

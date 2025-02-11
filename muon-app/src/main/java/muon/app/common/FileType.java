@@ -1,5 +1,5 @@
 package muon.app.common;
 
 public enum FileType {
-    File, Directory, DirLink, FileLink
+    FILE, DIRECTORY, DIR_LINK, FILE_LINK
 }

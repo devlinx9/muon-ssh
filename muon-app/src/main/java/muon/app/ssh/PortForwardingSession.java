@@ -48,9 +48,7 @@ public class PortForwardingSession {
     }
 
     public void start() {
-        this.threadPool.submit(() -> {
-            this.forwardPorts();
-        });
+        this.threadPool.submit(this::forwardPorts);
     }
 
     private void forwardPorts() {
@@ -59,18 +57,14 @@ public class PortForwardingSession {
                 ssh.connect();
             }
             for (PortForwardingRule r : info.getPortForwardingRules()) {
-                if (r.getType() == PortForwardingType.Local) {
-                    try {
+                try {
+                    if (r.getType() == PortForwardingType.LOCAL) {
                         forwardLocalPort(r);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (r.getType() == PortForwardingType.Remote) {
-                    try {
+                    } else if (r.getType() == PortForwardingType.REMOTE) {
                         forwardRemotePort(r);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         } catch (Exception e) {
@@ -109,10 +103,7 @@ public class PortForwardingSession {
 
                 // Something to hang on to so that the forwarding stays
                 ssh.getTransport().join();
-            } catch (ConnectionException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (TransportException e) {
+            } catch (ConnectionException | TransportException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }

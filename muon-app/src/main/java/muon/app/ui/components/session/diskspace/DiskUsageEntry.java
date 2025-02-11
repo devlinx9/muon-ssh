@@ -1,16 +1,22 @@
 package muon.app.ui.components.session.diskspace;
 
+import lombok.Getter;
+import lombok.Setter;
 import util.FormatUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DiskUsageEntry {
-    private String path, name;
+    private String path;
+    private String name;
     private long size;
     private double usagePercent;
+    @Getter
     private final List<DiskUsageEntry> children;
 
+    @Setter
+    @Getter
     private boolean directory;
 
     public DiskUsageEntry(String name, String path, long size,
@@ -60,18 +66,6 @@ public class DiskUsageEntry {
     public String toString() {
         return name + " [" + FormatUtils.humanReadableByteCount(size, true)
                 + "]";
-    }
-
-    public List<DiskUsageEntry> getChildren() {
-        return children;
-    }
-
-    public boolean isDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(boolean directory) {
-        this.directory = directory;
     }
 
 }

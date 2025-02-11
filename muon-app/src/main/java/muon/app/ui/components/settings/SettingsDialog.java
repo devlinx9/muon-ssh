@@ -76,7 +76,7 @@ public class SettingsDialog extends JDialog {
         cardPanel = new JPanel(cardLayout, true);
 
         DefaultListModel<String> navModel = new DefaultListModel<>();
-        navList = new JList<String>(navModel);
+        navList = new JList<>(navModel);
         navList.setCellRenderer(new CellRenderer());
 
         navList.addListSelectionListener(e -> {
@@ -116,13 +116,9 @@ public class SettingsDialog extends JDialog {
         btnSave = new JButton(App.bundle.getString("save"));
         btnReset = new JButton(App.bundle.getString("reset"));
 
-        btnSave.addActionListener(e -> {
-            applySettings();
-        });
+        btnSave.addActionListener(e -> applySettings());
 
-        btnCancel.addActionListener(e -> {
-            super.setVisible(false);
-        });
+        btnCancel.addActionListener(e -> super.setVisible(false));
 
         btnReset.addActionListener(e -> {
             loadSettings(new Settings());
@@ -471,8 +467,10 @@ public class SettingsDialog extends JDialog {
         vbox.add(chkStartMaximized);
         vbox.add(Box.createRigidArea(new Dimension(10, 20)));
 
-        JLabel lbl0 = new JLabel(App.bundle.getString("log_viewer_lines")), lbl1 = new JLabel(App.bundle.getString("connection_timeout")), lbl2 = new JLabel(App.bundle.getString("log_viewer_font_size")),
-                lbl3 = new JLabel(App.bundle.getString("system_refresh_interval"));
+        JLabel lbl0 = new JLabel(App.bundle.getString("log_viewer_lines"));
+        JLabel lbl1 = new JLabel(App.bundle.getString("connection_timeout"));
+        JLabel lbl2 = new JLabel(App.bundle.getString("log_viewer_font_size"));
+        JLabel lbl3 = new JLabel(App.bundle.getString("system_refresh_interval"));
 
         LayoutUtilities.equalizeSize(spLogLinesPerPage, spConnectionTimeout, spLogFontSize, spSysLoadInterval);
 
@@ -640,9 +638,7 @@ public class SettingsDialog extends JDialog {
         chkFirstFileBrowserView.setSelected(settings.isFirstFileBrowserView());
         chkTransferTemporaryDirectory.setSelected(settings.isTransferTemporaryDirectory());
         chkUseSudo.setSelected(settings.isUseSudo());
-        chkUseSudo.addActionListener(e -> {
-            setStatusCheckBox(chkPromptForSudo, chkUseSudo.isSelected());
-        });
+        chkUseSudo.addActionListener(e -> setStatusCheckBox(chkPromptForSudo, chkUseSudo.isSelected()));
         if (settings.isUseSudo()) {
             chkPromptForSudo.setSelected(settings.isPromptForSudo());
         } else {

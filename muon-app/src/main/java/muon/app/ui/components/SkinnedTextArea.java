@@ -51,21 +51,13 @@ public class SkinnedTextArea extends JTextArea {
         popup.add(mPaste);
         popup.add(mSelect);
 
-        mCut.addActionListener(e -> {
-            cut();
-        });
+        mCut.addActionListener(e -> cut());
 
-        mCopy.addActionListener(e -> {
-            copy();
-        });
+        mCopy.addActionListener(e -> copy());
 
-        mPaste.addActionListener(e -> {
-            paste();
-        });
+        mPaste.addActionListener(e -> paste());
 
-        mSelect.addActionListener(e -> {
-            selectAll();
-        });
+        mSelect.addActionListener(e -> selectAll());
 
         return popup;
     }

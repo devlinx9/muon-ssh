@@ -25,8 +25,14 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     private DefaultMutableTreeNode rootNode;
     private JScrollPane jsp;
     private SessionInfoPanel sessionInfoPanel;
-    private JButton btnNewHost, btnDel, btnDup, btnNewFolder, btnExport, btnImport;
-    private JButton btnConnect, btnCancel;
+    private JButton btnNewHost;
+    private JButton btnDel;
+    private JButton btnDup;
+    private JButton btnNewFolder;
+    private JButton btnExport;
+    private JButton btnImport;
+    private JButton btnConnect;
+    private JButton btnCancel;
     private JTextField txtName;
     private JPanel namePanel;
     private NamedItem selectedInfo;
@@ -422,11 +428,10 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     private void connectClicked() {
         save();
         this.info = (SessionInfo) selectedInfo;
-        if (this.info.getHost() == null || this.info.getHost().length() < 1) {
+        if (this.info.getHost() == null || this.info.getHost().isEmpty()) {
             JOptionPane.showMessageDialog(this, App.bundle.getString("no_hostname"));
             this.info = null;
             System.out.println("Returned");
-            return;
         } else {
             System.out.println("Returned disposing");
             dispose();

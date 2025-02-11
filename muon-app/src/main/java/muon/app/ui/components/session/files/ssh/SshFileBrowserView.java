@@ -39,7 +39,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
         this.addressPopup = menuHandler.createAddressPopup();
         if (initialPath == null) {
             this.path = this.fileBrowser.getInfo().getRemoteFolder();
-            if (this.path != null && this.path.trim().length() < 1) {
+            if (this.path != null && this.path.trim().isEmpty()) {
                 this.path = null;
             }
             System.out.println("Path: " + path);
@@ -78,7 +78,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
     @Override
     public String toString() {
         return this.fileBrowser.getInfo().getName()
-                + (this.path == null || this.path.length() < 1 ? "" : " [" + this.path + "]");
+                + (this.path == null || this.path.isEmpty() ? "" : " [" + this.path + "]");
     }
 
     private String trimPath(String path) {
@@ -259,7 +259,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                     }
                 }
 
-                if (transferData.getTransferAction() == DndTransferData.TransferAction.Copy) {
+                if (transferData.getTransferAction() == DndTransferData.TransferAction.COPY) {
                     menuHandler.copy(Arrays.asList(transferData.getFiles()), getCurrentDirectory());
                 } else {
                     menuHandler.move(Arrays.asList(transferData.getFiles()), getCurrentDirectory());
@@ -293,7 +293,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
     }
 
     public String getPathText() {
-        return (this.path == null || this.path.length() < 1 ? "" : this.path);
+        return (this.path == null || this.path.isEmpty() ? "" : this.path);
     }
 
 }

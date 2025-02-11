@@ -10,15 +10,15 @@ import java.io.IOException;
 import java.util.*;
 
 public final class BookmarkManager {
-    public static final synchronized Map<String, List<String>> getAll() {
+    public static synchronized Map<String, List<String>> getAll() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         File bookmarkFile = new File(App.CONFIG_DIR, App.BOOKMARKS_FILE);
         if (bookmarkFile.exists()) {
             try {
                 Map<String, List<String>> bookmarkMap = objectMapper.readValue(bookmarkFile,
-                        new TypeReference<Map<String, List<String>>>() {
-                        });
+                                                                               new TypeReference<>() {
+                                                                               });
                 return Collections.synchronizedMap(bookmarkMap);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -27,7 +27,7 @@ public final class BookmarkManager {
         return Collections.synchronizedMap(new HashMap<>());
     }
 
-    public static final synchronized void save(Map<String, List<String>> bookmarks) {
+    public static synchronized void save(Map<String, List<String>> bookmarks) {
         ObjectMapper objectMapper = new ObjectMapper();
         File bookmarkFile = new File(App.CONFIG_DIR, App.BOOKMARKS_FILE);
         try {
@@ -37,35 +37,35 @@ public final class BookmarkManager {
         }
     }
 
-    public static final synchronized void addEntry(String id, String path) {
+    public static synchronized void addEntry(String id, String path) {
         if (id == null) {
             id = "";
         }
         Map<String, List<String>> bookmarkMap = BookmarkManager.getAll();
         List<String> bookmarks = bookmarkMap.get(id);
         if (bookmarks == null) {
-            bookmarks = new ArrayList<String>();
+            bookmarks = new ArrayList<>();
         }
         bookmarks.add(path);
         bookmarkMap.put(id, bookmarks);
         save(bookmarkMap);
     }
 
-    public static final synchronized void addEntry(String id, List<String> path) {
+    public static synchronized void addEntry(String id, List<String> path) {
         if (id == null) {
             id = "";
         }
         Map<String, List<String>> bookmarkMap = BookmarkManager.getAll();
         List<String> bookmarks = bookmarkMap.get(id);
         if (bookmarks == null) {
-            bookmarks = new ArrayList<String>();
+            bookmarks = new ArrayList<>();
         }
         bookmarks.addAll(path);
         bookmarkMap.put(id, bookmarks);
         save(bookmarkMap);
     }
 
-    public static final synchronized List<String> getBookmarks(String id) {
+    public static synchronized List<String> getBookmarks(String id) {
         if (id == null) {
             id = "";
         }
@@ -75,17 +75,17 @@ public final class BookmarkManager {
         if (bookmarkFile.exists()) {
             try {
                 Map<String, List<String>> bookmarkMap = objectMapper.readValue(bookmarkFile,
-                        new TypeReference<Map<String, List<String>>>() {
+                        new TypeReference<>() {
                         });
                 List<String> bookmarks = bookmarkMap.get(id);
                 if (bookmarks != null) {
-                    return new ArrayList<String>(bookmarks);
+                    return new ArrayList<>(bookmarks);
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 }

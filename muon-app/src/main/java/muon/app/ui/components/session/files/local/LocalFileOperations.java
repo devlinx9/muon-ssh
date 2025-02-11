@@ -23,7 +23,7 @@ public class LocalFileOperations {
 
     public boolean newFile(String folder) {
         String text = JOptionPane.showInputDialog("New file");
-        if (text == null || text.length() < 1) {
+        if (text == null || text.isEmpty()) {
             return false;
         }
         LocalFileSystem fs = new LocalFileSystem();
@@ -39,7 +39,7 @@ public class LocalFileOperations {
 
     public boolean newFolder(String folder) {
         String text = JOptionPane.showInputDialog("New folder name");
-        if (text == null || text.length() < 1) {
+        if (text == null || text.isEmpty()) {
             return false;
         }
         FileSystem fs = new LocalFileSystem();

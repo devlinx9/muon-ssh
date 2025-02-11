@@ -38,25 +38,34 @@ import static muon.app.App.bundle;
  *
  */
 public class SearchPanel extends Page {
-    private static final String lsRegex1 = "([dflo])\\|(.*)";
+    private static final String LS_REGEX_1 = "([dflo])\\|(.*)";
     private final SessionContentPanel holder;
     private final AtomicBoolean init = new AtomicBoolean(false);
     private JTextField txtName;
-    private JComboBox<String> cmbSize, cmbSizeUnit;
+    private JComboBox<String> cmbSize;
+    private JComboBox<String> cmbSizeUnit;
     private JTextField txtSize;
-    private JRadioButton radAny, radWeek, radCust;
-    private JRadioButton radBoth, radFile, radFolder;
-    private JSpinner spDate1, spDate2;
+    private JRadioButton radAny;
+    private JRadioButton radWeek;
+    private JRadioButton radCust;
+    private JRadioButton radBoth;
+    private JRadioButton radFile;
+    private JRadioButton radFolder;
+    private JSpinner spDate1;
+    private JSpinner spDate2;
     private JTextField txtFolder;
     private JButton btnSearch;
     private SearchTableModel model;
     private JTable table;
-    private JLabel lblStat, lblCount;
+    private JLabel lblStat;
+    private JLabel lblCount;
     private Pattern pattern;
-    private JRadioButton radFileName, radFileContents;
+    private JRadioButton radFileName;
+    private JRadioButton radFileContents;
     private JCheckBox chkIncludeCompressed;
     private String searchScript;
-    private JButton btnShowInBrowser, btnCopyPath;
+    private JButton btnShowInBrowser;
+    private JButton btnCopyPath;
 
     /**
      *
@@ -97,7 +106,7 @@ public class SearchPanel extends Page {
 
         criteriaBuffer.append(" ");
 
-        if (txtSize.getText().length() > 0) {
+        if (!txtSize.getText().isEmpty()) {
             criteriaBuffer.append("-size");
             switch (cmbSize.getSelectedIndex()) {
                 case 1:
@@ -163,7 +172,7 @@ public class SearchPanel extends Page {
 
         StringBuilder scriptBuffer = new StringBuilder();
 
-        if (txtName.getText().length() > 0 && radFileName.isSelected()) {
+        if (!txtName.getText().isEmpty() && radFileName.isSelected()) {
             scriptBuffer.append("export NAME='" + txtName.getText() + "'\n");
         }
 
@@ -179,9 +188,7 @@ public class SearchPanel extends Page {
 
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         this.holder.disableUi(stopFlag);
-        holder.EXECUTOR.submit(() -> {
-            findAsync(scriptBuffer, stopFlag);
-        });
+        holder.EXECUTOR.submit(() -> findAsync(scriptBuffer, stopFlag));
     }
 
     private void findAsync(StringBuilder scriptBuffer, AtomicBoolean stopFlag) {
@@ -216,7 +223,7 @@ public class SearchPanel extends Page {
             String[] lines = output.toString().split("\n");
             SwingUtilities.invokeLater(() -> {
                 for (String line : lines) {
-                    if (line.length() > 0) {
+                    if (!line.isEmpty()) {
                         SearchResult res = parseOutput(line);
                         if (res != null) {
                             model.add(res);
@@ -242,7 +249,7 @@ public class SearchPanel extends Page {
 
     private SearchResult parseOutput(String text) {
         if (this.pattern == null) {
-            this.pattern = Pattern.compile(lsRegex1);
+            this.pattern = Pattern.compile(LS_REGEX_1);
         }
 
         Matcher matcher = this.pattern.matcher(text);
@@ -437,9 +444,7 @@ public class SearchPanel extends Page {
         btnSearch = new JButton(bundle.getString("search"));
         btnSearch.setAlignmentX(LEFT_ALIGNMENT);
 
-        btnSearch.addActionListener(e -> {
-            find();
-        });
+        btnSearch.addActionListener(e -> find());
 
         model = new SearchTableModel();
 
@@ -577,7 +582,7 @@ public class SearchPanel extends Page {
                 SearchResult res = model.getItemAt(index);
                 String path = res.getPath();
                 path = PathUtils.getParent(path);
-                if (path.length() > 0) {
+                if (!path.isEmpty()) {
                     holder.openFileInBrowser(path);
                 }
             }

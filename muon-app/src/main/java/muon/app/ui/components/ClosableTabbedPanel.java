@@ -1,5 +1,7 @@
 package muon.app.ui.components;
 
+import lombok.Getter;
+import lombok.Setter;
 import muon.app.App;
 import util.FontAwesomeContants;
 
@@ -18,6 +20,8 @@ public class ClosableTabbedPanel extends JPanel {
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final JPanel tabHolder;
+
+    @Getter
     private final JPanel buttonsBox;
 
     /**
@@ -201,37 +205,18 @@ public class ClosableTabbedPanel extends JPanel {
         return null;
     }
 
-    /**
-     * @return the buttonsBox
-     */
-    public JPanel getButtonsBox() {
-        return buttonsBox;
-    }
-
     public Component[] getTabContents() {
         return cardPanel.getComponents();
     }
 
     public enum NewTabType {
-        LocalTab, RemoteTab
+        LOCAL_TAB, REMOTE_TAB
     }
 
+    @Setter
+    @Getter
     public static class TabTitle {
         private Consumer<String> callback;
-
-        /**
-         * @return the callback
-         */
-        public Consumer<String> getCallback() {
-            return callback;
-        }
-
-        /**
-         * @param callback the callback to set
-         */
-        public void setCallback(Consumer<String> callback) {
-            this.callback = callback;
-        }
     }
 
     private class TabTitleComponent extends JPanel {

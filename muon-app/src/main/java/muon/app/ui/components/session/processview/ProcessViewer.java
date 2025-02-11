@@ -54,9 +54,7 @@ public class ProcessViewer extends Page {
      *
      */
     private void createUI() {
-        processListPanel = new ProcessListPanel((cmd, mode) -> {
-            this.runCommand(cmd, mode);
-        });
+        processListPanel = new ProcessListPanel(this::runCommand);
         processListPanel.setMinimumSize(new Dimension(10, 10));
         this.add(processListPanel);
     }
@@ -158,28 +156,33 @@ public class ProcessViewer extends Page {
             try {
                 ent.setPid(Integer.parseInt(p[0].trim()));
             } catch (Exception e) {
+                e.printStackTrace();
             }
             try {
                 ent.setCpu(Float.parseFloat(p[1].trim()));
             } catch (Exception e) {
+                e.printStackTrace();
             }
             try {
                 ent.setMemory(Float.parseFloat(p[2].trim()));
             } catch (Exception e) {
+                e.printStackTrace();
             }
             ent.setTime(p[3]);
             try {
                 ent.setPpid(Integer.parseInt(p[4].trim()));
             } catch (Exception e) {
+                e.printStackTrace();
             }
             ent.setUser(p[5]);
             try {
                 ent.setNice(Integer.parseInt(p[6].trim()));
             } catch (Exception e) {
+                e.printStackTrace();
             }
             StringBuilder sb = new StringBuilder();
             for (int i = 7; i < p.length; i++) {
-                sb.append(p[i] + " ");
+                sb.append(p[i]).append(" ");
             }
             ent.setArgs(sb.toString().trim());
             list.add(ent);

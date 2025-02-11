@@ -82,8 +82,8 @@ public class SnippetPanel extends JPanel {
                     "New snippet", JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE, null, null,
                     null) == JOptionPane.OK_OPTION) {
-                if (txtCommand.getText().length() < 1
-                        || txtName.getText().length() < 1) {
+                if (txtCommand.getText().isEmpty()
+                        || txtName.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null,
                             "Please enter name and command");
                     return;
@@ -117,8 +117,8 @@ public class SnippetPanel extends JPanel {
                     "New snippet", JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE, null, null,
                     null) == JOptionPane.OK_OPTION) {
-                if (txtCommand.getText().length() < 1
-                        || txtName.getText().length() < 1) {
+                if (txtCommand.getText().isEmpty()
+                        || txtName.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null,
                             "Please enter name and command");
                     return;
@@ -203,7 +203,7 @@ public class SnippetPanel extends JPanel {
     private void filter() {
         this.listModel.clear();
         String text = searchTextField.getText().trim();
-        if (text.length() < 1) {
+        if (text.isEmpty()) {
             this.listModel.addAll(this.snippetList);
             return;
         }

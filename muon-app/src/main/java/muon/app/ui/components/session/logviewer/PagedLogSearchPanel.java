@@ -31,9 +31,7 @@ public class PagedLogSearchPanel extends JPanel {
         super(new BorderLayout());
         this.searchListener = searchListener;
         txtSearch = new SkinnedTextField(20);
-        txtSearch.addActionListener(e -> {
-            startSearch();
-        });
+        txtSearch.addActionListener(e -> startSearch());
 
         UIDefaults skin = App.SKIN.createTabButtonSkin();
 
@@ -41,9 +39,7 @@ public class PagedLogSearchPanel extends JPanel {
         btnSearch.putClientProperty("Nimbus.Overrides", skin);
         btnSearch.setFont(App.SKIN.getIconFont());
         btnSearch.setText(FontAwesomeContants.FA_SEARCH);
-        btnSearch.addActionListener(e -> {
-            startSearch();
-        });
+        btnSearch.addActionListener(e -> startSearch());
 
         JButton btnNext = new JButton();
         btnNext.putClientProperty("Nimbus.Overrides", skin);
@@ -111,7 +107,7 @@ public class PagedLogSearchPanel extends JPanel {
      */
     private void startSearch() {
         String text = txtSearch.getText();
-        if (text.length() < 1)
+        if (text.isEmpty())
             return;
         this.lblResults.setText("");
         this.index = 0;
@@ -119,6 +115,7 @@ public class PagedLogSearchPanel extends JPanel {
             try {
                 raf.close();
             } catch (Exception ex) {
+                ex.printStackTrace();
             }
             raf = null;
         }
@@ -162,6 +159,7 @@ public class PagedLogSearchPanel extends JPanel {
             try {
                 raf.close();
             } catch (Exception ex) {
+                ex.printStackTrace();
             }
             raf = null;
         }

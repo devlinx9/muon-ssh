@@ -25,9 +25,15 @@ import static muon.app.App.bundle;
  */
 public class NetworkToolsPage extends UtilPageItemView {
     private JTextArea txtOutput;
-    private DefaultComboBoxModel<String> modelHost, modelPort;
-    private JComboBox<String> cmbHost, cmbPort, cmbDNSTool;
-    private JButton btn1, btn2, btn3, btn4;
+    private DefaultComboBoxModel<String> modelHost;
+    private DefaultComboBoxModel<String> modelPort;
+    private JComboBox<String> cmbHost;
+    private JComboBox<String> cmbPort;
+    private JComboBox<String> cmbDNSTool;
+    private JButton btn1;
+    private JButton btn2;
+    private JButton btn3;
+    private JButton btn4;
 
     /**
      *
@@ -38,15 +44,15 @@ public class NetworkToolsPage extends UtilPageItemView {
 
     @Override
     protected void createUI() {
-        modelHost = new DefaultComboBoxModel<String>();
-        modelPort = new DefaultComboBoxModel<String>();
+        modelHost = new DefaultComboBoxModel<>();
+        modelPort = new DefaultComboBoxModel<>();
 
-        cmbHost = new JComboBox<String>(modelHost);
-        cmbPort = new JComboBox<String>(modelPort);
+        cmbHost = new JComboBox<>(modelHost);
+        cmbPort = new JComboBox<>(modelPort);
         cmbHost.setEditable(true);
         cmbPort.setEditable(true);
 
-        cmbDNSTool = new JComboBox<String>(new String[]{"nslookup", "dig",
+        cmbDNSTool = new JComboBox<>(new String[]{"nslookup", "dig",
                 "dig +short", "host", "getent ahostsv4"});
 
         JPanel grid = new JPanel(new GridLayout(1, 4, 10, 10));
@@ -134,9 +140,7 @@ public class NetworkToolsPage extends UtilPageItemView {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                SwingUtilities.invokeLater(() -> {
-                    this.txtOutput.setText(outText.toString());
-                });
+                SwingUtilities.invokeLater(() -> this.txtOutput.setText(outText.toString()));
                 holder.enableUi();
             }
         });

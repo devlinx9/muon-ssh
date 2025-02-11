@@ -75,8 +75,7 @@ public class AddressBarLayout implements LayoutManager {
 
         int x = 0;
 
-        for (int i = 0; i < componentList.size(); i++) {
-            Component component = componentList.get(i);
+        for (Component component : componentList) {
             int prefWidth = component.getPreferredSize().width;
             component.setBounds(x, 0, prefWidth, h);
             x += prefWidth;

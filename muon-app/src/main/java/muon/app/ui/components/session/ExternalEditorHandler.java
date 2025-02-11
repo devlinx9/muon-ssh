@@ -73,7 +73,7 @@ public class ExternalEditorHandler extends JDialog {
             List<String> messages = new ArrayList<>();
             messages.add("Some file(s) have been modified, upload changes to server?\n");
             messages.add("Changed file(s):");
-            messages.addAll(files.stream().map(e -> e.toString()).collect(Collectors.toList()));
+            messages.addAll(files.stream().map(Object::toString).collect(Collectors.toList()));
             if (OptionPaneUtils.showOptionDialog(this.frame, messages.toArray(new String[0]),
                     "File changed") == JOptionPane.OK_OPTION) {
                 this.fileWatcher.stopWatching();
@@ -110,9 +110,7 @@ public class ExternalEditorHandler extends JDialog {
         }
         fileWatcher.resumeWatching();
         System.out.println("Transfer complete");
-        SwingUtilities.invokeLater(() -> {
-            setVisible(false);
-        });
+        SwingUtilities.invokeLater(() -> setVisible(false));
     }
 
     /**
@@ -146,9 +144,7 @@ public class ExternalEditorHandler extends JDialog {
                 totalBytes += x;
                 out.write(b, 0, x);
                 final int progress = (int) ((totalBytes * 100) / total);
-                SwingUtilities.invokeLater(() -> {
-                    progressBar.setValue(progress);
-                });
+                SwingUtilities.invokeLater(() -> progressBar.setValue(progress));
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -197,9 +193,7 @@ public class ExternalEditorHandler extends JDialog {
                     totalBytes += x;
                     out.write(b, 0, x);
                     final int progress = (int) ((totalBytes * 100) / remoteFile.getSize());
-                    SwingUtilities.invokeLater(() -> {
-                        progressBar.setValue(progress);
-                    });
+                    SwingUtilities.invokeLater(() -> progressBar.setValue(progress));
                 }
                 localFile.setLastModified(TimeUtils.toEpochMilli(remoteFile.getLastModified()));
                 fileWatcher.addForMonitoring(remoteFile, localFilePath.toAbsolutePath().toString(), activeSessionId);

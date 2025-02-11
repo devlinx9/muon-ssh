@@ -96,9 +96,7 @@ public class SshKeyManager {
         JCheckBox chkGenPassPhrase = new JCheckBox("Use passphrase to protect private key (Optional)");
         JPasswordField txtPassPhrase = new JPasswordField(30);
         txtPassPhrase.setEditable(false);
-        chkGenPassPhrase.addActionListener(e -> {
-            txtPassPhrase.setEditable(chkGenPassPhrase.isSelected());
-        });
+        chkGenPassPhrase.addActionListener(e -> txtPassPhrase.setEditable(chkGenPassPhrase.isSelected()));
 
         String passPhrase = new String(txtPassPhrase.getPassword());
 
@@ -120,7 +118,7 @@ public class SshKeyManager {
         JSch jsch = new JSch();
         KeyPair kpair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
         Files.createDirectories(sshDir);
-        if (passPhrase.length() > 0) {
+        if (!passPhrase.isEmpty()) {
             kpair.writePrivateKey(keyPath.toString(), passPhrase.getBytes(StandardCharsets.UTF_8));
         } else {
             kpair.writePrivateKey(keyPath.toString());
@@ -163,7 +161,7 @@ public class SshKeyManager {
     }
 
     private static String getPubKeyPath(SessionInfo info) {
-        if (info.getPrivateKeyFile() != null && info.getPrivateKeyFile().length() > 0) {
+        if (info.getPrivateKeyFile() != null && !info.getPrivateKeyFile().isEmpty()) {
             String path = PathUtils.combine(PathUtils.getParent(info.getPrivateKeyFile()),
                     PathUtils.getFileName(info.getPrivateKeyFile()) + ".pub", File.separator);
             if (new File(path).exists()) {
@@ -179,6 +177,7 @@ public class SshKeyManager {
             fileSystem.getInfo(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));
             found = true;
         } catch (Exception e) {
+            e.printStackTrace();
         }
         if (!found) {
             fileSystem.mkdir(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));

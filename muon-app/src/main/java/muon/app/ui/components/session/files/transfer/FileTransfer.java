@@ -1,5 +1,7 @@
 package muon.app.ui.components.session.files.transfer;
 
+import lombok.Getter;
+import lombok.Setter;
 import muon.app.App;
 import muon.app.common.*;
 import muon.app.ssh.RemoteSessionInstance;
@@ -24,13 +26,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FileTransfer implements Runnable, AutoCloseable {
     // -> skip
     private static final int BUF_SIZE = Short.MAX_VALUE;
+    @Getter
     private final FileSystem sourceFs;
+    @Getter
     private final FileSystem targetFs;
+    @Getter
     private final FileInfo[] files;
+    @Getter
     private final String targetFolder;
     private final AtomicBoolean stopFlag = new AtomicBoolean(false);
     private final RemoteSessionInstance instance;
     private long totalSize;
+    @Setter
     private FileTransferProgress callback;
     private long processedBytes;
     private int processedFilesCount;
@@ -81,7 +88,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
                 }
             }
 
-            if (file.getType() == FileType.Directory || file.getType() == FileType.DirLink) {
+            if (file.getType() == FileType.DIRECTORY || file.getType() == FileType.DIR_LINK) {
                 fileList.addAll(createFileList(file, targetFolder, proposedName));
             } else {
                 fileList.add(new FileInfoHolder(file, targetFolder, proposedName));
@@ -150,7 +157,6 @@ public class FileTransfer implements Runnable, AutoCloseable {
                 return;
             }
             callback.error("Error", this);
-            return;
         }
     }
 
@@ -166,9 +172,9 @@ public class FileTransfer implements Runnable, AutoCloseable {
             if (stopFlag.get()) {
                 throw new Exception("Interrupted");
             }
-            if (file.getType() == FileType.Directory) {
+            if (file.getType() == FileType.DIRECTORY) {
                 fileInfoHolders.addAll(createFileList(file, folderTarget, null));
-            } else if (file.getType() == FileType.File) {
+            } else if (file.getType() == FileType.FILE) {
                 fileInfoHolders.add(new FileInfoHolder(file, folderTarget, null));
                 totalSize += file.getSize();
             }
@@ -224,14 +230,6 @@ public class FileTransfer implements Runnable, AutoCloseable {
         stopFlag.set(true);
     }
 
-    public FileInfo[] getFiles() {
-        return files;
-    }
-
-    public String getTargetFolder() {
-        return this.targetFolder;
-    }
-
     private ConflictAction checkForConflict(List<FileInfo> dupList) throws Exception {
         List<FileInfo> fileList = targetFs.list(targetFolder);
         for (FileInfo file : files) {
@@ -243,7 +241,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
         }
 
         ConflictAction action = ConflictAction.CANCEL;
-        if (dupList.size() > 0) {
+        if (!dupList.isEmpty()) {
 
             DefaultComboBoxModel<Constants.ConflictAction> conflictOptionsCmb = new DefaultComboBoxModel<>(Constants.ConflictAction.values());
             conflictOptionsCmb.removeAllElements();
@@ -289,18 +287,6 @@ public class FileTransfer implements Runnable, AutoCloseable {
 
     public String getTargetName() {
         return this.targetFs.getName();
-    }
-
-    public void setCallback(FileTransferProgress callback) {
-        this.callback = callback;
-    }
-
-    public FileSystem getSourceFs() {
-        return sourceFs;
-    }
-
-    public FileSystem getTargetFs() {
-        return targetFs;
     }
 
     static class FileInfoHolder {

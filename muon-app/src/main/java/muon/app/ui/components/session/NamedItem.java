@@ -1,21 +1,14 @@
 package muon.app.ui.components.session;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class NamedItem {
-    protected String id, name;
+    protected String id;
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+    @Setter
+    @Getter
+    protected String name;
 
     @Override
     public String toString() {

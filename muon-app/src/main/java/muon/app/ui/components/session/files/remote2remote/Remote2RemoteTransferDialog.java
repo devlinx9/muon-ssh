@@ -45,11 +45,11 @@ public class Remote2RemoteTransferDialog extends JDialog {
         setSize(640, 480);
         setModal(true);
 
-        remoteHostModel = new DefaultListModel<RemoteServerEntry>();
+        remoteHostModel = new DefaultListModel<>();
         this.list.clear();
         this.list.addAll(load());
         remoteHostModel.addAll(this.list);
-        remoteHostList = new JList<RemoteServerEntry>(remoteHostModel);
+        remoteHostList = new JList<>(remoteHostModel);
         remoteHostList.setCellRenderer(new RemoteHostRenderer());
 
         remoteHostList.setBackground(App.SKIN.getTextFieldBackground());
@@ -58,7 +58,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
         scrollPane.setBorder(new MatteBorder(0, 0, 1, 0, App.SKIN.getDefaultBorderColor()));
 
         this.add(scrollPane);
-        if (remoteHostModel.size() > 0) {
+        if (!remoteHostModel.isEmpty()) {
             remoteHostList.setSelectedIndex(0);
         }
 
@@ -204,7 +204,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             user = txtUser.getText();
             path = txtPath.getText();
             port = (Integer) spPort.getValue();
-            if (host.length() < 1 || user.length() < 1 || path.length() < 1 || port <= 0) {
+            if (host.isEmpty() || user.isEmpty() || path.isEmpty() || port <= 0) {
                 JOptionPane.showMessageDialog(this, "Invalid input: all fields mandatory");
                 continue;
             }
@@ -224,10 +224,10 @@ public class Remote2RemoteTransferDialog extends JDialog {
         sb.append("cd \"" + e.getPath() + "\"\n");
 
         for (FileInfo finfo : selectedFiles) {
-            if (finfo.getType() == FileType.Directory) {
+            if (finfo.getType() == FileType.DIRECTORY) {
                 sb.append("mkdir \"" + finfo.getName() + "\"\n");
                 sb.append("put -r \"" + finfo.getName() + "\"\n");
-            } else if (finfo.getType() == FileType.File) {
+            } else if (finfo.getType() == FileType.FILE) {
                 sb.append("put -P \"" + finfo.getName() + "\"\n");
             }
         }
@@ -258,7 +258,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
             try {
-                return objectMapper.readValue(file, new TypeReference<List<RemoteServerEntry>>() {
+                return objectMapper.readValue(file, new TypeReference<>() {
                 });
             } catch (IOException e) {
                 e.printStackTrace();

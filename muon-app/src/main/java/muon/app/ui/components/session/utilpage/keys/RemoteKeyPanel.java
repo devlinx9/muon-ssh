@@ -25,13 +25,12 @@ public class RemoteKeyPanel extends JPanel {
     private final Consumer<?> callback2;
     private final DefaultListModel<String> model;
     private final JList<String> jList;
-    private SessionInfo info;
+    private final SessionInfo info;
     private Consumer<String> callback3;
 
     public RemoteKeyPanel(SessionInfo info, Consumer<?> callback1,
                           Consumer<?> callback2, Consumer<String> callback3) {
         super(new BorderLayout());
-        this.info = info;
         this.info = info;
         this.callback1 = callback1;
         this.callback2 = callback3;
@@ -54,13 +53,9 @@ public class RemoteKeyPanel extends JPanel {
         btnGenNewKey = new JButton(bundle.getString("generate_new_key"));
         btnRefresh = new JButton(bundle.getString("generate"));
 
-        btnGenNewKey.addActionListener(e -> {
-            callback1.accept(null);
-        });
+        btnGenNewKey.addActionListener(e -> callback1.accept(null));
 
-        btnRefresh.addActionListener(e -> {
-            callback2.accept(null);
-        });
+        btnRefresh.addActionListener(e -> callback2.accept(null));
 
         Box hbox1 = Box.createHorizontalBox();
         hbox1.add(Box.createHorizontalGlue());
@@ -84,7 +79,7 @@ public class RemoteKeyPanel extends JPanel {
 
         btnAdd.addActionListener(e -> {
             String text = JOptionPane.showInputDialog(null, bundle.getString("new_entry"));
-            if (text != null && text.length() > 0) {
+            if (text != null && !text.isEmpty()) {
                 model.addElement(text);
                 callback3.accept(getAuthorizedKeys());
             }
@@ -98,7 +93,7 @@ public class RemoteKeyPanel extends JPanel {
             }
             String str = model.get(index);
             String text = JOptionPane.showInputDialog(null, bundle.getString("new_entry"), str);
-            if (text != null && text.length() > 0) {
+            if (text != null && !text.isEmpty()) {
                 model.set(index, text);
                 callback3.accept(getAuthorizedKeys());
             }
@@ -145,7 +140,7 @@ public class RemoteKeyPanel extends JPanel {
         this.model.clear();
         if (holder.getRemoteAuthorizedKeys() != null) {
             for (String line : holder.getRemoteAuthorizedKeys().split("\n")) {
-                if (line.trim().length() > 0) {
+                if (!line.trim().isEmpty()) {
                     model.addElement(line);
                 }
             }

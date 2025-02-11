@@ -50,9 +50,7 @@ public class BackgroundTransferPanel extends JPanel {
     public void removePendingTransfers(int sessionId) {
         if (!SwingUtilities.isEventDispatchThread()) {
             try {
-                SwingUtilities.invokeAndWait(() -> {
-                    stopSession(sessionId);
-                });
+                SwingUtilities.invokeAndWait(() -> stopSession(sessionId));
             } catch (InvocationTargetException | InterruptedException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -129,19 +127,15 @@ public class BackgroundTransferPanel extends JPanel {
         @Override
         public void progress(long processedBytes, long totalBytes, long processedCount, long totalCount,
                              FileTransfer fileTransfer) {
-            SwingUtilities.invokeLater(() -> {
-                progressBar.setValue(totalBytes > 0 ? ((int) ((processedBytes * 100) / totalBytes)) : 0);
-            });
+            SwingUtilities.invokeLater(() -> progressBar.setValue(totalBytes > 0 ? ((int) ((processedBytes * 100) / totalBytes)) : 0));
         }
 
         @Override
         public void error(String cause, FileTransfer fileTransfer) {
             transferCount.decrementAndGet();
             callback.accept(transferCount.get());
-            SwingUtilities.invokeLater(() -> {
-                progressLabel.setText(String.format("Error while copying from %s to %s", fileTransfer.getSourceName(),
-                        fileTransfer.getTargetName()));
-            });
+            SwingUtilities.invokeLater(() -> progressLabel.setText(String.format("Error while copying from %s to %s", fileTransfer.getSourceName(),
+                                                                             fileTransfer.getTargetName())));
         }
 
         @Override

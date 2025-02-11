@@ -46,7 +46,7 @@ public class PasswordFinderDialog implements PasswordFinder {
             return passPhrase;
         }
         retry = false;
-        return null;
+        return new char[0];
     }
 
     @Override

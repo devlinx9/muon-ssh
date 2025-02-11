@@ -37,7 +37,7 @@ public class FolderViewTableModel extends AbstractTableModel implements ListMode
     }
 
     public void addAll(List<FileInfo> list) {
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             int sz = files.size();
             files.addAll(list);
             fireTableDataChanged();

@@ -11,7 +11,8 @@ import java.awt.*;
  */
 public final class LayoutUtilities {
     public static void equalizeSize(Component... components) {
-        int maxWidth = 0, maxHeight = 0;
+        int maxWidth = 0;
+        int maxHeight = 0;
         for (Component item : components) {
             Dimension dim = item.getPreferredSize();
             if (maxWidth <= dim.width) {

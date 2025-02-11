@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.logviewer;
 
+import lombok.Getter;
 import muon.app.App;
 import muon.app.ui.components.ClosableTabContent;
 import muon.app.ui.components.SkinnedScrollPane;
@@ -35,6 +36,12 @@ import java.util.zip.GZIPInputStream;
  */
 public class LogContent extends JPanel implements ClosableTabContent {
     private final SessionContentPanel holder;
+    /**
+     * -- GETTER --
+     *
+     * @return the remoteFile
+     */
+    @Getter
     private final String remoteFile;
     private File indexFile;
     private RandomAccessFile raf;
@@ -95,18 +102,14 @@ public class LogContent extends JPanel implements ClosableTabContent {
         btnPrevPage.putClientProperty("Nimbus.Overrides", skin);
         btnPrevPage.setFont(App.SKIN.getIconFont());
         btnPrevPage.setText(FontAwesomeContants.FA_STEP_BACKWARD);
-        btnPrevPage.addActionListener(e -> {
-            previousPage();
-        });
+        btnPrevPage.addActionListener(e -> previousPage());
 
         btnLastPage = new JButton();
         btnLastPage.setToolTipText("Last page");
         btnLastPage.putClientProperty("Nimbus.Overrides", skin);
         btnLastPage.setFont(App.SKIN.getIconFont());
         btnLastPage.setText(FontAwesomeContants.FA_FAST_FORWARD);
-        btnLastPage.addActionListener(e -> {
-            lastPage();
-        });
+        btnLastPage.addActionListener(e -> lastPage());
 
         textArea = new SkinnedTextArea();
         textArea.setEditable(false);
@@ -173,9 +176,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         btnBookMark.putClientProperty("Nimbus.Overrides", skin);
         btnBookMark.setFont(App.SKIN.getIconFont());
         btnBookMark.setText(FontAwesomeContants.FA_BOOKMARK);
-        btnBookMark.addActionListener(e -> {
-            startPage.pinLog(remoteLogFile);
-        });
+        btnBookMark.addActionListener(e -> startPage.pinLog(remoteLogFile));
 
         Box toolbar = Box.createHorizontalBox();
         toolbar.setBorder(new CompoundBorder(
@@ -210,9 +211,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                         RandomAccessFile searchIndex = LogContent.this
                                 .search(text, stopFlag);
                         long len = searchIndex.length();
-                        SwingUtilities.invokeLater(() -> {
-                            logSearchPanel.setResults(searchIndex, len);
-                        });
+                        SwingUtilities.invokeLater(() -> logSearchPanel.setResults(searchIndex, len));
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
@@ -282,7 +281,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                                     this.lblCurrentPage);
 
                             this.textArea.setText(pageText);
-                            if (pageText.length() > 0) {
+                            if (!pageText.isEmpty()) {
                                 this.textArea.setCaretPosition(0);
                             }
 
@@ -345,7 +344,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
             int blocks = (int) Math.ceil((double) byteRange / 8192);
 
 
-            if (blocks * 8192 - bytesToSkip < byteRange) {
+            if (blocks * 8192L - bytesToSkip < byteRange) {
                 blocks++;
             }
             command.append("dd if=\"" + this.remoteFile + "\" ibs=8192 skip="
@@ -411,7 +410,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 if (line == null)
                     break;
                 line = line.trim();
-                if (line.length() < 1)
+                if (line.isEmpty())
                     continue;
                 toByteArray(offset, longBytes);
                 bout.write(longBytes);
@@ -462,7 +461,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 String pageText = getPageText(this.currentPage, stopFlag);
                 SwingUtilities.invokeLater(() -> {
                     this.textArea.setText(pageText);
-                    if (pageText.length() > 0) {
+                    if (!pageText.isEmpty()) {
                         this.textArea.setCaretPosition(0);
                     }
                     this.lblCurrentPage.setText((this.currentPage + 1) + "");
@@ -494,6 +493,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         try {
             Files.delete(this.indexFile.toPath());
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
         callback.accept(remoteFile);
         return true;
@@ -526,7 +526,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                         if (line == null)
                             break;
                         line = line.trim();
-                        if (line.length() < 1)
+                        if (line.isEmpty())
                             continue;
                         long lineNo = Long.parseLong(line);
                         toByteArray(lineNo, longBytes);
@@ -554,10 +554,4 @@ public class LogContent extends JPanel implements ClosableTabContent {
         }
     }
 
-    /**
-     * @return the remoteFile
-     */
-    public String getRemoteFile() {
-        return remoteFile;
-    }
 }

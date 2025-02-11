@@ -16,7 +16,7 @@ public class ScriptLoader {
                     if (s == null) {
                         break;
                     }
-                    sb.append(s + "\n");
+                    sb.append(s).append("\n");
                 }
             }
             return sb.toString();

@@ -3,6 +3,7 @@
  */
 package muon.app.ssh;
 
+import lombok.Getter;
 import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.HopEntry;
@@ -41,6 +42,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SshClient2 implements Closeable {
     private static final int CONNECTION_TIMEOUT = App.getGlobalSettings().getConnectionTimeout() * 1000;
     private final AtomicBoolean closed = new AtomicBoolean(false);
+    /**
+     * -- GETTER --
+     *
+     * @return the info
+     */
+    @Getter
     private final SessionInfo info;
     private final PasswordFinderDialog passwordFinder;
     private final InputBlocker inputBlocker;
@@ -80,7 +87,7 @@ public class SshClient2 implements Closeable {
         System.out.println("Trying to get allowed authentication methods...");
         try {
             String user = promptUser();
-            if (user == null || user.length() < 1) {
+            if (user == null || user.isEmpty()) {
                 throw new OperationCancelledException();
             }
             sshj.auth(user, new AuthNone());
@@ -97,7 +104,7 @@ public class SshClient2 implements Closeable {
 
     private void authPublicKey() throws Exception {
         KeyProvider provider = null;
-        if (info.getPrivateKeyFile() != null && info.getPrivateKeyFile().length() > 0) {
+        if (info.getPrivateKeyFile() != null && !info.getPrivateKeyFile().isEmpty()) {
             File keyFile = new File(info.getPrivateKeyFile());
             if (keyFile.exists()) {
                 provider = sshj.loadKeys(info.getPrivateKeyFile(), passwordFinder);
@@ -121,7 +128,7 @@ public class SshClient2 implements Closeable {
     private void authPassoword() throws Exception {
         String user = getUser();
         char[] password = getPassword();
-        if (user == null || user.length() < 1) {
+        if (user == null || user.isEmpty()) {
             password = null;
         }
         // keep on trying with password
@@ -160,7 +167,7 @@ public class SshClient2 implements Closeable {
     }
 
     public void connect() throws IOException, OperationCancelledException {
-        Deque<HopEntry> hopStack = new ArrayDeque<HopEntry>();
+        Deque<HopEntry> hopStack = new ArrayDeque<>();
         for (HopEntry e : this.info.getJumpHosts()) {
             hopStack.add(e);
         }
@@ -190,7 +197,7 @@ public class SshClient2 implements Closeable {
                     System.out.println("adding host key verifier");
                     this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
                     System.out.println("Host key verifier added");
-                    if (this.info.getJumpType() == SessionInfo.JumpType.TcpForwarding) {
+                    if (this.info.getJumpType() == SessionInfo.JumpType.TCP_FORWARDING) {
                         System.out.println("tcp forwarding...");
                         this.connectViaTcpForwarding();
                     } else {
@@ -289,12 +296,12 @@ public class SshClient2 implements Closeable {
     }
 
     private boolean isPasswordSet() {
-        return info.getPassword() != null && info.getPassword().length() > 0;
+        return info.getPassword() != null && !info.getPassword().isEmpty();
     }
 
     private String getUser() {
         String user = cachedCredentialProvider.getCachedUser();
-        if (user == null || user.length() < 1) {
+        if (user == null || user.isEmpty()) {
             user = this.info.getUser();
         }
         return user;
@@ -302,7 +309,7 @@ public class SshClient2 implements Closeable {
 
     private char[] getPassword() {
         char[] password = cachedCredentialProvider.getCachedPassword();
-        if (password == null && (this.info.getPassword() != null && this.info.getPassword().length() > 0)) {
+        if (password == null && (this.info.getPassword() != null && !this.info.getPassword().isEmpty())) {
             password = this.info.getPassword().toCharArray();
         }
         return password;
@@ -310,7 +317,7 @@ public class SshClient2 implements Closeable {
 
     private String promptUser() {
         String user = getUser();
-        if (user == null || user.length() < 1) {
+        if (user == null || user.isEmpty()) {
             JTextField txtUser = new SkinnedTextField(30);
             JCheckBox chkCacheUser = new JCheckBox(App.bundle.getString("remember_username"));
             int ret = JOptionPane.showOptionDialog(null, new Object[]{"User name", txtUser, chkCacheUser}, App.bundle.getString("user"),
@@ -394,13 +401,6 @@ public class SshClient2 implements Closeable {
 
     public SFTPClient createSftpClient() throws IOException {
         return sshj.newSFTPClient();
-    }
-
-    /**
-     * @return the info
-     */
-    public SessionInfo getInfo() {
-        return info;
     }
 
     // recursively

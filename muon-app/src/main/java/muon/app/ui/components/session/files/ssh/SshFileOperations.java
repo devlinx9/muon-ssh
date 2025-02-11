@@ -61,7 +61,7 @@ public class SshFileOperations {
         }
 
         int action = -1;
-        if (dupList.size() > 0) {
+        if (!dupList.isEmpty()) {
             JComboBox<String> cmbs = new JComboBox<>(
                     new String[]{"Auto rename", "Overwrite"});
             if (JOptionPane.showOptionDialog(null, new Object[]{
@@ -77,8 +77,8 @@ public class SshFileOperations {
 
         StringBuilder command = new StringBuilder();
         for (FileInfo fileInfo : files) {
-            if (fileInfo.getType() == FileType.DirLink
-                    || fileInfo.getType() == FileType.Directory) {
+            if (fileInfo.getType() == FileType.DIR_LINK
+                    || fileInfo.getType() == FileType.DIRECTORY) {
                 command.append("mv ");
             } else {
                 command.append("mv -T ");
@@ -139,7 +139,7 @@ public class SshFileOperations {
         }
 
         int action = -1;
-        if (dupList.size() > 0) {
+        if (!dupList.isEmpty()) {
             JComboBox<String> cmbs = new JComboBox<>(
                     new String[]{"Auto rename", "Overwrite"});
             if (JOptionPane.showOptionDialog(null, new Object[]{
@@ -155,8 +155,8 @@ public class SshFileOperations {
 
         StringBuilder command = new StringBuilder();
         for (FileInfo fileInfo : files) {
-            if (fileInfo.getType() == FileType.DirLink
-                    || fileInfo.getType() == FileType.Directory) {
+            if (fileInfo.getType() == FileType.DIR_LINK
+                    || fileInfo.getType() == FileType.DIRECTORY) {
                 command.append("cp -rf ");
             } else {
                 command.append("cp -Tf ");
@@ -328,7 +328,7 @@ public class SshFileOperations {
     public boolean newFile(FileInfo[] files, FileSystem fs, String folder,
                            RemoteSessionInstance instance, String password) {
         String text = JOptionPane.showInputDialog("New file");
-        if (text == null || text.length() < 1) {
+        if (text == null || text.isEmpty()) {
             return false;
         }
         boolean alreadyExists = false;
@@ -395,7 +395,7 @@ public class SshFileOperations {
     public boolean newFolder(FileInfo[] files, String folder, FileSystem fs,
                              RemoteSessionInstance instance, String password) {
         String text = JOptionPane.showInputDialog("New folder name");
-        if (text == null || text.length() < 1) {
+        if (text == null || text.isEmpty()) {
             return false;
         }
         boolean alreadyExists = false;
@@ -478,8 +478,8 @@ public class SshFileOperations {
                 "Create link", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null, null,
                 null) == JOptionPane.OK_OPTION) {
-            if (txtLinkName.getText().length() > 0
-                    && txtFileName.getText().length() > 0) {
+            if (!txtLinkName.getText().isEmpty()
+                    && !txtFileName.getText().isEmpty()) {
                 return createLinkAsync(txtFileName.getText(),
                         txtLinkName.getText(), chkHardLink.isSelected(), fs);
             }

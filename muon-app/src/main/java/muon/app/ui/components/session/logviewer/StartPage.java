@@ -132,7 +132,7 @@ public class StartPage extends JPanel {
                         txt},
                 "Input", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION && txt.getText().length() > 0) {
+                null) == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
             return txt.getText();
         }
         return null;

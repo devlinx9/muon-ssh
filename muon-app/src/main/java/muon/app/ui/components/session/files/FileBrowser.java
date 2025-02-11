@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files;
 
+import lombok.Getter;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
@@ -32,7 +33,14 @@ public class FileBrowser extends Page {
     private final JSplitPane horizontalSplitter;
     private final ClosableTabbedPanel leftTabs;
     private final ClosableTabbedPanel rightTabs;
+    /**
+     * -- GETTER --
+     *
+     * @return the holder
+     */
+    @Getter
     private final SessionContentPanel holder;
+    @Getter
     private final SessionInfo info;
     private final Map<String, List<FileInfo>> sshDirCache = new HashMap<>();
     private final int activeSessionId;
@@ -59,17 +67,17 @@ public class FileBrowser extends Page {
 
         localMenuItem.addActionListener(e -> {
             if (leftPopup) {
-                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Left);
+                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.LEFT);
             } else {
-                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Right);
+                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.RIGHT);
             }
         });
 
         remoteMenuItem.addActionListener(e -> {
             if (leftPopup) {
-                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Left);
+                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.LEFT);
             } else {
-                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Right);
+                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.RIGHT);
             }
         });
 
@@ -129,7 +137,7 @@ public class FileBrowser extends Page {
 
     public void openSshFileBrowserView(String path, AbstractFileBrowserView.PanelOrientation orientation) {
         SshFileBrowserView tab = new SshFileBrowserView(this, path, orientation);
-        if (orientation == AbstractFileBrowserView.PanelOrientation.Left) {
+        if (orientation == AbstractFileBrowserView.PanelOrientation.LEFT) {
             this.leftTabs.addTab(tab.getTabTitle(), tab);
         } else {
             this.rightTabs.addTab(tab.getTabTitle(), tab);
@@ -139,7 +147,7 @@ public class FileBrowser extends Page {
     public void openLocalFileBrowserView(String path, AbstractFileBrowserView.PanelOrientation orientation) {
 
         LocalFileBrowserView tab = new LocalFileBrowserView(this, path, orientation);
-        if (orientation == AbstractFileBrowserView.PanelOrientation.Left) {
+        if (orientation == AbstractFileBrowserView.PanelOrientation.LEFT) {
             this.leftTabs.addTab(tab.getTabTitle(), tab);
         } else {
             this.rightTabs.addTab(tab.getTabTitle(), tab);
@@ -152,10 +160,6 @@ public class FileBrowser extends Page {
 
     public RemoteSessionInstance getSessionInstance() {
         return this.holder.getRemoteSessionInstance();
-    }
-
-    public SessionInfo getInfo() {
-        return info;
     }
 
     public boolean isCloseRequested() {
@@ -239,11 +243,11 @@ public class FileBrowser extends Page {
             return;
         }
         init.set(true);
-        SshFileBrowserView left = new SshFileBrowserView(this, null, AbstractFileBrowserView.PanelOrientation.Left);
+        SshFileBrowserView left = new SshFileBrowserView(this, null, AbstractFileBrowserView.PanelOrientation.LEFT);
         this.leftTabs.addTab(left.getTabTitle(), left);
 
         LocalFileBrowserView right = new LocalFileBrowserView(this, System.getProperty("user.home"),
-                AbstractFileBrowserView.PanelOrientation.Right);
+                AbstractFileBrowserView.PanelOrientation.RIGHT);
         this.rightTabs.addTab(right.getTabTitle(), right);
     }
 
@@ -257,15 +261,8 @@ public class FileBrowser extends Page {
         return bundle.getString("file_browser");
     }
 
-    /**
-     * @return the holder
-     */
-    public SessionContentPanel getHolder() {
-        return holder;
-    }
-
     public void openPath(String path) {
-        openSshFileBrowserView(path, AbstractFileBrowserView.PanelOrientation.Left);
+        openSshFileBrowserView(path, AbstractFileBrowserView.PanelOrientation.LEFT);
     }
 
     public boolean isSessionClosed() {

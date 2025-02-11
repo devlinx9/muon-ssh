@@ -47,7 +47,7 @@ public class FileChangeWatcher {
                             info.lastModified = modified;
                         }
                     }
-                    if (list.size() > 0) {
+                    if (!list.isEmpty()) {
                         callback.accept(list);
                     }
                 }

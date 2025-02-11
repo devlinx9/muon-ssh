@@ -18,8 +18,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -76,124 +74,106 @@ public class FolderView extends JPanel {
         });
 
         // compare name
-        sorter.setComparator(0, new Comparator<>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                FileInfo fi1 = (FileInfo) o1;
-                FileInfo fi2 = (FileInfo) o2;
-                //Make sure folders are always before files with respect to current sort order
-                if (fi1.isDirectory()) {
-                    if (!fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
-                    }
-                } else {
-                    if (fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
-                    }
+        sorter.setComparator(0, (o1, o2) -> {
+            FileInfo fi1 = (FileInfo) o1;
+            FileInfo fi2 = (FileInfo) o2;
+            //Make sure folders are always before files with respect to current sort order
+            if (fi1.isDirectory()) {
+                if (!fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
                 }
-
-                return fi1.getName().compareToIgnoreCase(fi2.getName());
+            } else {
+                if (fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
+                }
             }
+
+            return fi1.getName().compareToIgnoreCase(fi2.getName());
         });
 
         // compare size
-        sorter.setComparator(2, new Comparator<>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                FileInfo fi1 = (FileInfo) o1;
-                FileInfo fi2 = (FileInfo) o2;
-                //Make sure folders are always before files with respect to current sort order
-                if (fi1.isDirectory()) {
-                    if (!fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
-                    }
-                } else {
-                    if (fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
-                    }
+        sorter.setComparator(2, (o1, o2) -> {
+            FileInfo fi1 = (FileInfo) o1;
+            FileInfo fi2 = (FileInfo) o2;
+            //Make sure folders are always before files with respect to current sort order
+            if (fi1.isDirectory()) {
+                if (!fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
                 }
-
-                Long s1 = fi1.getSize();
-                Long s2 = fi2.getSize();
-                return s1.compareTo(s2);
+            } else {
+                if (fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
+                }
             }
+
+            Long s1 = fi1.getSize();
+            Long s2 = fi2.getSize();
+            return s1.compareTo(s2);
         });
 
         // compare type
-        sorter.setComparator(3, new Comparator<>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                String s1 = ((FileInfo) o1).getType().toString();
-                String s2 = ((FileInfo) o2).getType().toString();
-                return s1.compareTo(s2);
-            }
+        sorter.setComparator(3, (o1, o2) -> {
+            String s1 = ((FileInfo) o1).getType().toString();
+            String s2 = ((FileInfo) o2).getType().toString();
+            return s1.compareTo(s2);
         });
 
         // compare last modified
-        sorter.setComparator(1, new Comparator<>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                FileInfo fi1 = (FileInfo) o1;
-                FileInfo fi2 = (FileInfo) o2;
-                //Make sure folders are always before files with respect to current sort order
-                if (fi1.isDirectory()) {
-                    if (!fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
-                    }
-                } else {
-                    if (fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
-                    }
+        sorter.setComparator(1, (o1, o2) -> {
+            FileInfo fi1 = (FileInfo) o1;
+            FileInfo fi2 = (FileInfo) o2;
+            //Make sure folders are always before files with respect to current sort order
+            if (fi1.isDirectory()) {
+                if (!fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
                 }
-
-                return fi1.getLastModified().compareTo(fi2.getLastModified());
+            } else {
+                if (fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
+                }
             }
+
+            return fi1.getLastModified().compareTo(fi2.getLastModified());
         });
 
         // compare permission
-        sorter.setComparator(4, new Comparator<>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                FileInfo fi1 = (FileInfo) o1;
-                FileInfo fi2 = (FileInfo) o2;
-                //Make sure folders are always before files with respect to current sort order
-                if (fi1.isDirectory()) {
-                    if (!fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
-                    }
-                } else {
-                    if (fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
-                    }
+        sorter.setComparator(4, (o1, o2) -> {
+            FileInfo fi1 = (FileInfo) o1;
+            FileInfo fi2 = (FileInfo) o2;
+            //Make sure folders are always before files with respect to current sort order
+            if (fi1.isDirectory()) {
+                if (!fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
                 }
-
-                String s1 = fi1.getPermissionString();
-                String s2 = fi2.getPermissionString();
-                return s1.compareTo(s2);
+            } else {
+                if (fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
+                }
             }
+
+            String s1 = fi1.getPermissionString();
+            String s2 = fi2.getPermissionString();
+            return s1.compareTo(s2);
         });
 
         // compare owner
-        sorter.setComparator(5, new Comparator<>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                FileInfo fi1 = (FileInfo) o1;
-                FileInfo fi2 = (FileInfo) o2;
-                //Make sure folders are always before files with respect to current sort order
-                if (fi1.isDirectory()) {
-                    if (!fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
-                    }
-                } else {
-                    if (fi2.isDirectory()) {
-                        return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
-                    }
+        sorter.setComparator(5, (o1, o2) -> {
+            FileInfo fi1 = (FileInfo) o1;
+            FileInfo fi2 = (FileInfo) o2;
+            //Make sure folders are always before files with respect to current sort order
+            if (fi1.isDirectory()) {
+                if (!fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? 1 : -1;
                 }
-
-                String s1 = fi1.getUser();
-                String s2 = fi2.getUser();
-                return s1.compareTo(s2);
+            } else {
+                if (fi2.isDirectory()) {
+                    return sortingOrder[0] == SortOrder.DESCENDING ? -1 : 1;
+                }
             }
+
+            String s1 = fi1.getUser();
+            String s2 = fi2.getUser();
+            return s1.compareTo(s2);
         });
 
         table.setRowSorter(sorter);
@@ -206,12 +186,11 @@ public class FolderView extends JPanel {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 FileInfo[] files = getSelectedFiles();
-                if (files.length > 0) {
-                    if (files[0].getType() == FileType.Directory || files[0].getType() == FileType.DirLink) {
-                        String str = files[0].getPath();
-                        listener.render(str, App.getGlobalSettings().isDirectoryCache());
-                    }
+                if (files.length > 0 && (files[0].getType() == FileType.DIRECTORY || files[0].getType() == FileType.DIR_LINK)) {
+                    String str = files[0].getPath();
+                    listener.render(str, App.getGlobalSettings().isDirectoryCache());
                 }
+
             }
         });
 
@@ -246,7 +225,7 @@ public class FolderView extends JPanel {
                     }
                     if (r == table.getSelectedRow()) {
                         FileInfo fileInfo = folderViewModel.getItemAt(getRow(r));
-                        if (fileInfo.getType() == FileType.Directory || fileInfo.getType() == FileType.DirLink) {
+                        if (fileInfo.getType() == FileType.DIRECTORY || fileInfo.getType() == FileType.DIR_LINK) {
                             listener.addBack(fileInfo.getPath());
                             listener.render(fileInfo.getPath(), App.getGlobalSettings().isDirectoryCache());
                         } else {
@@ -297,7 +276,7 @@ public class FolderView extends JPanel {
                     }
                     if (r == x) {
                         FileInfo fileInfo = folderViewModel.getItemAt(getRow(r));
-                        if (fileInfo.getType() == FileType.Directory || fileInfo.getType() == FileType.DirLink) {
+                        if (fileInfo.getType() == FileType.DIRECTORY || fileInfo.getType() == FileType.DIR_LINK) {
                             listener.addBack(fileInfo.getPath());
                             listener.render(fileInfo.getPath(), App.getGlobalSettings().isDirectoryCache());
                         } else {
@@ -429,7 +408,7 @@ public class FolderView extends JPanel {
     }
 
     public void sort(int index, SortOrder sortOrder) {
-        sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(index, sortOrder)));
+        sorter.setSortKeys(List.of(new SortKey(index, sortOrder)));
         sorter.sort();
     }
 

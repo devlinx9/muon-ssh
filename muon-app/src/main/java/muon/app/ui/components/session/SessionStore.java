@@ -2,6 +2,7 @@ package muon.app.ui.components.session;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import muon.app.App;
 import muon.app.PasswordStore;
@@ -10,23 +11,26 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
 
 public class SessionStore {
 
-    public synchronized static SavedSessionTree load() {
+    public static synchronized SavedSessionTree load() {
         File file = Paths.get(App.CONFIG_DIR, App.SESSION_DB_FILE).toFile();
         return load(file);
     }
 
-    public synchronized static SavedSessionTree load(File file) {
+    public static synchronized SavedSessionTree load(File file) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
+
         try {
-            SavedSessionTree savedSessionTree = objectMapper.readValue(file, new TypeReference<SavedSessionTree>() {
+            SavedSessionTree savedSessionTree = objectMapper.readValue(preprocessJson(file), new TypeReference<>() {
             });
             try {
                 System.out.println("Loading passwords...");
@@ -47,12 +51,12 @@ public class SessionStore {
         }
     }
 
-    public synchronized static void save(SessionFolder folder, String lastSelectionPath) {
+    public static synchronized void save(SessionFolder folder, String lastSelectionPath) {
         File file = Paths.get(App.CONFIG_DIR, App.SESSION_DB_FILE).toFile();
         save(folder, lastSelectionPath, file);
     }
 
-    public synchronized static void save(SessionFolder folder, String lastSelectionPath, File file) {
+    public static synchronized void save(SessionFolder folder, String lastSelectionPath, File file) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             SavedSessionTree tree = new SavedSessionTree();
@@ -85,7 +89,7 @@ public class SessionStore {
         return folder;
     }
 
-    public synchronized static DefaultMutableTreeNode getNode(SessionFolder folder) {
+    public static synchronized DefaultMutableTreeNode getNode(SessionFolder folder) {
         NamedItem item = new NamedItem();
         item.setName(folder.getName());
         item.setId(folder.getId());
@@ -102,7 +106,7 @@ public class SessionStore {
         return node;
     }
 
-    public synchronized static void updateFavourites(String id, List<String> localFolders, List<String> remoteFolders) {
+    public static synchronized void updateFavourites(String id, List<String> localFolders, List<String> remoteFolders) {
         SavedSessionTree tree = load();
         SessionFolder folder = tree.getFolder();
 
@@ -131,5 +135,16 @@ public class SessionStore {
             }
         }
         return false;
+    }
+
+    public static String preprocessJson(File file) throws IOException {
+        String content = new String(Files.readAllBytes(file.toPath()));
+        content = content.replaceAll("\"TcpForwarding\"", "\"TCP_FORWARDING\"");
+        content = content.replaceAll("\"PortForwarding\"", "\"PORT_FORWARDING\"");
+        content = content.replaceAll("\"DragDrop\"", "\"DRAG_DROP\"");
+        content = content.replaceAll("\"DirLink\"", "\"DIR_LINK\"");
+        content = content.replaceAll("\"FileLink\"", "\"FILE_LINK\"");
+        content = content.replaceAll("\"KeyStore\"", "\"KEY_STORE\"");
+        return content;
     }
 }

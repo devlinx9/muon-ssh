@@ -7,14 +7,15 @@ import javax.net.SocketFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
  * @author subhro
- *
  */
 public class CustomSocketFactory extends SocketFactory {
 
@@ -42,8 +43,9 @@ public class CustomSocketFactory extends SocketFactory {
 
     public static final int getResponseCode(String statusLine) {
         String[] arr = statusLine.split(" ");
-        if (arr.length < 2)
+        if (arr.length < 2) {
             return 400;
+        }
         return Integer.parseInt(arr[1]);
     }
 
@@ -57,7 +59,7 @@ public class CustomSocketFactory extends SocketFactory {
     public Socket createSocket(String host, int port, InetAddress localHost,
                                int localPort) throws IOException {
         return this.createSocket(InetAddress.getByName(host), port, localHost,
-                localPort);
+                                 localPort);
     }
 
     @Override
@@ -88,16 +90,14 @@ public class CustomSocketFactory extends SocketFactory {
         Proxy proxy = Proxy.NO_PROXY;
         if (this.proxyType == Proxy.Type.SOCKS) {
             proxy = new Proxy(Proxy.Type.SOCKS,
-                    new InetSocketAddress(proxyHost, proxyPort));
-        } else if (this.proxyType == Proxy.Type.HTTP) {
-            if (proxyUser == null || proxyUser.length() < 1) {
+                              new InetSocketAddress(proxyHost, proxyPort));
+        } else if (this.proxyType == Proxy.Type.HTTP && (proxyUser == null || proxyUser.isEmpty())) {
                 proxy = new Proxy(Proxy.Type.HTTP,
-                        new InetSocketAddress(proxyHost, proxyPort));
+                                  new InetSocketAddress(proxyHost, proxyPort));
             }
-        }
 
-        Socket socket = new Socket(proxy);
-        return socket;
+
+        return new Socket(proxy);
     }
 
     private void connectToProxy(Socket socket) throws IOException {
@@ -130,13 +130,14 @@ public class CustomSocketFactory extends SocketFactory {
 
         while (true) {
             String line = readLine(in);
-            if (line.length() < 1)
+            if (line.isEmpty()) {
                 break;
+            }
         }
     }
 
     private String getBasicAuthStr() {
-        if (proxyUser != null && proxyUser.length() > 0) {
+        if (proxyUser != null && !proxyUser.isEmpty()) {
             return (Base64.getEncoder().encodeToString(
                     (proxyUser + ":" + (proxyPass == null ? "" : proxyPass))
                             .getBytes(StandardCharsets.UTF_8)));
@@ -148,13 +149,16 @@ public class CustomSocketFactory extends SocketFactory {
         StringBuilder buf = new StringBuilder();
         while (true) {
             int x = in.read();
-            if (x == -1)
+            if (x == -1) {
                 throw new IOException(
                         "Unexpected EOF while reading header line");
-            if (x == '\n')
+            }
+            if (x == '\n') {
                 return buf.toString();
-            if (x != '\r')
+            }
+            if (x != '\r') {
                 buf.append((char) x);
+            }
         }
     }
 

@@ -27,8 +27,8 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
     public void init(Resource resource, String name, String instruction) {
         System.out.println("ChallengeResponseProvider init - resource: "
                 + resource + " name: " + name + " instruction: " + instruction);
-        if ((name != null && name.length() > 0)
-                || (instruction != null && instruction.length() > 0)) {
+        if ((name != null && !name.isEmpty())
+                || (instruction != null && !instruction.isEmpty())) {
             JOptionPane.showMessageDialog(null, name + "\n" + instruction);
         }
     }
@@ -42,8 +42,6 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
             if (str != null) {
                 return str.toCharArray();
             }
-            retry = false;
-            return null;
         } else {
             JPasswordField passwordField = new JPasswordField(30);
             int ret = JOptionPane.showOptionDialog(null,
@@ -53,9 +51,9 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
             if (ret == JOptionPane.OK_OPTION) {
                 return passwordField.getPassword();
             }
-            retry = false;
-            return null;
         }
+        retry = false;
+        return new char[0];
     }
 
     @Override

@@ -26,7 +26,7 @@ public class PathUtils {
         }
         int index1 = file.lastIndexOf('/');
         int index2 = file.lastIndexOf('\\');
-        int index = index1 > index2 ? index1 : index2;
+        int index = Math.max(index1, index2);
         if (index >= 0) {
             return file.substring(index + 1);
         }
@@ -37,12 +37,12 @@ public class PathUtils {
         if (file.endsWith("/") || file.endsWith("\\")) {
             file = file.substring(0, file.length() - 1);
         }
-        if (file.length() == 0) {
+        if (file.isEmpty()) {
             return null;
         }
         int index1 = file.lastIndexOf('/');
         int index2 = file.lastIndexOf('\\');
-        int index = index1 > index2 ? index1 : index2;
+        int index = Math.max(index1, index2);
         if (index >= 0) {
             return file.substring(0, index + 1);
         }

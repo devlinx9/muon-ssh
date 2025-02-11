@@ -3,6 +3,8 @@
  */
 package muon.app.ui.components;
 
+import lombok.Getter;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -12,7 +14,11 @@ import java.awt.*;
  */
 public class TextGutter extends JComponent {
     private final JTextArea textArea;
+
+    @Getter
     private int digitCount;
+
+    @Getter
     private long lineStart;
 
     /**
@@ -62,26 +68,12 @@ public class TextGutter extends JComponent {
     }
 
     /**
-     * @return the digitCount
-     */
-    public int getDigitCount() {
-        return digitCount;
-    }
-
-    /**
      * @param digitCount the digitCount to set
      */
     public void setDigitCount(int digitCount) {
         this.digitCount = digitCount;
         revalidate();
         repaint(0);
-    }
-
-    /**
-     * @return the lineStart
-     */
-    public long getLineStart() {
-        return lineStart;
     }
 
     /**

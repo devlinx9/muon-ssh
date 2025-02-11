@@ -166,10 +166,10 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
                             e.printStackTrace();
                         }
                         FileInfo finfo = new FileInfo(file.getName(), file.getAbsolutePath(), file.length(),
-                                file.isDirectory() ? FileType.Directory : FileType.File, file.lastModified(), -1,
-                                LocalFileSystem.PROTO_LOCAL_FILE, "",
+                                                      file.isDirectory() ? FileType.DIRECTORY : FileType.FILE, file.lastModified(), -1,
+                                                      LocalFileSystem.PROTO_LOCAL_FILE, "",
                                 attrs != null ? attrs.creationTime().toMillis() : file.lastModified(), "",
-                                file.isHidden());
+                                                      file.isHidden());
                         infoArr[c++] = finfo;
                     }
 
@@ -208,7 +208,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
 
         if (DATA_FLAVOR_FILE_LIST.equals(flavor)) {
             if (App.IS_WINDOWS && tempDir != null) {
-                return Arrays.asList(tempDir);
+                return List.of(tempDir);
             }
         }
         return null;

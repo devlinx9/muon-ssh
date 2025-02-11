@@ -20,13 +20,10 @@ public class ImportDlg extends JDialog {
         sessionList = new JList<>(model);
         sessionList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-        switch (index) {
-            case 0:
-                importFromPutty();
-                break;
-            case 1:
-                importFromWinScp();
-                break;
+        if (index == 0) {
+            importFromPutty();
+        } else if (index == 1) {
+            importFromWinScp();
         }
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -61,13 +58,10 @@ public class ImportDlg extends JDialog {
         JButton btnImport = new JButton("Import");
         btnImport.addActionListener(e -> {
 
-            switch (index) {
-                case 0:
-                    importSessionsFromPutty(node);
-                    break;
-                case 1:
-                    importSessionsFromWinScp(node);
-                    break;
+            if (index == 0) {
+                importSessionsFromPutty(node);
+            } else if (index == 1) {
+                importSessionsFromWinScp(node);
             }
 
             dispose();
@@ -90,11 +84,11 @@ public class ImportDlg extends JDialog {
     }
 
     private void importSessionsFromPutty(DefaultMutableTreeNode node) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         int[] arr = sessionList.getSelectedIndices();
         if (arr != null) {
-            for (int i = 0; i < arr.length; i++) {
-                list.add(model.get(arr[i]));
+            for (int j : arr) {
+                list.add(model.get(j));
             }
         }
 
@@ -102,12 +96,12 @@ public class ImportDlg extends JDialog {
     }
 
     private void importSessionsFromWinScp(DefaultMutableTreeNode node) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         int[] arr = sessionList.getSelectedIndices();
         if (arr != null) {
-            for (int i = 0; i < arr.length; i++) {
-                list.add(model.get(arr[i]));
+            for (int j : arr) {
+                list.add(model.get(j));
             }
         }
 

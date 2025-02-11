@@ -3,12 +3,20 @@
  */
 package muon.app.ui.components.session.files.remote2remote;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author subhro
  *
  */
+@Setter
+@Getter
 public class RemoteServerEntry {
-    private String id, host, user, path;
+    private String id;
+    private String host;
+    private String user;
+    private String path;
     private int port;
 
     public RemoteServerEntry(String host, int port, String user, String path) {
@@ -22,43 +30,4 @@ public class RemoteServerEntry {
         // TODO Auto-generated constructor stub
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
 }

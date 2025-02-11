@@ -17,7 +17,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,7 +24,6 @@ import static muon.app.App.bundle;
 
 /**
  * @author subhro
- *
  */
 public class DiskspaceAnalyzer extends Page {
     private final CardLayout cardLayout;
@@ -54,9 +52,7 @@ public class DiskspaceAnalyzer extends Page {
         resultTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         JButton btnStart = new JButton(bundle.getString("start_another_analysis"));
-        btnStart.addActionListener(e -> {
-            cardLayout.show(this, "firstPanel");
-        });
+        btnStart.addActionListener(e -> cardLayout.show(this, "firstPanel"));
 
         Box resultBox = Box.createHorizontalBox();
         resultBox.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -153,13 +149,10 @@ public class DiskspaceAnalyzer extends Page {
                 analyze(model.get(r).getMountPoint());
             } else {
                 JOptionPane.showMessageDialog(this, bundle.getString("select_partition"));
-                return;
             }
         });
 
-        btnBack.addActionListener(e -> {
-            cardLayout.show(this, "firstPanel");
-        });
+        btnBack.addActionListener(e -> cardLayout.show(this, "firstPanel"));
 
         Box bottomBox = Box.createHorizontalBox();
         bottomBox.add(btnReload);
@@ -209,11 +202,12 @@ public class DiskspaceAnalyzer extends Page {
                         continue;
                     }
                     String[] arr = line.split("\\s+");
-                    if (arr.length < 6)
+                    if (arr.length < 6) {
                         continue;
+                    }
                     PartitionEntry ent = new PartitionEntry(arr[0], arr[5], Long.parseLong(arr[1].trim()) * 1024,
-                            Long.parseLong(arr[2].trim()) * 1024, Long.parseLong(arr[3].trim()) * 1024,
-                            Double.parseDouble(arr[4].replace("%", "").trim()));
+                                                            Long.parseLong(arr[2].trim()) * 1024, Long.parseLong(arr[3].trim()) * 1024,
+                                                            Double.parseDouble(arr[4].replace("%", "").trim()));
                     list.add(ent);
                 }
                 SwingUtilities.invokeLater(() -> {
@@ -265,9 +259,7 @@ public class DiskspaceAnalyzer extends Page {
     }
 
     private void createTree(DefaultMutableTreeNode treeNode, DiskUsageEntry entry) {
-        Collections.sort(entry.getChildren(), (a, b) -> {
-            return a.getSize() < b.getSize() ? 1 : (a.getSize() > b.getSize() ? -1 : 0);
-        });
+        entry.getChildren().sort((a, b) -> Long.compare(b.getSize(), a.getSize()));
         for (DiskUsageEntry ent : entry.getChildren()) {
             DefaultMutableTreeNode child = new DefaultMutableTreeNode(ent, true);
             child.setAllowsChildren(true);

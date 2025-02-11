@@ -34,27 +34,25 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.16.0</version>
+            <version>2.22.1</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-1.2-api -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <version>2.15.0</version>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.22.1</version>
         </dependency>
 
-
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
+            <version>2.0.16</version>
         </dependency>
+
+
 
 
         <!-- <dependency> <groupId>jediterm</groupId> <artifactId>jediterm</artifactId>
@@ -69,7 +67,7 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>3.6</version>
+            <version>3.9.0</version>
         </dependency>
         <dependency>
             <groupId>com.shinyhut</groupId>
@@ -80,7 +78,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.10.1</version>
+            <version>2.13.4.2</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.fifesoft/rstaui -->
@@ -94,14 +92,14 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.64</version>
+            <version>1.70</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
+            <version>2.16.1</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.tukaani/xz -->
         <dependency>
@@ -127,8 +125,6 @@
             <artifactId>jna-platform</artifactId>
             <version>5.5.0</version>
         </dependency>
-        <!-- <dependency> <groupId>snowflake</groupId> <artifactId>terminal</artifactId>
-            <version>0.0.1-SNAPSHOT</version> </dependency> -->
         <dependency>
             <groupId>net.i2p.crypto</groupId>
             <artifactId>eddsa</artifactId>
@@ -162,6 +158,14 @@
             <artifactId>proxy-vole</artifactId>
             <version>1.0.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>  <!-- Ensures it's only used at compile-time -->
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -178,10 +182,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.1</version>
+                <version>3.13.0</version>
                 <configuration>
                     <source>11</source>
                     <target>11</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.30</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
 
@@ -303,7 +314,8 @@
                             <outfile>target/muonssh_${project.version}.exe</outfile>
                             <jar>target/muonssh_${project.version}.jar</jar>
                             <errTitle>Failed to load muonssh</errTitle>
-                            <downloadUrl>https://www.oracle.com/java/technologies/downloads/#java11-windows</downloadUrl>
+                            <downloadUrl>https://www.oracle.com/java/technologies/downloads/#java11-windows
+                            </downloadUrl>
                             <classPath>
                                 <mainClass>muon.app.App</mainClass>
                                 <addDependencies>false</addDependencies>

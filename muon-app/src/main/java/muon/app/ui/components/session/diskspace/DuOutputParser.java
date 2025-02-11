@@ -16,7 +16,7 @@ public final class DuOutputParser {
                 true);
     }
 
-    public final DiskUsageEntry parseList(List<String> lines, int prefixLen) {
+    public DiskUsageEntry parseList(List<String> lines, int prefixLen) {
         for (String line : lines) {
             Matcher matcher = duPattern.matcher(line);
             if (matcher.find()) {
@@ -34,7 +34,7 @@ public final class DuOutputParser {
     }
 
     private void addEntry(long size, String path) {
-        if (path.length() < 1 || path.equals("/")) {
+        if (path.isEmpty() || path.equals("/")) {
             root.setSize(size);
             return;
         }

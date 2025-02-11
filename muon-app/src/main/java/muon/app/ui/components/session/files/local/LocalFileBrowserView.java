@@ -93,7 +93,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
     }
 
     public String getPathText() {
-        return (this.path == null || this.path.length() < 1 ? "" : this.path);
+        return (this.path == null || this.path.isEmpty() ? "" : this.path);
     }
 
     @Override

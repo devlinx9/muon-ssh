@@ -2,12 +2,16 @@ package muon.app.ui.components.session.terminal;
 
 import com.jediterm.terminal.ui.JediTermWidget;
 import com.jediterm.terminal.ui.settings.SettingsProvider;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import java.awt.*;
 
+@Setter
+@Getter
 public class CustomJediterm extends JediTermWidget {
     private boolean started = false;
 
@@ -39,14 +43,6 @@ public class CustomJediterm extends JediTermWidget {
     @Override
     protected JScrollBar createScrollBar() {
         return new JScrollBar();
-    }
-
-    public boolean isStarted() {
-        return started;
-    }
-
-    public void setStarted(boolean started) {
-        this.started = started;
     }
 
     @Override

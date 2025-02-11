@@ -28,13 +28,13 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 import static muon.app.App.bundle;
 import static util.Constants.*;
 
 /**
  * @author subhro
- *
  */
 public class AppWindow extends JFrame {
     private final CardLayout sessionCard;
@@ -43,9 +43,11 @@ public class AppWindow extends JFrame {
     private final BackgroundTransferPanel downloadPanel;
     private final Component bottomPanel;
     private SessionListPanel sessionListPanel;
-    private JLabel lblUploadCount, lblDownloadCount;
+    private JLabel lblUploadCount;
+    private JLabel lblDownloadCount;
     private JPopupMenu popup;
-    private JLabel lblUpdate, lblUpdateText;
+    private JLabel lblUpdate;
+    private JLabel lblUpdateText;
 
     /**
      *
@@ -53,7 +55,7 @@ public class AppWindow extends JFrame {
     public AppWindow() {
         super(APPLICATION_NAME);
         try {
-            this.setIconImage(ImageIO.read(AppWindow.class.getResource("/muon.png")));
+            this.setIconImage(ImageIO.read(Objects.requireNonNull(AppWindow.class.getResource("/muon.png"))));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,17 +90,9 @@ public class AppWindow extends JFrame {
         this.bottomPanel = createBottomPanel();
         this.add(this.bottomPanel, BorderLayout.SOUTH);
 
-        this.uploadPanel = new BackgroundTransferPanel(count -> {
-            SwingUtilities.invokeLater(() -> {
-                lblUploadCount.setText(count + "");
-            });
-        });
+        this.uploadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblUploadCount.setText(count + "")));
 
-        this.downloadPanel = new BackgroundTransferPanel(count -> {
-            SwingUtilities.invokeLater(() -> {
-                lblDownloadCount.setText(count + "");
-            });
-        });
+        this.downloadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblDownloadCount.setText(count + "")));
 
         new Thread(() -> {
             if (UpdateChecker.isNewUpdateAvailable()) {
@@ -116,40 +110,61 @@ public class AppWindow extends JFrame {
     }
 
     private JPanel createSessionPanel() {
-        JLabel lblSession = new JLabel(bundle.getString("sessions"));
-        lblSession.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
-        JButton btnNew = new JButton(bundle.getString("add"));
-        btnNew.setFont(App.SKIN.getDefaultFont().deriveFont(12.0f));
-        btnNew.addActionListener(e -> {
-            this.createFirstSessionPanel();
-        });
+        JButton btnNew = new JButton(FontAwesomeContants.FA_TELEVISION);
+        btnNew.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
+        btnNew.addActionListener(e -> this.createFirstSessionPanel());
 
-        JButton btnSettings = new JButton();
-        btnSettings.setFont(App.SKIN.getIconFont().deriveFont(12.0f));
-        btnSettings.setText(FontAwesomeContants.FA_COG);
-        btnSettings.addActionListener(e -> {
-            openSettings(null);
-        });
+        JButton btnSettings = new JButton(FontAwesomeContants.FA_COG);
+        btnSettings.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
+        btnSettings.addActionListener(e -> openSettings(null));
 
-        Box topBox = Box.createHorizontalBox();
+        JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
+        btnToggle.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
+
+        JPanel topBox = new JPanel();
+        topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
         topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
-        topBox.add(lblSession);
-        topBox.add(Box.createRigidArea(new Dimension(50, 0)));
+        topBox.add(btnToggle);
         topBox.add(Box.createHorizontalGlue());
         topBox.add(btnNew);
-        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        Component rigidArea1 = Box.createRigidArea(new Dimension(5, 0));
+        topBox.add(rigidArea1);
         topBox.add(btnSettings);
+        Component rigidArea2 = Box.createRigidArea(new Dimension(5, 0));
+        topBox.add(rigidArea2);
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new MatteBorder(0, 0, 0, 1, App.SKIN.getDefaultBorderColor()));
-        panel.add(topBox, BorderLayout.NORTH);
 
         sessionListPanel = new SessionListPanel(this);
-        panel.add(sessionListPanel);
+        panel.add(topBox, BorderLayout.NORTH);
+        panel.add(sessionListPanel, BorderLayout.CENTER);
+
+        btnToggle.addActionListener(e -> {
+            boolean isVisible = btnNew.isVisible();
+            sessionListPanel.setVisible(!isVisible);
+            btnNew.setVisible(!isVisible);
+            btnSettings.setVisible(!isVisible);
+            rigidArea2.setVisible(!isVisible);
+            rigidArea1.setVisible(!isVisible);
+            topBox.setBorder(null);
+
+            if (!isVisible) {
+                topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+            }
+
+            btnToggle.setText(isVisible ? FontAwesomeContants.FA_ANGLE_DOUBLE_RIGHT : FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
+
+            topBox.revalidate();
+            topBox.repaint();
+
+        });
+
 
         return panel;
-
     }
+
 
     /**
      * @param sessionContentPanel
@@ -186,7 +201,7 @@ public class AppWindow extends JFrame {
         b1.setOpaque(true);
         b1.setBackground(App.SKIN.getTableBackgroundColor());
         b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()),
-                new EmptyBorder(5, 5, 5, 5)));
+                                        new EmptyBorder(5, 5, 5, 5)));
         b1.add(Box.createRigidArea(new Dimension(10, 10)));
 
         MouseListener ml = new MouseAdapter() {
@@ -195,9 +210,7 @@ public class AppWindow extends JFrame {
                 if (Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(new URI(REPOSITORY_URL));
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } catch (URISyntaxException ex) {
+                    } catch (IOException | URISyntaxException ex) {
                         ex.printStackTrace();
                     }
                 }
@@ -208,7 +221,7 @@ public class AppWindow extends JFrame {
         JLabel lblBrand = new JLabel(APPLICATION_NAME + " " + APPLICATION_VERSION);
         lblBrand.addMouseListener(ml);
         lblBrand.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        lblBrand.setVerticalAlignment(JLabel.CENTER);
+        lblBrand.setVerticalAlignment(SwingConstants.CENTER);
         b1.add(lblBrand);
         b1.add(Box.createRigidArea(new Dimension(10, 10)));
 
@@ -276,9 +289,7 @@ public class AppWindow extends JFrame {
                 if (Desktop.isDesktopSupported()) {
                     try {
                         Desktop.getDesktop().browse(new URI(HELP_URL));
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } catch (URISyntaxException ex) {
+                    } catch (IOException | URISyntaxException ex) {
                         ex.printStackTrace();
                     }
                 }
@@ -325,9 +336,7 @@ public class AppWindow extends JFrame {
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop.getDesktop().browse(new URI(App.UPDATE_URL2));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            } catch (URISyntaxException ex) {
+            } catch (IOException | URISyntaxException ex) {
                 ex.printStackTrace();
             }
         }
@@ -347,7 +356,7 @@ public class AppWindow extends JFrame {
         popup.setInvoker(bottomPanel);
 
         popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
-                -popup.getPreferredSize().height);
+                   -popup.getPreferredSize().height);
     }
 
     public void removePendingTransfers(int sessionId) {

@@ -48,13 +48,9 @@ public class LocalKeyPanel extends JPanel {
         btnGenNewKey = new JButton(bundle.getString("generate_new_key"));
         btnRefresh = new JButton(bundle.getString("refresh"));
 
-        btnGenNewKey.addActionListener(e -> {
-            callback1.accept(null);
-        });
+        btnGenNewKey.addActionListener(e -> callback1.accept(null));
 
-        btnRefresh.addActionListener(e -> {
-            callback2.accept(null);
-        });
+        btnRefresh.addActionListener(e -> callback2.accept(null));
 
         Box hbox1 = Box.createHorizontalBox();
         hbox1.add(Box.createHorizontalGlue());

@@ -8,10 +8,10 @@ import java.awt.*;
 public class FontAwesomeIcon implements Icon {
     private final int width;
     private final int height;
-    private final String FA_ICON;
+    private final String faIcon;
 
-    public FontAwesomeIcon(String FA_ICON, int width, int height) {
-        this.FA_ICON = FA_ICON;
+    public FontAwesomeIcon(String pFaIcon, int width, int height) {
+        this.faIcon = pFaIcon;
         this.width = width;
         this.height = height;
     }
@@ -24,7 +24,7 @@ public class FontAwesomeIcon implements Icon {
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setFont(App.SKIN.getIconFont().deriveFont((float) height));
         int ypos = g2.getFontMetrics().getAscent();
-        g2.drawString(FA_ICON, x, ypos);
+        g2.drawString(faIcon, x, ypos);
     }
 
     @Override

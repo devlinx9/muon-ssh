@@ -25,10 +25,8 @@ public class DiskAnalysisTask implements Runnable {
     public void run() {
         DiskUsageEntry root = null;
         try {
-            StringBuilder scriptBuffer = new StringBuilder(
-                    "export POSIXLY_CORRECT=1; " + "du '" + folder + "'");
             StringBuilder output = new StringBuilder();
-            client.exec(scriptBuffer.toString(), stopFlag, output);
+            client.exec("export POSIXLY_CORRECT=1; " + "du '" + folder + "'", stopFlag, output);
             List<String> lines = Arrays.asList(output.toString().split("\n"));
             DuOutputParser duOutputParser = new DuOutputParser(folder);
             int prefixLen = folder.endsWith("/") ? folder.length() - 1

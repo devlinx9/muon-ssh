@@ -3,6 +3,7 @@ package muon.app;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import muon.app.ssh.GraphicalHostKeyVerifier;
 import muon.app.ssh.GraphicalInputBlocker;
 import muon.app.ssh.InputBlocker;
@@ -33,13 +34,10 @@ import java.util.concurrent.Executors;
 import static util.Constants.APPLICATION_VERSION;
 import static util.Constants.UPDATE_URL;
 
-/**
- * Hello world!
- */
 public class App {
     public static final VersionEntry VERSION = new VersionEntry("v" + APPLICATION_VERSION);
     public static final String UPDATE_URL2 = UPDATE_URL + "/check-update.html?v="
-            + VERSION.getNumericValue();
+                                             + VERSION.getNumericValue();
     public static String CONFIG_DIR = System.getProperty("user.home") + File.separatorChar + "muon-ssh";
     public static final String SESSION_DB_FILE = "session-store.json";
     public static final String CONFIG_DB_FILE = "settings.json";
@@ -47,7 +45,7 @@ public class App {
     public static final String PINNED_LOGS = "pinned-logs.json";
     public static final String TRANSFER_HOSTS = "transfer-hosts.json";
     public static final String BOOKMARKS_FILE = "bookmarks.json";
-    private static final String PATH_MESSAGES_FILE= "i18n/messages";
+    private static final String PATH_MESSAGES_FILE = "i18n/messages";
     public static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     public static final SnippetManager SNIPPET_MANAGER = new SnippetManager();
     public static final boolean IS_MAC = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH)
@@ -59,9 +57,15 @@ public class App {
     public static ResourceBundle bundle;
     public static AppSkin SKIN;
     private static Settings settings;
+
+    @Getter
     private static InputBlocker inputBlocker;
+
+    @Getter
     private static ExternalEditorHandler externalEditorHandler;
     private static AppWindow mw;
+
+    @Getter
     private static Map<String, List<String>> pinnedLogs = new HashMap<>();
 
     static {
@@ -83,10 +87,10 @@ public class App {
         boolean firstRun = false;
 
         //Checks if the parameter muonPath is set in the startup
-        String muonPath= System.getProperty("muonPath");
-        boolean isMuonPath=false;
-        if (muonPath != null && !muonPath.isEmpty()){
-            System.out.println("Muon path: "+muonPath);
+        String muonPath = System.getProperty("muonPath");
+        boolean isMuonPath = false;
+        if (muonPath != null && !muonPath.isEmpty()) {
+            System.out.println("Muon path: " + muonPath);
             CONFIG_DIR = muonPath;
             isMuonPath = true;
         }
@@ -94,8 +98,8 @@ public class App {
         File appDir = new File(CONFIG_DIR);
         if (!appDir.exists()) {
             //Validate if the config directory can be created
-            if(!appDir.mkdirs()){
-                System.err.println("The config directory for moun cannot be created: "+ CONFIG_DIR);
+            if (!appDir.mkdirs()) {
+                System.err.println("The config directory for moun cannot be created: " + CONFIG_DIR);
                 System.exit(1);
             }
             firstRun = true;
@@ -112,7 +116,7 @@ public class App {
             SessionExportImport.importOnFirstRun();
         }
 
-        if (settings.getEditors().size() == 0) {
+        if (settings.getEditors().isEmpty()) {
             System.out.println("Searching for known editors...");
             settings.setEditors(PlatformUtils.getKnownEditors());
             saveSettings();
@@ -122,7 +126,6 @@ public class App {
         setBundleLanguage();
         Constants.TransferMode.update();
         Constants.ConflictAction.update();
-
 
 
         SKIN = settings.isUseGlobalDarkTheme() ? new AppSkinDark() : new AppSkinLight();
@@ -152,9 +155,7 @@ public class App {
         mw = new AppWindow();
         inputBlocker = new GraphicalInputBlocker(mw);
         externalEditorHandler = new ExternalEditorHandler(mw);
-        SwingUtilities.invokeLater(() -> {
-            mw.setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> mw.setVisible(true));
 
         try {
             File knownHostFile = new File(App.CONFIG_DIR, "known_hosts");
@@ -167,13 +168,13 @@ public class App {
         mw.createFirstSessionPanel();
     }
 
-    public synchronized static void loadSettings() {
+    public static synchronized void loadSettings() {
         File file = new File(CONFIG_DIR, CONFIG_DB_FILE);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
             try {
-                settings = objectMapper.readValue(file, new TypeReference<Settings>() {
+                settings = objectMapper.readValue(file, new TypeReference<>() {
                 });
                 return;
             } catch (IOException e) {
@@ -183,13 +184,13 @@ public class App {
         settings = new Settings();
     }
 
-    public synchronized static Settings loadSettings2() {
+    public static synchronized Settings loadSettings2() {
         File file = new File(CONFIG_DIR, CONFIG_DB_FILE);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
             try {
-                settings = objectMapper.readValue(file, new TypeReference<Settings>() {
+                settings = objectMapper.readValue(file, new TypeReference<>() {
                 });
                 return settings;
             } catch (IOException e) {
@@ -200,7 +201,7 @@ public class App {
         return settings;
     }
 
-    public synchronized static void saveSettings() {
+    public static synchronized void saveSettings() {
         File file = new File(CONFIG_DIR, CONFIG_DB_FILE);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -210,52 +211,31 @@ public class App {
         }
     }
 
-    public synchronized static Settings getGlobalSettings() {
+    public static synchronized Settings getGlobalSettings() {
         return settings;
-    }
-
-    /**
-     * @return the inputBlocker
-     */
-    public static InputBlocker getInputBlocker() {
-        return inputBlocker;
-    }
-
-    /**
-     * @return the externalEditorHandler
-     */
-    public static ExternalEditorHandler getExternalEditorHandler() {
-        return externalEditorHandler;
     }
 
     public static SessionContentPanel getSessionContainer(int activeSessionId) {
         return mw.getSessionListPanel().getSessionContainer(activeSessionId);
     }
 
-    /**
-     * @return the pinnedLogs
-     */
-    public static Map<String, List<String>> getPinnedLogs() {
-        return pinnedLogs;
-    }
-
-    public synchronized static void loadPinnedLogs() {
+    public static synchronized void loadPinnedLogs() {
         File file = new File(CONFIG_DIR, PINNED_LOGS);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
             try {
-                pinnedLogs = objectMapper.readValue(file, new TypeReference<Map<String, List<String>>>() {
+                pinnedLogs = objectMapper.readValue(file, new TypeReference<>() {
                 });
                 return;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        pinnedLogs = new HashMap<String, List<String>>();
+        pinnedLogs = new HashMap<>();
     }
 
-    public synchronized static void savePinnedLogs() {
+    public static synchronized void savePinnedLogs() {
         File file = new File(CONFIG_DIR, PINNED_LOGS);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
@@ -286,13 +266,13 @@ public class App {
     }
 
     //Set the bundle language
-    private static void setBundleLanguage(){
+    private static void setBundleLanguage() {
         Language language = Language.ENGLISH;
-        if (settings != null && settings.getLanguage() != null){
+        if (settings != null && settings.getLanguage() != null) {
             language = settings.getLanguage();
         }
 
-        Locale locale =  new Locale.Builder().setLanguage(language.getLangAbbr()).build();
+        Locale locale = new Locale.Builder().setLanguage(language.getLangAbbr()).build();
         bundle = ResourceBundle.getBundle(PATH_MESSAGES_FILE, locale);
 
     }

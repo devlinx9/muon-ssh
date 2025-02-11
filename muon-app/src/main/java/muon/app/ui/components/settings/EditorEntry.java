@@ -1,5 +1,10 @@
 package muon.app.ui.components.settings;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class EditorEntry {
     private String name;
     private String path;
@@ -13,19 +18,4 @@ public class EditorEntry {
         this.path = path;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
 }

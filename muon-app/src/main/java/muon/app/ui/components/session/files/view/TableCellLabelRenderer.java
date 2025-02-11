@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.view;
 
+import lombok.Getter;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileType;
@@ -16,6 +17,7 @@ public class TableCellLabelRenderer implements TableCellRenderer {
     private final JLabel textLabel;
     private final JLabel iconLabel;
     private final JLabel label;
+    @Getter
     private final int height;
     private final Color foreground;
 
@@ -54,10 +56,6 @@ public class TableCellLabelRenderer implements TableCellRenderer {
         label.setOpaque(true);
     }
 
-    public int getHeight() {
-        return height;
-    }
-
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
                                                    int row, int column) {
@@ -86,7 +84,7 @@ public class TableCellLabelRenderer implements TableCellRenderer {
                 label.setText(FormatUtils.formatDate(ent.getLastModified()));
                 break;
             case 2:
-                if (ent.getType() == FileType.Directory || ent.getType() == FileType.DirLink) {
+                if (ent.getType() == FileType.DIRECTORY || ent.getType() == FileType.DIR_LINK) {
                     label.setText("");
                 } else {
                     label.setText(FormatUtils.humanReadableByteCount(ent.getSize(), true));

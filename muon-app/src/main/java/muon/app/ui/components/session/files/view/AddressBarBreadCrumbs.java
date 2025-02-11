@@ -69,8 +69,7 @@ public class AddressBarBreadCrumbs extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        Dimension d = getLayout().preferredLayoutSize(this);
-        return d;
+        return getLayout().preferredLayoutSize(this);
     }
 
     public void setPath(String path) {
@@ -87,7 +86,7 @@ public class AddressBarBreadCrumbs extends JPanel {
         segments = path.split(unix ? "\\/" : "\\\\");
         for (int i = 0; i < segments.length; i++) {
             String text = segments[i];
-            if (text.length() < 1)
+            if (text.isEmpty())
                 continue;
             JButton btn = new JButton(segments[i]);
             btn.putClientProperty("Nimbus.Overrides", this.toolBarButtonSkin);
@@ -113,34 +112,22 @@ public class AddressBarBreadCrumbs extends JPanel {
     }
 
     private void createAddressButtonStyle() {
-        Painter<JButton> toolBarButtonPainterNormal = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width,
-                              int height) {
-                if (object
-                        .getClientProperty("path.index.last") == Boolean.TRUE) {
-                    g.setColor(App.SKIN.getAddressBarSelectionBackground());
-                    g.fillRect(0, 0, width - 1, height - 1);
-                }
-            }
-        };
-
-        Painter<JButton> toolBarButtonPainterHot = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width,
-                              int height) {
-                g.setColor(App.SKIN.getAddressBarRolloverBackground());
-                g.fillRect(0, 0, width - 1, height - 1);
-            }
-        };
-
-        Painter<JButton> toolBarButtonPainterPressed = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width,
-                              int height) {
+        Painter<JButton> toolBarButtonPainterNormal = (g, object, width, height) -> {
+            if (object
+                    .getClientProperty("path.index.last") == Boolean.TRUE) {
                 g.setColor(App.SKIN.getAddressBarSelectionBackground());
                 g.fillRect(0, 0, width - 1, height - 1);
             }
+        };
+
+        Painter<JButton> toolBarButtonPainterHot = (g, object, width, height) -> {
+            g.setColor(App.SKIN.getAddressBarRolloverBackground());
+            g.fillRect(0, 0, width - 1, height - 1);
+        };
+
+        Painter<JButton> toolBarButtonPainterPressed = (g, object, width, height) -> {
+            g.setColor(App.SKIN.getAddressBarSelectionBackground());
+            g.fillRect(0, 0, width - 1, height - 1);
         };
 
         toolBarButtonSkin.put("Button.contentMargins", new Insets(2, 8, 2, 8));

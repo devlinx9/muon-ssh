@@ -27,10 +27,9 @@ public class LocalFileSystem implements FileSystem {
         }
         Path p = f.toPath();
         BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
-        FileInfo info = new FileInfo(f.getName(), path, f.length(),
-                f.isDirectory() ? FileType.Directory : FileType.File, f.lastModified(), -1, PROTO_LOCAL_FILE, "",
-                attrs.creationTime().toMillis(), "", f.isHidden());
-        return info;
+        return new FileInfo(f.getName(), path, f.length(),
+                            f.isDirectory() ? FileType.DIRECTORY : FileType.FILE, f.lastModified(), -1, PROTO_LOCAL_FILE, "",
+                            attrs.creationTime().toMillis(), "", f.isHidden());
     }
 
     @Override
@@ -40,7 +39,7 @@ public class LocalFileSystem implements FileSystem {
 
     @Override
     public List<FileInfo> list(String path) throws Exception {
-        if (path == null || path.length() < 1) {
+        if (path == null || path.isEmpty()) {
             path = System.getProperty("user.home");
         }
         if (!path.endsWith(File.separator)) {
@@ -56,8 +55,8 @@ public class LocalFileSystem implements FileSystem {
                 Path p = f.toPath();
                 BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
                 FileInfo info = new FileInfo(f.getName(), f.getAbsolutePath(), f.length(),
-                        f.isDirectory() ? FileType.Directory : FileType.File, f.lastModified(), -1, PROTO_LOCAL_FILE,
-                        "", attrs.creationTime().toMillis(), "", f.isHidden());
+                                             f.isDirectory() ? FileType.DIRECTORY : FileType.FILE, f.lastModified(), -1, PROTO_LOCAL_FILE,
+                                             "", attrs.creationTime().toMillis(), "", f.isHidden());
                 list.add(info);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -90,17 +89,15 @@ public class LocalFileSystem implements FileSystem {
     }
 
     public synchronized void delete(FileInfo f) throws Exception {
-        if (f.getType() == FileType.Directory) {
+        if (f.getType() == FileType.DIRECTORY) {
             List<FileInfo> list = list(f.getPath());
-            if (list != null && list.size() > 0) {
+            if (list != null && !list.isEmpty()) {
                 for (FileInfo fc : list) {
                     delete(fc);
                 }
             }
-            new File(f.getPath()).delete();
-        } else {
-            new File(f.getPath()).delete();
         }
+        new File(f.getPath()).delete();
     }
 
     @Override
@@ -134,7 +131,7 @@ public class LocalFileSystem implements FileSystem {
 
         List<FileInfo> list = list(dir);
         for (FileInfo f : list) {
-            if (f.getType() == FileType.Directory) {
+            if (f.getType() == FileType.DIRECTORY) {
                 folderMap.put(f.getPath(), PathUtils.combineUnix(parentFolder, f.getName()));
                 size += getAllFiles(f.getPath(), parentFolder, fileMap, folderMap);
             } else {
@@ -170,7 +167,7 @@ public class LocalFileSystem implements FileSystem {
         Files.createFile(Paths.get(path));
     }
 
-    public void createLink(String src, String dst, boolean hardLink) throws Exception {
+    public void createLink(String src, String dst, boolean hardLink) {
 
     }
 
@@ -180,7 +177,7 @@ public class LocalFileSystem implements FileSystem {
     }
 
     @Override
-    public String[] getRoots() throws Exception {
+    public String[] getRoots() {
         File[] roots = File.listRoots();
         String[] arr = new String[roots.length];
         int i = 0;
@@ -191,7 +188,7 @@ public class LocalFileSystem implements FileSystem {
     }
 
     public InputTransferChannel inputTransferChannel() throws Exception {
-        InputTransferChannel tc = new InputTransferChannel() {
+        return new InputTransferChannel() {
             @Override
             public InputStream getInputStream(String path) throws Exception {
                 return new FileInputStream(path);
@@ -208,11 +205,10 @@ public class LocalFileSystem implements FileSystem {
             }
 
         };
-        return tc;
     }
 
     public OutputTransferChannel outputTransferChannel() throws Exception {
-        OutputTransferChannel tc = new OutputTransferChannel() {
+        return new OutputTransferChannel() {
             @Override
             public OutputStream getOutputStream(String path) throws Exception {
                 return new FileOutputStream(path);
@@ -223,7 +219,6 @@ public class LocalFileSystem implements FileSystem {
                 return File.separator;
             }
         };
-        return tc;
     }
 
     public String getSeparator() {

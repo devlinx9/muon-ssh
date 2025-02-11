@@ -146,18 +146,14 @@ public class PortViewer extends UtilPageItemView {
 
         add(b1, BorderLayout.NORTH);
 
-        btnFilter.addActionListener(e -> {
-            filter();
-        });
+        btnFilter.addActionListener(e -> filter());
         table.setAutoCreateRowSorter(true);
         add(new SkinnedScrollPane(table));
 
         Box box = Box.createHorizontalBox();
         box.setBorder(new EmptyBorder(10, 0, 0, 0));
         btnRefresh = new JButton(bundle.getString("refresh"));
-        btnRefresh.addActionListener(e -> {
-            getListingSockets();
-        });
+        btnRefresh.addActionListener(e -> getListingSockets());
 
         chkRunAsSuperUser = new JCheckBox(
                 bundle.getString("actions_sudo"));
@@ -221,9 +217,7 @@ public class PortViewer extends UtilPageItemView {
                                         "Command was: " + cmd + " " + output);
                                 java.util.List<SocketEntry> list = this
                                         .parseSocketList(output.toString());
-                                SwingUtilities.invokeAndWait(() -> {
-                                    setSocketData(list);
-                                });
+                                SwingUtilities.invokeAndWait(() -> setSocketData(list));
                                 return;
                             }
                             System.out.println("Error: " + output);

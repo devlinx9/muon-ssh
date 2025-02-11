@@ -81,57 +81,28 @@ public class LocalMenuHandler {
         });
 
         mDelete = new JMenuItem(bundle.getString("delete"));
-        mDelete.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                delete(folderView.getSelectedFiles());
-            }
-        });
+        mDelete.addActionListener(e -> delete(folderView.getSelectedFiles()));
 
         mNewFile = new JMenuItem(bundle.getString("new_file"));
-        mNewFile.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                newFile();
-            }
-        });
+        mNewFile.addActionListener(e -> newFile());
 
         mNewFolder = new JMenuItem(bundle.getString("new_folder"));
-        mNewFolder.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                newFolder(fileBrowserView.getCurrentDirectory());
-            }
-        });
+        mNewFolder.addActionListener(e -> newFolder(fileBrowserView.getCurrentDirectory()));
 
         mCopy = new JMenuItem(bundle.getString("copy"));
-        mCopy.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
+        mCopy.addActionListener(e -> {
         });
 
         mPaste = new JMenuItem(bundle.getString("paste"));
-        mPaste.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
+        mPaste.addActionListener(e -> {
         });
 
         mCut = new JMenuItem(bundle.getString("cut"));
-        mCut.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            }
+        mCut.addActionListener(e -> {
         });
 
         mAddToFav = new JMenuItem(bundle.getString("bookmark"));
-        mAddToFav.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addToFavourites();
-            }
-        });
+        mAddToFav.addActionListener(e -> addToFavourites());
     }
 
     public void createMenu(JPopupMenu popup, FileInfo[] selectedFiles) {
@@ -147,10 +118,10 @@ public class LocalMenuHandler {
 
     private void createBuitinItems1(int selectionCount, JPopupMenu popup, FileInfo[] selectedFiles) {
         if (selectionCount == 1) {
-            if (selectedFiles[0].getType() == FileType.File || selectedFiles[0].getType() == FileType.FileLink) {
+            if (selectedFiles[0].getType() == FileType.FILE || selectedFiles[0].getType() == FileType.FILE_LINK) {
                 popup.add(mOpen);
             }
-            if (selectedFiles[0].getType() == FileType.Directory || selectedFiles[0].getType() == FileType.DirLink) {
+            if (selectedFiles[0].getType() == FileType.DIRECTORY || selectedFiles[0].getType() == FileType.DIR_LINK) {
                 popup.add(mOpenInNewTab);
                 popup.add(mOpenInFileExplorer);
             }
@@ -170,7 +141,7 @@ public class LocalMenuHandler {
         FileInfo[] files = folderView.getSelectedFiles();
         if (files.length == 1) {
             FileInfo file = files[0];
-            if (file.getType() == FileType.FileLink || file.getType() == FileType.File) {
+            if (file.getType() == FileType.FILE_LINK || file.getType() == FileType.FILE) {
             }
         }
     }
@@ -179,7 +150,7 @@ public class LocalMenuHandler {
         FileInfo[] files = folderView.getSelectedFiles();
         if (files.length == 1) {
             FileInfo file = files[0];
-            if (file.getType() == FileType.Directory || file.getType() == FileType.DirLink) {
+            if (file.getType() == FileType.DIRECTORY || file.getType() == FileType.DIR_LINK) {
                 fileBrowser.openLocalFileBrowserView(file.getPath(), this.fileBrowserView.getOrientation());
             }
         }
@@ -187,7 +158,7 @@ public class LocalMenuHandler {
 
     private void rename(FileInfo info, String baseFolder) {
         String text = JOptionPane.showInputDialog(bundle.getString("enter_new_name"), info.getName());
-        if (text != null && text.length() > 0) {
+        if (text != null && !text.isEmpty()) {
             renameAsync(info.getPath(), PathUtils.combineUnix(PathUtils.getParent(info.getPath()), text), baseFolder);
         }
     }
@@ -246,8 +217,8 @@ public class LocalMenuHandler {
 
         if (arr.length > 0) {
             BookmarkManager.addEntry(null,
-                    Arrays.asList(arr).stream()
-                            .filter(a -> a.getType() == FileType.DirLink || a.getType() == FileType.Directory)
+                                     Arrays.stream(arr)
+                            .filter(a -> a.getType() == FileType.DIR_LINK || a.getType() == FileType.DIRECTORY)
                             .map(a -> a.getPath()).collect(Collectors.toList()));
         } else if (arr.length == 0) {
             BookmarkManager.addEntry(null, fileBrowserView.getCurrentDirectory());

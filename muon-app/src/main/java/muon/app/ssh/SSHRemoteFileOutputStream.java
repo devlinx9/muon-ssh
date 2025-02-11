@@ -3,6 +3,8 @@
  */
 package muon.app.ssh;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.schmizz.sshj.sftp.RemoteFile;
 
 import java.io.IOException;
@@ -13,6 +15,8 @@ import java.io.OutputStream;
  *
  */
 public class SSHRemoteFileOutputStream extends OutputStream {
+    @Setter
+    @Getter
     private int bufferCapacity;
     private final RemoteFile remoteFile;
     private final OutputStream remoteFileOutputStream;
@@ -52,14 +56,6 @@ public class SSHRemoteFileOutputStream extends OutputStream {
     public void flush() throws IOException {
         System.out.println(this.getClass().getName() + " flushing");
         this.remoteFileOutputStream.flush();
-    }
-
-    public int getBufferCapacity() {
-        return bufferCapacity;
-    }
-
-    public void setBufferCapacity(int bufferCapacity) {
-        this.bufferCapacity = bufferCapacity;
     }
 
 }

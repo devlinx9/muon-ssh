@@ -1,5 +1,8 @@
 package util;
 
+import lombok.Getter;
+
+@Getter
 public enum Language {
     ENGLISH("en", "English"),
     CHINESE("cn", "Chinese"),
@@ -14,14 +17,6 @@ public enum Language {
     Language(String langAbbr, String full) {
         this.full = full;
         this.langAbbr = langAbbr;
-    }
-
-    public String getFull() {
-        return full;
-    }
-
-    public String getLangAbbr() {
-        return langAbbr;
     }
 
     @Override

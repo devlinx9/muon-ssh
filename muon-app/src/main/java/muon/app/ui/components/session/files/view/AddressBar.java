@@ -37,9 +37,7 @@ public class AddressBar extends JPanel {
         btnRoot.putClientProperty("Nimbus.Overrides", toolbarSkin);
         btnRoot.setFont(App.SKIN.getIconFont());
         btnRoot.setText("\uf0a0");
-        btnRoot.addActionListener(e -> {
-            createAndShowPopup();
-        });
+        btnRoot.addActionListener(e -> createAndShowPopup());
 
         DefaultComboBoxModel<String> model1 = new DefaultComboBoxModel<>();
         txtAddressBar = new JComboBox<>(model1);

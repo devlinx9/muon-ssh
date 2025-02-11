@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class FileIconUtil {
     public static String getIconForType(FileInfo ent) {
-        if (ent.getType() == FileType.Directory || ent.getType() == FileType.DirLink) {
+        if (ent.getType() == FileType.DIRECTORY || ent.getType() == FileType.DIR_LINK) {
             return FontAwesomeContants.FA_FOLDER;
         }
         String name = ent.getName().toLowerCase(Locale.ENGLISH);
