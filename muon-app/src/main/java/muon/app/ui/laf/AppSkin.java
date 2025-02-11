@@ -4,7 +4,9 @@
 package muon.app.ui.laf;
 
 import lombok.Getter;
+import muon.app.App;
 import muon.app.ui.components.RoundedButtonPainter;
+import util.Language;
 
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -13,7 +15,6 @@ import java.io.InputStream;
 
 /**
  * @author subhro
- *
  */
 public abstract class AppSkin {
     protected UIDefaults defaults;
@@ -33,17 +34,8 @@ public abstract class AppSkin {
     }
 
     private void initDefaults() {
-        //TODO validate this
-//        this.defaults =UIManager.getDefaults();
         this.laf = new NimbusLookAndFeel();
         this.defaults = this.laf.getDefaults();
-//TODO validate this
-//        try {
-//                UIManager.setLookAndFeel(this.laf);
-//        }
-//        catch (javax.swing.UnsupportedLookAndFeelException ue){
-//            ue.printStackTrace();
-//        }
 
         this.defaults.put("defaultFont", loadFonts());
         this.defaults.put("iconFont", loadFontAwesomeFonts());
@@ -69,9 +61,13 @@ public abstract class AppSkin {
     }
 
     protected Font loadFonts() {
+        String fontPath = "/fonts/Helvetica.ttf";
+        if (App.getGlobalSettings().getLanguage().equals(Language.CHINESE)) {
+            fontPath = "/fonts/WenQuanYi-Micro-Hei-Regular.ttf";
+        }
+
         try (InputStream is = AppSkin.class
-//TODO fix this font
-                .getResourceAsStream("/fonts/Helvetica.ttf")) {
+                .getResourceAsStream(fontPath)) {
             Font font = Font.createFont(Font.TRUETYPE_FONT, is);
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
@@ -140,12 +136,12 @@ public abstract class AppSkin {
         };
 
         for (String key : new String[]{"SplitPane:SplitPaneDivider[Enabled].backgroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled+Vertical].foregroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled].backgroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
-                "SplitPane:SplitPaneDivider[Focused].backgroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled].foregroundPainter"}) {
+                                       "SplitPane:SplitPaneDivider[Enabled+Vertical].foregroundPainter",
+                                       "SplitPane:SplitPaneDivider[Enabled].backgroundPainter",
+                                       "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
+                                       "SplitPane:SplitPaneDivider[Focused].backgroundPainter",
+                                       "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
+                                       "SplitPane:SplitPaneDivider[Enabled].foregroundPainter"}) {
             uiDefaults.put(key, painter);
         }
 
