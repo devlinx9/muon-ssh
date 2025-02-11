@@ -39,11 +39,7 @@ public class FileBrowser extends Page {
     @Getter
     private final SessionInfo info;
     private final Map<String, List<FileInfo>> sshDirCache = new HashMap<>();
-    /**
-     * -- GETTER --
-     *
-     * @return the activeSessionId
-     */
+
     @Getter
     private final int activeSessionId;
     private final AtomicBoolean init = new AtomicBoolean(false);
