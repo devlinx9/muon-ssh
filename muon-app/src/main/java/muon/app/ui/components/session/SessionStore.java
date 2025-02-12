@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.PasswordStore;
+import util.Constants;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -21,7 +22,7 @@ import java.util.List;
 public class SessionStore {
 
     public static synchronized SavedSessionTree load() {
-        File file = Paths.get(App.CONFIG_DIR, App.SESSION_DB_FILE).toFile();
+        File file = Paths.get(App.CONFIG_DIR, Constants.SESSION_DB_FILE).toFile();
         return load(file);
     }
 
@@ -53,7 +54,7 @@ public class SessionStore {
     }
 
     public static synchronized void save(SessionFolder folder, String lastSelectionPath) {
-        File file = Paths.get(App.CONFIG_DIR, App.SESSION_DB_FILE).toFile();
+        File file = Paths.get(App.CONFIG_DIR, Constants.SESSION_DB_FILE).toFile();
         save(folder, lastSelectionPath, file);
     }
 

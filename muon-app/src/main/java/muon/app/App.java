@@ -41,12 +41,6 @@ public class App {
     public static final String UPDATE_URL2 = UPDATE_URL + "/check-update.html?v="
                                              + VERSION.getNumericValue();
     public static String CONFIG_DIR = System.getProperty("user.home") + File.separatorChar + "muon-ssh";
-    public static final String SESSION_DB_FILE = "session-store.json";
-    public static final String CONFIG_DB_FILE = "settings.json";
-    public static final String SNIPPETS_FILE = "snippets.json";
-    public static final String PINNED_LOGS = "pinned-logs.json";
-    public static final String TRANSFER_HOSTS = "transfer-hosts.json";
-    public static final String BOOKMARKS_FILE = "bookmarks.json";
     private static final String PATH_MESSAGES_FILE = "i18n/messages";
     public static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     public static final SnippetManager SNIPPET_MANAGER = new SnippetManager();
@@ -169,24 +163,8 @@ public class App {
         mw.createFirstSessionPanel();
     }
 
-    public static synchronized void loadSettings() {
-        File file = new File(CONFIG_DIR, CONFIG_DB_FILE);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        if (file.exists()) {
-            try {
-                settings = objectMapper.readValue(file, new TypeReference<>() {
-                });
-                return;
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        settings = new Settings();
-    }
-
-    public static synchronized Settings loadSettings2() {
-        File file = new File(CONFIG_DIR, CONFIG_DB_FILE);
+    public static synchronized Settings loadSettings() {
+        File file = new File(CONFIG_DIR, Constants.CONFIG_DB_FILE);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
@@ -203,7 +181,7 @@ public class App {
     }
 
     public static synchronized void saveSettings() {
-        File file = new File(CONFIG_DIR, CONFIG_DB_FILE);
+        File file = new File(CONFIG_DIR, Constants.CONFIG_DB_FILE);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(file, settings);
@@ -221,7 +199,7 @@ public class App {
     }
 
     public static synchronized void loadPinnedLogs() {
-        File file = new File(CONFIG_DIR, PINNED_LOGS);
+        File file = new File(CONFIG_DIR, Constants.PINNED_LOGS);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
@@ -237,7 +215,7 @@ public class App {
     }
 
     public static synchronized void savePinnedLogs() {
-        File file = new File(CONFIG_DIR, PINNED_LOGS);
+        File file = new File(CONFIG_DIR, Constants.PINNED_LOGS);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(file, pinnedLogs);

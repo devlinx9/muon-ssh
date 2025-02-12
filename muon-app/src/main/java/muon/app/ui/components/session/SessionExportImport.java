@@ -153,9 +153,9 @@ public class SessionExportImport {
                     new TypeReference<>() {
                     });
             save(savedSessionTree.getFolder(), savedSessionTree.getLastSelection(),
-                    new File(App.CONFIG_DIR, App.SESSION_DB_FILE));
+                    new File(App.CONFIG_DIR, Constants.SESSION_DB_FILE));
             Files.copy(Paths.get(System.getProperty("user.home"), "muon-ssh", "snippets.json"),
-                    Paths.get(App.CONFIG_DIR, App.SNIPPETS_FILE));
+                    Paths.get(App.CONFIG_DIR, Constants.SNIPPETS_FILE));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

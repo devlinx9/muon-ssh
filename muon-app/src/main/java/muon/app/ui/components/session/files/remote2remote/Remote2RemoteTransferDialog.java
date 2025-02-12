@@ -12,6 +12,7 @@ import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.NewSessionDlg;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
+import util.Constants;
 import util.FontAwesomeContants;
 
 import javax.swing.*;
@@ -243,7 +244,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
         for (int i = 0; i < remoteHostModel.size(); i++) {
             list.add(remoteHostModel.get(i));
         }
-        File file = new File(App.CONFIG_DIR, App.TRANSFER_HOSTS);
+        File file = new File(App.CONFIG_DIR, Constants.TRANSFER_HOSTS);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(file, list);
@@ -255,7 +256,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
     }
 
     private List<RemoteServerEntry> load() {
-        File file = new File(App.CONFIG_DIR, App.TRANSFER_HOSTS);
+        File file = new File(App.CONFIG_DIR, Constants.TRANSFER_HOSTS);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {

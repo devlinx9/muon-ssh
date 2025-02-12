@@ -40,22 +40,22 @@ Muon ha sido probado con varios servidores Linux y UNIX, como el servidor Ubuntu
   </tr>
 <tr>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.2.0/muonssh_2.2.0.deb">v2.2.0</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.3.0/muonssh_2.3.0.deb">v2.3.0</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.2.0/muonssh_2.2.0.exe">Exe file</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.3.0/muonssh_2.3.0.exe">Exe file</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.2.0/muonssh_2.2.0.deb">DEB installer</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.3.0/muonssh_2.3.0.deb">DEB installer</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.2.0/muonssh_2.2.0.dmg">DMG installer</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.3.0/muonssh_2.3.0.dmg">DMG installer</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.2.0/muonssh_2.2.0.jar">Generic installer</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.3.0/muonssh_2.3.0.jar">Generic installer</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.2.0/muonssh_2.2.0.jar">Portable JAR (Java 11)</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.3.0/muonssh_2.3.0.jar">Portable JAR (Java 11)</a>
     </td>
   </tr>
   <tr>

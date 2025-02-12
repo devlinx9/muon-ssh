@@ -1,5 +1,5 @@
 name: muon
-version: "2.2.0"
+version: "2.3.0"
 summary: Graphical SFTP client and terminal emulator with helpful utilities
 description: |
   Muon is a graphical SSH client. It has a file browser,
@@ -15,7 +15,7 @@ confinement: strict
 
 apps:
   muon:
-    command: java -jar $SNAP/jar/muonssh_2.2.0.jar
+    command: java -jar $SNAP/jar/muonssh_2.3.0.jar
     common-id: muonssh.desktop
     environment:
       # Needed for fontconfig

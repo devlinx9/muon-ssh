@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.terminal.snippets.SnippetItem;
+import util.Constants;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +23,7 @@ public class SnippetManager {
     private List<SnippetItem> snippetItems = new ArrayList<>();
 
     public synchronized void loadSnippets() {
-        File file = new File(App.CONFIG_DIR, App.SNIPPETS_FILE);
+        File file = new File(App.CONFIG_DIR, Constants.SNIPPETS_FILE);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(
                 DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -39,7 +40,7 @@ public class SnippetManager {
     }
 
     public synchronized void saveSnippets() {
-        File file = new File(App.CONFIG_DIR, App.SNIPPETS_FILE);
+        File file = new File(App.CONFIG_DIR, Constants.SNIPPETS_FILE);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(file, snippetItems);
