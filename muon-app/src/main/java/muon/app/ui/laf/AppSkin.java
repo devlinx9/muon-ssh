@@ -5,16 +5,15 @@ package muon.app.ui.laf;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import muon.app.App;
 import muon.app.ui.components.RoundedButtonPainter;
 import muon.app.ui.components.session.files.view.AddressBarBreadCrumbs;
-import util.Language;
 
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
-import java.io.InputStream;
-import java.util.Objects;
+
+import static util.FontUtils.loadFontAwesomeFonts;
+import static util.FontUtils.loadFonts;
 
 /**
  * @author subhro
@@ -56,34 +55,6 @@ public abstract class AppSkin {
         Painter<? extends JComponent> treeCellFocusPainter = (g, object, width, height) -> {
         };
         this.defaults.put("Tree:TreeCell[Enabled+Focused].backgroundPainter", treeCellFocusPainter);
-    }
-
-    protected Font loadFonts() {
-        String fontPath = "/fonts/Helvetica.ttf";
-        if (App.getGlobalSettings().getLanguage().equals(Language.CHINESE)) {
-            fontPath = "/fonts/WenQuanYi-Micro-Hei-Regular.ttf";
-        }
-
-        try (InputStream is = AppSkin.class
-                .getResourceAsStream(fontPath)) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
-            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            ge.registerFont(font);
-            return font.deriveFont(Font.PLAIN, 12.0f);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    protected Font loadFontAwesomeFonts() {
-        try (InputStream is = AppSkin.class.getResourceAsStream("/fonts/fontawesome-webfont.ttf")) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
-            return font.deriveFont(Font.PLAIN, 14f);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return null;
     }
 
     public Color getDefaultBackground() {
