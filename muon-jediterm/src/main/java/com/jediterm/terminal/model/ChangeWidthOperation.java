@@ -32,7 +32,7 @@ class ChangeWidthOperation {
     Point getTrackedPoint(Point original) {
         Point result = myTrackingPoints.get(new Point(original));
         if (result == null) {
-            log.warn("Not tracked point: " + original);
+            log.warn("Not tracked point: {}", original);
             return original;
         }
         return result;
@@ -54,9 +54,7 @@ class ChangeWidthOperation {
         }
         LinesBuffer screenBuffer = myTextBuffer.getScreenBufferOrBackup();
         if (screenBuffer.getLineCount() > myTextBuffer.getHeight()) {
-            log.warn("Terminal height < screen buffer line count: "
-                     + myTextBuffer.getHeight() + " < "
-                     + screenBuffer.getLineCount());
+            log.warn("Terminal height < screen buffer line count: {} < {}", myTextBuffer.getHeight(), screenBuffer.getLineCount());
         }
         int oldScreenLineCount = Math.min(screenBuffer.getLineCount(),
                                           myTextBuffer.getHeight());

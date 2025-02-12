@@ -112,10 +112,10 @@ public class CharUtils {
 	}
 
 	/**
-	 * Computes text length as sum of characters length, treating
-	 * double-width(full-width) characters as 2, normal-width(half-width) as 1
-	 * (Read http://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms)
-	 */
+     * Computes text length as sum of characters length, treating
+     * double-width(full-width) characters as 2, normal-width(half-width) as 1
+     * (Read <a href="http://en.wikipedia.org/wiki/Halfwidth_and_fullwidth_forms">...</a>)
+     */
 	public static int getTextLengthDoubleWidthAware(char[] buffer, int start,
 			int length, boolean ambiguousIsDWC) {
 		int result = 0;

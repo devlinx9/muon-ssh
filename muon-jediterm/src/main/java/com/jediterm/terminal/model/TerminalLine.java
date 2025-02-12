@@ -318,12 +318,11 @@ public class TerminalLine {
 	@Override
 	public String toString() {
 		return myTextEntries.length() + " chars, "
-				+ (myWrapped ? "wrapped, " : "")
-				+ myTextEntries.myTextEntries.size() + " entries: "
-				+ String.join("|",
-						myTextEntries.myTextEntries.stream()
-								.map(entry -> entry.getText().toString())
-								.collect(Collectors.toList()));
+               + (myWrapped ? "wrapped, " : "")
+               + myTextEntries.myTextEntries.size() + " entries: "
+               + myTextEntries.myTextEntries.stream()
+                       .map(entry -> entry.getText().toString())
+                       .collect(Collectors.joining("|"));
 	}
 
 	public static class TextEntry {

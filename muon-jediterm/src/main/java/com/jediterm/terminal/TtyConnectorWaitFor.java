@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 public class TtyConnectorWaitFor {
 
   private final Future<?> myWaitForThreadFuture;
-  private final BlockingQueue<Predicate<Integer>> myTerminationCallback = new ArrayBlockingQueue<Predicate<Integer>>(1);
+  private final BlockingQueue<Predicate<Integer>> myTerminationCallback = new ArrayBlockingQueue<>(1);
 
   public void detach() {
     myWaitForThreadFuture.cancel(true);

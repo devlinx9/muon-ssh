@@ -3,7 +3,6 @@ package com.jediterm.terminal.model.hyperlinks;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

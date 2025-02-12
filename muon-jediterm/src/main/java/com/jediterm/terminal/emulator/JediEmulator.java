@@ -135,7 +135,7 @@ public class JediEmulator extends DataStreamIteratingEmulator {
         final SystemCommandSequence command = new SystemCommandSequence(myDataStream);
 
         if (!operatingSystemCommand(command)) {
-          log.error("Error processing OSC " + command.getSequenceString());
+            log.error("Error processing OSC {}", command.getSequenceString());
         }
         break;
       case '6':
@@ -204,7 +204,7 @@ public class JediEmulator extends DataStreamIteratingEmulator {
         case 2: //Title
           String name = args.getStringAt(1);
           if (name != null) {
-        	  log.debug("***************name: "+name);
+              log.debug("***************name: {}", name);
             myTerminal.setWindowTitle(name);
             return true;
           }
@@ -212,7 +212,7 @@ public class JediEmulator extends DataStreamIteratingEmulator {
         case 7: //Path
           String path = args.getStringAt(1);
           if (path != null) {
-        	  log.debug("***************path: "+path);
+              log.debug("***************path: {}", path);
             myTerminal.setCurrentPath(path);
             return true;
           }
@@ -263,13 +263,11 @@ public class JediEmulator extends DataStreamIteratingEmulator {
         }
         break;
       case '#':
-        switch (secondCh) {
-          case '8':
-            terminal.fillScreen('E');
-            break;
-          default:
-            unsupported(ch, secondCh);
-        }
+          if (secondCh == '8') {
+              terminal.fillScreen('E');
+          } else {
+              unsupported(ch, secondCh);
+          }
         break;
       case '%':
         switch (secondCh) {
@@ -433,25 +431,22 @@ public class JediEmulator extends DataStreamIteratingEmulator {
 
   private boolean windowManipulation(ControlSequence args) {
     // CSI Ps ; Ps ; Ps t
-    switch (args.getArg(0, -1)) {
-      case 8:
-//        Ps = 8  ;  height ;  width -> Resize the text area to given
+      if (args.getArg(0, -1) == 8) {//        Ps = 8  ;  height ;  width -> Resize the text area to given
 //        height and width in characters.  Omitted parameters reuse the
 //        current height or width.  Zero parameters use the display's
 //        height or width.
-        int width = args.getArg(2, 0);
-        int height = args.getArg(1, 0);
-        if (width == 0) {
-          width = myTerminal.getTerminalWidth();
-        }
-        if (height == 0) {
-          height = myTerminal.getTerminalHeight();
-        }
-        myTerminal.resize(new Dimension(width, height), RequestOrigin.Remote);
-        return true;
-      default:
-        return false;
-    }
+          int width = args.getArg(2, 0);
+          int height = args.getArg(1, 0);
+          if (width == 0) {
+              width = myTerminal.getTerminalWidth();
+          }
+          if (height == 0) {
+              height = myTerminal.getTerminalHeight();
+          }
+          myTerminal.resize(new Dimension(width, height), RequestOrigin.Remote);
+          return true;
+      }
+      return false;
   }
 
   private boolean tabClear(int mode) {
@@ -605,7 +600,7 @@ public class JediEmulator extends DataStreamIteratingEmulator {
   }
 
   private boolean restoreDecPrivateModeValues(ControlSequence args) {
-    log.error("Unsupported: " + args.toString());
+      log.error("Unsupported: {}", args.toString());
 
     return false;
   }
@@ -618,7 +613,7 @@ public class JediEmulator extends DataStreamIteratingEmulator {
     int c = args.getArg(0, 0);
     if (c == 5) {
       String str = "\033[0n";
-      log.debug("Sending Device Report Status : " + str);
+        log.debug("Sending Device Report Status : {}", str);
       myTerminal.deviceStatusReport(str);
       return true;
     } else if (c == 6) {
@@ -626,11 +621,11 @@ public class JediEmulator extends DataStreamIteratingEmulator {
       int column = myTerminal.getCursorX();
       String str = "\033[" + row + ";" + column + "R";
 
-      log.debug("Sending Device Report Status : " + str);
+        log.debug("Sending Device Report Status : {}", str);
       myTerminal.deviceStatusReport(str);
       return true;
     } else {
-      log.error("Sending Device Report Status : unsupported parameter: " + args);
+        log.error("Sending Device Report Status : unsupported parameter: {}", args);
       return false;
     }
   }
@@ -658,7 +653,7 @@ public class JediEmulator extends DataStreamIteratingEmulator {
         myTerminal.cursorShape(CursorShape.STEADY_VERTICAL_BAR);
         return true;
       default:
-        log.error("Setting cursor shape : unsupported parameter " + args);
+          log.error("Setting cursor shape : unsupported parameter {}", args);
         return false;
     }
   }
@@ -837,7 +832,7 @@ public class JediEmulator extends DataStreamIteratingEmulator {
 
       final int arg = args.getArg(i, -1);
       if (arg == -1) {
-        log.error("Error in processing char attributes, arg " + i);
+          log.error("Error in processing char attributes, arg {}", i);
         i++;
         continue;
       }
@@ -949,7 +944,7 @@ public class JediEmulator extends DataStreamIteratingEmulator {
           builder.setBackground(ColorPalette.getIndexedColor(arg - 92));
           break;
         default:
-          log.error("Unknown character attribute:" + arg);
+            log.error("Unknown character attribute:{}", arg);
       }
       i = i + step;
     }
@@ -969,14 +964,14 @@ public class JediEmulator extends DataStreamIteratingEmulator {
               (val2 >= 0 && val2 < 256)) {
         return new TerminalColor(val0, val1, val2);
       } else {
-        log.error("Bogus color setting " + args);
+          log.error("Bogus color setting {}", args);
         return null;
       }
     } else if (code == 5) {
       /* indexed color */
       return ColorPalette.getIndexedColor(args.getArg(index + 2, 0));
     } else {
-      log.error("Unsupported code for color attribute " + args);
+        log.error("Unsupported code for color attribute {}", args);
       return null;
     }
   }
@@ -1000,7 +995,7 @@ public class JediEmulator extends DataStreamIteratingEmulator {
 
   private void setModeEnabled(final TerminalMode mode, final boolean enabled) {
     if (log.isDebugEnabled()) {
-      log.debug("Setting mode " + mode + " enabled = " + enabled);
+        log.debug("Setting mode {} enabled = {}", mode, enabled);
     }
     myTerminal.setModeEnabled(mode, enabled);
   }

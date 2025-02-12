@@ -4,6 +4,7 @@ package com.jediterm.terminal;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * @author traff
@@ -64,7 +65,7 @@ public class TerminalColor {
       if (that.isIndexed()) {
         return false;
       }
-      return myColor.equals(that.myColor);
+      return Objects.requireNonNull(myColor).equals(that.myColor);
     }
   }
 

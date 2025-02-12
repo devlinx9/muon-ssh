@@ -100,42 +100,42 @@ public final class CharacterSets {
    * The DEC special characters (only the last 32 characters).
    * Contains [light][heavy] flavors for box drawing
    */
-  public static final Object[][] DEC_SPECIAL_CHARS = {{'\u25c6', null}, // black_diamond
-    {'\u2592', null}, // Medium Shade
-    {'\u2409', null}, // Horizontal tab (HT)
-    {'\u240c', null}, // Form Feed (FF)
-    {'\u240d', null}, // Carriage Return (CR)
-    {'\u240a', null}, // Line Feed (LF)
-    {'\u00b0', null}, // Degree sign
-    {'\u00b1', null}, // Plus/minus sign
-    {'\u2424', null}, // New Line (NL)
-    {'\u240b', null}, // Vertical Tab (VT)
-    {'\u2518', '\u251b'}, // Forms up and left
-    {'\u2510', '\u2513'}, // Forms down and left
-    {'\u250c', '\u250f'}, // Forms down and right
-    {'\u2514', '\u2517'}, // Forms up and right
-    {'\u253c', '\u254b'}, // Forms vertical and horizontal
-    {'\u23ba', null}, // Scan 1
-    {'\u23bb', null}, // Scan 3
-    {'\u2500', '\u2501'}, // Scan 5 / Horizontal bar
-    {'\u23bc', null}, // Scan 7
-    {'\u23bd', null}, // Scan 9
-    {'\u251c', '\u2523'}, // Forms vertical and right
-    {'\u2524', '\u252b'}, // Forms vertical and left
-    {'\u2534', '\u253b'}, // Forms up and horizontal
-    {'\u252c', '\u2533'}, // Forms down and horizontal
-    {'\u2502', '\u2503'}, // vertical bar
-    {'\u2264', null}, // less than or equal sign
-    {'\u2265', null}, // greater than or equal sign
-    {'\u03c0', null}, // pi
-    {'\u2260', null}, // not equal sign
-    {'\u00a3', null}, // pound sign
-    {'\u00b7', null}, // middle dot
+  public static final Object[][] DEC_SPECIAL_CHARS = {{'◆', null}, // black_diamond
+    {'▒', null}, // Medium Shade
+    {'␉', null}, // Horizontal tab (HT)
+    {'␌', null}, // Form Feed (FF)
+    {'␍', null}, // Carriage Return (CR)
+    {'␊', null}, // Line Feed (LF)
+    {'°', null}, // Degree sign
+    {'±', null}, // Plus/minus sign
+    {'␤', null}, // New Line (NL)
+    {'␋', null}, // Vertical Tab (VT)
+    {'┘', '┛'}, // Forms up and left
+    {'┐', '┓'}, // Forms down and left
+    {'┌', '┏'}, // Forms down and right
+    {'└', '┗'}, // Forms up and right
+    {'┼', '╋'}, // Forms vertical and horizontal
+    {'⎺', null}, // Scan 1
+    {'⎻', null}, // Scan 3
+    {'─', '━'}, // Scan 5 / Horizontal bar
+    {'⎼', null}, // Scan 7
+    {'⎽', null}, // Scan 9
+    {'├', '┣'}, // Forms vertical and right
+    {'┤', '┫'}, // Forms vertical and left
+    {'┴', '┻'}, // Forms up and horizontal
+    {'┬', '┳'}, // Forms down and horizontal
+    {'│', '┃'}, // vertical bar
+    {'≤', null}, // less than or equal sign
+    {'≥', null}, // greater than or equal sign
+    {'π', null}, // pi
+    {'≠', null}, // not equal sign
+    {'£', null}, // pound sign
+    {'·', null}, // middle dot
     {' ', null}, //
   };
 
   public static boolean isDecBoxChar(char c) {
-    if (c < '\u2500' || c >= '\u2580') { // fast path
+    if (c < '─' || c >= '▀') { // fast path
       return false;
     }
     for (Object[] o : DEC_SPECIAL_CHARS) {
@@ -147,7 +147,7 @@ public final class CharacterSets {
   }
   
   public static char getHeavyDecBoxChar(char c) {
-    if (c < '\u2500' || c >= '\u2580') { // fast path
+    if (c < '─' || c >= '▀') { // fast path
       return c;
     }
     for (Object[] o : DEC_SPECIAL_CHARS) {

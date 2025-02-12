@@ -11,7 +11,10 @@ import com.jediterm.terminal.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -191,11 +194,9 @@ public class TerminalTextBuffer {
 
     public void deleteCharacters(final int x, final int y, final int count) {
         if (y > myHeight - 1 || y < 0) {
-            log.error("attempt to delete in line " + y + "\n" + "args were x:"
-                      + x + " count:" + count);
+            log.error("attempt to delete in line {}\nargs were x:{} count:{}", y, x, count);
         } else if (count < 0) {
-            log.error(
-                    "Attempt to delete negative chars number: count:" + count);
+            log.error("Attempt to delete negative chars number: count:{}", count);
         } else if (count > 0) {
             myScreenBuffer.deleteCharacters(x, y, count,
                                             createEmptyStyleWithCurrentColor());
@@ -207,11 +208,9 @@ public class TerminalTextBuffer {
     public void insertBlankCharacters(final int x, final int y,
                                       final int count) {
         if (y > myHeight - 1 || y < 0) {
-            log.error("attempt to insert blank chars in line " + y + "\n"
-                      + "args were x:" + x + " count:" + count);
+            log.error("attempt to insert blank chars in line {}\nargs were x:{} count:{}", y, x, count);
         } else if (count < 0) {
-            log.error("Attempt to insert negative blank chars number: count:"
-                      + count);
+            log.error("Attempt to insert negative blank chars number: count:{}", count);
         } else if (count > 0) { // nothing to do
             myScreenBuffer.insertBlankCharacters(x, y, count, myWidth,
                                                  createEmptyStyleWithCurrentColor());
@@ -256,7 +255,7 @@ public class TerminalTextBuffer {
     }
 
     public String getStyleLines() {
-        final Map<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
+        final Map<Integer, Integer> hashMap = new HashMap<>();
         myLock.lock();
         try {
             final StringBuilder sb = new StringBuilder();
@@ -294,15 +293,13 @@ public class TerminalTextBuffer {
     public TerminalLine getLine(int index) {
         if (index >= 0) {
             if (index >= getHeight()) {
-                log.error("Attempt to get line out of bounds: " + index + " >= "
-                          + getHeight());
+                log.error("Attempt to get line out of bounds: {} >= {}", index, getHeight());
                 return TerminalLine.createEmpty();
             }
             return myScreenBuffer.getLine(index);
         } else {
             if (index < -getHistoryLinesCount()) {
-                log.error("Attempt to get line out of bounds: " + index + " < "
-                          + -getHistoryLinesCount());
+                log.error("Attempt to get line out of bounds: {} < {}", index, -getHistoryLinesCount());
                 return TerminalLine.createEmpty();
             }
             return myHistoryBuffer.getLine(getHistoryLinesCount() + index);
@@ -317,9 +314,7 @@ public class TerminalTextBuffer {
                 StringBuilder line = new StringBuilder(
                         myScreenBuffer.getLine(row).getText());
 
-                for (int i = line.length(); i < myWidth; i++) {
-                    line.append(' ');
-                }
+                line.append(" ".repeat(Math.max(0, myWidth - line.length())));
                 if (line.length() > myWidth) {
                     line.setLength(myWidth);
                 }
@@ -377,8 +372,8 @@ public class TerminalTextBuffer {
     public Pair<Character, TextStyle> getStyledCharAt(int x, int y) {
         synchronized (myScreenBuffer) {
             TerminalLine line = getLine(y);
-            return new Pair<Character, TextStyle>(line.charAt(x),
-                                                  line.getStyleAt(x));
+            return new Pair<>(line.charAt(x),
+                              line.getStyleAt(x));
         }
     }
 
@@ -448,7 +443,7 @@ public class TerminalTextBuffer {
                 myTextProcessing.processHyperlinks(myScreenBuffer, getLine(y));
             }
         } else {
-            log.error("Attempt to erase characters in line: " + y);
+            log.error("Attempt to erase characters in line: {}", y);
         }
     }
 

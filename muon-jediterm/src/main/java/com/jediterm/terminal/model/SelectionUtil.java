@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 public class SelectionUtil {
 
-  private static final List<Character> SEPARATORS = new ArrayList<Character>();
+  private static final List<Character> SEPARATORS = new ArrayList<>();
   static {
     SEPARATORS.add(' ');
     SEPARATORS.add('\u00A0'); // NO-BREAK SPACE
@@ -33,7 +33,7 @@ public class SelectionUtil {
   }
 
   public static List<Character> getDefaultSeparators() {
-    return new ArrayList<Character>(SEPARATORS);
+    return new ArrayList<>(SEPARATORS);
   }
   
   public static Pair<Point, Point> sortPoints(Point a, Point b) {

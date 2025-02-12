@@ -102,6 +102,6 @@ public enum TerminalMode {
 
 
     public void setEnabled(Terminal terminal, boolean enabled) {
-        log.error("Mode " + name() + " is not implemented, setting to " + enabled);
+        log.error("Mode {} is not implemented, setting to {}", name(), enabled);
     }
 }

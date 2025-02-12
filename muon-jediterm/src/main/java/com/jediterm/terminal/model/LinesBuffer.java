@@ -219,7 +219,7 @@ public class LinesBuffer {
   
   public synchronized TerminalLine getLine(int row) {
     if (row<0) {
-      log.error("Negative line number: " + row);
+        log.error("Negative line number: {}", row);
       return TerminalLine.createEmpty();
     }
 

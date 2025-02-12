@@ -18,9 +18,11 @@ import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicArrowButton;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -208,11 +210,7 @@ public class JediTermWidget extends JPanel
 
     @Override
     public boolean requestFocusInWindow() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                myTerminalPanel.requestFocusInWindow();
-            }
-        });
+        SwingUtilities.invokeLater(myTerminalPanel::requestFocusInWindow);
         return super.requestFocusInWindow();
     }
 
@@ -258,12 +256,9 @@ public class JediTermWidget extends JPanel
 
     @Override
     public List<TerminalAction> getActions() {
-        Predicate<KeyEvent> p = new Predicate<KeyEvent>() {
-            @Override
-            public boolean test(KeyEvent input) {
-                showFindText();
-                return true;
-            }
+        Predicate<KeyEvent> p = input -> {
+            showFindText();
+            return true;
         };
         return new ArrayList<>(Collections.singletonList(new TerminalAction("Find",
                                                                             mySettingsProvider.getFindKeyStrokes(), p)
@@ -303,13 +298,8 @@ public class JediTermWidget extends JPanel
                 }
             });
 
-            myFindComponent.addIgnoreCaseListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    findText(myFindComponent.getText(),
-                             myFindComponent.ignoreCase());
-                }
-            });
+            myFindComponent.addIgnoreCaseListener(e -> findText(myFindComponent.getText(),
+                                                        myFindComponent.ignoreCase()));
 
             myFindComponent.addKeyListener(new KeyAdapter() {
                 @Override
@@ -398,6 +388,7 @@ public class JediTermWidget extends JPanel
                 try {
                     myTtyConnector.close();
                 } catch (Exception e) {
+                    log.error("Exception running terminal", e);
                 }
                 mySessionRunning.set(false);
                 TerminalPanelListener terminalPanelListener = myTerminalPanel
@@ -430,22 +421,12 @@ public class JediTermWidget extends JPanel
 
         public SearchPanel() {
             next = createNextButton();
-            next.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    nextFindResultItem(
-                            myTerminalPanel.selectNextFindResultItem());
-                }
-            });
+            next.addActionListener(e -> nextFindResultItem(
+                    myTerminalPanel.selectNextFindResultItem()));
 
             prev = createPrevButton();
-            prev.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    prevFindResultItem(
-                            myTerminalPanel.selectPrevFindResultItem());
-                }
-            });
+            prev.addActionListener(e -> prevFindResultItem(
+                    myTerminalPanel.selectPrevFindResultItem()));
 
             myTextField.setPreferredSize(
                     new Dimension(myTerminalPanel.myCharSize.width * 30,

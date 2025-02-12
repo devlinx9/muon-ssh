@@ -40,8 +40,7 @@ public abstract class AbstractTerminalFrame {
 
     private final AbstractAction myDumpDimension = new AbstractAction("Dump terminal dimension") {
         public void actionPerformed(final ActionEvent e) {
-            log.info(myTerminal.getTerminalDisplay().getColumnCount() +
-                        "x" + myTerminal.getTerminalDisplay().getRowCount());
+            log.info("{}x{}", myTerminal.getTerminalDisplay().getColumnCount(), myTerminal.getTerminalDisplay().getRowCount());
         }
     };
 
@@ -49,15 +48,13 @@ public abstract class AbstractTerminalFrame {
         public void actionPerformed(final ActionEvent e) {
             Pair<Point, Point> points = myTerminal.getTerminalDisplay()
                     .getSelection().pointsForRun(myTerminal.getTerminalDisplay().getColumnCount());
-            log.info(myTerminal.getTerminalDisplay().getSelection() + " : '"
-                        + SelectionUtil.getSelectionText(points.first, points.second, myTerminal.getCurrentSession().getTerminalTextBuffer()) + "'");
+            log.info("{} : '{}'", myTerminal.getTerminalDisplay().getSelection(), SelectionUtil.getSelectionText(points.first, points.second, myTerminal.getCurrentSession().getTerminalTextBuffer()));
         }
     };
 
     private final AbstractAction myDumpCursorPosition = new AbstractAction("Dump cursor position") {
         public void actionPerformed(final ActionEvent e) {
-            log.info(myTerminal.getCurrentSession().getTerminal().getCursorX() +
-                        "x" + myTerminal.getCurrentSession().getTerminal().getCursorY());
+            log.info("{}x{}", myTerminal.getCurrentSession().getTerminal().getCursorX(), myTerminal.getCurrentSession().getTerminal().getCursorY());
         }
     };
 
@@ -192,37 +189,32 @@ public abstract class AbstractTerminalFrame {
     }
 
     private void sizeFrameForTerm(final JFrame frame) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Dimension d = myTerminal.getPreferredSize();
+        SwingUtilities.invokeLater(() -> {
+            Dimension d = myTerminal.getPreferredSize();
 
-                d.width += frame.getWidth() - frame.getContentPane().getWidth();
-                d.height += frame.getHeight() - frame.getContentPane().getHeight();
-                frame.setSize(d);
-            }
+            d.width += frame.getWidth() - frame.getContentPane().getWidth();
+            d.height += frame.getHeight() - frame.getContentPane().getHeight();
+            frame.setSize(d);
         });
     }
 
     private void showBuffers() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                myBufferFrame = new JFrame("buffers");
-                final JPanel panel = new BufferPanel(myTerminal.getCurrentSession());
+        SwingUtilities.invokeLater(() -> {
+            myBufferFrame = new JFrame("buffers");
+            final JPanel panel = new BufferPanel(myTerminal.getCurrentSession());
 
-                myBufferFrame.getContentPane().add(panel);
-                myBufferFrame.pack();
-                myBufferFrame.setLocationByPlatform(true);
-                myBufferFrame.setVisible(true);
-                myBufferFrame.setSize(800, 600);
+            myBufferFrame.getContentPane().add(panel);
+            myBufferFrame.pack();
+            myBufferFrame.setLocationByPlatform(true);
+            myBufferFrame.setVisible(true);
+            myBufferFrame.setSize(800, 600);
 
-                myBufferFrame.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowClosing(final WindowEvent e) {
-                        myBufferFrame = null;
-                    }
-                });
-            }
+            myBufferFrame.addWindowListener(new WindowAdapter() {
+                @Override
+                public void windowClosing(final WindowEvent e) {
+                    myBufferFrame = null;
+                }
+            });
         });
     }
 

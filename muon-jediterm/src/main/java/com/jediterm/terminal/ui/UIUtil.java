@@ -37,7 +37,7 @@ public class UIUtil {
           field.setAccessible(true);
           Object scale = field.get(device);
 
-          if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+          if (scale instanceof Integer && (Integer) scale == 2) {
             return true;
           }
         }

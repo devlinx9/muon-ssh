@@ -53,23 +53,23 @@ public class CharBuffer implements Iterable<Character>, CharSequence {
 
   @Override
   public Iterator<Character> iterator() {
-    return new Iterator<Character>() {
-      private final int myCurPosition = myStart;
+    return new Iterator<>() {
+        private final int myCurPosition = myStart;
 
-      @Override
-      public boolean hasNext() {
-        return myCurPosition < myBuf.length && myCurPosition < myStart + myLength;
-      }
+        @Override
+        public boolean hasNext() {
+            return myCurPosition < myBuf.length && myCurPosition < myStart + myLength;
+        }
 
-      @Override
-      public Character next() {
-        return myBuf[myCurPosition];
-      }
+        @Override
+        public Character next() {
+            return myBuf[myCurPosition];
+        }
 
-      @Override
-      public void remove() {
-        throw new IllegalStateException("Can't remove from buffer");
-      }
+        @Override
+        public void remove() {
+            throw new IllegalStateException("Can't remove from buffer");
+        }
     };
   }
 

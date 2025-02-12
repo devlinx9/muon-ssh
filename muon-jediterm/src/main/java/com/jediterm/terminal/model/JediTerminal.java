@@ -18,7 +18,10 @@ import java.awt.event.MouseWheelEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Terminal that reflects obtained commands and text at {@link TerminalDisplay}(handles change of cursor position, screen size etc)
@@ -319,7 +322,7 @@ public class JediTerminal implements Terminal, TerminalMouseListener, TerminalCo
           myTerminalTextBuffer.moveScreenLinesToHistory();
           break;
         default:
-          log.error("Unsupported erase in display mode:" + arg);
+            log.error("Unsupported erase in display mode:{}", arg);
           beginY = 1;
           endY = 1;
           break;
@@ -405,7 +408,7 @@ public class JediTerminal implements Terminal, TerminalMouseListener, TerminalCo
           myTerminalTextBuffer.eraseCharacters(0, -1, myCursorY - 1);
           break;
         default:
-          log.error("Unsupported erase in line mode:" + arg);
+            log.error("Unsupported erase in line mode:{}", arg);
           break;
       }
     } finally {
@@ -641,7 +644,7 @@ public class JediTerminal implements Terminal, TerminalMouseListener, TerminalCo
   @Override
   public void setScrollingRegion(int top, int bottom) {
     if (top > bottom) {
-      log.error("Top margin of scroll region can't be greater then bottom: " + top + ">" + bottom);
+        log.error("Top margin of scroll region can't be greater then bottom: {}>{}", top, bottom);
     }
     myScrollRegionTop = Math.max(1, top);
     myScrollRegionBottom = Math.min(myTerminalHeight, bottom);
@@ -1144,7 +1147,7 @@ public class JediTerminal implements Terminal, TerminalMouseListener, TerminalCo
   }
 
   public SubstringFinder.FindResult searchInTerminalTextBuffer(final String pattern, boolean ignoreCase) {
-    if (pattern.length() == 0) {
+    if (pattern.isEmpty()) {
       return null;
     }
 
@@ -1184,7 +1187,7 @@ public class JediTerminal implements Terminal, TerminalMouseListener, TerminalCo
     }
 
     public DefaultTabulator(int width, int tabLength) {
-      myTabStops = new TreeSet<Integer>();
+      myTabStops = new TreeSet<>();
 
       myWidth = width;
       myTabLength = tabLength;
@@ -1206,13 +1209,7 @@ public class JediTerminal implements Terminal, TerminalMouseListener, TerminalCo
           }
         }
       } else {
-        Iterator<Integer> it = myTabStops.iterator();
-        while (it.hasNext()) {
-          int i = it.next();
-          if (i > columns) {
-            it.remove();
-          }
-        }
+          myTabStops.removeIf(i -> i > columns);
       }
 
       myWidth = columns;
@@ -1220,7 +1217,7 @@ public class JediTerminal implements Terminal, TerminalMouseListener, TerminalCo
 
     @Override
     public void clearTabStop(int position) {
-      myTabStops.remove(Integer.valueOf(position));
+      myTabStops.remove(position);
     }
 
     @Override
@@ -1257,7 +1254,7 @@ public class JediTerminal implements Terminal, TerminalMouseListener, TerminalCo
       int tabStop = 0;
 
       // Search for the first tab stop before the given position...
-      SortedSet<Integer> headSet = myTabStops.headSet(Integer.valueOf(position));
+      SortedSet<Integer> headSet = myTabStops.headSet(position);
       if (!headSet.isEmpty()) {
         tabStop = headSet.last();
       }
@@ -1268,7 +1265,7 @@ public class JediTerminal implements Terminal, TerminalMouseListener, TerminalCo
 
     @Override
     public void setTabStop(int position) {
-      myTabStops.add(Integer.valueOf(position));
+      myTabStops.add(position);
     }
   }
 }
