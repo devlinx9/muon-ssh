@@ -26,7 +26,6 @@ public class PortForwardingRule {
      *                   this is the port bind on remote server
      * @param targetPort For local port forwarding this is the target port, for
      *                   remote this will be the local port of that local service
-     * @param bindHost
      */
     public PortForwardingRule(PortForwardingType type, String host, int sourcePort, int targetPort, String bindHost) {
         super();

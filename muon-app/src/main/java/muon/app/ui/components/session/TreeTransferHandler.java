@@ -9,6 +9,7 @@ import javax.swing.tree.TreePath;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.util.Objects;
 
 @Slf4j
 class TreeTransferHandler extends TransferHandler {
@@ -41,7 +42,7 @@ class TreeTransferHandler extends TransferHandler {
         JTree tree = (JTree) support.getComponent();
         int dropRow = tree.getRowForPath(dl.getPath());
         int[] selRows = tree.getSelectionRows();
-        for (int selRow : selRows) {
+        for (int selRow : Objects.requireNonNull(selRows)) {
             if (selRow == dropRow) {
                 return false;
             }

@@ -30,10 +30,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.ServerSocket;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -400,7 +397,7 @@ public class SshClient2 implements Closeable {
     private void tunnelThrough(Deque<HopEntry> hopStack) throws Exception {
         HopEntry ent = hopStack.poll();
         SessionInfo hopInfo = new SessionInfo();
-        hopInfo.setHost(ent.getHost());
+        hopInfo.setHost(Objects.requireNonNull(ent).getHost());
         hopInfo.setPort(ent.getPort());
         hopInfo.setUser(ent.getUser());
         hopInfo.setPassword(ent.getPassword());

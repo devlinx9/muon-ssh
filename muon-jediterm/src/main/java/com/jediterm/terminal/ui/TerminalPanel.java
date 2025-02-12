@@ -17,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import muon.terminal.Ascii;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.font.TextHitInfo;
@@ -118,12 +116,7 @@ public class TerminalPanel extends JComponent
                 AWTEvent.KEY_EVENT_MASK | AWTEvent.INPUT_METHOD_EVENT_MASK);
         enableInputMethods(true);
 
-        terminalTextBuffer.addModelListener(new TerminalModelListener() {
-            @Override
-            public void modelChanged() {
-                repaint();
-            }
-        });
+        terminalTextBuffer.addModelListener(this::repaint);
     }
 
     //
@@ -326,14 +319,10 @@ public class TerminalPanel extends JComponent
             }
         });
 
-        myBoundedRangeModel.addChangeListener(new
-
-                                                      ChangeListener() {
-                                                          public void stateChanged(final ChangeEvent e) {
-                                                              myClientScrollOrigin = myBoundedRangeModel.getValue();
-                                                              repaint();
-                                                          }
-                                                      });
+        myBoundedRangeModel.addChangeListener(e -> {
+            myClientScrollOrigin = myBoundedRangeModel.getValue();
+            repaint();
+        });
 
         createRepaintTimer();
     }
@@ -468,7 +457,7 @@ public class TerminalPanel extends JComponent
         private final WeakReference<TerminalPanel> ref;
 
         public WeakRedrawTimer(TerminalPanel terminalPanel) {
-            this.ref = new WeakReference<TerminalPanel>(terminalPanel);
+            this.ref = new WeakReference<>(terminalPanel);
         }
 
         @Override
@@ -550,7 +539,7 @@ public class TerminalPanel extends JComponent
         }
         String selectionText = SelectionUtil.getSelectionText(selectionStart,
                                                               selectionEnd, myTerminalTextBuffer);
-        if (selectionText.length() != 0) {
+        if (!selectionText.isEmpty()) {
             myCopyPasteHandler.setContents(selectionText,
                                            useSystemSelectionClipboardIfAvailable);
         }
@@ -688,12 +677,11 @@ public class TerminalPanel extends JComponent
         // emoji, which are slightly higher than the font metrics reported
         // character height :(
         myCharSize.height = fo.getHeight() + (int) (lineSpace * 2) + 2;
-        myDescent += lineSpace;
+        myDescent += (int) lineSpace;
 
         myMonospaced = isMonospaced(fo);
         if (!myMonospaced) {
-            log.info("WARNING: Font " + myNormalFont.getName()
-                     + " is non-monospaced");
+            log.info("WARNING: Font {} is non-monospaced", myNormalFont.getName());
         }
 
         img.flush();
@@ -928,7 +916,7 @@ public class TerminalPanel extends JComponent
 
     private boolean hasUncommittedChars() {
         return myInputMethodUncommittedChars != null
-               && myInputMethodUncommittedChars.length() > 0;
+               && !myInputMethodUncommittedChars.isEmpty();
     }
 
     private boolean inSelection(int x, int y) {
@@ -1004,15 +992,12 @@ public class TerminalPanel extends JComponent
             }
         });
 
-        addMouseWheelListener(new MouseWheelListener() {
-            @Override
-            public void mouseWheelMoved(MouseWheelEvent e) {
-                if (mySettingsProvider.enableMouseReporting()
-                    && isRemoteMouseAction(e)) {
-                    mySelection = null;
-                    Point p = panelToCharCoords(e.getPoint());
-                    listener.mouseWheelMoved(p.x, p.y, e);
-                }
+        addMouseWheelListener(e -> {
+            if (mySettingsProvider.enableMouseReporting()
+                && isRemoteMouseAction(e)) {
+                mySelection = null;
+                Point p = panelToCharCoords(e.getPoint());
+                listener.mouseWheelMoved(p.x, p.y, e);
             }
         });
 
@@ -1484,7 +1469,7 @@ public class TerminalPanel extends JComponent
 
     @Override
     public void setWindowTitle(String name) {
-        log.debug("########## name: " + name);
+        log.debug("########## name: {}", name);
         myWindowTitle = name;
         if (myTerminalPanelListener != null) {
             myTerminalPanelListener.onTitleChanged(myWindowTitle);
@@ -1493,14 +1478,13 @@ public class TerminalPanel extends JComponent
 
     @Override
     public void setCurrentPath(String path) {
-        log.debug("########## path: " + path);
+        log.debug("########## path: {}", path);
         myCurrentPath = path;
     }
 
     @Override
     public List<TerminalAction> getActions() {
-        ArrayList<TerminalAction> list = new ArrayList<>();
-        list.addAll(Arrays.asList(
+        ArrayList<TerminalAction> list = new ArrayList<>(Arrays.asList(
                 new TerminalAction("Open as URL", new KeyStroke[0],
                                    input -> openSelectionAsURL())
                         .withEnabledSupplier(this::selectionTextIsUrl),
@@ -1794,7 +1778,7 @@ public class TerminalPanel extends JComponent
 
     /**
      * InputMethod implementation For details read
-     * http://docs.oracle.com/javase/7/docs/technotes/guides/imf/api-tutorial.html
+     * <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/imf/api-tutorial.html">...</a>
      */
     @Override
     protected void processInputMethodEvent(InputMethodEvent e) {

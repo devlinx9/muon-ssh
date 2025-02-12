@@ -21,6 +21,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 public class SshFileBrowserView extends AbstractFileBrowserView {
@@ -236,7 +237,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                     FileInfo fileInfo = transferData.getFiles()[0];
                     String parent = PathUtils.getParent(fileInfo.getPath());
                     log.info("Parent: {} == {}", parent, this.getCurrentDirectory());
-                    if (!parent.endsWith("/")) {
+                    if (!Objects.requireNonNull(parent).endsWith("/")) {
                         parent += "/";
                     }
                     String pwd = this.getCurrentDirectory();

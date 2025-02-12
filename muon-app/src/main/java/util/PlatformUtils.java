@@ -111,7 +111,6 @@ public class PlatformUtils {
      * @param folder folder to open in explorer
      * @param file   if any file needs to be selected in folder, mentioned in
      *               previous argument
-     * @throws FileNotFoundException
      */
     public static void openFolderInExplorer(String folder, String file) throws FileNotFoundException {
         if (file == null) {

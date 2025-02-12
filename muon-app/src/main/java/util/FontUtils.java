@@ -9,6 +9,7 @@ import muon.app.ui.laf.AppSkin;
 import java.awt.*;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author subhro
@@ -22,7 +23,7 @@ public class FontUtils {
 
     public static Font loadFont(String path) {
         try (InputStream is = AppSkin.class.getResourceAsStream(path)) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
             log.info("Font loaded: {} of family: {}", font.getFontName(), font.getFamily());
@@ -36,7 +37,7 @@ public class FontUtils {
     public static Font loadTerminalFont(String name) {
         log.debug("Loading font: {}", name);
         try (InputStream is = AppSkin.class.getResourceAsStream(String.format("/fonts/terminal/%s.ttf", name))) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
             log.debug("Font loaded: {} of family: {}", font.getFontName(), font.getFamily());

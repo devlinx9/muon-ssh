@@ -32,6 +32,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -148,7 +149,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             }
             item.setSelected(false);
         }
-        selectedPage.setSelected(true);
+        Objects.requireNonNull(selectedPage).setSelected(true);
         this.cardLayout.show(this.cardPanel, pageId);
         this.revalidate();
         this.repaint();

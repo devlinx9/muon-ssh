@@ -20,8 +20,6 @@ public class RemoteResourceInfoWrapper {
     private String longPath;
 
     /**
-     * @param info
-     * @param longPath
      */
     public RemoteResourceInfoWrapper(RemoteResourceInfo info, String longPath) {
         super();

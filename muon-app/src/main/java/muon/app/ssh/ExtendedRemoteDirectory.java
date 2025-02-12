@@ -18,9 +18,6 @@ import java.util.concurrent.TimeUnit;
 public class ExtendedRemoteDirectory extends RemoteDirectory {
 
     /**
-     * @param requester
-     * @param path
-     * @param handle
      */
     public ExtendedRemoteDirectory(SFTPEngine requester, String path,
                                    byte[] handle) {

@@ -25,7 +25,6 @@ public class SSHRemoteFileInputStream extends InputStream {
     private int bufferCapacity;
 
     /**
-     * @param remoteFile
      */
     public SSHRemoteFileInputStream(RemoteFile remoteFile, int localMaxPacketSize) {
         this.remoteFile = remoteFile;

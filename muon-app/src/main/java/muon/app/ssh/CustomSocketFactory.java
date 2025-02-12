@@ -26,10 +26,6 @@ public class CustomSocketFactory extends SocketFactory {
     private final Proxy.Type proxyType;
 
     /**
-     * @param proxyHost
-     * @param proxyPort
-     * @param proxyUser
-     * @param proxyPass
      */
     public CustomSocketFactory(String proxyHost, int proxyPort,
                                String proxyUser, String proxyPass, Proxy.Type proxyType) {

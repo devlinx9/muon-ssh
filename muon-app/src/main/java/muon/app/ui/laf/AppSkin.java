@@ -14,6 +14,7 @@ import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * @author subhro
@@ -65,7 +66,7 @@ public abstract class AppSkin {
 
         try (InputStream is = AppSkin.class
                 .getResourceAsStream(fontPath)) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
             return font.deriveFont(Font.PLAIN, 12.0f);
@@ -77,7 +78,7 @@ public abstract class AppSkin {
 
     protected Font loadFontAwesomeFonts() {
         try (InputStream is = AppSkin.class.getResourceAsStream("/fonts/fontawesome-webfont.ttf")) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
             return font.deriveFont(Font.PLAIN, 14f);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

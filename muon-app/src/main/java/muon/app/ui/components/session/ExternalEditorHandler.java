@@ -116,10 +116,6 @@ public class ExternalEditorHandler extends JDialog {
     }
 
     /**
-     * @param info
-     * @param total
-     * @param totalBytes
-     * @return
      */
     private long saveRemoteFile(FileModificationInfo info, long total, long totalBytes) {
         log.info("Init transfer...1");
@@ -158,12 +154,8 @@ public class ExternalEditorHandler extends JDialog {
      * Downloads a remote file using SFTP in a temporary directory and if download
      * completes successfully, adds it for monitoring.
      *
-     * @param remoteFile
-     * @param remoteFs
-     * @param activeSessionId
      * @param openWith        should show windows open with dialog
      * @param app             should open with specified app
-     * @throws IOException
      */
     public void openRemoteFile(FileInfo remoteFile, SshFileSystem remoteFs, int activeSessionId, boolean openWith,
                                String app) throws IOException {

@@ -172,7 +172,6 @@ public class AppWindow extends JFrame {
 
 
     /**
-     * @param sessionContentPanel
      */
     public void showSession(SessionContentPanel sessionContentPanel) {
         cardPanel.add(sessionContentPanel, sessionContentPanel.hashCode() + "");
@@ -182,7 +181,6 @@ public class AppWindow extends JFrame {
     }
 
     /**
-     * @param sessionContentPanel
      */
     public void removeSession(SessionContentPanel sessionContentPanel) {
         cardPanel.remove(sessionContentPanel);

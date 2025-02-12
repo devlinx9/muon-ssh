@@ -19,10 +19,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author subhro
@@ -546,11 +544,11 @@ public class SettingsDialog extends JDialog {
         settings.setTermWidth((int) this.spTermWidth.getModel().getValue());
         settings.setTermHeight((int) this.spTermHeight.getModel().getValue());
         settings.setTerminalFontSize((int) this.spFontSize.getModel().getValue());
-        settings.setTerminalFontName(this.cmbFonts.getSelectedItem().toString());
-        settings.setTerminalType(this.cmbTermType.getSelectedItem().toString());
+        settings.setTerminalFontName(Objects.requireNonNull(this.cmbFonts.getSelectedItem()).toString());
+        settings.setTerminalType(Objects.requireNonNull(this.cmbTermType.getSelectedItem()).toString());
         settings.setLanguage((Language) this.cmbLanguage.getSelectedItem());
-        settings.setTerminalTheme(this.cmbTermTheme.getSelectedItem().toString());
-        settings.setTerminalPalette(this.cmbTermPalette.getSelectedItem().toString());
+        settings.setTerminalTheme(Objects.requireNonNull(this.cmbTermTheme.getSelectedItem()).toString());
+        settings.setTerminalPalette(Objects.requireNonNull(this.cmbTermPalette.getSelectedItem()).toString());
 
         for (int i = 0; i < paletteButtons.length; i++) {
             settings.getPalleteColors()[i] = paletteButtons[i].getColor().getRGB();

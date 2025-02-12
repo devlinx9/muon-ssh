@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -30,7 +31,7 @@ public class SessionExportImport {
         if (jfc.showSaveDialog(App.getAppWindow()) == JFileChooser.APPROVE_OPTION) {
             File file = jfc.getSelectedFile();
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
-                for (File f : new File(App.CONFIG_DIR).listFiles()) {
+                for (File f : Objects.requireNonNull(new File(App.CONFIG_DIR).listFiles())) {
                     ZipEntry ent = new ZipEntry(f.getName());
                     out.putNextEntry(ent);
                     out.write(Files.readAllBytes(f.toPath()));
@@ -55,7 +56,7 @@ public class SessionExportImport {
         byte[] b = new byte[8192];
         try (ZipInputStream in = new ZipInputStream(new FileInputStream(f))) {
             ZipEntry ent = in.getNextEntry();
-            File file = new File(App.CONFIG_DIR, ent.getName());
+            File file = new File(App.CONFIG_DIR, Objects.requireNonNull(ent).getName());
             try (OutputStream out = new FileOutputStream(file)) {
                 while (true) {
                     int x = in.read(b);

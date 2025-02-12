@@ -23,7 +23,6 @@ public class SSHRemoteFileOutputStream extends OutputStream {
     private final RemoteFile remoteFile;
     private final OutputStream remoteFileOutputStream;
     /**
-     * @param remoteFile
      */
     public SSHRemoteFileOutputStream(RemoteFile remoteFile, int remoteMaxPacketSize) {
         this.remoteFile = remoteFile;

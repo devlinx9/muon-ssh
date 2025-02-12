@@ -20,7 +20,6 @@ import java.security.PublicKey;
 @Slf4j
 public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
     /**
-     * @throws IOException
      *
      */
     public GraphicalHostKeyVerifier(File knownHostFile) throws IOException {

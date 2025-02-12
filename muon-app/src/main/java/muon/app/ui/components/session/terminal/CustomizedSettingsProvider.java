@@ -14,6 +14,7 @@ import util.FontUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * @author subhro
@@ -108,8 +109,8 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     @Override
     public Font getTerminalFont() {
         log.debug("Called terminal font: {}", App.getGlobalSettings().getTerminalFontName());
-        return FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalFontName()).deriveFont(Font.PLAIN,
-                App.getGlobalSettings().getTerminalFontSize());
+        return Objects.requireNonNull(FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalFontName())).deriveFont(Font.PLAIN,
+                                                                                                                            App.getGlobalSettings().getTerminalFontSize());
     }
 
     @Override

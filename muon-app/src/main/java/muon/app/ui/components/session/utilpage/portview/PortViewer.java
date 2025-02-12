@@ -16,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -94,7 +95,7 @@ public class PortViewer extends UtilPageItemView {
                 ent.setPid(Integer.parseInt(line.substring(1)));
             }
             if (ch == 'c') {
-                ent.setApp(line.substring(1));
+                Objects.requireNonNull(ent).setApp(line.substring(1));
             }
             if (ch == 'n') {
                 String hostStr = line.substring(1);
@@ -102,7 +103,7 @@ public class PortViewer extends UtilPageItemView {
                 if (index != -1) {
                     int port = Integer.parseInt(hostStr.substring(index + 1));
                     String host = hostStr.substring(0, index);
-                    if (ent.getHost() != null) {
+                    if (Objects.requireNonNull(ent).getHost() != null) {
                         // if listening on multiple interfaces, ports
                         SocketEntry ent1 = new SocketEntry();
                         ent1.setPort(port);

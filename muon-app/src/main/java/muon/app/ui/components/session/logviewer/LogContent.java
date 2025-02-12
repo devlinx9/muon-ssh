@@ -26,6 +26,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -204,7 +205,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     try {
                         RandomAccessFile searchIndex = LogContent.this
                                 .search(text, stopFlag);
-                        long len = searchIndex.length();
+                        long len = Objects.requireNonNull(searchIndex).length();
                         SwingUtilities.invokeLater(() -> logSearchPanel.setResults(searchIndex, len));
                     } catch (Exception e) {
                         log.error(e.getMessage(), e);
@@ -275,7 +276,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                                     this.lblCurrentPage);
 
                             this.textArea.setText(pageText);
-                            if (!pageText.isEmpty()) {
+                            if (!Objects.requireNonNull(pageText).isEmpty()) {
                                 this.textArea.setCaretPosition(0);
                             }
 
@@ -470,7 +471,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 String pageText = getPageText(this.currentPage, stopFlag);
                 SwingUtilities.invokeLater(() -> {
                     this.textArea.setText(pageText);
-                    if (!pageText.isEmpty()) {
+                    if (!Objects.requireNonNull(pageText).isEmpty()) {
                         this.textArea.setCaretPosition(0);
                     }
                     this.lblCurrentPage.setText((this.currentPage + 1) + "");
