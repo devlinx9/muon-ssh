@@ -37,7 +37,7 @@ Muon SSH доступен в виде пакета Debian (.deb) для поль
 Вы можете установить его с помощью команды:
 
 ```sh
-sudo dpgk -i muon_package.deb
+sudo dpkg -i muon_package.deb
 ```
 
 <h3>Целевые аудитории</h3>

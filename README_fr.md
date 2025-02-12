@@ -34,7 +34,7 @@ Muon SSH est disponible sous forme de paquet Debian (.deb) pour les utilisateurs
 
 Vous pouvez l’installer avec la commande suivante :
 ```sh
-sudo dpgk -i muon_package.deb
+sudo dpkg -i muon_package.deb
 ```
 
 <h3>Public objectif</h3>

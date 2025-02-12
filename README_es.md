@@ -36,7 +36,7 @@ Muon SSH está disponible como un paquete Snap para facilitar la instalación y 
 
 Puedes instalarlo con el siguiente comando:
 ```sh
-sudo dpgk -i muon_package.deb
+sudo dpkg -i muon_package.deb
 ```
 
 <h3>Público objetivo</h3>
