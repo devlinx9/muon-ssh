@@ -46,7 +46,7 @@ public class Settings {
     private int logViewerLinesPerPage = 50;
     private int sysloadRefreshInterval = 3;
     private boolean puttyLikeCopyPaste = false;
-    private String terminalType = "xterm-256color";
+    private String terminalType = "ansi";
     private boolean confirmBeforeTerminalClosing = true;
     private int termWidth = 80;
     private int termHeight = 24;

@@ -221,7 +221,7 @@ public class SettingsDialog extends JDialog {
 
         chkPuttyLikeCopyPaste = new JCheckBox(App.bundle.getString("copy_like_putty"));
 
-        cmbTermType = new JComboBox<>(new String[]{"xterm-256color", "xterm", "vt100"});
+        cmbTermType = new JComboBox<>(new String[]{"xterm-256color", "xterm", "vt100", "ansi"});
         cmbTermType.setEditable(true);
         d = new Dimension(Math.max(100, cmbTermType.getPreferredSize().width * 2),
                 cmbTermType.getPreferredSize().height);
