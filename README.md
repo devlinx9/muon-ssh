@@ -16,6 +16,28 @@ Muon has been tested with several Linux and UNIX servers, like Ubuntu server, Ce
 
 [![IMAGE ALT TEXT](https://raw.githubusercontent.com/subhra74/snowflake-screenshots/master/Capture32.PNG)](https://youtu.be/G2qHZ2NodeM "View on YouTube")
 
+
+## Installation
+
+### Snap (Recommended)
+
+[![Install Muon SSH Terminal using Snap](https://snapcraft.io/muon-ssh/badge.svg)](https://snapcraft.io/muon-ssh)
+
+Muon SSH is available as a Snap package for easy installation and updates across multiple Linux distributions.
+
+You can install it using:
+```sh
+sudo snap install muon-ssh
+```
+
+### Deb package
+Muon SSH is available as a Snap package for easy installation and updates across multiple Linux distributions.
+
+You can install it using:
+```sh
+sudo dpgk -i muon_package.deb
+```
+
 <h3>Intended audience</h3>
 <p>The application is targeted mainly towards web/backend developers who often deploy/debug their code on remote servers and not overly fond of complex terminal based commands. It could also be useful for sysadmins as well who manages lots of remote servers manually.
 </p>

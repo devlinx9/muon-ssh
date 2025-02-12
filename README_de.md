@@ -16,6 +16,27 @@ Muon bietet ähnliche Funktionen wie webbasierte Control Panels, funktioniert je
 
 [![IMAGE ALT TEXT](https://raw.githubusercontent.com/subhra74/snowflake-screenshots/master/Capture32.PNG)](https://youtu.be/G2qHZ2NodeM "View on YouTube")
 
+## Installation
+
+### Snap (Recommended)
+
+[![Install Muon SSH Terminal using Snap](https://snapcraft.io/muon-ssh/badge.svg)](https://snapcraft.io/muon-ssh)
+
+Muon SSH ist als Snap-Paket verfügbar, um eine einfache Installation und Updates auf verschiedenen Linux-Distributionen zu ermöglichen.
+
+Sie können es mit folgendem Befehl installieren:
+```sh
+sudo snap install muon-ssh
+```
+
+### Deb package
+Muon SSH ist als Snap-Paket verfügbar, um eine einfache Installation und Updates auf verschiedenen Linux-Distributionen zu ermöglichen.
+
+Sie können es mit folgendem Befehl installieren:
+```sh
+sudo dpgk -i muon_package.deb
+```
+
 <h3>Zielpublikum</h3>
 <p>Die App richtet sich in erster Linie an Webbackend-Entwickler, die ihren Code häufig auf Remote-Servern bereitstellen und debuggen und komplexe Terminal-basierte Befehle nicht besonders mögen. Es könnte auch für Systemadministratoren nützlich sein, die viele entfernte Server manuell verwalten.
 </p>
