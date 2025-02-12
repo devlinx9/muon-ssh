@@ -57,7 +57,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
                 SwingUtilities.invokeLater(() -> {
                     addressBar.setText(path);
                     folderView.setItems(list);
-                    tabTitle.getCallback().accept(PathUtils.getFileName(path));
+                    tabTitle.getCallback().accept(PathUtils.getFileName(path).concat(" (local)"));
                 });
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -114,7 +114,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
                     int tc = list.size();
                     String text = String.format("Total %d remote file(s)", tc);
                     fileBrowser.updateRemoteStatus(text);
-                    tabTitle.getCallback().accept(PathUtils.getFileName(this.path));
+                    tabTitle.getCallback().accept(PathUtils.getFileName(this.path).concat(" (local)"));
                 });
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
