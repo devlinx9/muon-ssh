@@ -19,7 +19,7 @@ confinement: strict
 compression: lzo
 
 apps:
-  muon-ssh:
+  muon:
     command: usr/lib/jvm/java-17-openjdk-amd64/bin/java -jar $SNAP/jar/muonssh_2.3.0.jar
     common-id: muonssh.desktop
     environment:
@@ -32,13 +32,16 @@ apps:
     plugs: [x11, ssh-keys, network, desktop, home, network-bind]
 
 parts:
-  muon-ssh:
-    plugin: dump
+  muon:
+    plugin: maven
     source: .
     override-build: |
       mkdir -p $SNAPCRAFT_PART_INSTALL/jar/
       snapcraftctl build
-      cp muon-app/target/muonssh*.jar $SNAPCRAFT_PART_INSTALL/jar/
+      find muon-app/target -name "muonssh*.jar" -exec cp {} $SNAPCRAFT_PART_INSTALL/jar/ \;
+    build-packages:
+      - openjdk-17-jdk
+      - maven
     stage-packages:
       - openjdk-17-jre
       - x11-utils
