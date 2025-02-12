@@ -1,6 +1,3 @@
-/**
- *
- */
 package muon.app.ssh;
 
 import lombok.Getter;
@@ -35,7 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author subhro
- *
  */
 @Slf4j
 public class SshClient2 implements Closeable {
@@ -132,8 +128,8 @@ public class SshClient2 implements Closeable {
                 JCheckBox chkUseCache = new JCheckBox(App.bundle.getString("remember_session"));
                 txtUser.setText(user);
                 int ret = JOptionPane.showOptionDialog(null,
-                        new Object[]{"User", txtUser, "Password", txtPassword, chkUseCache}, "Authentication",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+                                                       new Object[]{"User", txtUser, "Password", txtPassword, chkUseCache}, "Authentication",
+                                                       JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
                 if (ret == JOptionPane.OK_OPTION) {
                     user = txtUser.getText();
                     password = txtPassword.getPassword();
@@ -311,7 +307,7 @@ public class SshClient2 implements Closeable {
             JTextField txtUser = new SkinnedTextField(30);
             JCheckBox chkCacheUser = new JCheckBox(App.bundle.getString("remember_username"));
             int ret = JOptionPane.showOptionDialog(null, new Object[]{"User name", txtUser, chkCacheUser}, App.bundle.getString("user"),
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+                                                   JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
             if (ret == JOptionPane.OK_OPTION) {
                 user = txtUser.getText();
                 if (chkCacheUser.isSelected()) {
@@ -356,14 +352,16 @@ public class SshClient2 implements Closeable {
         }
         closed.set(true);
         try {
-            if (sshj != null)
+            if (sshj != null) {
                 sshj.disconnect();
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
         try {
-            if (previousHop != null)
+            if (previousHop != null) {
                 previousHop.close();
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
@@ -412,7 +410,7 @@ public class SshClient2 implements Closeable {
 
     private void connectViaTcpForwarding() throws Exception {
         this.sshj.connectVia(this.previousHop.newDirectConnection(info.getHost(), info.getPort()), info.getHost(),
-                info.getPort());
+                             info.getPort());
     }
 
     private void connectViaPortForwarding() throws Exception {
@@ -440,9 +438,9 @@ public class SshClient2 implements Closeable {
         return this.sshj.newLocalPortForwarder(parameters, serverSocket);
     }
 
-    @SuppressWarnings("deprecation")
+
     public RemotePortForwarder getRemotePortForwarder() {
-        this.sshj.getTransport().setHeartbeatInterval(30);
+        this.sshj.getConnection().getKeepAlive().setKeepAliveInterval(30);
         return this.sshj.getRemotePortForwarder();
     }
 
