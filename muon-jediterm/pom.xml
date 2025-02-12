@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.30</version> <!-- Latest version as of October 2023 -->
+            <version>1.18.30</version>
             <scope>provided</scope>
         </dependency>
 
@@ -45,14 +45,14 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.9</version> <!-- Latest version as of October 2023 -->
+            <version>2.0.16</version>
         </dependency>
 
         <!-- SLF4J Binding (e.g., Logback) -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.4.11</version> <!-- Latest version as of October 2023 -->
+            <version>1.5.16</version>
         </dependency>
     </dependencies>
     <repositories>
