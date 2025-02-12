@@ -1,5 +1,10 @@
 package muon.app.ui.components.session.utilpage.portview;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class SocketEntry {
     private String app;
     private int pid;
@@ -16,35 +21,4 @@ public class SocketEntry {
         this.host = host;
     }
 
-    public String getApp() {
-        return app;
-    }
-
-    public void setApp(String app) {
-        this.app = app;
-    }
-
-    public int getPid() {
-        return pid;
-    }
-
-    public void setPid(int pid) {
-        this.pid = pid;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
 }

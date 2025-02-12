@@ -3,6 +3,8 @@
  */
 package muon.app.ui.components.session.logviewer;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.ClosableTabContent;
 import muon.app.ui.components.SkinnedScrollPane;
@@ -24,6 +26,7 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -33,8 +36,11 @@ import java.util.zip.GZIPInputStream;
  * @author subhro
  *
  */
+@Slf4j
 public class LogContent extends JPanel implements ClosableTabContent {
     private final SessionContentPanel holder;
+
+    @Getter
     private final String remoteFile;
     private File indexFile;
     private RandomAccessFile raf;
@@ -77,36 +83,28 @@ public class LogContent extends JPanel implements ClosableTabContent {
         btnFirstPage.putClientProperty("Nimbus.Overrides", skin);
         btnFirstPage.setFont(App.SKIN.getIconFont());
         btnFirstPage.setText(FontAwesomeContants.FA_FAST_BACKWARD);
-        btnFirstPage.addActionListener(e -> {
-            firstPage();
-        });
+        btnFirstPage.addActionListener(e -> firstPage());
 
         btnNextPage = new JButton();
         btnNextPage.setToolTipText("Next page");
         btnNextPage.putClientProperty("Nimbus.Overrides", skin);
         btnNextPage.setFont(App.SKIN.getIconFont());
         btnNextPage.setText(FontAwesomeContants.FA_STEP_FORWARD);
-        btnNextPage.addActionListener(e -> {
-            nextPage();
-        });
+        btnNextPage.addActionListener(e -> nextPage());
 
         btnPrevPage = new JButton("");
         btnPrevPage.setToolTipText("Previous page");
         btnPrevPage.putClientProperty("Nimbus.Overrides", skin);
         btnPrevPage.setFont(App.SKIN.getIconFont());
         btnPrevPage.setText(FontAwesomeContants.FA_STEP_BACKWARD);
-        btnPrevPage.addActionListener(e -> {
-            previousPage();
-        });
+        btnPrevPage.addActionListener(e -> previousPage());
 
         btnLastPage = new JButton();
         btnLastPage.setToolTipText("Last page");
         btnLastPage.putClientProperty("Nimbus.Overrides", skin);
         btnLastPage.setFont(App.SKIN.getIconFont());
         btnLastPage.setText(FontAwesomeContants.FA_FAST_FORWARD);
-        btnLastPage.addActionListener(e -> {
-            lastPage();
-        });
+        btnLastPage.addActionListener(e -> lastPage());
 
         textArea = new SkinnedTextArea();
         textArea.setEditable(false);
@@ -157,12 +155,12 @@ public class LogContent extends JPanel implements ClosableTabContent {
             try {
                 raf.close();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                log.error(ex.getMessage(), ex);
             }
             try {
                 Files.delete(this.indexFile.toPath());
             } catch (Exception ex) {
-                ex.printStackTrace();
+                log.error(ex.getMessage(), ex);
             }
             this.currentPage = 0;
             initPages();
@@ -173,9 +171,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         btnBookMark.putClientProperty("Nimbus.Overrides", skin);
         btnBookMark.setFont(App.SKIN.getIconFont());
         btnBookMark.setText(FontAwesomeContants.FA_BOOKMARK);
-        btnBookMark.addActionListener(e -> {
-            startPage.pinLog(remoteLogFile);
-        });
+        btnBookMark.addActionListener(e -> startPage.pinLog(remoteLogFile));
 
         Box toolbar = Box.createHorizontalBox();
         toolbar.setBorder(new CompoundBorder(
@@ -209,12 +205,10 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     try {
                         RandomAccessFile searchIndex = LogContent.this
                                 .search(text, stopFlag);
-                        long len = searchIndex.length();
-                        SwingUtilities.invokeLater(() -> {
-                            logSearchPanel.setResults(searchIndex, len);
-                        });
+                        long len = Objects.requireNonNull(searchIndex).length();
+                        SwingUtilities.invokeLater(() -> logSearchPanel.setResults(searchIndex, len));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        log.error(e.getMessage(), e);
                     } finally {
                         holder.enableUi();
                     }
@@ -223,10 +217,10 @@ public class LogContent extends JPanel implements ClosableTabContent {
 
             @Override
             public void select(long index) {
-                System.out.println("Search item found on line: " + index);
+                log.info("Search item found on line: {}", index);
                 int page = (int) index / linePerPage;
                 int line = (int) (index % linePerPage);
-                System.out.println("Found on page: " + page + " line: " + line);
+                log.info("Found on page: {} line: {}", page, line);
                 if (currentPage == page) {
                     if (line < textArea.getLineCount() && line != -1) {
                         highlightLine(line);
@@ -260,7 +254,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 if ((indexFile(true, stopFlag))
                         || (indexFile(false, stopFlag))) {
                     this.totalLines = this.raf.length() / 16;
-                    System.out.println("Total lines: " + this.totalLines);
+                    log.info("Total lines: {}", this.totalLines);
                     if (this.totalLines > 0) {
                         this.pageCount = (long) Math
                                 .ceil((double) totalLines / linePerPage);
@@ -282,7 +276,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                                     this.lblCurrentPage);
 
                             this.textArea.setText(pageText);
-                            if (pageText.length() > 0) {
+                            if (!Objects.requireNonNull(pageText).isEmpty()) {
                                 this.textArea.setCaretPosition(0);
                             }
 
@@ -294,7 +288,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
                 holder.enableUi();
             }
@@ -335,27 +329,42 @@ public class LogContent extends JPanel implements ClosableTabContent {
         long byteRange = endOffset - startOffset;
 
         if (startOffset < 8192) {
-            command.append("dd if=\"" + this.remoteFile + "\" ibs=1 skip="
-                    + startOffset + " count=" + byteRange
-                    + " 2>/dev/null | sed -ne '1," + linePerPage + "p;"
-                    + (linePerPage + 1) + "q'");
+            command.append("dd if=\"")
+                    .append(this.remoteFile)
+                    .append("\" ibs=1 skip=")
+                    .append(startOffset)
+                    .append(" count=")
+                    .append(byteRange)
+                    .append(" 2>/dev/null | sed -ne '1,")
+                    .append(linePerPage)
+                    .append("p;")
+                    .append(linePerPage + 1)
+                    .append("q'");
         } else {
             long blockToSkip = startOffset / 8192;
             long bytesToSkip = startOffset % 8192;
             int blocks = (int) Math.ceil((double) byteRange / 8192);
 
 
-            if (blocks * 8192 - bytesToSkip < byteRange) {
+            if (blocks * 8192L - bytesToSkip < byteRange) {
                 blocks++;
             }
-            command.append("dd if=\"" + this.remoteFile + "\" ibs=8192 skip="
-                    + blockToSkip + " count=" + blocks
-                    + " 2>/dev/null | dd bs=1 skip=" + bytesToSkip
-                    + " 2>/dev/null | sed -ne '1," + linePerPage + "p;"
-                    + (linePerPage + 1) + "q'");
+            command.append("dd if=\"")
+                    .append(this.remoteFile)
+                    .append("\" ibs=8192 skip=")
+                    .append(blockToSkip)
+                    .append(" count=")
+                    .append(blocks)
+                    .append(" 2>/dev/null | dd bs=1 skip=")
+                    .append(bytesToSkip)
+                    .append(" 2>/dev/null | sed -ne '1,")
+                    .append(linePerPage)
+                    .append("p;")
+                    .append(linePerPage + 1)
+                    .append("q'");
         }
 
-        System.out.println("Command: " + command);
+        log.debug("Command: {}", command);
         StringBuilder output = new StringBuilder();
 
         if (holder.getRemoteSessionInstance().exec(command.toString(), stopFlag,
@@ -369,11 +378,11 @@ public class LogContent extends JPanel implements ClosableTabContent {
         try {
             File tempFile = Files.createTempFile(
                     "muon" + UUID.randomUUID(), "index").toFile();
-            System.out.println("Temp file: " + tempFile);
+            log.info("Temp file: {}", tempFile);
             try (OutputStream outputStream = new FileOutputStream(tempFile)) {
                 String command = "LANG=C awk '{len=length($0); print len; }' \""
                         + remoteFile + "\" | " + (xz ? "xz" : "gzip") + " |cat";
-                System.out.println("Command: " + command);
+                log.debug("Command: {}", command);
 
                 if (holder.getRemoteSessionInstance().execBin(command, stopFlag,
                         outputStream, null) == 0) {
@@ -390,7 +399,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }
@@ -411,7 +420,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 if (line == null)
                     break;
                 line = line.trim();
-                if (line.length() < 1)
+                if (line.isEmpty())
                     continue;
                 toByteArray(offset, longBytes);
                 bout.write(longBytes);
@@ -462,7 +471,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 String pageText = getPageText(this.currentPage, stopFlag);
                 SwingUtilities.invokeLater(() -> {
                     this.textArea.setText(pageText);
-                    if (pageText.length() > 0) {
+                    if (!Objects.requireNonNull(pageText).isEmpty()) {
                         this.textArea.setCaretPosition(0);
                     }
                     this.lblCurrentPage.setText((this.currentPage + 1) + "");
@@ -475,7 +484,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     gutter.setLineStart(lineStart + 1);
                 });
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
                 holder.enableUi();
             }
@@ -489,11 +498,12 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 raf.close();
             }
         } catch (IOException ex) {
-            ex.printStackTrace();
+            log.error(ex.getMessage(), ex);
         }
         try {
             Files.delete(this.indexFile.toPath());
         } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
         }
         callback.accept(remoteFile);
         return true;
@@ -506,10 +516,8 @@ public class LogContent extends JPanel implements ClosableTabContent {
                 .createTempFile("muon" + UUID.randomUUID(), "index")
                 .toFile();
         StringBuilder command = new StringBuilder();
-        command.append("awk '{if(index(tolower($0),\""
-                + text.toLowerCase(Locale.ENGLISH) + "\")){ print NR}}' \""
-                + this.remoteFile + "\"");
-        System.out.println("Command: " + command);
+        command.append("awk '{if(index(tolower($0),\"").append(text.toLowerCase(Locale.ENGLISH)).append("\")){ print NR}}' \"").append(this.remoteFile).append("\"");
+        log.debug("Command: {}", command);
         try (OutputStream outputStream = new FileOutputStream(tempFile)) {
 
             File searchIndexes = Files.createTempFile(
@@ -526,7 +534,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                         if (line == null)
                             break;
                         line = line.trim();
-                        if (line.length() < 1)
+                        if (line.isEmpty())
                             continue;
                         long lineNo = Long.parseLong(line);
                         toByteArray(lineNo, longBytes);
@@ -543,21 +551,15 @@ public class LogContent extends JPanel implements ClosableTabContent {
         try {
             int startIndex = textArea.getLineStartOffset(lineNumber);
             int endIndex = textArea.getLineEndOffset(lineNumber);
-            System.out.println("selection: " + startIndex + " " + endIndex);
+            log.info("selection: {} {}", startIndex, endIndex);
             textArea.setCaretPosition(startIndex);
             textArea.getHighlighter().removeAllHighlights();
             textArea.getHighlighter().addHighlight(startIndex, endIndex,
                     painter);
-            System.out.println(textArea.modelToView2D(startIndex));
+            log.info(textArea.modelToView2D(startIndex).toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
-    /**
-     * @return the remoteFile
-     */
-    public String getRemoteFile() {
-        return remoteFile;
-    }
 }

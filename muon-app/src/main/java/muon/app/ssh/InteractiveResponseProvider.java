@@ -3,6 +3,7 @@
  */
 package muon.app.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import net.schmizz.sshj.userauth.method.ChallengeResponseProvider;
 import net.schmizz.sshj.userauth.password.Resource;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * @author subhro
  *
  */
+@Slf4j
 public class InteractiveResponseProvider implements ChallengeResponseProvider {
 
     private boolean retry = true;
@@ -25,25 +27,22 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
 
     @Override
     public void init(Resource resource, String name, String instruction) {
-        System.out.println("ChallengeResponseProvider init - resource: "
-                + resource + " name: " + name + " instruction: " + instruction);
-        if ((name != null && name.length() > 0)
-                || (instruction != null && instruction.length() > 0)) {
+        log.info("ChallengeResponseProvider init - resource: {} name: {} instruction: {}", resource, name, instruction);
+        if ((name != null && !name.isEmpty())
+                || (instruction != null && !instruction.isEmpty())) {
             JOptionPane.showMessageDialog(null, name + "\n" + instruction);
         }
     }
 
     @Override
     public char[] getResponse(String prompt, boolean echo) {
-        System.out.println("prompt: " + prompt + " echo: " + echo);
+        log.info("prompt: {} echo: {}", prompt, echo);
 
         if (echo) {
             String str = JOptionPane.showInputDialog(prompt);
             if (str != null) {
                 return str.toCharArray();
             }
-            retry = false;
-            return null;
         } else {
             JPasswordField passwordField = new JPasswordField(30);
             int ret = JOptionPane.showOptionDialog(null,
@@ -53,9 +52,9 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
             if (ret == JOptionPane.OK_OPTION) {
                 return passwordField.getPassword();
             }
-            retry = false;
-            return null;
         }
+        retry = false;
+        return new char[0];
     }
 
     @Override

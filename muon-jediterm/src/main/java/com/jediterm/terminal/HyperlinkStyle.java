@@ -1,10 +1,12 @@
 package com.jediterm.terminal;
 
 import com.jediterm.terminal.model.hyperlinks.LinkInfo;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author traff
  */
+@Slf4j
 public class HyperlinkStyle extends TextStyle implements Runnable {
   
   private final LinkInfo myLinkInfo;

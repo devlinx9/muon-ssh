@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.terminal;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.ClosableTabbedPanel;
 import muon.app.ui.components.session.Page;
@@ -16,6 +17,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public class TerminalHolder extends Page implements AutoCloseable {
     private final ClosableTabbedPanel tabs;
     private JPopupMenu snippetPopupMenu;
@@ -27,15 +29,11 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     public TerminalHolder(SessionInfo info, SessionContentPanel sessionContentPanel) {
         this.sessionContentPanel = sessionContentPanel;
-        this.tabs = new ClosableTabbedPanel(e -> {
-            openNewTerminal(null);
-        });
+        this.tabs = new ClosableTabbedPanel(e -> openNewTerminal(null));
 
         btn = new JButton();
         btn.setToolTipText("Snippets");
-        btn.addActionListener(e -> {
-            showSnippets();
-        });
+        btn.addActionListener(e -> showSnippets());
         btn.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
         btn.setText(FontAwesomeContants.FA_BOOKMARK);
         btn.putClientProperty("Nimbus.Overrides", App.SKIN.createTabButtonSkin());
@@ -46,14 +44,12 @@ public class TerminalHolder extends Page implements AutoCloseable {
         TerminalComponent tc = new TerminalComponent(info, c + "", null, sessionContentPanel);
         this.tabs.addTab(tc.getTabTitle(), tc);
         long t2 = System.currentTimeMillis();
-        System.out.println("Terminal init in: " + (t2 - t1) + " ms");
+        log.debug("Terminal init in: {} ms", t2 - t1);
 
         snippetPanel = new SnippetPanel(e -> {
             TerminalComponent tc1 = (TerminalComponent) tabs.getSelectedContent();
             tc1.sendCommand(e + "\n");
-        }, e -> {
-            this.snippetPopupMenu.setVisible(false);
-        });
+        }, e -> this.snippetPopupMenu.setVisible(false));
         snippetPopupMenu = new JPopupMenu();
         snippetPopupMenu.add(snippetPanel);
         this.add(tabs);
@@ -62,19 +58,19 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
             @Override
             public void ancestorRemoved(AncestorEvent event) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public void ancestorMoved(AncestorEvent event) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public void ancestorAdded(AncestorEvent event) {
-                System.err.println("Terminal ancestor component shown");
+                log.debug("Terminal ancestor component shown");
                 focusTerminal();
             }
         });
@@ -89,7 +85,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     private void focusTerminal() {
         tabs.requestFocusInWindow();
-        System.err.println("Terminal component shown");
+        log.debug("Terminal component shown");
         TerminalComponent comp = (TerminalComponent) tabs.getSelectedContent();
         if (comp != null) {
             comp.requestFocusInWindow();
@@ -121,10 +117,9 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     public void close() {
         Component[] components = tabs.getTabContents();
-        for (int i = 0; i < components.length; i++) {
-            Component c = components[i];
+        for (Component c : components) {
             if (c instanceof TerminalComponent) {
-                System.out.println("Closing terminal: " + c);
+                log.info("Closing terminal: {}", c);
                 ((TerminalComponent) c).close();
             }
         }

@@ -1,13 +1,14 @@
 package com.jediterm.terminal;
 
 import com.jediterm.terminal.ui.UIUtil;
-import org.apache.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
 
+@Slf4j
 public class DefaultTerminalCopyPasteHandler implements TerminalCopyPasteHandler, ClipboardOwner {
-  private static final Logger LOG = Logger.getLogger(DefaultTerminalCopyPasteHandler.class);
+
 
   @Override
   public void setContents( String text, boolean useSystemSelectionClipboardIfAvailable) {
@@ -91,10 +92,10 @@ public class DefaultTerminalCopyPasteHandler implements TerminalCopyPasteHandler
 
   private static void logException( String message,  Exception e) {
     if (UIUtil.isWindows && e instanceof IllegalStateException) {
-      LOG.debug(message, e);
+      log.error(message, e);
     }
     else {
-      LOG.warn(message, e);
+      log.warn(message, e);
     }
   }
 

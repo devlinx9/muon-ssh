@@ -3,18 +3,23 @@
  */
 package muon.app.ssh;
 
+import lombok.Getter;
+import lombok.Setter;
 import net.schmizz.sshj.sftp.RemoteResourceInfo;
 
 /**
  * @author subhro
  *
  */
+@Setter
+@Getter
 public class RemoteResourceInfoWrapper {
+
     private RemoteResourceInfo info;
+
     private String longPath;
+
     /**
-     * @param info
-     * @param longPath
      */
     public RemoteResourceInfoWrapper(RemoteResourceInfo info, String longPath) {
         super();
@@ -22,31 +27,4 @@ public class RemoteResourceInfoWrapper {
         this.longPath = longPath;
     }
 
-    /**
-     * @return the info
-     */
-    public RemoteResourceInfo getInfo() {
-        return info;
-    }
-
-    /**
-     * @param info the info to set
-     */
-    public void setInfo(RemoteResourceInfo info) {
-        this.info = info;
-    }
-
-    /**
-     * @return the longPath
-     */
-    public String getLongPath() {
-        return longPath;
-    }
-
-    /**
-     * @param longPath the longPath to set
-     */
-    public void setLongPath(String longPath) {
-        this.longPath = longPath;
-    }
 }

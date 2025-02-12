@@ -1,5 +1,10 @@
 package muon.app.ui.components.session.files.transfer;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class ByteChunk {
     private byte[] buf;
     private long len;
@@ -9,19 +14,4 @@ public class ByteChunk {
         this.len = len;
     }
 
-    public byte[] getBuf() {
-        return buf;
-    }
-
-    public void setBuf(byte[] buf) {
-        this.buf = buf;
-    }
-
-    public long getLen() {
-        return len;
-    }
-
-    public void setLen(long len) {
-        this.len = len;
-    }
 }

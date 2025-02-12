@@ -1,14 +1,15 @@
 package com.jediterm.terminal.model.hyperlinks;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-
-
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author traff
  */
+@Slf4j
 public class LinkResult {
   private final LinkResultItem myItem;
   private List<LinkResultItem> myItemList;
@@ -25,7 +26,7 @@ public class LinkResult {
 
   public List<LinkResultItem> getItems() {
     if (myItemList == null) {
-      myItemList = new ArrayList<>(Arrays.asList(myItem));
+      myItemList = new ArrayList<>(Collections.singletonList(myItem));
     }
     return myItemList;
   }

@@ -1,5 +1,7 @@
 package com.jediterm.terminal.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -7,8 +9,9 @@ import javax.swing.text.PlainDocument;
 /**
 * @author traff
 */
+@Slf4j
 public class JTextFieldLimit extends PlainDocument {
-  private int limit;
+  private final int limit;
 
   public JTextFieldLimit(int limit) {
     super();

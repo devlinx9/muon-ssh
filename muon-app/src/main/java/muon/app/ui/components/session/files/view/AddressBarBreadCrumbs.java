@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.view;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class AddressBarBreadCrumbs extends JPanel {
     public UIDefaults toolBarButtonSkin = new UIDefaults();
     private final boolean unix;
@@ -29,7 +31,7 @@ public class AddressBarBreadCrumbs extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 String selectedPath = calculatePath(
                         (JComponent) e.getComponent());
-                System.out.println("Selected path: " + selectedPath);
+                log.info("Selected path: {}", selectedPath);
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     if (popupTriggerListener != null) {
                         popupTriggerListener.actionPerformed(
@@ -37,7 +39,7 @@ public class AddressBarBreadCrumbs extends JPanel {
                     }
                 } else {
                     for (ActionListener l : listeners) {
-                        System.out.println("Performing action");
+                        log.info("Performing action");
                         l.actionPerformed(new ActionEvent(this, hashCode(),
                                 selectedPath));
                     }
@@ -69,8 +71,7 @@ public class AddressBarBreadCrumbs extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        Dimension d = getLayout().preferredLayoutSize(this);
-        return d;
+        return getLayout().preferredLayoutSize(this);
     }
 
     public void setPath(String path) {
@@ -87,7 +88,7 @@ public class AddressBarBreadCrumbs extends JPanel {
         segments = path.split(unix ? "\\/" : "\\\\");
         for (int i = 0; i < segments.length; i++) {
             String text = segments[i];
-            if (text.length() < 1)
+            if (text.isEmpty())
                 continue;
             JButton btn = new JButton(segments[i]);
             btn.putClientProperty("Nimbus.Overrides", this.toolBarButtonSkin);
@@ -113,62 +114,54 @@ public class AddressBarBreadCrumbs extends JPanel {
     }
 
     private void createAddressButtonStyle() {
-        Painter<JButton> toolBarButtonPainterNormal = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width,
-                              int height) {
-                if (object
-                        .getClientProperty("path.index.last") == Boolean.TRUE) {
-                    g.setColor(App.SKIN.getAddressBarSelectionBackground());
-                    g.fillRect(0, 0, width - 1, height - 1);
-                }
-            }
-        };
-
-        Painter<JButton> toolBarButtonPainterHot = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width,
-                              int height) {
-                g.setColor(App.SKIN.getAddressBarRolloverBackground());
-                g.fillRect(0, 0, width - 1, height - 1);
-            }
-        };
-
-        Painter<JButton> toolBarButtonPainterPressed = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width,
-                              int height) {
+        Painter<JButton> toolBarButtonPainterNormal = (g, object, width, height) -> {
+            if (object
+                    .getClientProperty("path.index.last") == Boolean.TRUE) {
                 g.setColor(App.SKIN.getAddressBarSelectionBackground());
                 g.fillRect(0, 0, width - 1, height - 1);
             }
         };
 
+        Painter<JButton> toolBarButtonPainterHot = (g, object, width, height) -> {
+            g.setColor(App.SKIN.getAddressBarRolloverBackground());
+            g.fillRect(0, 0, width - 1, height - 1);
+        };
+
+        Painter<JButton> toolBarButtonPainterPressed = (g, object, width, height) -> {
+            g.setColor(App.SKIN.getAddressBarSelectionBackground());
+            g.fillRect(0, 0, width - 1, height - 1);
+        };
+
         toolBarButtonSkin.put("Button.contentMargins", new Insets(2, 8, 2, 8));
+        setTolbarButtonSkin(toolBarButtonPainterNormal, toolBarButtonPainterHot, toolBarButtonPainterPressed, toolBarButtonSkin);
+    }
+
+    public static void setTolbarButtonSkin(Painter<JButton> toolBarButtonPainterNormal, Painter<JButton> toolBarButtonPainterHot, Painter<JButton> toolBarButtonPainterPressed, UIDefaults toolBarButtonSkin) {
         toolBarButtonSkin.put("Button[Enabled].backgroundPainter",
-                toolBarButtonPainterNormal);
+                              toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Focused].backgroundPainter",
-                toolBarButtonPainterNormal);
+                              toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Default].backgroundPainter",
-                toolBarButtonPainterNormal);
+                              toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Default+Focused].backgroundPainter",
-                toolBarButtonPainterNormal);
+                              toolBarButtonPainterNormal);
 
         toolBarButtonSkin.put("Button[Pressed].backgroundPainter",
-                toolBarButtonPainterPressed);
+                              toolBarButtonPainterPressed);
         toolBarButtonSkin.put("Button[Focused+Pressed].backgroundPainter",
-                toolBarButtonPainterPressed);
+                              toolBarButtonPainterPressed);
         toolBarButtonSkin.put(
                 "Button[Default+Focused+Pressed].backgroundPainter",
                 toolBarButtonPainterPressed);
         toolBarButtonSkin.put("Button[Default+Pressed].backgroundPainter",
-                toolBarButtonPainterPressed);
+                              toolBarButtonPainterPressed);
 
         toolBarButtonSkin.put("Button[MouseOver].backgroundPainter",
-                toolBarButtonPainterHot);
+                              toolBarButtonPainterHot);
         toolBarButtonSkin.put("Button[Focused+MouseOver].backgroundPainter",
-                toolBarButtonPainterHot);
+                              toolBarButtonPainterHot);
         toolBarButtonSkin.put("Button[Default+MouseOver].backgroundPainter",
-                toolBarButtonPainterHot);
+                              toolBarButtonPainterHot);
         toolBarButtonSkin.put(
                 "Button[Default+Focused+MouseOver].backgroundPainter",
                 toolBarButtonPainterHot);

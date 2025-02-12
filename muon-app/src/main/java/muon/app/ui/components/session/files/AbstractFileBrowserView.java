@@ -1,5 +1,7 @@
 package muon.app.ui.components.session.files;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileSystem;
 import muon.app.ui.components.ClosableTabContent;
@@ -14,17 +16,23 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
+@Slf4j
 public abstract class AbstractFileBrowserView extends JPanel implements FolderViewEventListener, ClosableTabContent {
     private final NavigationHistory history;
     private final JButton btnBack;
     private final JButton btnNext;
+    @Getter
     private final OverflowMenuHandler overflowMenuHandler;
     protected AddressBar addressBar;
     protected FolderView folderView;
     protected String path;
+    @Getter
     protected PanelOrientation orientation;
+
+    @Getter
     protected TabTitle tabTitle;
 
+    @Getter
     protected FileBrowser fileBrowser;
 
     public AbstractFileBrowserView(PanelOrientation orientation, FileBrowser fileBrowser) {
@@ -41,12 +49,12 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         createAddressBar();
         addressBar.addActionListener(e -> {
             String text = e.getActionCommand();
-            System.out.println("Address changed: " + text + " old: " + this.path);
+            log.info("Address changed: {} old: {}", text, this.path);
             if (PathUtils.isSamePath(this.path, text)) {
-                System.out.println("Same text");
+                log.info("Same text");
                 return;
             }
-            if (text != null && text.length() > 0) {
+            if (text != null && !text.isEmpty()) {
                 addBack(this.path);
                 render(text, App.getGlobalSettings().isDirectoryCache());
             }
@@ -145,9 +153,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         add(toolBar, BorderLayout.NORTH);
 
-        folderView = new FolderView(this, text -> {
-            this.fileBrowser.updateRemoteStatus(text);
-        });
+        folderView = new FolderView(this, text -> this.fileBrowser.updateRemoteStatus(text));
 
         this.overflowMenuHandler.setFolderView(folderView);
 
@@ -172,7 +178,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
     public abstract String toString();
 
     public boolean close() {
-        System.out.println("Unregistering for view mode notification");
+        log.debug("Unregistering for view mode notification");
         this.fileBrowser.unRegisterForViewNotification(this);
         return true;
     }
@@ -192,10 +198,6 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         this.render(this.path, false);
     }
 
-    public PanelOrientation getOrientation() {
-        return orientation;
-    }
-
     @Override
     public void addBack(String path) {
         history.addBack(path);
@@ -212,18 +214,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         btnNext.setEnabled(history.hasNextElement());
     }
 
-    public OverflowMenuHandler getOverflowMenuHandler() {
-        return this.overflowMenuHandler;
-    }
-
-    public abstract FileSystem getFileSystem() throws Exception;
-
-    /**
-     * @return the tabTitle
-     */
-    public TabTitle getTabTitle() {
-        return tabTitle;
-    }
+    public abstract FileSystem getFileSystem();
 
     public void refreshViewMode() {
         this.folderView.refreshViewMode();
@@ -231,12 +222,8 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         this.repaint();
     }
 
-    public FileBrowser getFileBrowser() {
-        return this.fileBrowser;
-    }
-
     public enum PanelOrientation {
-        Left, Right
+        LEFT, RIGHT
     }
 
 }

@@ -3,6 +3,7 @@
  */
 package muon.app.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import net.schmizz.sshj.common.KeyType;
 import net.schmizz.sshj.common.SecurityUtils;
 import net.schmizz.sshj.transport.verification.OpenSSHKnownHosts;
@@ -16,9 +17,9 @@ import java.security.PublicKey;
  * @author subhro
  *
  */
+@Slf4j
 public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
     /**
-     * @throws IOException
      *
      */
     public GraphicalHostKeyVerifier(File knownHostFile) throws IOException {
@@ -40,7 +41,7 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
                 this.entries.add(new HostEntry(null, hostname, KeyType.fromKey(key), key));
                 write();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             return true;
         }
@@ -58,7 +59,8 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
                 + "IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!\n"
                 + "Someone could be eavesdropping on you right now (man-in-the-middle attack)!\n"
                 + "It is also possible that the host key has just been changed.\n"
-                + "The fingerprint for the %s key sent by the remote host is\n" + "%s.\n"
+                + "The fingerprint for the %s key sent by the remote host is\n %s.\n"
+                + "Review the file %s.\n"
                 + "Do you still want to connect to this server?", type, fp, path);
         return JOptionPane.showConfirmDialog(null, msg) == JOptionPane.YES_OPTION;
     }
@@ -71,7 +73,7 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return this.hostKeyUnverifiableAction(hostname, key);
         }
     }

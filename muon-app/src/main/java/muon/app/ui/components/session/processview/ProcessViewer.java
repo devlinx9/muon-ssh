@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.processview;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ui.components.session.Page;
@@ -22,8 +23,8 @@ import static muon.app.App.bundle;
 
 /**
  * @author subhro
- *
  */
+@Slf4j
 public class ProcessViewer extends Page {
     private final SessionContentPanel holder;
     private final AtomicBoolean init = new AtomicBoolean(false);
@@ -54,9 +55,7 @@ public class ProcessViewer extends Page {
      *
      */
     private void createUI() {
-        processListPanel = new ProcessListPanel((cmd, mode) -> {
-            this.runCommand(cmd, mode);
-        });
+        processListPanel = new ProcessListPanel(this::runCommand);
         processListPanel.setMinimumSize(new Dimension(10, 10));
         this.add(processListPanel);
     }
@@ -79,7 +78,7 @@ public class ProcessViewer extends Page {
                 processListPanel.setProcessList(list);
             });
         } catch (Exception e1) {
-            e1.printStackTrace();
+            log.error(e1.getMessage(), e1);
         }
     }
 
@@ -91,7 +90,7 @@ public class ProcessViewer extends Page {
                 holder.EXECUTOR.execute(() -> {
                     try {
                         if (holder.getRemoteSessionInstance().exec(cmd, stopFlag, new StringBuilder(),
-                                new StringBuilder()) != 0) {
+                                                                   new StringBuilder()) != 0) {
                             if (!holder.isSessionClosed()) {
                                 JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
                             }
@@ -99,8 +98,8 @@ public class ProcessViewer extends Page {
                             updateProcessList(stopFlag);
                         }
                     } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        
+                        log.error(e.getMessage(), e);
                     }
                     holder.enableUi();
                 });
@@ -108,7 +107,7 @@ public class ProcessViewer extends Page {
                 break;
             case KILL_AS_ROOT:
                 holder.EXECUTOR.execute(() -> {
-                    if (SudoUtils.runSudo(cmd, holder.getRemoteSessionInstance(),holder.getInfo().getPassword()) != 0) {
+                    if (SudoUtils.runSudo(cmd, holder.getRemoteSessionInstance(), holder.getInfo().getPassword()) != 0) {
                         if (!holder.isSessionClosed()) {
                             JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
                         }
@@ -132,11 +131,12 @@ public class ProcessViewer extends Page {
             throws Exception {
         StringBuilder out = new StringBuilder(), err = new StringBuilder();
         int ret = instance.exec(ScriptLoader.loadShellScript("/scripts/ps.sh"),
-                // "ps -e -o pid=pid -o pcpu -o rss -o etime -o ppid -o user -o nice -o args -ww
-                // --sort pid",
-                stopFlag, out, err);
-        if (ret != 0)
+                                // "ps -e -o pid=pid -o pcpu -o rss -o etime -o ppid -o user -o nice -o args -ww
+                                // --sort pid",
+                                stopFlag, out, err);
+        if (ret != 0) {
             throw new Exception("Error while getting metrics");
+        }
         return parseProcessList(out.toString());
     }
 
@@ -158,28 +158,33 @@ public class ProcessViewer extends Page {
             try {
                 ent.setPid(Integer.parseInt(p[0].trim()));
             } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
             try {
                 ent.setCpu(Float.parseFloat(p[1].trim()));
             } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
             try {
                 ent.setMemory(Float.parseFloat(p[2].trim()));
             } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
             ent.setTime(p[3]);
             try {
                 ent.setPpid(Integer.parseInt(p[4].trim()));
             } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
             ent.setUser(p[5]);
             try {
-                ent.setNice(Integer.parseInt(p[6].trim()));
+                ent.setNice(p[6].trim());
             } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
             StringBuilder sb = new StringBuilder();
             for (int i = 7; i < p.length; i++) {
-                sb.append(p[i] + " ");
+                sb.append(p[i]).append(" ");
             }
             ent.setArgs(sb.toString().trim());
             list.add(ent);

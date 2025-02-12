@@ -1,5 +1,6 @@
 package muon.app.ui.components.session;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.SkinnedTextArea;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.TabbedPanel;
@@ -7,8 +8,6 @@ import muon.app.ui.components.session.SessionInfo.JumpType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -19,6 +18,7 @@ import java.util.List;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class SessionInfoPanel extends JPanel {
 
     public static final int DEFAULT_MAX_PORT = 65535;
@@ -33,16 +33,28 @@ public class SessionInfoPanel extends JPanel {
     private JButton inpLocalBrowse;
     private JButton inpKeyBrowse;
     private JButton inpKeyShowPass;
-    private JLabel lblHost, lblPort, lblUser, lblPass, lblLocalFolder, lblRemoteFolder, lblKeyFile, lblProxyType,
-            lblProxyHost, lblProxyPort, lblProxyUser, lblProxyPass;
-    private SpinnerNumberModel portModel, proxyPortModel;
+    private JLabel lblHost;
+    private JLabel lblPort;
+    private JLabel lblUser;
+    private JLabel lblPass;
+    private JLabel lblLocalFolder;
+    private JLabel lblRemoteFolder;
+    private JLabel lblKeyFile;
+    private JLabel lblProxyType;
+    private JLabel lblProxyHost;
+    private JLabel lblProxyPort;
+    private JLabel lblProxyUser;
+    private JLabel lblProxyPass;
+    private SpinnerNumberModel portModel;
+    private SpinnerNumberModel proxyPortModel;
     private JComboBox<String> cmbProxy;
     private JTextField inpProxyHostName;
     private JSpinner inpProxyPort;
     private JTextField inpProxyUserName;
     private JPasswordField inpProxyPassword;
     private JCheckBox chkUseJumpHosts;
-    private JRadioButton radMultiHopTunnel, radMultiHopPortForwarding;
+    private JRadioButton radMultiHopTunnel;
+    private JRadioButton radMultiHopPortForwarding;
     private JumpHostPanel panJumpHost;
     private PortForwardingPanel panPF;
     private TabbedPanel tabs;
@@ -65,11 +77,11 @@ public class SessionInfoPanel extends JPanel {
     }
 
     public boolean validateFields() {
-        if (inpHostName.getText().length() < 1) {
+        if (inpHostName.getText().isEmpty()) {
             showError("Host name can not be left blank");
             return false;
         }
-        if (inpUserName.getText().length() < 1) {
+        if (inpUserName.getText().isEmpty()) {
             showError("User name can not be left blank");
             return false;
         }
@@ -145,12 +157,12 @@ public class SessionInfoPanel extends JPanel {
     }
 
     private void showError(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg, bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
     }
 
     private void setJumpHostDetails(boolean useJumpHosts, JumpType jumpType, List<HopEntry> jumpHosts) {
         this.chkUseJumpHosts.setSelected(useJumpHosts);
-        if (jumpType == JumpType.TcpForwarding) {
+        if (jumpType == JumpType.TCP_FORWARDING) {
             radMultiHopTunnel.setSelected(true);
         } else {
             radMultiHopPortForwarding.setSelected(true);
@@ -182,9 +194,7 @@ public class SessionInfoPanel extends JPanel {
         radMultiHopTunnel = new JRadioButton("Use multihop SSH tunnel");
         radMultiHopPortForwarding = new JRadioButton("Use multihop port forwarding");
 
-        chkUseJumpHosts.addActionListener(e -> {
-            info.setUseJumpHosts(chkUseJumpHosts.isSelected());
-        });
+        chkUseJumpHosts.addActionListener(e -> info.setUseJumpHosts(chkUseJumpHosts.isSelected()));
 
         radMultiHopPortForwarding.addActionListener(e -> updateHopMode());
         radMultiHopTunnel.addActionListener(e -> updateHopMode());
@@ -274,9 +284,7 @@ public class SessionInfoPanel extends JPanel {
         lblProxyPass = new JLabel(bundle.getString("proxy_password") + bundle.getString("warning_plain_text"));
 
         cmbProxy = new JComboBox<>(new String[]{"NONE", "HTTP", "SOCKS"});
-        cmbProxy.addActionListener(e -> {
-            info.setProxyType(cmbProxy.getSelectedIndex());
-        });
+        cmbProxy.addActionListener(e -> info.setProxyType(cmbProxy.getSelectedIndex()));
 
         inpProxyHostName = new SkinnedTextField(10);// new
         inpProxyHostName.getDocument().addDocumentListener(new DocumentListener() {
@@ -301,12 +309,7 @@ public class SessionInfoPanel extends JPanel {
             }
         });
         proxyPortModel = new SpinnerNumberModel(8080, 1, DEFAULT_MAX_PORT, 1);
-        proxyPortModel.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent arg0) {
-                info.setProxyPort((Integer) proxyPortModel.getValue());
-            }
-        });
+        proxyPortModel.addChangeListener(arg0 -> info.setProxyPort((Integer) proxyPortModel.getValue()));
         inpProxyPort = new JSpinner(proxyPortModel);
         inpProxyUserName = new SkinnedTextField(10);// new
         inpProxyUserName.getDocument().addDocumentListener(new DocumentListener() {
@@ -608,12 +611,7 @@ public class SessionInfoPanel extends JPanel {
         });
 
         portModel = new SpinnerNumberModel(22, 1, DEFAULT_MAX_PORT, 1);
-        portModel.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent arg0) {
-                info.setPort((Integer) portModel.getValue());
-            }
-        });
+        portModel.addChangeListener(arg0 -> info.setPort((Integer) portModel.getValue()));
         inpPort = new JSpinner(portModel);
         inpUserName = new SkinnedTextField(10);
         inpUserName.getDocument().addDocumentListener(new DocumentListener() {
@@ -814,9 +812,9 @@ public class SessionInfoPanel extends JPanel {
 
     private void updateHopMode() {
         if (radMultiHopPortForwarding.isSelected()) {
-            info.setJumpType(JumpType.PortForwarding);
+            info.setJumpType(JumpType.PORT_FORWARDING);
         } else {
-            info.setJumpType(JumpType.TcpForwarding);
+            info.setJumpType(JumpType.TCP_FORWARDING);
         }
     }
 
@@ -831,7 +829,7 @@ public class SessionInfoPanel extends JPanel {
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }

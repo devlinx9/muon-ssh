@@ -15,7 +15,7 @@ import java.awt.*;
  */
 public class CustomTerminalTheme implements TerminalTheme {
 
-    public static final TerminalColor getTerminalColor(int rgb) {
+    public static TerminalColor getTerminalColor(int rgb) {
         return TerminalColor.awt(new Color(rgb));
     }
 

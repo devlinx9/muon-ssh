@@ -2,6 +2,7 @@ package muon.app.ui.components.session;
 
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.WinReg;
+import lombok.extern.slf4j.Slf4j;
 import util.RegUtil;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -10,20 +11,21 @@ import java.util.List;
 import java.util.Map;
 
 
+@Slf4j
 public class PuttyImporter {
-    private static final String PuttyREGKey = "Software\\SimonTatham\\PuTTY\\Sessions";
+    private static final String PUTTY_REG_KEY = "Software\\SimonTatham\\PuTTY\\Sessions";
 
     public static Map<String, String> getKeyNames() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         try {
             String[] keys = Advapi32Util
-                    .registryGetKeys(WinReg.HKEY_CURRENT_USER, PuttyREGKey);
+                    .registryGetKeys(WinReg.HKEY_CURRENT_USER, PUTTY_REG_KEY);
             for (String key : keys) {
                 String decodedKey = key.replace("%20", " ");
                 map.put(key, decodedKey);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
 
         return map;
@@ -34,28 +36,28 @@ public class PuttyImporter {
 
         for (String key : keys) {
             if ("ssh".equals(RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                    PuttyREGKey + "\\" + key, "Protocol"))) {
+                                               PUTTY_REG_KEY + "\\" + key, "Protocol"))) {
                 String host = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        PuttyREGKey + "\\" + key, "HostName");
+                                                PUTTY_REG_KEY + "\\" + key, "HostName");
                 int port = RegUtil.regGetInt(WinReg.HKEY_CURRENT_USER,
-                        PuttyREGKey + "\\" + key, "PortNumber");
+                                             PUTTY_REG_KEY + "\\" + key, "PortNumber");
                 String user = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        PuttyREGKey + "\\" + key, "UserName");
+                                                PUTTY_REG_KEY + "\\" + key, "UserName");
                 String keyfile = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        PuttyREGKey + "\\" + key, "PublicKeyFile");
+                                                   PUTTY_REG_KEY + "\\" + key, "PublicKeyFile");
 
                 String proxyHost = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        PuttyREGKey + "\\" + key, "ProxyHost");
+                                                     PUTTY_REG_KEY + "\\" + key, "ProxyHost");
                 int proxyPort = RegUtil.regGetInt(WinReg.HKEY_CURRENT_USER,
-                        PuttyREGKey + "\\" + key, "ProxyPort");
+                                                  PUTTY_REG_KEY + "\\" + key, "ProxyPort");
                 String proxyUser = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        PuttyREGKey + "\\" + key, "ProxyUsername");
+                                                     PUTTY_REG_KEY + "\\" + key, "ProxyUsername");
 
                 String proxyPass = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
-                        PuttyREGKey + "\\" + key, "ProxyPassword");
+                                                     PUTTY_REG_KEY + "\\" + key, "ProxyPassword");
 
                 int proxyType = RegUtil.regGetInt(WinReg.HKEY_CURRENT_USER,
-                        PuttyREGKey + "\\" + key, "ProxyMethod");
+                                                  PUTTY_REG_KEY + "\\" + key, "ProxyMethod");
                 if (proxyType == 1) {
                     proxyType = 2;
                 } else if (proxyType == 2) {

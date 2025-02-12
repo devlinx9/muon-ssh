@@ -2,6 +2,7 @@ package muon.app.ui.components.session.utilpage.keys;
 
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.common.InputTransferChannel;
 import muon.app.common.OutputTransferChannel;
 import muon.app.ssh.RemoteSessionInstance;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public class SshKeyManager {
     public static SshKeyHolder getKeyDetails(SessionContentPanel content) throws Exception {
         SshKeyHolder holder = new SshKeyHolder();
@@ -40,7 +42,7 @@ public class SshKeyManager {
             holder.setLocalPublicKey(new String(bytes, StandardCharsets.UTF_8));
             holder.setLocalPubKeyFile(defaultPath.toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -96,9 +98,7 @@ public class SshKeyManager {
         JCheckBox chkGenPassPhrase = new JCheckBox("Use passphrase to protect private key (Optional)");
         JPasswordField txtPassPhrase = new JPasswordField(30);
         txtPassPhrase.setEditable(false);
-        chkGenPassPhrase.addActionListener(e -> {
-            txtPassPhrase.setEditable(chkGenPassPhrase.isSelected());
-        });
+        chkGenPassPhrase.addActionListener(e -> txtPassPhrase.setEditable(chkGenPassPhrase.isSelected()));
 
         String passPhrase = new String(txtPassPhrase.getPassword());
 
@@ -120,7 +120,7 @@ public class SshKeyManager {
         JSch jsch = new JSch();
         KeyPair kpair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
         Files.createDirectories(sshDir);
-        if (passPhrase.length() > 0) {
+        if (!passPhrase.isEmpty()) {
             kpair.writePrivateKey(keyPath.toString(), passPhrase.getBytes(StandardCharsets.UTF_8));
         } else {
             kpair.writePrivateKey(keyPath.toString());
@@ -163,7 +163,7 @@ public class SshKeyManager {
     }
 
     private static String getPubKeyPath(SessionInfo info) {
-        if (info.getPrivateKeyFile() != null && info.getPrivateKeyFile().length() > 0) {
+        if (info.getPrivateKeyFile() != null && !info.getPrivateKeyFile().isEmpty()) {
             String path = PathUtils.combine(PathUtils.getParent(info.getPrivateKeyFile()),
                     PathUtils.getFileName(info.getPrivateKeyFile()) + ".pub", File.separator);
             if (new File(path).exists()) {
@@ -179,6 +179,7 @@ public class SshKeyManager {
             fileSystem.getInfo(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));
             found = true;
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
         if (!found) {
             fileSystem.mkdir(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));

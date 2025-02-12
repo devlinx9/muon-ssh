@@ -1,11 +1,14 @@
 package com.jediterm.terminal;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.ref.WeakReference;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.WeakHashMap;
 
+@Slf4j
 public class TextStyle {
   private static final EnumSet<Option> NO_OPTIONS = EnumSet.noneOf(Option.class);
 

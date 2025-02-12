@@ -3,6 +3,8 @@
  */
 package muon.app.ui.components;
 
+import lombok.Getter;
+import lombok.Setter;
 import muon.app.App;
 
 import javax.swing.*;
@@ -20,10 +22,13 @@ import java.awt.event.MouseEvent;
 public class KeyShortcutComponent extends JComponent {
 
     private static final String WAITING_STRING = "Please press the key combination";
-    /**
-     *
-     */
+
+    @Setter
+    @Getter
     private int keyCode = Integer.MIN_VALUE;
+
+    @Setter
+    @Getter
     private int modifier;
     private boolean waitingForKeys = false;
 
@@ -87,7 +92,7 @@ public class KeyShortcutComponent extends JComponent {
             }
             String txtModifier = KeyEvent.getModifiersExText(modifier);
             String txtKeyText = KeyEvent.getKeyText(keyCode);
-            return txtModifier == null || txtModifier.length() < 1 ? txtKeyText
+            return txtModifier == null || txtModifier.isEmpty() ? txtKeyText
                     : txtModifier + "+" + txtKeyText;
         } else {
             return WAITING_STRING;
@@ -112,34 +117,6 @@ public class KeyShortcutComponent extends JComponent {
     @Override
     public Dimension getMaximumSize() {
         return getPreferredSize();
-    }
-
-    /**
-     * @return the keyCode
-     */
-    public int getKeyCode() {
-        return keyCode;
-    }
-
-    /**
-     * @param keyCode the keyCode to set
-     */
-    public void setKeyCode(int keyCode) {
-        this.keyCode = keyCode;
-    }
-
-    /**
-     * @return the modifier
-     */
-    public int getModifier() {
-        return modifier;
-    }
-
-    /**
-     * @param modifier the modifier to set
-     */
-    public void setModifier(int modifier) {
-        this.modifier = modifier;
     }
 
 }

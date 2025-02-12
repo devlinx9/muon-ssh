@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.utilpage.portview;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
@@ -15,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -24,6 +26,7 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class PortViewer extends UtilPageItemView {
     private static final String SEPARATOR = UUID.randomUUID().toString();
     public static final String LSOF_COMMAND = "sh -c \"export PATH=$PATH:/usr/sbin; echo;echo "
@@ -48,7 +51,7 @@ public class PortViewer extends UtilPageItemView {
     private void filter() {
         String text = txtFilter.getText();
         model.clear();
-        if (text.length() > 0) {
+        if (!text.isEmpty()) {
             List<SocketEntry> filteredList = new ArrayList<>();
             for (SocketEntry entry : list) {
                 if (entry.getApp().contains(text)
@@ -70,13 +73,13 @@ public class PortViewer extends UtilPageItemView {
     }
 
     public List<SocketEntry> parseSocketList(String text) {
-        System.err.println("text: " + text);
+        log.debug("text: {}", text);
         List<SocketEntry> list = new ArrayList<>();
         SocketEntry ent = null;
         boolean start = false;
         for (String line1 : text.split("\n")) {
             String line = line1.trim();
-            System.out.println("LINE=" + line);
+            log.debug("LINE={}", line);
             if (!start) {
                 if (line.trim().equals(SEPARATOR)) {
                     start = true;
@@ -92,7 +95,7 @@ public class PortViewer extends UtilPageItemView {
                 ent.setPid(Integer.parseInt(line.substring(1)));
             }
             if (ch == 'c') {
-                ent.setApp(line.substring(1));
+                Objects.requireNonNull(ent).setApp(line.substring(1));
             }
             if (ch == 'n') {
                 String hostStr = line.substring(1);
@@ -100,7 +103,7 @@ public class PortViewer extends UtilPageItemView {
                 if (index != -1) {
                     int port = Integer.parseInt(hostStr.substring(index + 1));
                     String host = hostStr.substring(0, index);
-                    if (ent.getHost() != null) {
+                    if (Objects.requireNonNull(ent).getHost() != null) {
                         // if listening on multiple interfaces, ports
                         SocketEntry ent1 = new SocketEntry();
                         ent1.setPort(port);
@@ -146,18 +149,14 @@ public class PortViewer extends UtilPageItemView {
 
         add(b1, BorderLayout.NORTH);
 
-        btnFilter.addActionListener(e -> {
-            filter();
-        });
+        btnFilter.addActionListener(e -> filter());
         table.setAutoCreateRowSorter(true);
         add(new SkinnedScrollPane(table));
 
         Box box = Box.createHorizontalBox();
         box.setBorder(new EmptyBorder(10, 0, 0, 0));
         btnRefresh = new JButton(bundle.getString("refresh"));
-        btnRefresh.addActionListener(e -> {
-            getListingSockets();
-        });
+        btnRefresh.addActionListener(e -> getListingSockets());
 
         chkRunAsSuperUser = new JCheckBox(
                 bundle.getString("actions_sudo"));
@@ -174,13 +173,13 @@ public class PortViewer extends UtilPageItemView {
 
     @Override
     protected void onComponentVisible() {
-        // TODO Auto-generated method stub
+        
 
     }
 
     @Override
     protected void onComponentHide() {
-        // TODO Auto-generated method stub
+        
 
     }
 
@@ -201,41 +200,33 @@ public class PortViewer extends UtilPageItemView {
                                     new StringBuilder(),holder.getInfo().getPassword()) == 0) {
                                 java.util.List<SocketEntry> list = this
                                         .parseSocketList(output.toString());
-                                SwingUtilities.invokeAndWait(() -> {
-                                    setSocketData(list);
-                                });
+                                SwingUtilities.invokeAndWait(() -> setSocketData(list));
                                 return;
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                        if (!holder.isSessionClosed()) {
-                            JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                            log.error(ex.getMessage(), ex);
                         }
                     } else {
-                        System.out.println("Command was: " + cmd);
+                        log.debug("Command was: {}", cmd);
                         try {
                             if (holder.getRemoteSessionInstance().exec(cmd,
                                     stopFlag, output) == 0) {
-                                System.out.println(
-                                        "Command was: " + cmd + " " + output);
+                                log.debug("Command was: {} {}", cmd, output);
                                 java.util.List<SocketEntry> list = this
                                         .parseSocketList(output.toString());
-                                SwingUtilities.invokeAndWait(() -> {
-                                    setSocketData(list);
-                                });
+                                SwingUtilities.invokeAndWait(() -> setSocketData(list));
                                 return;
                             }
-                            System.out.println("Error: " + output);
+                            log.error("Error: {}", output);
                         } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                        if (!holder.isSessionClosed()) {
-                            JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                            log.error(ex.getMessage(), ex);
                         }
                     }
+                    if (!holder.isSessionClosed()) {
+                        JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 } finally {
                     holder.enableUi();
                 }

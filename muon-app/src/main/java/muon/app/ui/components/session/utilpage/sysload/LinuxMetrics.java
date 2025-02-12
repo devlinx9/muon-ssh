@@ -3,18 +3,35 @@
  */
 package muon.app.ui.components.session.utilpage.sysload;
 
+import lombok.Getter;
 import muon.app.ssh.RemoteSessionInstance;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author subhro
- *
  */
 public class LinuxMetrics {
-    private double cpuUsage, memoryUsage, swapUsage;
-    private long totalMemory, usedMemory, totalSwap, usedSwap;
-    private long prev_idle, prev_total;
+
+    @Getter
+    private double cpuUsage;
+    @Getter
+    private double memoryUsage;
+    @Getter
+    private double swapUsage;
+
+    @Getter
+    private long totalMemory;
+    @Getter
+    private long usedMemory;
+    @Getter
+    private long totalSwap;
+    @Getter
+    private long usedSwap;
+    private long prev_idle;
+    private long prev_total;
+
+    @Getter
     private String OS;
 
     public void updateMetrics(RemoteSessionInstance instance) throws Exception {
@@ -22,8 +39,9 @@ public class LinuxMetrics {
         int ret = instance.exec(
                 "uname; head -1 /proc/stat;grep -E \"MemTotal|MemFree|Cached|SwapTotal|SwapFree\" /proc/meminfo",
                 new AtomicBoolean(), out, err);
-        if (ret != 0)
+        if (ret != 0) {
             throw new Exception("Error while getting metrics");
+        }
         updateStats(out.toString());
     }
 
@@ -45,7 +63,7 @@ public class LinuxMetrics {
         long diff_idle = idle - prev_idle;
         long diff_total = total - prev_total;
         this.cpuUsage = (1000 * ((double) diff_total - diff_idle) / diff_total
-                + 5) / 10;
+                         + 5) / 10;
         this.prev_idle = idle;
         this.prev_total = total;
     }
@@ -82,69 +100,14 @@ public class LinuxMetrics {
         if (this.totalMemory > 0) {
             this.usedMemory = this.totalMemory - freeMemory - memCachedK * 1024;
             this.memoryUsage = ((double) (this.totalMemory - freeMemory
-                    - memCachedK * 1024) * 100) / this.totalMemory;
+                                          - memCachedK * 1024) * 100) / this.totalMemory;
         }
 
         if (this.totalSwap > 0) {
             this.usedSwap = this.totalSwap - freeSwap - swapCachedK * 1024;
             this.swapUsage = ((double) (this.totalSwap - freeSwap
-                    - swapCachedK * 1024) * 100) / this.totalSwap;
+                                        - swapCachedK * 1024) * 100) / this.totalSwap;
         }
     }
 
-    /**
-     * @return the cpuUsage
-     */
-    public double getCpuUsage() {
-        return cpuUsage;
-    }
-
-    /**
-     * @return the memoryUsage
-     */
-    public double getMemoryUsage() {
-        return memoryUsage;
-    }
-
-    /**
-     * @return the swapUsage
-     */
-    public double getSwapUsage() {
-        return swapUsage;
-    }
-
-    /**
-     * @return the totalMemory
-     */
-    public long getTotalMemory() {
-        return totalMemory;
-    }
-
-    /**
-     * @return the usedMemory
-     */
-    public long getUsedMemory() {
-        return usedMemory;
-    }
-
-    /**
-     * @return the totalSwap
-     */
-    public long getTotalSwap() {
-        return totalSwap;
-    }
-
-    /**
-     * @return the usedSwap
-     */
-    public long getUsedSwap() {
-        return usedSwap;
-    }
-
-    /**
-     * @return the oS
-     */
-    public String getOS() {
-        return OS;
-    }
 }

@@ -3,6 +3,9 @@
  */
 package muon.app.ssh;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import net.schmizz.sshj.sftp.RemoteFile;
 
 import java.io.IOException;
@@ -12,12 +15,14 @@ import java.io.OutputStream;
  * @author subhro
  *
  */
+@Slf4j
 public class SSHRemoteFileOutputStream extends OutputStream {
+    @Setter
+    @Getter
     private int bufferCapacity;
     private final RemoteFile remoteFile;
     private final OutputStream remoteFileOutputStream;
     /**
-     * @param remoteFile
      */
     public SSHRemoteFileOutputStream(RemoteFile remoteFile, int remoteMaxPacketSize) {
         this.remoteFile = remoteFile;
@@ -37,29 +42,23 @@ public class SSHRemoteFileOutputStream extends OutputStream {
 
     @Override
     public void close() throws IOException {
-        System.out.println(this.getClass().getName() + " closing");
+        log.debug("{} closing", this.getClass().getName());
         try {
             this.remoteFile.close();
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
         try {
             this.remoteFileOutputStream.close();
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 
     @Override
     public void flush() throws IOException {
-        System.out.println(this.getClass().getName() + " flushing");
+        log.debug("{} flushing", this.getClass().getName());
         this.remoteFileOutputStream.flush();
-    }
-
-    public int getBufferCapacity() {
-        return bufferCapacity;
-    }
-
-    public void setBufferCapacity(int bufferCapacity) {
-        this.bufferCapacity = bufferCapacity;
     }
 
 }

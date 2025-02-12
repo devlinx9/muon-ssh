@@ -1,11 +1,15 @@
 package com.jediterm.terminal;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * @author traff
  */
+@Slf4j
 public class TerminalColor {
   public static final TerminalColor BLACK = index(0);
   public static final TerminalColor WHITE = index(15);
@@ -61,7 +65,7 @@ public class TerminalColor {
       if (that.isIndexed()) {
         return false;
       }
-      return myColor.equals(that.myColor);
+      return Objects.requireNonNull(myColor).equals(that.myColor);
     }
   }
 

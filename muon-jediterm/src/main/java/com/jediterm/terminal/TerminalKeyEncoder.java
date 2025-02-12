@@ -2,7 +2,7 @@ package com.jediterm.terminal;
 
 import com.jediterm.terminal.ui.UIUtil;
 import com.jediterm.terminal.util.CharUtils;
-
+import lombok.extern.slf4j.Slf4j;
 import muon.terminal.Ascii;
 
 import java.awt.event.InputEvent;
@@ -15,10 +15,11 @@ import static java.awt.event.KeyEvent.*;
 /**
  * @author traff
  */
+@Slf4j
 public class TerminalKeyEncoder {
   private static final int ESC = Ascii.ESC;
 
-  private final Map<KeyCodeAndModifier, byte[]> myKeyCodes = new HashMap<KeyCodeAndModifier, byte[]>();
+  private final Map<KeyCodeAndModifier, byte[]> myKeyCodes = new HashMap<>();
 
   private boolean myAltSendsEscape = true;
   private boolean myMetaSendsEscape = false;
@@ -140,7 +141,7 @@ public class TerminalKeyEncoder {
   }
 
   /**
-   * Refer to section PC-Style Function Keys in http://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+   * Refer to section PC-Style Function Keys in <a href="http://invisible-island.net/xterm/ctlseqs/ctlseqs.html">...</a>
    */
   private byte[] getCodeWithModifiers(byte[] bytes, int modifiers) {
     int code = modifiersToCode(modifiers);
@@ -179,8 +180,6 @@ public class TerminalKeyEncoder {
    15    | Meta + Ctrl + Alt
    16    | Meta + Ctrl + Alt + Shift
    ------+--------------------------
-   * @param modifiers
-   * @return
    */
   private static int modifiersToCode(int modifiers) {
     int code = 0;

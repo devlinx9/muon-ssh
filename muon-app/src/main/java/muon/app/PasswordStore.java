@@ -3,6 +3,7 @@ package muon.app;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.SavedSessionTree;
 import muon.app.ui.components.session.SessionFolder;
 import muon.app.ui.components.session.SessionInfo;
@@ -16,15 +17,15 @@ import java.security.KeyStore;
 import java.security.KeyStore.SecretKeyEntry;
 import java.security.KeyStoreException;
 import java.security.UnrecoverableKeyException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public final class PasswordStore {
-    private static KeyStore KEY_STORE;
-    private static PasswordStore INSTANCE;
+    private static KeyStore keyStore;
+    private static PasswordStore instance;
 
     private final AtomicBoolean unlocked = new AtomicBoolean(false);
     private KeyStore.PasswordProtection protParam;
@@ -32,39 +33,39 @@ public final class PasswordStore {
     private Map<String, char[]> passwordMap = new HashMap<>();
 
     private PasswordStore() throws KeyStoreException {
-        KEY_STORE = KeyStore.getInstance("PKCS12");
+        keyStore = KeyStore.getInstance("PKCS12");
     }
 
-    public static final synchronized PasswordStore getSharedInstance() throws Exception {
-        if (INSTANCE == null) {
-            INSTANCE = new PasswordStore();
+    public static synchronized PasswordStore getSharedInstance() throws Exception {
+        if (instance == null) {
+            instance = new PasswordStore();
         }
-        return INSTANCE;
+        return instance;
     }
 
-    public final boolean isUnlocked() {
+    public boolean isUnlocked() {
         return unlocked.get();
     }
 
-    public final synchronized void unlockStore(char[] password) throws Exception {
+    public synchronized void unlockStore(char[] password) throws Exception {
         protParam = new KeyStore.PasswordProtection(password, "PBEWithHmacSHA256AndAES_256", null);
         File filePasswordStore = new File(App.CONFIG_DIR, "passwords.pfx");
         if (!filePasswordStore.exists()) {
-            KEY_STORE.load(null, protParam.getPassword());
+            keyStore.load(null, protParam.getPassword());
             unlocked.set(true);
             return;
         }
         try (InputStream in = new FileInputStream(filePasswordStore)) {
-            KEY_STORE.load(in, protParam.getPassword());
+            keyStore.load(in, protParam.getPassword());
             loadPasswords();
             unlocked.set(true);
         }
     }
 
-    private final synchronized void loadPasswords() throws Exception {
+    private synchronized void loadPasswords() throws Exception {
 
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBE");
-        KeyStore.SecretKeyEntry ske = (KeyStore.SecretKeyEntry) KEY_STORE.getEntry("passwords", protParam);
+        KeyStore.SecretKeyEntry ske = (KeyStore.SecretKeyEntry) keyStore.getEntry("passwords", protParam);
 
         PBEKeySpec keySpec = (PBEKeySpec) factory.getKeySpec(ske.getSecretKey(), PBEKeySpec.class);
 
@@ -76,7 +77,7 @@ public final class PasswordStore {
     private Map<String, char[]> deserializePasswordMap(char[] chars) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper.readValue(new CharArrayReader(chars), new TypeReference<Map<String, char[]>>() {
+        return objectMapper.readValue(new CharArrayReader(chars), new TypeReference<>() {
         });
     }
 
@@ -87,29 +88,29 @@ public final class PasswordStore {
         return writer.toCharArray();
     }
 
-    public final synchronized char[] getSavedPassword(String alias) throws Exception {
+    public synchronized char[] getSavedPassword(String alias) {
         return this.passwordMap.get(alias);
     }
 
-    public final synchronized void savePassword(String alias, char[] password) throws Exception {
+    public synchronized void savePassword(String alias, char[] password) {
         this.passwordMap.put(alias, password);
     }
 
-    public final synchronized void saveKeyStore() throws Exception {
+    public synchronized void saveKeyStore() throws Exception {
 
         SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBE");
         SecretKey generatedSecret = secretKeyFactory
                 .generateSecret(new PBEKeySpec(serializePasswordMap(this.passwordMap)));
-        KEY_STORE.setEntry("passwords", new SecretKeyEntry(generatedSecret), protParam);
+        keyStore.setEntry("passwords", new SecretKeyEntry(generatedSecret), protParam);
 
-        System.out.println("Password protection: " + protParam.getProtectionAlgorithm());
+        log.info("Password protection: {}", protParam.getProtectionAlgorithm());
 
         try (OutputStream out = new FileOutputStream(new File(App.CONFIG_DIR, "passwords.pfx"))) {
-            KEY_STORE.store(out, protParam.getPassword());
+            keyStore.store(out, protParam.getPassword());
         }
     }
 
-    private final boolean unlockStore() {
+    private boolean unlockStore() {
         if (this.isUnlocked()) {
             return true;
         }
@@ -121,14 +122,14 @@ public final class PasswordStore {
                 unlockStore(new char[0]);
                 return true;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
                 return false;
             }
         }
 
     }
 
-    public final synchronized void populatePassword(SavedSessionTree savedSessionTree) {
+    public synchronized void populatePassword(SavedSessionTree savedSessionTree) {
         if (!unlockStore()) {
             return;
         }
@@ -142,8 +143,13 @@ public final class PasswordStore {
         for (SessionInfo info : folder.getItems()) {
             try {
                 char[] password = this.getSavedPassword(info.getId());
-                info.setPassword(new String(password));
+                if (password != null) {
+                    info.setPassword(new String(password));
+                } else {
+                    log.debug("The info {} has no password", info.getHost());
+                }
             } catch (Exception e) {
+                log.error(e.getMessage(), e);
             }
         }
         for (SessionFolder f : folder.getFolders()) {
@@ -161,7 +167,7 @@ public final class PasswordStore {
                 try {
                     unlockStore(new char[0]);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                     return;
                 }
             }
@@ -170,18 +176,18 @@ public final class PasswordStore {
         try {
             saveKeyStore();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
     private void savePassword(SessionFolder folder) {
         for (SessionInfo info : folder.getItems()) {
             String password = info.getPassword();
-            if (password != null && password.length() > 0) {
+            if (password != null && !password.isEmpty()) {
                 try {
                     savePassword(info.getId(), password.toCharArray());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
             }
         }
@@ -195,24 +201,23 @@ public final class PasswordStore {
             try {
                 JPasswordField txtPass = new JPasswordField(30);
                 if (JOptionPane.showOptionDialog(App.getAppWindow(), new Object[]{"Master password", txtPass},
-                        "Master password", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                        null) == JOptionPane.OK_OPTION) {
+                                                 App.bundle.getString("master_password"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
+                                                 null) == JOptionPane.OK_OPTION) {
                     this.unlockStore(txtPass.getPassword());
                     return true;
                 }
             } catch (IOException e) {
-                if (e.getCause() instanceof UnrecoverableKeyException) {
-                    if (JOptionPane.showConfirmDialog(App.getAppWindow(),
-                            "Incorrect password.\nTry again?") != JOptionPane.YES_OPTION) {
+                if (e.getCause() instanceof UnrecoverableKeyException && JOptionPane.showConfirmDialog(App.getAppWindow(),
+                                                      App.bundle.getString("incorrect_password")) != JOptionPane.YES_OPTION) {
                         break;
                     }
-                }
+
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
 
             if (JOptionPane.showConfirmDialog(App.getAppWindow(),
-                    "Error loading saved passwords\nTry again?") != JOptionPane.YES_OPTION) {
+                                              App.bundle.getString("error_loading_password")) != JOptionPane.YES_OPTION) {
                 break;
             }
         }
@@ -224,13 +229,13 @@ public final class PasswordStore {
             return false;
         }
 
-        Enumeration<String> aliases = KEY_STORE.aliases();
-        Map<String, char[]> passMap = new HashMap<String, char[]>();
+        Enumeration<String> aliases = keyStore.aliases();
+        Map<String, char[]> passMap = new HashMap<>();
 
         while (aliases.hasMoreElements()) {
             String alias = aliases.nextElement();
             passMap.put(alias, getSavedPassword(alias));
-            KEY_STORE.deleteEntry(alias);
+            keyStore.deleteEntry(alias);
         }
 
         protParam = new KeyStore.PasswordProtection(newPassword, "PBEWithHmacSHA256AndAES_256", null);

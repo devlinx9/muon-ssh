@@ -1,5 +1,6 @@
 package muon.app.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.PortForwardingRule;
 import muon.app.ui.components.session.PortForwardingRule.PortForwardingType;
 import muon.app.ui.components.session.SessionInfo;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Slf4j
 public class PortForwardingSession {
     private final SshClient2 ssh;
     private final SessionInfo info;
@@ -34,13 +36,13 @@ public class PortForwardingSession {
             try {
                 this.ssh.close();
             } catch (IOException e) {
-                // TODO: handle exception
+                log.error("Failed to close ssh", e);
             }
             for (ServerSocket ss : ssList) {
                 try {
                     ss.close();
                 } catch (Exception e2) {
-                    // TODO: handle exception
+                    log.error("Failed to close ss", e2);
                 }
             }
         });
@@ -48,9 +50,7 @@ public class PortForwardingSession {
     }
 
     public void start() {
-        this.threadPool.submit(() -> {
-            this.forwardPorts();
-        });
+        this.threadPool.submit(this::forwardPorts);
     }
 
     private void forwardPorts() {
@@ -59,22 +59,18 @@ public class PortForwardingSession {
                 ssh.connect();
             }
             for (PortForwardingRule r : info.getPortForwardingRules()) {
-                if (r.getType() == PortForwardingType.Local) {
-                    try {
+                try {
+                    if (r.getType() == PortForwardingType.LOCAL) {
                         forwardLocalPort(r);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (r.getType() == PortForwardingType.Remote) {
-                    try {
+                    } else if (r.getType() == PortForwardingType.REMOTE) {
                         forwardRemotePort(r);
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -89,7 +85,7 @@ public class PortForwardingSession {
                                 new Parameters(r.getBindHost(), r.getSourcePort(), r.getHost(), r.getTargetPort()), ss)
                         .listen();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -109,12 +105,9 @@ public class PortForwardingSession {
 
                 // Something to hang on to so that the forwarding stays
                 ssh.getTransport().join();
-            } catch (ConnectionException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (TransportException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            } catch (ConnectionException | TransportException e) {
+                
+                log.error(e.getMessage(), e);
             }
         });
     }

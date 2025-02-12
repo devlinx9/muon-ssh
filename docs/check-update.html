@@ -2,14 +2,15 @@
 
 <head>
     <script>
-        var CURRENT_VERSION = 220;
-        var RELEASE_URL = "https://github.com/devlinx9/muon-ssh/releases/tag/v2.2.0";
+        const CURRENT_VERSION = 220;
+        const RELEASE_URL = "https://github.com/devlinx9/muon-ssh/releases/tag/v2.3.0";
+
         function printVersion() {
-            var rx = /\?v=(\d+)/;
-            var str = window.location.search;
-            var match = rx.exec(str);
+            const rx = /\?v=(\d+)/;
+            const str = window.location.search;
+            const match = rx.exec(str);
             if (match != null) {
-                var v = parseInt(match[1], 10);
+                const v = parseInt(match[1], 10);
                 if (v < CURRENT_VERSION) {
                     document.getElementById("ver").innerHTML = "A newer version is available, download it <a href='" + RELEASE_URL + "'>here</a>";
                 } else {

@@ -40,7 +40,7 @@ public class AddressBarLayout implements LayoutManager {
         for (int i = 0; i < c.getComponentCount(); i++) {
             Component comp = c.getComponent(i);
             Dimension pref = comp.getPreferredSize();
-            total += pref.getWidth();
+            total += (int) pref.getWidth();
         }
         return total;
     }
@@ -75,8 +75,7 @@ public class AddressBarLayout implements LayoutManager {
 
         int x = 0;
 
-        for (int i = 0; i < componentList.size(); i++) {
-            Component component = componentList.get(i);
+        for (Component component : componentList) {
             int prefWidth = component.getPreferredSize().width;
             component.setBounds(x, 0, prefWidth, h);
             x += prefWidth;

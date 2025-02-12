@@ -15,8 +15,8 @@ import java.util.UUID;
 import static muon.app.App.bundle;
 
 public class JumpHostPanel extends JPanel {
-    private final DefaultListModel<HopEntry> hopModel = new DefaultListModel<HopEntry>();
-    private final JList<HopEntry> hopList = new JList<HopEntry>(hopModel);
+    private final DefaultListModel<HopEntry> hopModel = new DefaultListModel<>();
+    private final JList<HopEntry> hopList = new JList<>(hopModel);
     private SessionInfo info;
 
     public JumpHostPanel() {
@@ -106,7 +106,7 @@ public class JumpHostPanel extends JPanel {
     }
 
     private List<HopEntry> getJumpHosts() {
-        List<HopEntry> list = new ArrayList<HopEntry>();
+        List<HopEntry> list = new ArrayList<>();
         for (int i = 0; i < this.hopModel.size(); i++) {
             HopEntry ent = this.hopModel.get(i);
             list.add(ent);
@@ -174,8 +174,8 @@ public class JumpHostPanel extends JPanel {
             String password = txtPassword.getPassword().length > 0 ? new String(txtPassword.getPassword()) : null;
             String path = txtKeyFile.getText();
             int port = (Integer) spPort.getValue();
-            if (host.length() < 1 || user.length() < 1 || port <= 0) {
-                JOptionPane.showMessageDialog(this, "Invalid input: all fields mandatory");
+            if (host.isEmpty() || user.isEmpty() || port <= 0) {
+                JOptionPane.showMessageDialog(this, App.bundle.getString("invalid_input"));
                 continue;
             }
 

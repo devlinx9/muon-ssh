@@ -1,20 +1,19 @@
 package muon.app.ui.components.session.processview;
 
+import lombok.Getter;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessTableModel extends AbstractTableModel {
     private final String[] columns = {"Command", "PID", "CPU", "Memory", "Time", "PPID", "User", "Nice"};
+    @Getter
     private List<ProcessTableEntry> processList = new ArrayList<>();
 
 
     public ProcessTableEntry get(int index) {
         return processList.get(index);
-    }
-
-    public List<ProcessTableEntry> getProcessList() {
-        return processList;
     }
 
     public void setProcessList(List<ProcessTableEntry> list) {

@@ -1,9 +1,9 @@
 package com.jediterm.terminal.ui;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 /**
  * @author traff
  */
+@Slf4j
 public class TerminalAction {
   private final String myName;
   private final KeyStroke[] myKeyStrokes;
@@ -143,12 +144,7 @@ public class TerminalAction {
       menuItem.setAccelerator(myKeyStrokes[0]);
     }
 
-    menuItem.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent actionEvent) {
-        myRunnable.test(null);
-      }
-    });
+    menuItem.addActionListener(actionEvent -> myRunnable.test(null));
     menuItem.setEnabled(isEnabled());
     
     return menuItem;

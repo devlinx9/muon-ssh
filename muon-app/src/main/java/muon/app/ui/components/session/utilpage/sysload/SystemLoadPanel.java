@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.utilpage.sysload;
 
+import lombok.Setter;
 import util.FormatUtils;
 
 import javax.swing.*;
@@ -18,8 +19,17 @@ public class SystemLoadPanel extends JPanel {
     private final JLabel cpuLabel;
     private final JLabel memoryLabel;
     private final JLabel swapLabel;
-    private long totalMemory, usedMemory, totalSwap, usedSwap;
-    private double cpuUsage, memoryUsage, swapUsage;
+    @Setter
+    private long totalMemory;
+    @Setter
+    private long usedMemory;
+    @Setter
+    private long totalSwap;
+    @Setter
+    private long usedSwap;
+    private double cpuUsage;
+    private double memoryUsage;
+    private double swapUsage;
 
     public SystemLoadPanel() {
         super(new BorderLayout(5, 5));
@@ -85,46 +95,30 @@ public class SystemLoadPanel extends JPanel {
         }
     }
 
-    public void setTotalMemory(long totalMemory) {
-        this.totalMemory = totalMemory;
-    }
-
-    public void setUsedMemory(long usedMemory) {
-        this.usedMemory = usedMemory;
-    }
-
-    public void setTotalSwap(long totalSwap) {
-        this.totalSwap = totalSwap;
-    }
-
-    public void setUsedSwap(long usedSwap) {
-        this.usedSwap = usedSwap;
-    }
-
     public void refreshUi() {
         this.cpuLabel
                 .setText(String.format(bundle.getString("cpu_usage") + ": %.1f", cpuUsage) + "% ");
         this.memoryLabel.setText(String.format(bundle.getString("memory_usage") + ": %.1f",
-                memoryUsage)
-                + "%"
-                + (totalMemory != 0
-                ? (", (Total: " + FormatUtils
+                                               memoryUsage)
+                                 + "%"
+                                 + (totalMemory != 0
+                                    ? (", (Total: " + FormatUtils
                 .humanReadableByteCount(totalMemory, true)
-                + ", " + bundle.getString("used2") + ": "
-                + FormatUtils.humanReadableByteCount(usedMemory,
-                true)
-                + ")")
-                : ""));
+                                       + ", " + bundle.getString("used2") + ": "
+                                       + FormatUtils.humanReadableByteCount(usedMemory,
+                                                                            true)
+                                       + ")")
+                                    : ""));
         this.swapLabel.setText(String.format(bundle.getString("swap_usage") + ": %.1f", swapUsage)
-                + "% "
-                + (totalSwap != 0
-                ? (", ( Total: "
-                + FormatUtils.humanReadableByteCount(totalSwap,
-                true)
-                + ", " + bundle.getString("used2") + ": " + FormatUtils
-                .humanReadableByteCount(usedSwap, true)
-                + ")")
-                : ""));
+                               + "% "
+                               + (totalSwap != 0
+                                  ? (", ( Total: "
+                                     + FormatUtils.humanReadableByteCount(totalSwap,
+                                                                          true)
+                                     + ", " + bundle.getString("used2") + ": " + FormatUtils
+                                             .humanReadableByteCount(usedSwap, true)
+                                     + ")")
+                                  : ""));
         this.revalidate();
         this.repaint();
     }

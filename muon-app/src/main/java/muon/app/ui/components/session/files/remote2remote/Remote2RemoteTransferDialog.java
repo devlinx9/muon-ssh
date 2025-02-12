@@ -3,6 +3,7 @@ package muon.app.ui.components.session.files.remote2remote;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileType;
@@ -11,6 +12,7 @@ import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.NewSessionDlg;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
+import util.Constants;
 import util.FontAwesomeContants;
 
 import javax.swing.*;
@@ -27,6 +29,7 @@ import java.util.List;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class Remote2RemoteTransferDialog extends JDialog {
     private final DefaultListModel<RemoteServerEntry> remoteHostModel;
     private final JList<RemoteServerEntry> remoteHostList;
@@ -45,11 +48,11 @@ public class Remote2RemoteTransferDialog extends JDialog {
         setSize(640, 480);
         setModal(true);
 
-        remoteHostModel = new DefaultListModel<RemoteServerEntry>();
+        remoteHostModel = new DefaultListModel<>();
         this.list.clear();
         this.list.addAll(load());
         remoteHostModel.addAll(this.list);
-        remoteHostList = new JList<RemoteServerEntry>(remoteHostModel);
+        remoteHostList = new JList<>(remoteHostModel);
         remoteHostList.setCellRenderer(new RemoteHostRenderer());
 
         remoteHostList.setBackground(App.SKIN.getTextFieldBackground());
@@ -58,7 +61,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
         scrollPane.setBorder(new MatteBorder(0, 0, 1, 0, App.SKIN.getDefaultBorderColor()));
 
         this.add(scrollPane);
-        if (remoteHostModel.size() > 0) {
+        if (!remoteHostModel.isEmpty()) {
             remoteHostList.setSelectedIndex(0);
         }
 
@@ -204,7 +207,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             user = txtUser.getText();
             path = txtPath.getText();
             port = (Integer) spPort.getValue();
-            if (host.length() < 1 || user.length() < 1 || path.length() < 1 || port <= 0) {
+            if (host.isEmpty() || user.isEmpty() || path.isEmpty() || port <= 0) {
                 JOptionPane.showMessageDialog(this, "Invalid input: all fields mandatory");
                 continue;
             }
@@ -219,16 +222,16 @@ public class Remote2RemoteTransferDialog extends JDialog {
 
     private String createSftpFileList(RemoteServerEntry e) {
         StringBuilder sb = new StringBuilder();
-        sb.append("sftp " + e.getUser() + "@" + e.getHost() + "<<EOF\n");
-        sb.append("lcd \"" + this.currentDirectory + "\"\n");
-        sb.append("cd \"" + e.getPath() + "\"\n");
+        sb.append("sftp ").append(e.getUser()).append("@").append(e.getHost()).append("<<EOF\n");
+        sb.append("lcd \"").append(this.currentDirectory).append("\"\n");
+        sb.append("cd \"").append(e.getPath()).append("\"\n");
 
         for (FileInfo finfo : selectedFiles) {
-            if (finfo.getType() == FileType.Directory) {
-                sb.append("mkdir \"" + finfo.getName() + "\"\n");
-                sb.append("put -r \"" + finfo.getName() + "\"\n");
-            } else if (finfo.getType() == FileType.File) {
-                sb.append("put -P \"" + finfo.getName() + "\"\n");
+            if (finfo.getType() == FileType.DIRECTORY) {
+                sb.append("mkdir \"").append(finfo.getName()).append("\"\n");
+                sb.append("put -r \"").append(finfo.getName()).append("\"\n");
+            } else if (finfo.getType() == FileType.FILE) {
+                sb.append("put -P \"").append(finfo.getName()).append("\"\n");
             }
         }
         sb.append("bye\n");
@@ -241,27 +244,27 @@ public class Remote2RemoteTransferDialog extends JDialog {
         for (int i = 0; i < remoteHostModel.size(); i++) {
             list.add(remoteHostModel.get(i));
         }
-        File file = new File(App.CONFIG_DIR, App.TRANSFER_HOSTS);
+        File file = new File(App.CONFIG_DIR, Constants.TRANSFER_HOSTS);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(file, list);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         this.list.clear();
         this.list.addAll(load());
     }
 
     private List<RemoteServerEntry> load() {
-        File file = new File(App.CONFIG_DIR, App.TRANSFER_HOSTS);
+        File file = new File(App.CONFIG_DIR, Constants.TRANSFER_HOSTS);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
             try {
-                return objectMapper.readValue(file, new TypeReference<List<RemoteServerEntry>>() {
+                return objectMapper.readValue(file, new TypeReference<>() {
                 });
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         }
         return new ArrayList<>();

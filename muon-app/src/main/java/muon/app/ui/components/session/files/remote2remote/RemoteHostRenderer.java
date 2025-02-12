@@ -52,10 +52,8 @@ public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
     public Component getListCellRendererComponent(JList<? extends RemoteServerEntry> list, RemoteServerEntry value,
                                                   int index, boolean isSelected, boolean cellHasFocus) {
 
-        RemoteServerEntry info = value;
-
-        lblText.setText(info.getHost());
-        lblHost.setText(info.getPath());
+        lblText.setText(value.getHost());
+        lblHost.setText(value.getPath());
         lblIcon.setText(FontAwesomeContants.FA_CUBE);
 
         if (isSelected) {

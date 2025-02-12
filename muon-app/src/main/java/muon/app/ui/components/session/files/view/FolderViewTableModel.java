@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.view;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.common.FileInfo;
 
 import javax.swing.*;
@@ -12,13 +13,14 @@ import java.util.List;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class FolderViewTableModel extends AbstractTableModel implements ListModel<FileInfo> {
 
     private static final long serialVersionUID = 7212506492710233442L;
     private final List<FileInfo> files = new ArrayList<>();
     private final String[] columns = {bundle.getString("name"), bundle.getString("modified"), bundle.getString("size"), bundle.getString("type"), bundle.getString("permission"), bundle.getString("owner")};
     protected EventListenerList listenerList = new EventListenerList();
-    private boolean local = false;
+    private final boolean local;
 
     public FolderViewTableModel(boolean local) {
         this.local = local;
@@ -37,7 +39,7 @@ public class FolderViewTableModel extends AbstractTableModel implements ListMode
     }
 
     public void addAll(List<FileInfo> list) {
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             int sz = files.size();
             files.addAll(list);
             fireTableDataChanged();
@@ -71,8 +73,7 @@ public class FolderViewTableModel extends AbstractTableModel implements ListMode
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        FileInfo ent = files.get(rowIndex);
-        return ent;
+        return files.get(rowIndex);
     }
 
     @Override
@@ -87,7 +88,7 @@ public class FolderViewTableModel extends AbstractTableModel implements ListMode
 
     @Override
     public void addListDataListener(ListDataListener l) {
-        System.out.println("addListDataListener");
+        log.debug("addListDataListener");
         listenerList.add(ListDataListener.class, l);
     }
 

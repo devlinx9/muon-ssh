@@ -2,6 +2,7 @@ package com.jediterm.terminal.model;
 
 import com.jediterm.terminal.util.CharUtils;
 import com.jediterm.terminal.util.Pair;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -10,6 +11,7 @@ import java.util.Iterator;
  *
  * @author traff
  */
+@Slf4j
 public class CharBuffer implements Iterable<Character>, CharSequence {
 
   public final static CharBuffer EMPTY = new CharBuffer(new char[0], 0, 0);
@@ -51,23 +53,23 @@ public class CharBuffer implements Iterable<Character>, CharSequence {
 
   @Override
   public Iterator<Character> iterator() {
-    return new Iterator<Character>() {
-      private final int myCurPosition = myStart;
+    return new Iterator<>() {
+        private final int myCurPosition = myStart;
 
-      @Override
-      public boolean hasNext() {
-        return myCurPosition < myBuf.length && myCurPosition < myStart + myLength;
-      }
+        @Override
+        public boolean hasNext() {
+            return myCurPosition < myBuf.length && myCurPosition < myStart + myLength;
+        }
 
-      @Override
-      public Character next() {
-        return myBuf[myCurPosition];
-      }
+        @Override
+        public Character next() {
+            return myBuf[myCurPosition];
+        }
 
-      @Override
-      public void remove() {
-        throw new IllegalStateException("Can't remove from buffer");
-      }
+        @Override
+        public void remove() {
+            throw new IllegalStateException("Can't remove from buffer");
+        }
     };
   }
 

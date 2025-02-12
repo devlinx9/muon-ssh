@@ -1,12 +1,12 @@
 package muon.app.ui.components.session.terminal.ssh;
 
 import com.jediterm.terminal.Questioner;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ssh.SshClient2;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.connection.ConnectionException;
-import net.schmizz.sshj.connection.channel.direct.PTYMode;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Shell;
 import net.schmizz.sshj.connection.channel.direct.SessionChannel;
@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public class SshTtyConnector implements DisposableTtyConnector {
     private InputStreamReader myInputStreamReader;
     private InputStream myInputStream = null;
@@ -56,13 +57,13 @@ public class SshTtyConnector implements DisposableTtyConnector {
             this.channel.setAutoExpand(true);
 
             this.channel.allocatePTY(App.getGlobalSettings().getTerminalType(), App.getGlobalSettings().getTermWidth(),
-                    App.getGlobalSettings().getTermHeight(), 0, 0, Collections.emptyMap());
+                                     App.getGlobalSettings().getTermHeight(), 0, 0, Collections.emptyMap());
 
-            try{
+            try {
                 this.channel.setEnvVar("LANG", "en_US.UTF-8");
-            }catch (Exception e){
-                e.printStackTrace();
-                System.err.println("Cannot set environment variable Lang: " + e.getMessage());
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                log.error("Cannot set environment variable Lang: {}", e.getMessage());
             }
 
 
@@ -73,7 +74,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
             myInputStreamReader = new InputStreamReader(myInputStream, StandardCharsets.UTF_8);
 
             resizeImmediately();
-            System.out.println("Initiated");
+            log.debug("Initiated");
 
             if (initialCommand != null) {
                 myOutputStream.write((initialCommand + "\n").getBytes(StandardCharsets.UTF_8));
@@ -83,7 +84,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
             isInitiated.set(true);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             isInitiated.set(false);
             isCancelled.set(true);
             return false;
@@ -94,9 +95,10 @@ public class SshTtyConnector implements DisposableTtyConnector {
     public void close() {
         try {
             stopFlag.set(true);
-            System.out.println("Terminal wrapper disconnecting");
+            log.info("Terminal wrapper disconnecting");
             wr.disconnect();
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 
@@ -138,17 +140,17 @@ public class SshTtyConnector implements DisposableTtyConnector {
 
     @Override
     public int waitFor() throws InterruptedException {
-        System.out.println("Start waiting...");
+        log.info("Start waiting...");
         while (!isInitiated.get() || isRunning()) {
-            System.out.println("waiting");
+            log.info("waiting");
             Thread.sleep(100); // TODO: remove busy wait
         }
-        System.out.println("waiting exit");
+        log.info("waiting exit");
         try {
             shell.join();
         } catch (ConnectionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            
+            log.error(e.getMessage(), e);
         }
         return shell.getExitStatus();
     }
@@ -181,20 +183,20 @@ public class SshTtyConnector implements DisposableTtyConnector {
     private void resizeImmediately() {
         if (myPendingTermSize != null && myPendingPixelSize != null) {
             setPtySize(shell, myPendingTermSize.width, myPendingTermSize.height, myPendingPixelSize.width,
-                    myPendingPixelSize.height);
+                       myPendingPixelSize.height);
             myPendingTermSize = null;
             myPendingPixelSize = null;
         }
     }
 
     private void setPtySize(Shell shell, int col, int row, int wp, int hp) {
-        System.out.println("Exec pty resized:- col: " + col + " row: " + row + " wp: " + wp + " hp: " + hp);
+        log.debug("Exec pty resized:- col: {} row: {} wp: {} hp: {}", col, row, wp, hp);
         if (shell != null) {
             try {
                 shell.changeWindowDimensions(col, row, wp, hp);
             } catch (TransportException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                
+                log.error(e.getMessage(), e);
             }
         }
     }

@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.transfer;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import util.FontAwesomeContants;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
+@Slf4j
 public class BackgroundTransferPanel extends JPanel {
     private final Box verticalBox;
     private final AtomicInteger transferCount = new AtomicInteger(0);
@@ -42,7 +44,7 @@ public class BackgroundTransferPanel extends JPanel {
                 transfer.getFileTransfer().run();
                 transfer.getSession().addToSessionCache(transfer.getInstance());
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -50,12 +52,10 @@ public class BackgroundTransferPanel extends JPanel {
     public void removePendingTransfers(int sessionId) {
         if (!SwingUtilities.isEventDispatchThread()) {
             try {
-                SwingUtilities.invokeAndWait(() -> {
-                    stopSession(sessionId);
-                });
+                SwingUtilities.invokeAndWait(() -> stopSession(sessionId));
             } catch (InvocationTargetException | InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                
+                log.error(e.getMessage(), e);
             }
         } else {
             stopSession(sessionId);
@@ -129,19 +129,15 @@ public class BackgroundTransferPanel extends JPanel {
         @Override
         public void progress(long processedBytes, long totalBytes, long processedCount, long totalCount,
                              FileTransfer fileTransfer) {
-            SwingUtilities.invokeLater(() -> {
-                progressBar.setValue(totalBytes > 0 ? ((int) ((processedBytes * 100) / totalBytes)) : 0);
-            });
+            SwingUtilities.invokeLater(() -> progressBar.setValue(totalBytes > 0 ? ((int) ((processedBytes * 100) / totalBytes)) : 0));
         }
 
         @Override
         public void error(String cause, FileTransfer fileTransfer) {
             transferCount.decrementAndGet();
             callback.accept(transferCount.get());
-            SwingUtilities.invokeLater(() -> {
-                progressLabel.setText(String.format("Error while copying from %s to %s", fileTransfer.getSourceName(),
-                        fileTransfer.getTargetName()));
-            });
+            SwingUtilities.invokeLater(() -> progressLabel.setText(String.format("Error while copying from %s to %s", fileTransfer.getSourceName(),
+                                                                             fileTransfer.getTargetName())));
         }
 
         @Override
@@ -149,7 +145,10 @@ public class BackgroundTransferPanel extends JPanel {
             transferCount.decrementAndGet();
             callback.accept(transferCount.get());
             this.fileTransfer.getSession().addToSessionCache(this.fileTransfer.getInstance());
-            System.out.println("done transfer");
+            log.info("done transfer");
+
+            this.fileTransfer.getSession().fileBrowser.reloadView();
+
             SwingUtilities.invokeLater(() -> {
                 BackgroundTransferPanel.this.verticalBox.remove(this);
                 BackgroundTransferPanel.this.revalidate();

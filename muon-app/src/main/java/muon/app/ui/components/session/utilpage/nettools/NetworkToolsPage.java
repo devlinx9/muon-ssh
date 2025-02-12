@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.utilpage.nettools;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextArea;
@@ -23,11 +24,18 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class NetworkToolsPage extends UtilPageItemView {
     private JTextArea txtOutput;
-    private DefaultComboBoxModel<String> modelHost, modelPort;
-    private JComboBox<String> cmbHost, cmbPort, cmbDNSTool;
-    private JButton btn1, btn2, btn3, btn4;
+    private DefaultComboBoxModel<String> modelHost;
+    private DefaultComboBoxModel<String> modelPort;
+    private JComboBox<String> cmbHost;
+    private JComboBox<String> cmbPort;
+    private JComboBox<String> cmbDNSTool;
+    private JButton btn1;
+    private JButton btn2;
+    private JButton btn3;
+    private JButton btn4;
 
     /**
      *
@@ -38,15 +46,15 @@ public class NetworkToolsPage extends UtilPageItemView {
 
     @Override
     protected void createUI() {
-        modelHost = new DefaultComboBoxModel<String>();
-        modelPort = new DefaultComboBoxModel<String>();
+        modelHost = new DefaultComboBoxModel<>();
+        modelPort = new DefaultComboBoxModel<>();
 
-        cmbHost = new JComboBox<String>(modelHost);
-        cmbPort = new JComboBox<String>(modelPort);
+        cmbHost = new JComboBox<>(modelHost);
+        cmbPort = new JComboBox<>(modelPort);
         cmbHost.setEditable(true);
         cmbPort.setEditable(true);
 
-        cmbDNSTool = new JComboBox<String>(new String[]{"nslookup", "dig",
+        cmbDNSTool = new JComboBox<>(new String[]{"nslookup", "dig",
                 "dig +short", "host", "getent ahostsv4"});
 
         JPanel grid = new JPanel(new GridLayout(1, 4, 10, 10));
@@ -126,17 +134,15 @@ public class NetworkToolsPage extends UtilPageItemView {
                 if (holder.getRemoteSessionInstance().execBin(cmd, stopFlag,
                         bout, null) == 0) {
                     outText.append(bout.toString(StandardCharsets.UTF_8)).append("\n");
-                    System.out.println("Command stdout: " + outText);
+                    log.info("Command stdout: {}", outText);
                 } else {
                     JOptionPane.showMessageDialog(this,
                             bundle.getString("executed_errors"));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             } finally {
-                SwingUtilities.invokeLater(() -> {
-                    this.txtOutput.setText(outText.toString());
-                });
+                SwingUtilities.invokeLater(() -> this.txtOutput.setText(outText.toString()));
                 holder.enableUi();
             }
         });
@@ -144,13 +150,13 @@ public class NetworkToolsPage extends UtilPageItemView {
 
     @Override
     protected void onComponentVisible() {
-        // TODO Auto-generated method stub
+        
 
     }
 
     @Override
     protected void onComponentHide() {
-        // TODO Auto-generated method stub
+        
 
     }
 }

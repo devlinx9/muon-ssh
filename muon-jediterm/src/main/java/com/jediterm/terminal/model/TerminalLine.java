@@ -4,6 +4,7 @@ import com.jediterm.terminal.StyledTextConsumer;
 import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.util.CharUtils;
 import com.jediterm.terminal.util.Pair;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 /**
  * @author traff
  */
+@Slf4j
 public class TerminalLine {
 
 	private TextEntries myTextEntries = new TextEntries();
@@ -316,12 +318,11 @@ public class TerminalLine {
 	@Override
 	public String toString() {
 		return myTextEntries.length() + " chars, "
-				+ (myWrapped ? "wrapped, " : "")
-				+ myTextEntries.myTextEntries.size() + " entries: "
-				+ String.join("|",
-						myTextEntries.myTextEntries.stream()
-								.map(entry -> entry.getText().toString())
-								.collect(Collectors.toList()));
+               + (myWrapped ? "wrapped, " : "")
+               + myTextEntries.myTextEntries.size() + " entries: "
+               + myTextEntries.myTextEntries.stream()
+                       .map(entry -> entry.getText().toString())
+                       .collect(Collectors.joining("|"));
 	}
 
 	public static class TextEntry {

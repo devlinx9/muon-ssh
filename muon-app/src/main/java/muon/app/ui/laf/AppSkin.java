@@ -3,24 +3,30 @@
  */
 package muon.app.ui.laf;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ui.components.RoundedButtonPainter;
+import muon.app.ui.components.session.files.view.AddressBarBreadCrumbs;
+import util.Language;
 
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 import java.io.InputStream;
+import java.util.Objects;
 
 /**
  * @author subhro
- *
  */
+@Slf4j
 public abstract class AppSkin {
     protected UIDefaults defaults;
+
+    @Getter
     protected NimbusLookAndFeel laf;
 
-    /**
-     *
-     */
+
     public AppSkin() {
         initDefaults();
     }
@@ -52,33 +58,30 @@ public abstract class AppSkin {
         this.defaults.put("Tree:TreeCell[Enabled+Focused].backgroundPainter", treeCellFocusPainter);
     }
 
-    /**
-     * @return the laf
-     */
-    public NimbusLookAndFeel getLaf() {
-        return laf;
-    }
-
     protected Font loadFonts() {
-        try (InputStream is = AppSkin.class
+        String fontPath = "/fonts/Helvetica.ttf";
+        if (App.getGlobalSettings().getLanguage().equals(Language.CHINESE)) {
+            fontPath = "/fonts/WenQuanYi-Micro-Hei-Regular.ttf";
+        }
 
-                .getResourceAsStream("/fonts/Helvetica.ttf")) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+        try (InputStream is = AppSkin.class
+                .getResourceAsStream(fontPath)) {
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
             return font.deriveFont(Font.PLAIN, 12.0f);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return null;
     }
 
     protected Font loadFontAwesomeFonts() {
         try (InputStream is = AppSkin.class.getResourceAsStream("/fonts/fontawesome-webfont.ttf")) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
             return font.deriveFont(Font.PLAIN, 14f);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return null;
     }
@@ -125,21 +128,18 @@ public abstract class AppSkin {
 
     public UIDefaults getSplitPaneSkin() {
         UIDefaults uiDefaults = new UIDefaults();
-        Painter<? extends Object> painter = new Painter<Object>() {
-            @Override
-            public void paint(Graphics2D g, Object object, int width, int height) {
-                g.setColor(defaults.getColor("control"));
-                g.fill(new Rectangle(0, 0, width, height));
-            }
+        Painter<?> painter = (Painter<Object>) (g, object, width, height) -> {
+            g.setColor(defaults.getColor("control"));
+            g.fill(new Rectangle(0, 0, width, height));
         };
 
         for (String key : new String[]{"SplitPane:SplitPaneDivider[Enabled].backgroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled+Vertical].foregroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled].backgroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
-                "SplitPane:SplitPaneDivider[Focused].backgroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
-                "SplitPane:SplitPaneDivider[Enabled].foregroundPainter"}) {
+                                       "SplitPane:SplitPaneDivider[Enabled+Vertical].foregroundPainter",
+                                       "SplitPane:SplitPaneDivider[Enabled].backgroundPainter",
+                                       "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
+                                       "SplitPane:SplitPaneDivider[Focused].backgroundPainter",
+                                       "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
+                                       "SplitPane:SplitPaneDivider[Enabled].foregroundPainter"}) {
             uiDefaults.put(key, painter);
         }
 
@@ -181,29 +181,23 @@ public abstract class AppSkin {
     public void createTextFieldSkin(UIDefaults uiDefaults) {
         final Color borderColor = defaults.getColor("nimbusBorder");
         final Color focusedColor = defaults.getColor("nimbusSelectionBackground");
-        Painter<? extends JComponent> focusedBorder = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                if (object.getClientProperty("paintNoBorder") != null) {
-                    return;
-                }
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(focusedColor);
-                g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
+        Painter<? extends JComponent> focusedBorder = (Painter<JComponent>) (g, object, width, height) -> {
+            if (object.getClientProperty("paintNoBorder") != null) {
+                return;
             }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(focusedColor);
+            g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
 
-        Painter<? extends JComponent> normalBorder = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                if (object.getClientProperty("paintNoBorder") != null) {
-                    return;
-                }
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(borderColor);
-                g.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
+        Painter<? extends JComponent> normalBorder = (Painter<JComponent>) (g, object, width, height) -> {
+            if (object.getClientProperty("paintNoBorder") != null) {
+                return;
             }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(borderColor);
+            g.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
 
         uiDefaults.put("FormattedTextField[Disabled].borderPainter", normalBorder);
@@ -226,37 +220,28 @@ public abstract class AppSkin {
         Color c1 = this.defaults.getColor("TextField.background");
         Color c2 = this.defaults.getColor("nimbusBorder");
 
-        Painter<? extends JComponent> painter1 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c1);
-                g.fillRoundRect(1, 1, width - 2 + 20, height - 2, 5, 5);
-                g.setColor(c2);
-                g.drawRoundRect(1, 1, width - 2 + 20, height - 2, 5, 5);
-            }
+        Painter<? extends JComponent> painter1 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c1);
+            g.fillRoundRect(1, 1, width - 2 + 20, height - 2, 5, 5);
+            g.setColor(c2);
+            g.drawRoundRect(1, 1, width - 2 + 20, height - 2, 5, 5);
         };
 
-        Painter<? extends JComponent> painter2 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c1);
-                g.fillRoundRect(1 - 20, 1, width - 2 + 20, height - 2 + 20, 5, 5);
-                g.setColor(c2);
-                g.drawRoundRect(1 - 20, 1, width - 2 + 20, height - 2 + 20, 5, 5);
-            }
+        Painter<? extends JComponent> painter2 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c1);
+            g.fillRoundRect(1 - 20, 1, width - 2 + 20, height - 2 + 20, 5, 5);
+            g.setColor(c2);
+            g.drawRoundRect(1 - 20, 1, width - 2 + 20, height - 2 + 20, 5, 5);
         };
 
-        Painter<? extends JComponent> painter3 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c1);
-                g.fillRoundRect(1 - 20, 1 - 20, width - 2 + 20, height - 2 + 20, 5, 5);
-                g.setColor(c2);
-                g.drawRoundRect(1 - 20, 1 - 20, width - 2 + 20, height - 2 + 20, 5, 5);
-            }
+        Painter<? extends JComponent> painter3 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c1);
+            g.fillRoundRect(1 - 20, 1 - 20, width - 2 + 20, height - 2 + 20, 5, 5);
+            g.setColor(c2);
+            g.drawRoundRect(1 - 20, 1 - 20, width - 2 + 20, height - 2 + 20, 5, 5);
         };
 
         uiDefaults.put("Spinner:\"Spinner.nextButton\"[Disabled].backgroundPainter", painter2);
@@ -285,74 +270,59 @@ public abstract class AppSkin {
         Color c1 = this.defaults.getColor("nimbusBorder");
         Color c2 = this.defaults.getColor("TextField.background");
         Color c3 = this.defaults.getColor("nimbusSelectionBackground");
-        Painter<? extends JComponent> painter1 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                if (object.getClientProperty("paintNoBorder") != null) {
-                    return;
-                }
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c2);
-                g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
-                g.setColor(c1);
-                g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
+        Painter<? extends JComponent> painter1 = (Painter<JComponent>) (g, object, width, height) -> {
+            if (object.getClientProperty("paintNoBorder") != null) {
+                return;
             }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c2);
+            g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
+            g.setColor(c1);
+            g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
 
-        Painter<? extends JComponent> painter2 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                if (object.getClientProperty("paintNoBorder") != null) {
-                    return;
-                }
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c2);
-                g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
-                g.setColor(c1);
-                g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
+        Painter<? extends JComponent> painter2 = (Painter<JComponent>) (g, object, width, height) -> {
+            if (object.getClientProperty("paintNoBorder") != null) {
+                return;
             }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c2);
+            g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
+            g.setColor(c1);
+            g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
 
-        Painter<? extends JComponent> painter3 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                if (object.getClientProperty("paintNoBorder") != null) {
-                    return;
-                }
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c2);
-                g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
-                g.setColor(c1);
-                g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
+        Painter<? extends JComponent> painter3 = (Painter<JComponent>) (g, object, width, height) -> {
+            if (object.getClientProperty("paintNoBorder") != null) {
+                return;
             }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c2);
+            g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
+            g.setColor(c1);
+            g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
 
-        Painter<? extends JComponent> painter4 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                if (object.getClientProperty("paintNoBorder") != null) {
-                    return;
-                }
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c2);
-                g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
-                g.setColor(c1);
-                g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
+        Painter<? extends JComponent> painter4 = (Painter<JComponent>) (g, object, width, height) -> {
+            if (object.getClientProperty("paintNoBorder") != null) {
+                return;
             }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c2);
+            g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
+            g.setColor(c1);
+            g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
 
-        Painter<? extends JComponent> painter5 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                if (object.getClientProperty("paintNoBorder") != null) {
-                    return;
-                }
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c2);
-                g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
-                g.setColor(c1);
-                g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
+        Painter<? extends JComponent> painter5 = (Painter<JComponent>) (g, object, width, height) -> {
+            if (object.getClientProperty("paintNoBorder") != null) {
+                return;
             }
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c2);
+            g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
+            g.setColor(c1);
+            g.drawRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
         uiDefaults.put("ComboBox:\"ComboBox.textField\"[Enabled].backgroundPainter", painter3);
         uiDefaults.put("ComboBox:\"ComboBox.textField\"[Selected].backgroundPainter", painter3);
@@ -373,71 +343,53 @@ public abstract class AppSkin {
     }
 
     public void createTreeSkin(UIDefaults uiDefaults) {
-        uiDefaults.put("Tree[Enabled].closedIconPainter", new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                Font font = g.getFont();
-                g.setColor(defaults.getColor("Tree.textForeground"));
-                g.setFont(getIconFont().deriveFont(16));
-                int h = g.getFontMetrics().getAscent() + g.getFontMetrics().getDescent();
+        uiDefaults.put("Tree[Enabled].closedIconPainter", (Painter<JComponent>) (g, object, width, height) -> {
+            Font font = g.getFont();
+            g.setColor(defaults.getColor("Tree.textForeground"));
+            g.setFont(getIconFont().deriveFont(16));
+            int h = g.getFontMetrics().getAscent() + g.getFontMetrics().getDescent();
 
-                g.drawString("\uf07b", 0, h);
-                g.setFont(font);
-            }
+            g.drawString("\uf07b", 0, h);
+            g.setFont(font);
         });
 
-        uiDefaults.put("Tree[Enabled].openIconPainter", new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setColor(defaults.getColor("Tree.textForeground"));
-                Font font = g.getFont();
-                g.setFont(getIconFont().deriveFont(16));
-                int h = g.getFontMetrics().getAscent() + g.getFontMetrics().getDescent();
+        uiDefaults.put("Tree[Enabled].openIconPainter", (Painter<JComponent>) (g, object, width, height) -> {
+            g.setColor(defaults.getColor("Tree.textForeground"));
+            Font font = g.getFont();
+            g.setFont(getIconFont().deriveFont(16));
+            int h = g.getFontMetrics().getAscent() + g.getFontMetrics().getDescent();
 
-                g.drawString("\uf07c", 0, h);
-                g.setFont(font);
-            }
+            g.drawString("\uf07c", 0, h);
+            g.setFont(font);
         });
 
-        uiDefaults.put("Tree[Enabled].leafIconPainter", new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setColor(defaults.getColor("Tree.textForeground"));
-                Font font = g.getFont();
-                g.setFont(getIconFont().deriveFont(16));
-                int h = g.getFontMetrics().getAscent() + g.getFontMetrics().getDescent();
+        uiDefaults.put("Tree[Enabled].leafIconPainter", (Painter<JComponent>) (g, object, width, height) -> {
+            g.setColor(defaults.getColor("Tree.textForeground"));
+            Font font = g.getFont();
+            g.setFont(getIconFont().deriveFont(16));
+            int h = g.getFontMetrics().getAscent() + g.getFontMetrics().getDescent();
 
-                g.drawString("\uf15b", 0, h);
-                g.setFont(font);
-            }
+            g.drawString("\uf15b", 0, h);
+            g.setFont(font);
         });
         uiDefaults.put("Tree.rendererMargins", new Insets(5, 5, 5, 5));
     }
 
     public UIDefaults createToolbarSkin() {
         UIDefaults toolBarButtonSkin = new UIDefaults();
-        Painter<JButton> toolBarButtonPainterNormal = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width, int height) {
-                g.setColor(UIManager.getColor("control"));
-                g.fillRect(0, 0, width, height);
-            }
+        Painter<JButton> toolBarButtonPainterNormal = (g, object, width, height) -> {
+            g.setColor(UIManager.getColor("control"));
+            g.fillRect(0, 0, width, height);
         };
 
-        Painter<JButton> toolBarButtonPainterHot = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width, int height) {
-                g.setColor(UIManager.getColor("scrollbar-hot"));
-                g.fillRect(0, 0, width, height);
-            }
+        Painter<JButton> toolBarButtonPainterHot = (g, object, width, height) -> {
+            g.setColor(UIManager.getColor("scrollbar-hot"));
+            g.fillRect(0, 0, width, height);
         };
 
-        Painter<JButton> toolBarButtonPainterPressed = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width, int height) {
-                g.setColor(UIManager.getColor("scrollbar"));
-                g.fillRect(0, 0, width, height);
-            }
+        Painter<JButton> toolBarButtonPainterPressed = (g, object, width, height) -> {
+            g.setColor(UIManager.getColor("scrollbar"));
+            g.fillRect(0, 0, width, height);
         };
 
         toolBarButtonSkin.put("Button.contentMargins", new Insets(5, 8, 5, 8));
@@ -447,48 +399,26 @@ public abstract class AppSkin {
 
         toolBarButtonSkin.put("Button.foreground", UIManager.getColor("scrollbar"));
 
-        toolBarButtonSkin.put("Button[Enabled].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Focused].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Default].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Default+Focused].backgroundPainter", toolBarButtonPainterNormal);
-
-        toolBarButtonSkin.put("Button[Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Focused+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Default+Focused+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Default+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-
-        toolBarButtonSkin.put("Button[MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Focused+MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Default+MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Default+Focused+MouseOver].backgroundPainter", toolBarButtonPainterHot);
+        AddressBarBreadCrumbs.setTolbarButtonSkin(toolBarButtonPainterNormal, toolBarButtonPainterHot, toolBarButtonPainterPressed, toolBarButtonSkin);
 
         return toolBarButtonSkin;
     }
 
     public UIDefaults createTabButtonSkin() {
         UIDefaults toolBarButtonSkin = new UIDefaults();
-        Painter<JButton> toolBarButtonPainterNormal = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width, int height) {
-                g.setColor(getDefaultBackground());
-                g.fillRect(0, 0, width, height);
-            }
+        Painter<JButton> toolBarButtonPainterNormal = (g, object, width, height) -> {
+            g.setColor(getDefaultBackground());
+            g.fillRect(0, 0, width, height);
         };
 
-        Painter<JButton> toolBarButtonPainterHot = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width, int height) {
-                g.setColor(getSelectedTabColor());
-                g.fillRect(0, 0, width, height);
-            }
+        Painter<JButton> toolBarButtonPainterHot = (g, object, width, height) -> {
+            g.setColor(getSelectedTabColor());
+            g.fillRect(0, 0, width, height);
         };
 
-        Painter<JButton> toolBarButtonPainterPressed = new Painter<JButton>() {
-            @Override
-            public void paint(Graphics2D g, JButton object, int width, int height) {
-                g.setColor(UIManager.getColor("scrollbar"));
-                g.fillRect(0, 0, width, height);
-            }
+        Painter<JButton> toolBarButtonPainterPressed = (g, object, width, height) -> {
+            g.setColor(UIManager.getColor("scrollbar"));
+            g.fillRect(0, 0, width, height);
         };
 
         toolBarButtonSkin.put("Button.contentMargins", new Insets(5, 8, 5, 8));
@@ -496,26 +426,13 @@ public abstract class AppSkin {
         toolBarButtonSkin.put("Button[Disabled].backgroundPainter", toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Disabled].textForeground", Color.LIGHT_GRAY);
 
-        toolBarButtonSkin.put("Button[Enabled].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Focused].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Default].backgroundPainter", toolBarButtonPainterNormal);
-        toolBarButtonSkin.put("Button[Default+Focused].backgroundPainter", toolBarButtonPainterNormal);
-
-        toolBarButtonSkin.put("Button[Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Focused+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Default+Focused+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-        toolBarButtonSkin.put("Button[Default+Pressed].backgroundPainter", toolBarButtonPainterPressed);
-
-        toolBarButtonSkin.put("Button[MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Focused+MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Default+MouseOver].backgroundPainter", toolBarButtonPainterHot);
-        toolBarButtonSkin.put("Button[Default+Focused+MouseOver].backgroundPainter", toolBarButtonPainterHot);
+        AddressBarBreadCrumbs.setTolbarButtonSkin(toolBarButtonPainterNormal, toolBarButtonPainterHot, toolBarButtonPainterPressed, toolBarButtonSkin);
 
         return toolBarButtonSkin;
     }
 
     public void createTableHeaderSkin(UIDefaults uiDefaults) {
-        Painter<? extends Object> painterNormal = (Graphics2D g, Object object, int width, int height) -> {
+        Painter<?> painterNormal = (Graphics2D g, Object object, int width, int height) -> {
 
         };
         uiDefaults.put("TableHeader.font", new Font(Font.DIALOG, Font.PLAIN, 14));
@@ -581,25 +498,19 @@ public abstract class AppSkin {
         Color c1 = defaults.getColor("text");
         Color c2 = defaults.getColor("text");
 
-        Painter<? extends JComponent> painter1 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Painter<? extends JComponent> painter1 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                g.setColor(c1);
-                g.drawRect(2, 2, width - 4, height - 4);
-            }
+            g.setColor(c1);
+            g.drawRect(2, 2, width - 4, height - 4);
         };
 
-        Painter<? extends JComponent> painter2 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Painter<? extends JComponent> painter2 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                g.setColor(c2);
-                g.drawRect(2, 2, width - 4, height - 4);
-                g.fillRect(4, 4, width - 8, height - 8);
-            }
+            g.setColor(c2);
+            g.drawRect(2, 2, width - 4, height - 4);
+            g.fillRect(4, 4, width - 8, height - 8);
         };
 
         uiDefaults.put("CheckBox[Disabled].iconPainter", painter1);
@@ -630,24 +541,18 @@ public abstract class AppSkin {
         Color c1 = defaults.getColor("text");
         Color c2 = defaults.getColor("text");
 
-        Painter<? extends JComponent> painter1 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        Painter<? extends JComponent> painter1 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-                g.setColor(c1);
-                g.drawOval(1, 1, width - 2, height - 2);
-            }
+            g.setColor(c1);
+            g.drawOval(1, 1, width - 2, height - 2);
         };
 
-        Painter<? extends JComponent> painter2 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c2);
-                g.drawOval(1, 1, width - 2, height - 2);
-                g.fillOval(4, 4, width - 8, height - 8);
-            }
+        Painter<? extends JComponent> painter2 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c2);
+            g.drawOval(1, 1, width - 2, height - 2);
+            g.fillOval(4, 4, width - 8, height - 8);
         };
 
         uiDefaults.put("RadioButton[Disabled].iconPainter", painter1);
@@ -668,13 +573,10 @@ public abstract class AppSkin {
 
     public void createTooltipSkin(UIDefaults uiDefaults) {
         Color c1 = defaults.getColor("Tree.background");
-        Painter<? extends JComponent> painter2 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c1);
-                g.fillRect(0, 0, width, height);
-            }
+        Painter<? extends JComponent> painter2 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c1);
+            g.fillRect(0, 0, width, height);
         };
         uiDefaults.put("ToolTip[Enabled].backgroundPainter", painter2);
         uiDefaults.put("ToolTip.background", defaults.getColor("control"));
@@ -707,26 +609,20 @@ public abstract class AppSkin {
         Color c1 = this.defaults.getColor("nimbusSelection");
         Color c2 = this.defaults.getColor("TextField.background");
 
-        Painter<? extends JComponent> painter1 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c2);
-                g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
-            }
+        Painter<? extends JComponent> painter1 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c2);
+            g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
 
-        Painter<? extends JComponent> painter2 = new Painter<JComponent>() {
-            @Override
-            public void paint(Graphics2D g, JComponent object, int width, int height) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setColor(c1);
-                g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
-            }
+        Painter<? extends JComponent> painter2 = (Painter<JComponent>) (g, object, width, height) -> {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setColor(c1);
+            g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
 
         uiDefaults.put("ProgressBar.horizontalSize", new Dimension(150, 10));
-        uiDefaults.put("ProgressBar.vertictalSize", new Dimension(10, 150));
+        uiDefaults.put("ProgressBar.verticalSize", new Dimension(10, 150));
 
         uiDefaults.put("ProgressBar[Disabled+Finished].foregroundPainter", painter2);
         uiDefaults.put("ProgressBar[Disabled].foregroundPainter", painter2);

@@ -24,10 +24,6 @@ public class SessionConnectDialog extends JDialog implements GUIBlocker {
         this.appWindow = appWindow;
     }
 
-    public void connectSession(SessionInfo info) {
-
-    }
-
     @Override
     public void blockInterface() {
         setLocationRelativeTo(appWindow);

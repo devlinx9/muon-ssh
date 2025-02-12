@@ -1,7 +1,9 @@
 package com.jediterm.terminal;
 
 import com.jediterm.terminal.model.CharBuffer;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class StyledTextConsumerAdapter implements StyledTextConsumer {
 
   public void consume(int x, int y, TextStyle style, CharBuffer characters, int startRow) {

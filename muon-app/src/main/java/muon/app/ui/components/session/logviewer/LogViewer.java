@@ -34,9 +34,7 @@ public class LogViewer extends Page {
      */
     public LogViewer(SessionContentPanel sessionContent) {
         this.sessionContent = sessionContent;
-        startPage = new StartPage(e -> {
-            openLog(e);
-        }, sessionContent.getInfo().getId());
+        startPage = new StartPage(this::openLog, sessionContent.getInfo().getId());
         content = new JPanel();
         tabs = new ClosableTabbedPanel(e -> {
             String path = promptLogPath();
@@ -82,9 +80,7 @@ public class LogViewer extends Page {
             }
         }
         LogContent logContent = new LogContent(sessionContent, remotePath,
-                startPage, e -> {
-            openLogs.remove(remotePath);
-        });
+                startPage, e -> openLogs.remove(remotePath));
         TabTitle title = new TabTitle();
         tabs.addTab(title, logContent);
         title.getCallback().accept(PathUtils.getFileName(remotePath));
@@ -98,7 +94,7 @@ public class LogViewer extends Page {
                         txt},
                 "Input", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION && txt.getText().length() > 0) {
+                null) == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
             return txt.getText();
         }
         return null;

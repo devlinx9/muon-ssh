@@ -18,11 +18,11 @@ public class AutoScrollingJTree extends JTree implements Autoscroll {
     }
 
     public void autoscroll(Point p) {
-        int realrow = getRowForLocation(p.x, p.y);
+        int realRow = getRowForLocation(p.x, p.y);
         Rectangle outer = getBounds();
-        realrow = (p.y + outer.y <= margin ? realrow < 1 ? 0 : realrow - 1
-                : realrow < getRowCount() - 1 ? realrow + 1 : realrow);
-        scrollRowToVisible(realrow);
+        realRow = (p.y + outer.y <= margin ? realRow < 1 ? 0 : realRow - 1
+                : realRow < getRowCount() - 1 ? realRow + 1 : realRow);
+        scrollRowToVisible(realRow);
     }
 
     public Insets getAutoscrollInsets() {

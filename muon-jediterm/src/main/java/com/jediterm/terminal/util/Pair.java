@@ -16,13 +16,18 @@
 package com.jediterm.terminal.util;
 
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
+
+@Slf4j
 public class Pair<A, B> {
   public final A first;
   public final B second;
 
   //
   public static <A, B> Pair<A, B> create(A first, B second) {
-    return new Pair<A, B>(first, second);
+    return new Pair<>(first, second);
   }
 
   public static <T> T getFirst(Pair<T, ?> pair) {
@@ -61,8 +66,8 @@ public class Pair<A, B> {
 
     Pair pair = (Pair)o;
 
-    if (first != null ? !first.equals(pair.first) : pair.first != null) return false;
-    return second != null ? second.equals(pair.second) : pair.second == null;
+    if (!Objects.equals(first, pair.first)) return false;
+    return Objects.equals(second, pair.second);
   }
 
   public int hashCode() {

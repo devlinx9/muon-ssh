@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.utilpage.sysload;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
 
@@ -17,6 +18,7 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class SysLoadPage extends UtilPageItemView {
     private final AtomicInteger sleepInterval = new AtomicInteger(3);
     private SystemLoadPanel systemLoadPanel;
@@ -39,12 +41,10 @@ public class SysLoadPage extends UtilPageItemView {
         holder.EXECUTOR.submit(() -> {
             try {
                 if (holder.isSessionClosed()) {
-                    SwingUtilities.invokeAndWait(() -> {
-                        timer.stop();
-                    });
+                    SwingUtilities.invokeAndWait(() -> timer.stop());
                     return;
                 }
-                System.out.println("Getting system metrics");
+                log.info("Getting system metrics");
                 this.metrics
                         .updateMetrics(this.holder.getRemoteSessionInstance());
                 if ("Linux".equals(this.metrics.getOS())) {
@@ -80,7 +80,7 @@ public class SysLoadPage extends UtilPageItemView {
                     });
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
     }
@@ -110,7 +110,7 @@ public class SysLoadPage extends UtilPageItemView {
         spInterval.setMaximumSize(spInterval.getPreferredSize());
         spInterval.addChangeListener(e -> {
             int interval = (Integer) spInterval.getValue();
-            System.out.println("New interval: " + interval);
+            log.info("New interval: {}", interval);
             this.sleepInterval.set(interval);
             timer.stop();
             timer.setDelay(this.sleepInterval.get() * 1000);
@@ -135,9 +135,7 @@ public class SysLoadPage extends UtilPageItemView {
         this.add(topPanel, BorderLayout.NORTH);
         this.add(systemLoadPanel);
 
-        timer = new Timer(this.sleepInterval.get() * 1000, e -> {
-            fetchSystemLoad();
-        });
+        timer = new Timer(this.sleepInterval.get() * 1000, e -> fetchSystemLoad());
         timer.setInitialDelay(0);
         timer.setCoalesce(true);
 

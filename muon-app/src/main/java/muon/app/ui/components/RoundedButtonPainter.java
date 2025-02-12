@@ -1,11 +1,16 @@
 package muon.app.ui.components;
 
+import lombok.Getter;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class RoundedButtonPainter {
+    @Getter
     private final Painter<AbstractButton> normalPainter;
+    @Getter
     private final Painter<AbstractButton> hotPainter;
+    @Getter
     private final Painter<AbstractButton> pressedPainter;
     private final GradientPaint normalGradient;
     private final GradientPaint hotGradient;
@@ -58,15 +63,4 @@ public class RoundedButtonPainter {
         };
     }
 
-    public Painter<AbstractButton> getNormalPainter() {
-        return normalPainter;
-    }
-
-    public Painter<AbstractButton> getHotPainter() {
-        return hotPainter;
-    }
-
-    public Painter<AbstractButton> getPressedPainter() {
-        return pressedPainter;
-    }
 }

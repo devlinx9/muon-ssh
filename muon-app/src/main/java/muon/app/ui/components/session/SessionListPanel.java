@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.AppWindow;
 import muon.app.ui.components.SkinnedScrollPane;
@@ -16,8 +17,8 @@ import java.awt.event.MouseEvent;
 
 /**
  * @author subhro
- *
  */
+@Slf4j
 public class SessionListPanel extends JPanel {
     private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
     private static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -52,7 +53,7 @@ public class SessionListPanel extends JPanel {
                         int y = e.getPoint().y;
 
                         if (x > r.x + r.width - 30 && x < r.x + r.width && y > r.y + 10 && y < r.y + r.height - 10) {
-                            System.out.println("Clicked on: " + index);
+                            log.info("Clicked on: {}", index);
                             removeSession(index);
                         }
                     }
@@ -86,8 +87,7 @@ public class SessionListPanel extends JPanel {
         });
 
         sessionList.addListSelectionListener(e -> {
-            System.out.println("called for index: " + sessionList.getSelectedIndex() + " " + e.getFirstIndex() + " "
-                    + e.getLastIndex() + e.getValueIsAdjusting());
+            log.debug("called for index: {} {} {}{}", sessionList.getSelectedIndex(), e.getFirstIndex(), e.getLastIndex(), e.getValueIsAdjusting());
             if (!e.getValueIsAdjusting()) {
                 int index = sessionList.getSelectedIndex();
                 if (index != -1) {
@@ -112,14 +112,14 @@ public class SessionListPanel extends JPanel {
     }
 
     public void removeSession(int index) {
-        if (JOptionPane.showConfirmDialog(window, "Disconnect session?") == JOptionPane.YES_OPTION) {
+        if (JOptionPane.showConfirmDialog(window, App.bundle.getString("disconnect_session")) == JOptionPane.YES_OPTION) {
             SessionContentPanel sessionContentPanel = sessionListModel.get(index);
             sessionContentPanel.close();
             window.removeSession(sessionContentPanel);
             window.revalidate();
             window.repaint();
             sessionListModel.remove(index);
-            if (sessionListModel.size() == 0) {
+            if (sessionListModel.isEmpty()) {
                 return;
             }
             if (index == sessionListModel.size()) {
@@ -133,8 +133,9 @@ public class SessionListPanel extends JPanel {
     public SessionContentPanel getSessionContainer(int activeSessionId) {
         for (int i = 0; i < sessionListModel.size(); i++) {
             SessionContentPanel scp = sessionListModel.get(i);
-            if (scp.getActiveSessionId() == activeSessionId)
+            if (scp.getActiveSessionId() == activeSessionId) {
                 return scp;
+            }
         }
         return null;
     }
@@ -191,24 +192,63 @@ public class SessionListPanel extends JPanel {
 
             SessionInfo info = value.getInfo();
 
-
             lblText.setText(info.getName());
             lblHost.setText(info.getHost());
             lblIcon.setText(FontAwesomeContants.FA_CUBE);
             lblClose.setText(FontAwesomeContants.FA_EJECT);
+
+            lblText.setName("lblText");
+            lblHost.setName("lblHost");
+            lblIcon.setName("lblIcon");
+            lblClose.setName("lblClose");
+
+            boolean isPanelVisible = list.isVisible();
+            lblText.setVisible(isPanelVisible);
+            lblHost.setVisible(isPanelVisible);
+
+            panel.setBackground(App.SKIN.getDefaultBackground());
+            lblText.setForeground(App.SKIN.getDefaultForeground());
+            lblHost.setForeground(App.SKIN.getInfoTextForeground());
+            lblIcon.setForeground(App.SKIN.getDefaultForeground());
 
             if (isSelected) {
                 panel.setBackground(App.SKIN.getDefaultSelectionBackground());
                 lblText.setForeground(App.SKIN.getDefaultSelectionForeground());
                 lblHost.setForeground(App.SKIN.getDefaultSelectionForeground());
                 lblIcon.setForeground(App.SKIN.getDefaultSelectionForeground());
-            } else {
-                panel.setBackground(App.SKIN.getDefaultBackground());
-                lblText.setForeground(App.SKIN.getDefaultForeground());
-                lblHost.setForeground(App.SKIN.getInfoTextForeground());
-                lblIcon.setForeground(App.SKIN.getDefaultForeground());
             }
+
             return panel;
         }
+
     }
+
+    public void resizeSessionPanel(boolean isVisible) {
+        // Iterate over all elements in session list and hide/show text & host labels
+        for (int i = 0; i < sessionListModel.size(); i++) {
+            SessionContentPanel panel = sessionListModel.get(i);
+            SessionInfo info = panel.getInfo();
+
+            if (info != null) {
+                Component rendererComponent = sessionList.getCellRenderer()
+                        .getListCellRendererComponent(sessionList, panel, i, false, false);
+
+                if (rendererComponent instanceof JPanel) {
+                    JPanel cellPanel = (JPanel) rendererComponent;
+                    for (Component component : cellPanel.getComponents()) {
+                        if (component instanceof JPanel) {
+                            component.setVisible(isVisible);
+                            ((JPanel) component).getComponents();
+
+                        }
+                    }
+                }
+            }
+        }
+
+        // Refresh UI
+        sessionList.revalidate();
+        sessionList.repaint();
+    }
+
 }

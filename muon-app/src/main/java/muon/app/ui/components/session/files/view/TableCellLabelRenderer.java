@@ -1,5 +1,7 @@
 package muon.app.ui.components.session.files.view;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileType;
@@ -10,12 +12,13 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-
+@Slf4j
 public class TableCellLabelRenderer implements TableCellRenderer {
     private final JPanel panel;
     private final JLabel textLabel;
     private final JLabel iconLabel;
     private final JLabel label;
+    @Getter
     private final int height;
     private final Color foreground;
 
@@ -45,17 +48,13 @@ public class TableCellLabelRenderer implements TableCellRenderer {
 
         panel.doLayout();
 
-        System.out.println(panel.getPreferredSize());
+        log.debug(panel.getPreferredSize().toString());
 
         label = new JLabel();
         label.setForeground(foreground);
         label.setBorder(new EmptyBorder(5, 5, 5, 5));
         label.setFont(new Font(Font.DIALOG, Font.PLAIN, 14));
         label.setOpaque(true);
-    }
-
-    public int getHeight() {
-        return height;
     }
 
     @Override
@@ -86,7 +85,7 @@ public class TableCellLabelRenderer implements TableCellRenderer {
                 label.setText(FormatUtils.formatDate(ent.getLastModified()));
                 break;
             case 2:
-                if (ent.getType() == FileType.Directory || ent.getType() == FileType.DirLink) {
+                if (ent.getType() == FileType.DIRECTORY || ent.getType() == FileType.DIR_LINK) {
                     label.setText("");
                 } else {
                     label.setText(FormatUtils.humanReadableByteCount(ent.getSize(), true));

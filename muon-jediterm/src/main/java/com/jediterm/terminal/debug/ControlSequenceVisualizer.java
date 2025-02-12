@@ -1,6 +1,7 @@
 package com.jediterm.terminal.debug;
 
-import org.apache.log4j.Logger;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.nio.CharBuffer;
@@ -9,8 +10,8 @@ import java.util.List;
 /**
  * @author traff
  */
+@Slf4j
 public class ControlSequenceVisualizer {
-  private static final Logger LOG = Logger.getLogger(ControlSequenceVisualizer.class);
 
   private File myTempFile;
 

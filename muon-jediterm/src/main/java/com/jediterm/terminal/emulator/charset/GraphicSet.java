@@ -1,9 +1,12 @@
 package com.jediterm.terminal.emulator.charset;
 
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Denotes how a graphic set is designated.
  */
+@Slf4j
 public class GraphicSet
 {
   private final int myIndex; // 0..3

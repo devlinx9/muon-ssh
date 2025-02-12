@@ -5,6 +5,7 @@ import muon.app.App;
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.util.Objects;
 
 public class SearchTableRenderer implements TableCellRenderer {
 
@@ -31,8 +32,8 @@ public class SearchTableRenderer implements TableCellRenderer {
                                                    boolean isSelected, boolean hasFocus, int row, int column) {
         SearchResult ent = this.model.getItemAt(row);
         if (column == 0) {
-            iconLabel.setText(ent.getType() == "Folder" ? "\uf114"
-                    : (ent.getType() == "File" ? "\uf016" : "\uf0c1"));
+            iconLabel.setText(Objects.equals(ent.getType(), "Folder") ? "\uf114"
+                                                                      : (Objects.equals(ent.getType(), "File") ? "\uf016" : "\uf0c1"));
             textLabel.setText(ent.getName());
         } else {
             label.setText(value.toString());

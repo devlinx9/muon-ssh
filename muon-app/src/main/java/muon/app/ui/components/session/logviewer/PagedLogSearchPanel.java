@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.logviewer;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import util.FontAwesomeContants;
@@ -19,6 +20,7 @@ import java.nio.ByteBuffer;
  * @author subhro
  *
  */
+@Slf4j
 public class PagedLogSearchPanel extends JPanel {
     private final JTextField txtSearch;
     private JLabel lblResults;
@@ -31,9 +33,7 @@ public class PagedLogSearchPanel extends JPanel {
         super(new BorderLayout());
         this.searchListener = searchListener;
         txtSearch = new SkinnedTextField(20);
-        txtSearch.addActionListener(e -> {
-            startSearch();
-        });
+        txtSearch.addActionListener(e -> startSearch());
 
         UIDefaults skin = App.SKIN.createTabButtonSkin();
 
@@ -41,9 +41,7 @@ public class PagedLogSearchPanel extends JPanel {
         btnSearch.putClientProperty("Nimbus.Overrides", skin);
         btnSearch.setFont(App.SKIN.getIconFont());
         btnSearch.setText(FontAwesomeContants.FA_SEARCH);
-        btnSearch.addActionListener(e -> {
-            startSearch();
-        });
+        btnSearch.addActionListener(e -> startSearch());
 
         JButton btnNext = new JButton();
         btnNext.putClientProperty("Nimbus.Overrides", skin);
@@ -58,9 +56,9 @@ public class PagedLogSearchPanel extends JPanel {
                 index++;
             }
 
-            System.out.println("Index: " + index);
+            log.info("Index: {}", index);
             long lineNo = getLineNumber();
-            System.out.println("Line number: " + lineNo);
+            log.info("Line number: {}", lineNo);
             if (lineNo != -1) {
                 searchListener.select(lineNo);
                 this.lblResults.setText((index + 1) + "/" + this.resultCount);
@@ -80,7 +78,7 @@ public class PagedLogSearchPanel extends JPanel {
                 index--;
             }
             long lineNo = getLineNumber();
-            System.out.println("Line number: " + lineNo);
+            log.info("Line number: {}", lineNo);
             if (lineNo != -1) {
                 searchListener.select(lineNo);
                 this.lblResults.setText((index + 1) + "/" + this.resultCount);
@@ -111,7 +109,7 @@ public class PagedLogSearchPanel extends JPanel {
      */
     private void startSearch() {
         String text = txtSearch.getText();
-        if (text.length() < 1)
+        if (text.isEmpty())
             return;
         this.lblResults.setText("");
         this.index = 0;
@@ -119,6 +117,7 @@ public class PagedLogSearchPanel extends JPanel {
             try {
                 raf.close();
             } catch (Exception ex) {
+                log.error(ex.getMessage(), ex);
             }
             raf = null;
         }
@@ -133,7 +132,7 @@ public class PagedLogSearchPanel extends JPanel {
         this.raf = raf;
         this.index = 0;
         this.resultCount = len / 8;
-        System.out.println("Total items found: " + this.resultCount);
+        log.info("Total items found: {}", this.resultCount);
         this.lblResults
                 .setText(resultCount > 0 ? 1 + "/" + resultCount : "0/0");
         if (resultCount > 0) {
@@ -152,7 +151,7 @@ public class PagedLogSearchPanel extends JPanel {
             }
             return ByteBuffer.wrap(b).getLong() - 1;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return -1;
     }
@@ -162,6 +161,7 @@ public class PagedLogSearchPanel extends JPanel {
             try {
                 raf.close();
             } catch (Exception ex) {
+                log.error(ex.getMessage(), ex);
             }
             raf = null;
         }

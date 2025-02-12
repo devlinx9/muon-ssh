@@ -3,6 +3,9 @@
  */
 package muon.app.ui.components;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -10,9 +13,14 @@ import java.awt.*;
  * @author subhro
  *
  */
+@Slf4j
 public class TextGutter extends JComponent {
     private final JTextArea textArea;
+
+    @Getter
     private int digitCount;
+
+    @Getter
     private long lineStart;
 
     /**
@@ -57,15 +65,8 @@ public class TextGutter extends JComponent {
                 g.drawString(lineNum, x, (int) (y + asc));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
-    }
-
-    /**
-     * @return the digitCount
-     */
-    public int getDigitCount() {
-        return digitCount;
     }
 
     /**
@@ -75,13 +76,6 @@ public class TextGutter extends JComponent {
         this.digitCount = digitCount;
         revalidate();
         repaint(0);
-    }
-
-    /**
-     * @return the lineStart
-     */
-    public long getLineStart() {
-        return lineStart;
     }
 
     /**

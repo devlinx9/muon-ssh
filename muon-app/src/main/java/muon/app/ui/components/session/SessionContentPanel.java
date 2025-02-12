@@ -3,6 +3,8 @@
  */
 package muon.app.ui.components.session;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
@@ -28,19 +30,21 @@ import util.LayoutUtilities;
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.io.File;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
  * @author subhro
- *
  */
+@Slf4j
 public class SessionContentPanel extends JPanel implements PageHolder, CachedCredentialProvider {
     public final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+
+    @Getter
     private final SessionInfo info;
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
@@ -49,7 +53,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     private final DisabledPanel disabledPanel;
     private final TransferProgressPanel progressPanel = new TransferProgressPanel();
     private final TabbedPage[] pages;
-    private final FileBrowser fileBrowser;
+    public final FileBrowser fileBrowser;
     private final LogViewer logViewer;
     private final TerminalHolder terminalHolder;
     private final DiskspaceAnalyzer diskspaceAnalyzer;
@@ -58,6 +62,8 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     private final UtilityPage utilityPage;
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final Deque<RemoteSessionInstance> cachedSessions = new LinkedList<>();
+
+    @Getter
     private RemoteSessionInstance remoteSessionInstance;
     private ThreadPoolExecutor backgroundTransferPool;
     private char[] cachedPassword;
@@ -84,13 +90,13 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         processViewer = new ProcessViewer(this);
         utilityPage = new UtilityPage(this);
 
-        Page[] pageArr = null;
+        Page[] pageArr;
         if (App.getGlobalSettings().isFirstFileBrowserView()) {
             pageArr = new Page[]{fileBrowser, terminalHolder, logViewer, searchPanel, diskspaceAnalyzer,
-                    processViewer, utilityPage};
+                                 processViewer, utilityPage};
         } else {
             pageArr = new Page[]{terminalHolder, fileBrowser, logViewer, searchPanel, diskspaceAnalyzer,
-                    processViewer, utilityPage};
+                                 processViewer, utilityPage};
         }
 
         this.cardLayout = new CardLayout();
@@ -123,7 +129,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
 
         showPage(this.pages[0].getId());
 
-        if (info.getPortForwardingRules() != null && info.getPortForwardingRules().size() > 0) {
+        if (info.getPortForwardingRules() != null && !info.getPortForwardingRules().isEmpty()) {
             this.pfSession = new PortForwardingSession(info, App.getInputBlocker(), this);
             this.pfSession.start();
         }
@@ -143,25 +149,11 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             }
             item.setSelected(false);
         }
-        selectedPage.setSelected(true);
+        Objects.requireNonNull(selectedPage).setSelected(true);
         this.cardLayout.show(this.cardPanel, pageId);
         this.revalidate();
         this.repaint();
         selectedPage.getPage().onLoad();
-    }
-
-    /**
-     * @return the info
-     */
-    public SessionInfo getInfo() {
-        return info;
-    }
-
-    /**
-     * @return the remoteSessionInstance
-     */
-    public RemoteSessionInstance getRemoteSessionInstance() {
-        return remoteSessionInstance;
     }
 
     public void disableUi() {
@@ -176,7 +168,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         SwingUtilities.invokeLater(() -> {
             this.disabledPanel.startAnimation(stopFlag);
             this.rootPane.setGlassPane(this.disabledPanel);
-            System.out.println("Showing disable panel");
+            log.debug("Showing disable panel");
             this.disabledPanel.setVisible(true);
         });
     }
@@ -184,7 +176,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     public void enableUi() {
         SwingUtilities.invokeLater(() -> {
             this.disabledPanel.stopAnimation();
-            System.out.println("Hiding disable panel");
+            log.debug("Hiding disable panel");
             this.disabledPanel.setVisible(false);
         });
     }
@@ -210,10 +202,6 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
 
     public int getActiveSessionId() {
         return this.hashCode();
-    }
-
-    public void downloadFileToLocal(FileInfo remoteFile, Consumer<File> callback) {
-
     }
 
     public void openLog(FileInfo remoteFile) {
@@ -243,7 +231,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         try {
             this.terminalHolder.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         App.removePendingTransfers(this.getActiveSessionId());
         if (this.backgroundTransferPool != null) {
@@ -254,17 +242,17 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             try {
                 this.backgroundTransferPool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
             } catch (InterruptedException e1) {
-                e1.printStackTrace();
+                log.error(e1.getMessage(), e1);
             }
             try {
                 this.remoteSessionInstance.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
             try {
-                this.cachedSessions.forEach(c -> c.close());
+                this.cachedSessions.forEach(RemoteSessionInstance::close);
             } catch (Exception e2) {
-                e2.printStackTrace();
+                log.error(e2.getMessage(), e2);
             }
         });
         EXECUTOR.shutdown();
@@ -279,7 +267,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         FileSystem sourceFs = new LocalFileSystem();
         FileSystem targetFs = instance.getSshFs();
         FileTransfer transfer = new FileTransfer(sourceFs, targetFs, localFiles, targetRemoteDirectory, null,
-                confiAction, instance);
+                                                 confiAction, instance);
         App.addUpload(new BackgroundFileTransfer(transfer, instance, this));
     }
 
@@ -288,7 +276,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         RemoteSessionInstance instance = createBackgroundSession();
         SshFileSystem sourceFs = instance.getSshFs();
         FileTransfer transfer = new FileTransfer(sourceFs, targetFs, remoteFiles, targetLocalDirectory, null,
-                confiAction, instance);
+                                                 confiAction, instance);
         App.addDownload(new BackgroundFileTransfer(transfer, instance, this));
     }
 
@@ -297,7 +285,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             this.backgroundTransferPool = new ThreadPoolExecutor(
                     App.getGlobalSettings().getBackgroundTransferQueueSize(),
                     App.getGlobalSettings().getBackgroundTransferQueueSize(), 0, TimeUnit.NANOSECONDS,
-                    new LinkedBlockingQueue<Runnable>());
+                    new LinkedBlockingQueue<>());
         } else {
             if (this.backgroundTransferPool.getMaximumPoolSize() != App.getGlobalSettings()
                     .getBackgroundTransferQueueSize()) {
@@ -309,7 +297,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     }
 
     public synchronized RemoteSessionInstance createBackgroundSession() {
-        if (this.cachedSessions.size() == 0) {
+        if (this.cachedSessions.isEmpty()) {
             return new RemoteSessionInstance(info, App.getInputBlocker(), this);
         }
         return this.cachedSessions.pop();

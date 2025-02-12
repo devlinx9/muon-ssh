@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session;
 
+import lombok.Getter;
 import muon.app.App;
 
 import javax.swing.*;
@@ -16,18 +17,16 @@ import java.awt.event.MouseEvent;
 
 /**
  * @author subhro
- *
  */
 public class TabbedPage extends JPanel {
-    /**
-     *
-     */
+
+    @Getter
     private final Page page;
     private final JLabel lblIcon;
     private final JLabel lblText;
     private final Border selectedBorder = new CompoundBorder(
             new MatteBorder(0, 0, 2, 0,
-                    App.SKIN.getDefaultSelectionBackground()),
+                            App.SKIN.getDefaultSelectionBackground()),
             new EmptyBorder(10, 0, 10, 0));
     private final Border normalBorder = new CompoundBorder(
             new MatteBorder(0, 0, 2, 0, App.SKIN.getDefaultBackground()),
@@ -85,9 +84,9 @@ public class TabbedPage extends JPanel {
     public void setSelected(boolean selected) {
         this.setBorder(selected ? selectedBorder : normalBorder);
         this.lblIcon.setForeground(selected ? App.SKIN.getDefaultForeground()
-                : App.SKIN.getInfoTextForeground());
+                                            : App.SKIN.getInfoTextForeground());
         this.lblText.setForeground(selected ? App.SKIN.getDefaultForeground()
-                : App.SKIN.getInfoTextForeground());
+                                            : App.SKIN.getInfoTextForeground());
         this.revalidate();
         this.repaint();
     }
@@ -97,13 +96,6 @@ public class TabbedPage extends JPanel {
      */
     public String getText() {
         return lblText.getText();
-    }
-
-    /**
-     * @return the page
-     */
-    public Page getPage() {
-        return page;
     }
 
     public String getId() {

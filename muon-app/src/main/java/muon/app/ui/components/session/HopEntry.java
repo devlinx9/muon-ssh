@@ -1,7 +1,16 @@
 package muon.app.ui.components.session;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class HopEntry {
-    private String id, host, user, password, keypath;
+    private String id;
+    private String host;
+    private String user;
+    private String password;
+    private String keypath;
     private int port;
 
     public HopEntry(String id, String host, int port, String user, String password, String keypath) {
@@ -14,55 +23,6 @@ public class HopEntry {
         this.keypath = keypath;
     }
     public HopEntry() {
-        // TODO Auto-generated constructor stub
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getKeypath() {
-        return keypath;
-    }
-
-    public void setKeypath(String keypath) {
-        this.keypath = keypath;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
     }
 
     @Override

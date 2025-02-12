@@ -1,5 +1,7 @@
 package muon.app.ui.components.session.utilpage.sysload;
 
+import lombok.Getter;
+import lombok.Setter;
 import muon.app.App;
 
 import javax.swing.*;
@@ -8,13 +10,18 @@ import java.awt.geom.Path2D;
 
 public class LineGraph extends JComponent {
     private static final long serialVersionUID = -8887995348037288952L;
+    @Getter
     private double[] values = new double[0];
 
     private final Stroke lineStroke = new BasicStroke(1.0f, BasicStroke.CAP_ROUND,
-            BasicStroke.JOIN_ROUND);
+                                                      BasicStroke.JOIN_ROUND);
     private final Stroke gridStroke = new BasicStroke(1.0f, BasicStroke.CAP_ROUND,
-            BasicStroke.JOIN_ROUND);
+                                                      BasicStroke.JOIN_ROUND);
+    @Getter
+    @Setter
     private boolean dynamic = false;
+    @Setter
+    @Getter
     private String suffix = "%";
     private final Path2D shape = new Path2D.Double();
     private final Color bgColor = App.SKIN.getDefaultBackground();
@@ -28,15 +35,16 @@ public class LineGraph extends JComponent {
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setComposite(AlphaComposite.SrcOver);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+                            RenderingHints.VALUE_ANTIALIAS_ON);
 
         g2.setColor(bgColor);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
         int count = values.length - 1;
 
-        if (count < 1)
+        if (count < 1) {
             return;
+        }
 
         double den = 100;
         if (dynamic) {
@@ -44,12 +52,12 @@ public class LineGraph extends JComponent {
             double min = Float.MAX_VALUE;
             double max = Float.MIN_VALUE;
 
-            for (int i = 0; i < values.length; i++) {
-                if (values[i] < min) {
-                    min = values[i];
+            for (double value : values) {
+                if (value < min) {
+                    min = value;
                 }
-                if (values[i] > max) {
-                    max = values[i];
+                if (value > max) {
+                    max = value;
                 }
             }
 
@@ -68,7 +76,7 @@ public class LineGraph extends JComponent {
 
         int height = getHeight() - 6;
 
-        float stepy = height / 4;
+        float stepy = (float) height / 4;
 
         int ascent = g2.getFontMetrics().getAscent();
 
@@ -126,28 +134,9 @@ public class LineGraph extends JComponent {
 
     }
 
-    public double[] getValues() {
-        return values;
-    }
-
     public void setValues(double[] values) {
         this.values = values;
         repaint();
     }
 
-    public boolean isDynamic() {
-        return dynamic;
-    }
-
-    public void setDynamic(boolean dynamic) {
-        this.dynamic = dynamic;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(String suffix) {
-        this.suffix = suffix;
-    }
 }

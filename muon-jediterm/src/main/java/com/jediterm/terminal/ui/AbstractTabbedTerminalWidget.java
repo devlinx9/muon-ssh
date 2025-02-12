@@ -6,16 +6,12 @@ import com.jediterm.terminal.TtyConnector;
 import com.jediterm.terminal.TtyConnectorWaitFor;
 import com.jediterm.terminal.ui.settings.TabbedSettingsProvider;
 import com.jediterm.terminal.util.JTextFieldLimit;
-import java.util.function.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
@@ -211,12 +207,7 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
   public void closeTab(final T terminal) {
     if (terminal != null) {
       if (myTabs != null && myTabs.indexOfComponent(terminal) != -1) {
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              removeTab(terminal);
-            }
-          });
+          SwingUtilities.invokeLater(() -> removeTab(terminal));
         fireTabClosed(terminal);
       } else if (myTermWidget == terminal) {
         myTermWidget = null;
@@ -274,44 +265,22 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
   @Override
   public List<TerminalAction> getActions() {
     return new ArrayList<>(Arrays.asList(
-      new TerminalAction("New Session", mySettingsProvider.getNewSessionKeyStrokes(), new Predicate<KeyEvent>() {
-        @Override
-        public boolean test(KeyEvent input) {
+      new TerminalAction("New Session", mySettingsProvider.getNewSessionKeyStrokes(), input -> {
           handleNewSession();
           return true;
-        }
       }).withMnemonicKey(KeyEvent.VK_N),
-      new TerminalAction("Close Session", mySettingsProvider.getCloseSessionKeyStrokes(), new Predicate<KeyEvent>() {
-        @Override
-        public boolean test(KeyEvent input) {
+      new TerminalAction("Close Session", mySettingsProvider.getCloseSessionKeyStrokes(), input -> {
           closeCurrentSession();
           return true;
-        }
       }).withMnemonicKey(KeyEvent.VK_S),
-      new TerminalAction("Next Tab", mySettingsProvider.getNextTabKeyStrokes(), new Predicate<KeyEvent>() {
-        @Override
-        public boolean test(KeyEvent input) {
+      new TerminalAction("Next Tab", mySettingsProvider.getNextTabKeyStrokes(), input -> {
           selectNextTab();
           return true;
-        }
-      }).withEnabledSupplier(new Supplier<Boolean>() {
-        @Override
-        public Boolean get() {
-          return myTabs != null && myTabs.getSelectedIndex() < myTabs.getTabCount() - 1;
-        }
-      }),
-      new TerminalAction("Previous Tab", mySettingsProvider.getPreviousTabKeyStrokes(), new Predicate<KeyEvent>() {
-        @Override
-        public boolean test(KeyEvent input) {
+      }).withEnabledSupplier(() -> myTabs != null && myTabs.getSelectedIndex() < myTabs.getTabCount() - 1),
+      new TerminalAction("Previous Tab", mySettingsProvider.getPreviousTabKeyStrokes(), input -> {
           selectPreviousTab();
           return true;
-        }
-      }).withEnabledSupplier(new Supplier<Boolean>() {
-        @Override
-        public Boolean get() {
-          return myTabs != null && myTabs.getSelectedIndex() > 0;
-        }
-      })
+      }).withEnabledSupplier(() -> myTabs != null && myTabs.getSelectedIndex() > 0)
     ));
   }
 
@@ -481,12 +450,7 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
 
       JMenuItem rename = new JMenuItem("Rename Tab");
 
-      rename.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent actionEvent) {
-          renameTab();
-        }
-      });
+      rename.addActionListener(actionEvent -> renameTab());
 
       popupMenu.add(rename);
 
@@ -550,7 +514,7 @@ public abstract class AbstractTabbedTerminalWidget<T extends JediTermWidget> ext
   public void setTerminalPanelListener(TerminalPanelListener terminalPanelListener) {
     if (myTabs != null) {
       for (int i = 0; i < myTabs.getTabCount(); i++) {
-        getTerminalPanel(i).setTerminalPanelListener(terminalPanelListener);
+        Objects.requireNonNull(getTerminalPanel(i)).setTerminalPanelListener(terminalPanelListener);
       }
     } else if (myTermWidget!= null) {
       myTermWidget.setTerminalPanelListener(terminalPanelListener);

@@ -23,11 +23,6 @@ public class SocketTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Class<?> getColumnClass(int columnIndex) {
-        return Object.class;
-    }
-
-    @Override
     public int getRowCount() {
         return list.size();
     }

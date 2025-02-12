@@ -1,5 +1,10 @@
 package muon.app.ui.components.session.utilpage.services;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class ServiceEntry {
     private String name;
     private String unitStatus;
@@ -14,38 +19,6 @@ public class ServiceEntry {
     }
 
     public ServiceEntry() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUnitStatus() {
-        return unitStatus;
-    }
-
-    public void setUnitStatus(String unitStatus) {
-        this.unitStatus = unitStatus;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public String getUnitFileStatus() {
-        return unitFileStatus;
-    }
-
-    public void setUnitFileStatus(String unitFileStatus) {
-        this.unitFileStatus = unitFileStatus;
     }
 
     @Override

@@ -1,15 +1,16 @@
 package com.jediterm.terminal.ui;
 
 import com.jediterm.terminal.util.Util;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
  * @author traff
  */
+@Slf4j
 public class UIUtil {
   public static final String OS_NAME = System.getProperty("os.name");
   public static final String OS_VERSION = System.getProperty("os.version").toLowerCase();
@@ -36,7 +37,7 @@ public class UIUtil {
           field.setAccessible(true);
           Object scale = field.get(device);
 
-          if (scale instanceof Integer && ((Integer)scale).intValue() == 2) {
+          if (scale instanceof Integer && (Integer) scale == 2) {
             return true;
           }
         }

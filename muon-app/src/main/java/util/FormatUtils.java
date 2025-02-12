@@ -14,7 +14,7 @@ public class FormatUtils {
         return String.format("%.1f %s", bytes / Math.pow(unit, exp), pre);
     }
 
-    public static final String formatDate(LocalDateTime dateTime) {
+    public static String formatDate(LocalDateTime dateTime) {
         return dateTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
     }
 }

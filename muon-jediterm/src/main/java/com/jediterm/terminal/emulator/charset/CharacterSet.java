@@ -21,7 +21,7 @@ public enum CharacterSet
         if ( index == 3 )
         {
           // Pound sign...
-          return '\u00a3';
+          return '£';
         }
         return -1;
       }
@@ -34,25 +34,25 @@ public enum CharacterSet
         switch ( index )
         {
           case 32:
-            return '\u00c4';
+            return 'Ä';
           case 59:
-            return '\u00c6';
+            return 'Æ';
           case 60:
-            return '\u00d8';
+            return 'Ø';
           case 61:
-            return '\u00c5';
+            return 'Å';
           case 62:
-            return '\u00dc';
+            return 'Ü';
           case 64:
-            return '\u00e4';
+            return 'ä';
           case 91:
-            return '\u00e6';
+            return 'æ';
           case 92:
-            return '\u00f8';
+            return 'ø';
           case 93:
-            return '\u00e5';
+            return 'å';
           case 94:
-            return '\u00fc';
+            return 'ü';
           default:
             return -1;
         }
@@ -65,7 +65,7 @@ public enum CharacterSet
       {
         if ( index >= 64 && index < 96 )
         {
-          return ( ( Character )CharacterSets.DEC_SPECIAL_CHARS[index - 64][0] ).charValue();
+          return (Character) CharacterSets.DEC_SPECIAL_CHARS[index - 64][0];
         }
         return -1;
       }
@@ -91,23 +91,23 @@ public enum CharacterSet
         switch ( index )
         {
           case 3:
-            return '\u00a3';
+            return '£';
           case 32:
-            return '\u00be';
+            return '¾';
           case 59:
-            return '\u0133';
+            return 'ĳ';
           case 60:
-            return '\u00bd';
+            return '½';
           case 61:
             return '|';
           case 91:
-            return '\u00a8';
+            return '¨';
           case 92:
-            return '\u0192';
+            return 'ƒ';
           case 93:
-            return '\u00bc';
+            return '¼';
           case 94:
-            return '\u00b4';
+            return '´';
           default:
             return -1;
         }
@@ -121,23 +121,23 @@ public enum CharacterSet
         switch ( index )
         {
           case 59:
-            return '\u00c4';
+            return 'Ä';
           case 60:
-            return '\u00d4';
+            return 'Ô';
           case 61:
-            return '\u00c5';
+            return 'Å';
           case 62:
-            return '\u00dc';
+            return 'Ü';
           case 64:
-            return '\u00e9';
+            return 'é';
           case 91:
-            return '\u00e4';
+            return 'ä';
           case 92:
-            return '\u00f6';
+            return 'ö';
           case 93:
-            return '\u00e5';
+            return 'å';
           case 94:
-            return '\u00fc';
+            return 'ü';
           default:
             return -1;
         }
@@ -151,23 +151,23 @@ public enum CharacterSet
         switch ( index )
         {
           case 3:
-            return '\u00a3';
+            return '£';
           case 32:
-            return '\u00e0';
+            return 'à';
           case 59:
-            return '\u00b0';
+            return '°';
           case 60:
-            return '\u00e7';
+            return 'ç';
           case 61:
-            return '\u00a6';
+            return '¦';
           case 91:
-            return '\u00e9';
+            return 'é';
           case 92:
-            return '\u00f9';
+            return 'ù';
           case 93:
-            return '\u00e8';
+            return 'è';
           case 94:
-            return '\u00a8';
+            return '¨';
           default:
             return -1;
         }
@@ -181,23 +181,23 @@ public enum CharacterSet
         switch ( index )
         {
           case 32:
-            return '\u00e0';
+            return 'à';
           case 59:
-            return '\u00e2';
+            return 'â';
           case 60:
-            return '\u00e7';
+            return 'ç';
           case 61:
-            return '\u00ea';
+            return 'ê';
           case 62:
-            return '\u00ee';
+            return 'î';
           case 91:
-            return '\u00e9';
+            return 'é';
           case 92:
-            return '\u00f9';
+            return 'ù';
           case 93:
-            return '\u00e8';
+            return 'è';
           case 94:
-            return '\u00fb';
+            return 'û';
           default:
             return -1;
         }
@@ -211,21 +211,21 @@ public enum CharacterSet
         switch ( index )
         {
           case 32:
-            return '\u00a7';
+            return '§';
           case 59:
-            return '\u00c4';
+            return 'Ä';
           case 60:
-            return '\u00d6';
+            return 'Ö';
           case 61:
-            return '\u00dc';
+            return 'Ü';
           case 91:
-            return '\u00e4';
+            return 'ä';
           case 92:
-            return '\u00f6';
+            return 'ö';
           case 93:
-            return '\u00fc';
+            return 'ü';
           case 94:
-            return '\u00df';
+            return 'ß';
           default:
             return -1;
         }
@@ -239,23 +239,23 @@ public enum CharacterSet
         switch ( index )
         {
           case 3:
-            return '\u00a3';
+            return '£';
           case 32:
-            return '\u00a7';
+            return '§';
           case 59:
-            return '\u00ba';
+            return 'º';
           case 60:
-            return '\u00e7';
+            return 'ç';
           case 61:
-            return '\u00e9';
+            return 'é';
           case 91:
-            return '\u00e0';
+            return 'à';
           case 92:
-            return '\u00f2';
+            return 'ò';
           case 93:
-            return '\u00e8';
+            return 'è';
           case 94:
-            return '\u00ec';
+            return 'ì';
           default:
             return -1;
         }
@@ -269,21 +269,21 @@ public enum CharacterSet
         switch ( index )
         {
           case 3:
-            return '\u00a3';
+            return '£';
           case 32:
-            return '\u00a7';
+            return '§';
           case 59:
-            return '\u00a1';
+            return '¡';
           case 60:
-            return '\u00d1';
+            return 'Ñ';
           case 61:
-            return '\u00bf';
+            return '¿';
           case 91:
-            return '\u00b0';
+            return '°';
           case 92:
-            return '\u00f1';
+            return 'ñ';
           case 93:
-            return '\u00e7';
+            return 'ç';
           default:
             return -1;
         }
@@ -297,25 +297,25 @@ public enum CharacterSet
         switch ( index )
         {
           case 32:
-            return '\u00c9';
+            return 'É';
           case 59:
-            return '\u00c4';
+            return 'Ä';
           case 60:
-            return '\u00d6';
+            return 'Ö';
           case 61:
-            return '\u00c5';
+            return 'Å';
           case 62:
-            return '\u00dc';
+            return 'Ü';
           case 64:
-            return '\u00e9';
+            return 'é';
           case 91:
-            return '\u00e4';
+            return 'ä';
           case 92:
-            return '\u00f6';
+            return 'ö';
           case 93:
-            return '\u00e5';
+            return 'å';
           case 94:
-            return '\u00fc';
+            return 'ü';
           default:
             return -1;
         }
@@ -329,29 +329,29 @@ public enum CharacterSet
         switch ( index )
         {
           case 3:
-            return '\u00f9';
+            return 'ù';
           case 32:
-            return '\u00e0';
+            return 'à';
           case 59:
-            return '\u00e9';
+            return 'é';
           case 60:
-            return '\u00e7';
+            return 'ç';
           case 61:
-            return '\u00ea';
+            return 'ê';
           case 62:
-            return '\u00ee';
+            return 'î';
           case 63:
-            return '\u00e8';
+            return 'è';
           case 64:
-            return '\u00f4';
+            return 'ô';
           case 91:
-            return '\u00e4';
+            return 'ä';
           case 92:
-            return '\u00f6';
+            return 'ö';
           case 93:
-            return '\u00fc';
+            return 'ü';
           case 94:
-            return '\u00fb';
+            return 'û';
           default:
             return -1;
         }

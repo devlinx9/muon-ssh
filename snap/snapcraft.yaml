@@ -1,5 +1,5 @@
 name: muon
-version: "2.2.0"
+version: "2.3.0"
 summary: Graphical SFTP client and terminal emulator with helpful utilities
 description: |
   Muon is a graphical SSH client. It has a file browser,
@@ -15,18 +15,27 @@ confinement: strict
 
 apps:
   muon:
-    command: java -jar $SNAP/jar/muonssh_2.2.0.jar
+    command: java -jar $SNAP/jar/muonssh_2.3.0.jar
+    common-id: muonssh.desktop
     environment:
       # Needed for fontconfig
       XDG_DATA_HOME: ${SNAP}/usr/share
       FONTCONFIG_PATH: ${SNAP}/etc/fonts/config.d
       FONTCONFIG_FILE: ${SNAP}/etc/fonts/fonts.conf
-    plugs: [x11, ssh-keys,network, desktop, home, network-bind]
+    plugs: [x11, ssh-keys, network, desktop, home, network-bind]
 
 parts:
   muon:
     plugin: maven
-    source: https://github.com/devlinx9/muon-ssh.git
+    source: .
+    override-build: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/jar/
+      snapcraftctl build
+      cp ./muon-app/target/*.jar $SNAPCRAFT_PART_INSTALL/jar/
+      cp ./muon-jediterm/target/*.jar $SNAPCRAFT_PART_INSTALL/jar/
+    maven-targets:
+      - /root/parts/muon/build/muon-app
+      - /root/parts/muon/build/muon-jediterm
     build-packages:
       - openjdk-11-jdk
     stage-packages:

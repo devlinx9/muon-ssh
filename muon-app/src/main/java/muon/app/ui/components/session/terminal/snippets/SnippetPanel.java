@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.terminal.snippets;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import util.FontAwesomeContants;
@@ -19,6 +20,7 @@ import java.util.function.Consumer;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class SnippetPanel extends JPanel {
     private final DefaultListModel<SnippetItem> listModel = new DefaultListModel<>();
     private final List<SnippetItem> snippetList = new ArrayList<>();
@@ -82,8 +84,8 @@ public class SnippetPanel extends JPanel {
                     "New snippet", JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE, null, null,
                     null) == JOptionPane.OK_OPTION) {
-                if (txtCommand.getText().length() < 1
-                        || txtName.getText().length() < 1) {
+                if (txtCommand.getText().isEmpty()
+                        || txtName.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null,
                             "Please enter name and command");
                     return;
@@ -117,8 +119,8 @@ public class SnippetPanel extends JPanel {
                     "New snippet", JOptionPane.OK_CANCEL_OPTION,
                     JOptionPane.PLAIN_MESSAGE, null, null,
                     null) == JOptionPane.OK_OPTION) {
-                if (txtCommand.getText().length() < 1
-                        || txtName.getText().length() < 1) {
+                if (txtCommand.getText().isEmpty()
+                        || txtName.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null,
                             "Please enter name and command");
                     return;
@@ -196,14 +198,14 @@ public class SnippetPanel extends JPanel {
     public void loadSnippets() {
         this.snippetList.clear();
         this.snippetList.addAll(App.SNIPPET_MANAGER.getSnippetItems());
-        System.out.println("Snippet size: " + snippetList.size());
+        log.info("Snippet size: {}", snippetList.size());
         filter();
     }
 
     private void filter() {
         this.listModel.clear();
         String text = searchTextField.getText().trim();
-        if (text.length() < 1) {
+        if (text.isEmpty()) {
             this.listModel.addAll(this.snippetList);
             return;
         }

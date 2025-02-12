@@ -7,17 +7,20 @@ import com.jediterm.terminal.TerminalColor;
 import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.emulator.ColorPalette;
 import com.jediterm.terminal.ui.settings.DefaultSettingsProvider;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.Settings;
 import util.FontUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * @author subhro
  *
  */
+@Slf4j
 public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     private final ColorPalette palette;
 
@@ -94,11 +97,6 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     }
 
     @Override
-    public boolean enableMouseReporting() {
-        return true;
-    }
-
-    @Override
     public boolean pasteOnMiddleMouseClick() {
         return App.getGlobalSettings().isPuttyLikeCopyPaste();
     }
@@ -110,9 +108,9 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
 
     @Override
     public Font getTerminalFont() {
-        System.out.println("Called terminal font: " + App.getGlobalSettings().getTerminalFontName());
-        return FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalFontName()).deriveFont(Font.PLAIN,
-                App.getGlobalSettings().getTerminalFontSize());
+        log.debug("Called terminal font: {}", App.getGlobalSettings().getTerminalFontName());
+        return Objects.requireNonNull(FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalFontName())).deriveFont(Font.PLAIN,
+                                                                                                                            App.getGlobalSettings().getTerminalFontSize());
     }
 
     @Override

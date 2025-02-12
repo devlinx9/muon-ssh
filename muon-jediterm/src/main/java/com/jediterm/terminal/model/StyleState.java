@@ -2,7 +2,9 @@ package com.jediterm.terminal.model;
 
 import com.jediterm.terminal.TerminalColor;
 import com.jediterm.terminal.TextStyle;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class StyleState {
   private TextStyle myCurrentStyle = TextStyle.EMPTY;
   private TextStyle myDefaultStyle = TextStyle.EMPTY;

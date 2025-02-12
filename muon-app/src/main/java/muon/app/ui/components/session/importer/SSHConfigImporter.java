@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 
@@ -23,7 +24,7 @@ public class SSHConfigImporter {
         Scanner myReader = new Scanner(file);
         String linea = myReader.hasNextLine() ? myReader.nextLine() : null;
         SessionInfo info = new SessionInfo();
-        if (linea.contains(HOST_TEXT)) {
+        if (Objects.requireNonNull(linea).contains(HOST_TEXT)) {
             info.setName(sanitizeString(linea, HOST_TEXT));
         }
         while (myReader.hasNextLine()) {

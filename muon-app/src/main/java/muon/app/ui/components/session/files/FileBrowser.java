@@ -1,5 +1,7 @@
 package muon.app.ui.components.session.files;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
@@ -28,13 +30,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static muon.app.App.bundle;
 
+@Slf4j
 public class FileBrowser extends Page {
     private final JSplitPane horizontalSplitter;
     private final ClosableTabbedPanel leftTabs;
     private final ClosableTabbedPanel rightTabs;
+
+    @Getter
     private final SessionContentPanel holder;
+    @Getter
     private final SessionInfo info;
     private final Map<String, List<FileInfo>> sshDirCache = new HashMap<>();
+
+    @Getter
     private final int activeSessionId;
     private final AtomicBoolean init = new AtomicBoolean(false);
     private final JPopupMenu popup;
@@ -59,17 +67,17 @@ public class FileBrowser extends Page {
 
         localMenuItem.addActionListener(e -> {
             if (leftPopup) {
-                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Left);
+                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.LEFT);
             } else {
-                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Right);
+                openLocalFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.RIGHT);
             }
         });
 
         remoteMenuItem.addActionListener(e -> {
             if (leftPopup) {
-                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Left);
+                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.LEFT);
             } else {
-                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.Right);
+                openSshFileBrowserView(null, AbstractFileBrowserView.PanelOrientation.RIGHT);
             }
         });
 
@@ -129,7 +137,7 @@ public class FileBrowser extends Page {
 
     public void openSshFileBrowserView(String path, AbstractFileBrowserView.PanelOrientation orientation) {
         SshFileBrowserView tab = new SshFileBrowserView(this, path, orientation);
-        if (orientation == AbstractFileBrowserView.PanelOrientation.Left) {
+        if (orientation == AbstractFileBrowserView.PanelOrientation.LEFT) {
             this.leftTabs.addTab(tab.getTabTitle(), tab);
         } else {
             this.rightTabs.addTab(tab.getTabTitle(), tab);
@@ -139,7 +147,7 @@ public class FileBrowser extends Page {
     public void openLocalFileBrowserView(String path, AbstractFileBrowserView.PanelOrientation orientation) {
 
         LocalFileBrowserView tab = new LocalFileBrowserView(this, path, orientation);
-        if (orientation == AbstractFileBrowserView.PanelOrientation.Left) {
+        if (orientation == AbstractFileBrowserView.PanelOrientation.LEFT) {
             this.leftTabs.addTab(tab.getTabTitle(), tab);
         } else {
             this.rightTabs.addTab(tab.getTabTitle(), tab);
@@ -154,10 +162,6 @@ public class FileBrowser extends Page {
         return this.holder.getRemoteSessionInstance();
     }
 
-    public SessionInfo getInfo() {
-        return info;
-    }
-
     public boolean isCloseRequested() {
         return this.holder.isSessionClosed();
     }
@@ -168,69 +172,60 @@ public class FileBrowser extends Page {
 
     public void newFileTransfer(FileSystem sourceFs, FileSystem targetFs, FileInfo[] files, String targetFolder,
                                 int dragsource, Constants.ConflictAction defaultConflictAction, RemoteSessionInstance instance) {
-        System.out.println("Initiating new file transfer...");
+        log.info("Initiating new file transfer...");
         this.ongoingFileTransfer = new FileTransfer(sourceFs, targetFs, files, targetFolder,
-                new FileTransferProgress() {
+                                                    new FileTransferProgress() {
 
-                    @Override
-                    public void progress(long processedBytes, long totalBytes, long processedCount, long totalCount,
-                                         FileTransfer fileTransfer) {
-                        SwingUtilities.invokeLater(() -> {
-                            if (totalBytes == 0) {
-                                holder.setTransferProgress(0);
-                            } else {
-                                holder.setTransferProgress((int) ((processedBytes * 100) / totalBytes));
-                            }
-                        });
-                    }
+                                                        @Override
+                                                        public void progress(long processedBytes, long totalBytes, long processedCount, long totalCount,
+                                                                             FileTransfer fileTransfer) {
+                                                            SwingUtilities.invokeLater(() -> {
+                                                                if (totalBytes == 0) {
+                                                                    holder.setTransferProgress(0);
+                                                                } else {
+                                                                    holder.setTransferProgress((int) ((processedBytes * 100) / totalBytes));
+                                                                }
+                                                            });
+                                                        }
 
-                    @Override
-                    public void init(long totalSize, long files, FileTransfer fileTransfer) {
-                    }
+                                                        @Override
+                                                        public void init(long totalSize, long files, FileTransfer fileTransfer) {
+                                                        }
 
-                    @Override
-                    public void error(String cause, FileTransfer fileTransfer) {
-                        SwingUtilities.invokeLater(() -> {
-                            holder.endFileTransfer();
-                            if (!holder.isSessionClosed()) {
-                                JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
-                            }
-                        });
-                    }
+                                                        @Override
+                                                        public void error(String cause, FileTransfer fileTransfer) {
+                                                            SwingUtilities.invokeLater(() -> {
+                                                                holder.endFileTransfer();
+                                                                if (!holder.isSessionClosed()) {
+                                                                    JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                                                                }
+                                                            });
+                                                        }
 
-                    @Override
-                    public void done(FileTransfer fileTransfer) {
-                        System.out.println("Done");
-                        SwingUtilities.invokeLater(() -> {
-                            holder.endFileTransfer();
-                            reloadView();
-                        });
-                    }
-                }, defaultConflictAction, instance);
-        holder.startFileTransferModal(e -> {
-            this.ongoingFileTransfer.close();
-        });
+                                                        @Override
+                                                        public void done(FileTransfer fileTransfer) {
+                                                            log.info("Done");
+                                                            SwingUtilities.invokeLater(() -> {
+                                                                holder.endFileTransfer();
+                                                                reloadView();
+                                                            });
+                                                        }
+                                                    }, defaultConflictAction, instance);
+        holder.startFileTransferModal(e -> this.ongoingFileTransfer.close());
         holder.EXECUTOR.submit(this.ongoingFileTransfer);
     }
 
-    private void reloadView() {
+    public void reloadView() {
         Component c = leftTabs.getSelectedContent();
-        System.out.println("c1 " + c);
+        log.info("c1 {}", c);
         if (c instanceof AbstractFileBrowserView) {
             ((AbstractFileBrowserView) c).reload();
         }
         c = rightTabs.getSelectedContent();
-        System.out.println("c2 " + c);
+        log.info("c2 {}", c);
         if (c instanceof AbstractFileBrowserView) {
             ((AbstractFileBrowserView) c).reload();
         }
-    }
-
-    /**
-     * @return the activeSessionId
-     */
-    public int getActiveSessionId() {
-        return activeSessionId;
     }
 
     @Override
@@ -239,11 +234,20 @@ public class FileBrowser extends Page {
             return;
         }
         init.set(true);
-        SshFileBrowserView left = new SshFileBrowserView(this, null, AbstractFileBrowserView.PanelOrientation.Left);
-        this.leftTabs.addTab(left.getTabTitle(), left);
+        LocalFileBrowserView localFileBrowserView = new LocalFileBrowserView(this, System.getProperty("user.home"),
+                                                                             AbstractFileBrowserView.PanelOrientation.LEFT);
 
-        LocalFileBrowserView right = new LocalFileBrowserView(this, System.getProperty("user.home"),
-                AbstractFileBrowserView.PanelOrientation.Right);
+        SshFileBrowserView sshFileBrowserView = new SshFileBrowserView(this, null, AbstractFileBrowserView.PanelOrientation.RIGHT);
+
+        AbstractFileBrowserView left = sshFileBrowserView;
+        AbstractFileBrowserView right = localFileBrowserView;
+
+        if (App.getGlobalSettings().isFirstLocalViewInFileBrowser()) {
+            left = localFileBrowserView;
+            right = sshFileBrowserView;
+        }
+
+        this.leftTabs.addTab(left.getTabTitle(), left);
         this.rightTabs.addTab(right.getTabTitle(), right);
     }
 
@@ -257,22 +261,15 @@ public class FileBrowser extends Page {
         return bundle.getString("file_browser");
     }
 
-    /**
-     * @return the holder
-     */
-    public SessionContentPanel getHolder() {
-        return holder;
-    }
-
     public void openPath(String path) {
-        openSshFileBrowserView(path, AbstractFileBrowserView.PanelOrientation.Left);
+        openSshFileBrowserView(path, AbstractFileBrowserView.PanelOrientation.LEFT);
     }
 
     public boolean isSessionClosed() {
         return this.holder.isSessionClosed();
     }
 
-    public boolean selectTransferModeAndConflictAction(ResponseHolder holder) throws Exception {
+    public boolean selectTransferModeAndConflictAction(ResponseHolder holder) {
         holder.transferMode = App.getGlobalSettings().getFileTransferMode();
         holder.conflictAction = App.getGlobalSettings().getConflictAction();
         return true;
@@ -281,7 +278,7 @@ public class FileBrowser extends Page {
     public boolean handleLocalDrop(DndTransferData transferData, SessionInfo info, FileSystem currentFileSystem,
                                    String currentPath) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-                && JOptionPane.showConfirmDialog(null, "Move/copy files?") != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(null, "Move/copy files?") != JOptionPane.YES_OPTION) {
             return false;
         }
 
@@ -293,10 +290,10 @@ public class FileBrowser extends Page {
                 return false;
             }
 
-            System.out.println("Dropped: " + transferData);
+            log.info("Dropped: {}", transferData);
             int sessionHashCode = transferData.getInfo();
             if (sessionHashCode == 0) {
-                System.out.println("Session hash code: " + sessionHashCode);
+                log.info("Session hash code: {}", sessionHashCode);
                 return true;
             }
 
@@ -309,13 +306,12 @@ public class FileBrowser extends Page {
                 if (sourceFs == null) {
                     return false;
                 }
-                FileSystem targetFs = currentFileSystem;
-                this.newFileTransfer(sourceFs, targetFs, transferData.getFiles(), currentPath, this.hashCode(),
-                        holder.conflictAction, this.getSessionInstance());
+                this.newFileTransfer(sourceFs, currentFileSystem, transferData.getFiles(), currentPath, this.hashCode(),
+                                     holder.conflictAction, this.getSessionInstance());
             }
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return false;
         }
     }

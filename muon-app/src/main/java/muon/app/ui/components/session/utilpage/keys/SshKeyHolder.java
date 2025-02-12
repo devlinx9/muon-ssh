@@ -1,5 +1,10 @@
 package muon.app.ui.components.session.utilpage.keys;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class SshKeyHolder {
     private String remotePublicKey;
     private String localPublicKey;
@@ -18,46 +23,6 @@ public class SshKeyHolder {
         this.remoteAuthorizedKeys = remoteAuthorizedKeys;
         this.remotePubKeyFile = remotePubKeyFile;
         this.localPubKeyFile = localPubKeyFile;
-    }
-
-    public String getLocalPubKeyFile() {
-        return localPubKeyFile;
-    }
-
-    public void setLocalPubKeyFile(String localPubKeyFile) {
-        this.localPubKeyFile = localPubKeyFile;
-    }
-
-    public String getRemotePublicKey() {
-        return remotePublicKey;
-    }
-
-    public void setRemotePublicKey(String remotePublicKey) {
-        this.remotePublicKey = remotePublicKey;
-    }
-
-    public String getLocalPublicKey() {
-        return localPublicKey;
-    }
-
-    public void setLocalPublicKey(String localPublicKey) {
-        this.localPublicKey = localPublicKey;
-    }
-
-    public String getRemoteAuthorizedKeys() {
-        return remoteAuthorizedKeys;
-    }
-
-    public void setRemoteAuthorizedKeys(String remoteAuthorizedKeys) {
-        this.remoteAuthorizedKeys = remoteAuthorizedKeys;
-    }
-
-    public String getRemotePubKeyFile() {
-        return remotePubKeyFile;
-    }
-
-    public void setRemotePubKeyFile(String remotePubKeyFile) {
-        this.remotePubKeyFile = remotePubKeyFile;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.ssh;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ssh.RemoteSessionInstance;
 import util.PathUtils;
 
@@ -10,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public class ArchiveOperation {
     private final Map<String, String> extractCommands;
     private final Map<String, String> compressCommands;
@@ -87,7 +89,7 @@ public class ArchiveOperation {
             throws Exception {
         String command = getExtractCommand(archivePath);
         if (command == null) {
-            System.out.println("Unsupported file: " + archivePath);
+            log.info("Unsupported file: {}", archivePath);
             return false;
         }
         command = String
@@ -97,10 +99,10 @@ public class ArchiveOperation {
                                 getArchiveFileName(PathUtils
                                         .getFileName(archivePath)))
                                 : targetFolder);
-        System.out.println("Invoke command: " + command);
+        log.info("Invoke command: {}", command);
         StringBuilder output = new StringBuilder();
         boolean ret = client.exec(command, stopFlag, output) == 0;
-        System.out.println("output: " + output);
+        log.info("output: {}", output);
         return ret;
     }
 
@@ -121,7 +123,7 @@ public class ArchiveOperation {
 
             StringBuilder sb = new StringBuilder();
             for (String s : files) {
-                sb.append(" \"" + s + "\"");
+                sb.append(" \"").append(s).append("\"");
             }
 
             String ext = comboBox.getSelectedItem() + "";
@@ -131,10 +133,10 @@ public class ArchiveOperation {
                     PathUtils.combineUnix(txtTargetFolder.getText(),
                             txtFileName.getText() + "." + ext));
             String cd = String.format("cd \"%s\";", txtTargetFolder.getText());
-            System.out.println(cd + compressCmd);
+            log.info("{}{}", cd, compressCmd);
             StringBuilder output = new StringBuilder();
             boolean ret = client.exec(cd + compressCmd, stopFlag, output) == 0;
-            System.out.println("output: " + output);
+            log.info("output: {}", output);
             return ret;
         }
         return true;

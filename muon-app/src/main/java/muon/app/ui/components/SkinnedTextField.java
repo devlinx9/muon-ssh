@@ -3,6 +3,8 @@
  */
 package muon.app.ui.components;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,6 +15,7 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class SkinnedTextField extends JTextField {
     /**
      *
@@ -32,7 +35,7 @@ public class SkinnedTextField extends JTextField {
         this.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("Right click on text field");
+                log.debug("Right click on text field");
                 if (e.getButton() == MouseEvent.BUTTON3 || e.isPopupTrigger()) {
 
                     JPopupMenu pop = (JPopupMenu) SkinnedTextField.this
@@ -57,21 +60,13 @@ public class SkinnedTextField extends JTextField {
         popup.add(mPaste);
         popup.add(mSelect);
 
-        mCut.addActionListener(e -> {
-            cut();
-        });
+        mCut.addActionListener(e -> cut());
 
-        mCopy.addActionListener(e -> {
-            copy();
-        });
+        mCopy.addActionListener(e -> copy());
 
-        mPaste.addActionListener(e -> {
-            paste();
-        });
+        mPaste.addActionListener(e -> paste());
 
-        mSelect.addActionListener(e -> {
-            selectAll();
-        });
+        mSelect.addActionListener(e -> selectAll());
 
         return popup;
     }

@@ -3,6 +3,7 @@
  */
 package muon.app.ui.components.session.utilpage.services;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
@@ -26,6 +27,7 @@ import static muon.app.App.bundle;
  * @author subhro
  *
  */
+@Slf4j
 public class ServicePanel extends UtilPageItemView {
     private static final Pattern SERVICE_PATTERN = Pattern
             .compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+([\\S]+.*)");
@@ -132,7 +134,7 @@ public class ServicePanel extends UtilPageItemView {
     private void filter() {
         String text = txtFilter.getText();
         model.clear();
-        if (text.length() > 0) {
+        if (!text.isEmpty()) {
             List<ServiceEntry> filteredList = new ArrayList<>();
             for (ServiceEntry entry : list) {
                 if (entry.getName().contains(text)
@@ -231,9 +233,7 @@ public class ServicePanel extends UtilPageItemView {
 
         JLabel lbl1 = new JLabel(bundle.getString("search"));
         txtFilter = new SkinnedTextField(30);
-        txtFilter.addActionListener(e -> {
-            filter();
-        });
+        txtFilter.addActionListener(e -> filter());
         btnFilter = new JButton(bundle.getString("search"));
 
         Box b1 = Box.createHorizontalBox();
@@ -245,9 +245,7 @@ public class ServicePanel extends UtilPageItemView {
 
         add(b1, BorderLayout.NORTH);
 
-        btnFilter.addActionListener(e -> {
-            filter();
-        });
+        btnFilter.addActionListener(e -> filter());
         table.setAutoCreateRowSorter(true);
         add(new SkinnedScrollPane(table));
 
@@ -284,33 +282,19 @@ public class ServicePanel extends UtilPageItemView {
 
         add(box, BorderLayout.SOUTH);
 
-        this.setStartServiceActionListener(e -> {
-            performServiceAction(1);
-        });
-        this.setStopServiceActionListener(e -> {
-            performServiceAction(2);
-        });
-        this.setEnableServiceActionListener(e -> {
-            performServiceAction(3);
-        });
-        this.setDisableServiceActionListener(e -> {
-            performServiceAction(4);
-        });
-        this.setReloadServiceActionListener(e -> {
-            performServiceAction(5);
-        });
-        this.setRestartServiceActionListener(e -> {
-            performServiceAction(6);
-        });
+        this.setStartServiceActionListener(e -> performServiceAction(1));
+        this.setStopServiceActionListener(e -> performServiceAction(2));
+        this.setEnableServiceActionListener(e -> performServiceAction(3));
+        this.setDisableServiceActionListener(e -> performServiceAction(4));
+        this.setReloadServiceActionListener(e -> performServiceAction(5));
+        this.setRestartServiceActionListener(e -> performServiceAction(6));
 
-        btnRefresh.addActionListener(e -> {
-            holder.EXECUTOR.submit(() -> {
-                AtomicBoolean stopFlag = new AtomicBoolean(false);
-                holder.disableUi(stopFlag);
-                updateView(stopFlag);
-                holder.enableUi();
-            });
-        });
+        btnRefresh.addActionListener(e -> holder.EXECUTOR.submit(() -> {
+            AtomicBoolean stopFlag = new AtomicBoolean(false);
+            holder.disableUi(stopFlag);
+            updateView(stopFlag);
+            holder.enableUi();
+        }));
 
         holder.EXECUTOR.submit(() -> {
             AtomicBoolean stopFlag = new AtomicBoolean(false);
@@ -322,13 +306,13 @@ public class ServicePanel extends UtilPageItemView {
 
     @Override
     protected void onComponentVisible() {
-        // TODO Auto-generated method stub
+        
 
     }
 
     @Override
     protected void onComponentHide() {
-        // TODO Auto-generated method stub
+        
 
     }
 
@@ -374,11 +358,7 @@ public class ServicePanel extends UtilPageItemView {
                                 return;
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                        if (!holder.isSessionClosed()) {
-                            JOptionPane.showMessageDialog(null,
-                                    bundle.getString("operation_failed"));
+                            log.error(ex.getMessage(), ex);
                         }
                     } else {
                         try {
@@ -389,15 +369,15 @@ public class ServicePanel extends UtilPageItemView {
                                 return;
                             }
                         } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                        if (!holder.isSessionClosed()) {
-                            JOptionPane.showMessageDialog(null,
-                                    bundle.getString("operation_failed"));
+                            log.error(ex.getMessage(), ex);
                         }
                     }
+                    if (!holder.isSessionClosed()) {
+                        JOptionPane.showMessageDialog(null,
+                                bundle.getString("operation_failed"));
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 } finally {
                     holder.enableUi();
                 }
@@ -424,12 +404,10 @@ public class ServicePanel extends UtilPageItemView {
             if (ret == 0) {
                 List<ServiceEntry> list = ServicePanel
                         .parseServiceEntries(output);
-                SwingUtilities.invokeAndWait(() -> {
-                    setServiceData(list);
-                });
+                SwingUtilities.invokeAndWait(() -> setServiceData(list));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
     }
 }

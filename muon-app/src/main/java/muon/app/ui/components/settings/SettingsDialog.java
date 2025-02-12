@@ -4,6 +4,7 @@
 package muon.app.ui.components.settings;
 
 import com.jediterm.terminal.emulator.ColorPalette;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.PasswordStore;
 import muon.app.Settings;
@@ -18,15 +19,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author subhro
  *
  */
+@Slf4j
 public class SettingsDialog extends JDialog {
     private final EditorTableModel editorModel = new EditorTableModel();
     private final JButton btnSave;
@@ -39,20 +39,43 @@ public class SettingsDialog extends JDialog {
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final JList<String> navList;
-    private JSpinner spTermWidth, spTermHeight, spFontSize;
-    private JCheckBox chkAudibleBell, chkPuttyLikeCopyPaste;
-    private JComboBox<String> cmbFonts, cmbTermType, cmbTermPalette, cmbLanguage;
+    private JSpinner spTermWidth;
+    private JSpinner spTermHeight;
+    private JSpinner spFontSize;
+    private JCheckBox chkAudibleBell;
+    private JCheckBox chkPuttyLikeCopyPaste;
+    private JComboBox<String> cmbFonts;
+    private JComboBox<String> cmbTermType;
+    private JComboBox<String> cmbTermPalette;
+    private JComboBox<String> cmbLanguage;
     private JComboBox<TerminalTheme> cmbTermTheme;
     private ColorSelectorButton[] paletteButtons;
-    private ColorSelectorButton defaultColorFg, defaultColorBg, defaultSelectionFg, defaultSelectionBg, defaultFoundFg,
-            defaultFoundBg;
-    private JCheckBox chkConfirmBeforeDelete, chkConfirmBeforeMoveOrCopy, chkShowHiddenFilesByDefault, chkFirstFileBrowserView,
-            chkUseSudo, chkPromptForSudo, chkTransferTemporaryDirectory,
-            chkDirectoryCache, chkShowPathBar, chkConfirmBeforeTerminalClosing, chkShowMessagePrompt,
-            chkUseGlobalDarkTheme, spConnectionKeepAlive;
+    private ColorSelectorButton defaultColorFg;
+    private ColorSelectorButton defaultColorBg;
+    private ColorSelectorButton defaultSelectionFg;
+    private ColorSelectorButton defaultSelectionBg;
+    private ColorSelectorButton defaultFoundFg;
+    private ColorSelectorButton defaultFoundBg;
+    private JCheckBox chkConfirmBeforeDelete;
+    private JCheckBox chkConfirmBeforeMoveOrCopy;
+    private JCheckBox chkShowHiddenFilesByDefault;
+    private JCheckBox chkFirstFileBrowserView;
+    private JCheckBox chkFirstLocalViewInFileBrowserView;
+    private JCheckBox chkUseSudo;
+    private JCheckBox chkPromptForSudo;
+    private JCheckBox chkTransferTemporaryDirectory;
+    private JCheckBox chkDirectoryCache;
+    private JCheckBox chkShowPathBar;
+    private JCheckBox chkConfirmBeforeTerminalClosing;
+    private JCheckBox chkShowMessagePrompt;
+    private JCheckBox chkStartMaximized;
+    private JCheckBox chkUseGlobalDarkTheme;
+    private JCheckBox spConnectionKeepAlive;
     private KeyShortcutComponent[] kcc;
     private JCheckBox chkLogWrap;
-    private JSpinner spLogLinesPerPage, spLogFontSize, spConnectionTimeout;
+    private JSpinner spLogLinesPerPage;
+    private JSpinner spLogFontSize;
+    private JSpinner spConnectionTimeout;
     private JSpinner spSysLoadInterval;
     private JComboBox<Constants.TransferMode> cmbTransferMode;
     private JComboBox<Constants.ConflictAction> cmbConflictAction;
@@ -76,7 +99,7 @@ public class SettingsDialog extends JDialog {
         cardPanel = new JPanel(cardLayout, true);
 
         DefaultListModel<String> navModel = new DefaultListModel<>();
-        navList = new JList<String>(navModel);
+        navList = new JList<>(navModel);
         navList.setCellRenderer(new CellRenderer());
 
         navList.addListSelectionListener(e -> {
@@ -116,13 +139,9 @@ public class SettingsDialog extends JDialog {
         btnSave = new JButton(App.bundle.getString("save"));
         btnReset = new JButton(App.bundle.getString("reset"));
 
-        btnSave.addActionListener(e -> {
-            applySettings();
-        });
+        btnSave.addActionListener(e -> applySettings());
 
-        btnCancel.addActionListener(e -> {
-            super.setVisible(false);
-        });
+        btnCancel.addActionListener(e -> super.setVisible(false));
 
         btnReset.addActionListener(e -> {
             loadSettings(new Settings());
@@ -202,7 +221,7 @@ public class SettingsDialog extends JDialog {
 
         chkPuttyLikeCopyPaste = new JCheckBox(App.bundle.getString("copy_like_putty"));
 
-        cmbTermType = new JComboBox<>(new String[]{"xterm-256color", "xterm", "vt100"});
+        cmbTermType = new JComboBox<>(new String[]{"xterm-256color", "xterm", "vt100", "ansi"});
         cmbTermType.setEditable(true);
         d = new Dimension(Math.max(100, cmbTermType.getPreferredSize().width * 2),
                 cmbTermType.getPreferredSize().height);
@@ -214,7 +233,7 @@ public class SettingsDialog extends JDialog {
                 cmbTermType);
 
 
-        cmbLanguage = new JComboBox();
+        cmbLanguage = new JComboBox<>();
         cmbLanguage.setModel(new DefaultComboBoxModel(Language.values()));
         cmbLanguage.setEditable(true);
         d = new Dimension(Math.max(100, cmbLanguage.getPreferredSize().width * 2),
@@ -222,7 +241,7 @@ public class SettingsDialog extends JDialog {
         cmbLanguage.setMaximumSize(d);
         cmbLanguage.setMinimumSize(d);
         cmbLanguage.setPreferredSize(d);
-        Settings settings = App.loadSettings2();
+        Settings settings = App.loadSettings();
 
         cmbLanguage.setSelectedItem(settings.getLanguage());
 
@@ -284,8 +303,8 @@ public class SettingsDialog extends JDialog {
         });
 
         JPanel paletteGrid = new JPanel(new GridLayout(2, 8, 10, 10));
-        for (int i = 0; i < paletteButtons.length; i++) {
-            paletteGrid.add(paletteButtons[i]);
+        for (ColorSelectorButton paletteButton : paletteButtons) {
+            paletteGrid.add(paletteButton);
         }
         paletteGrid.setAlignmentX(Box.LEFT_ALIGNMENT);
 
@@ -388,13 +407,16 @@ public class SettingsDialog extends JDialog {
         chkConfirmBeforeDelete = new JCheckBox(App.bundle.getString("confirm_delete_files"));
         chkConfirmBeforeMoveOrCopy = new JCheckBox(App.bundle.getString("confirm_move_files"));
         chkShowHiddenFilesByDefault = new JCheckBox(App.bundle.getString("show_hidden_files"));
-        chkFirstFileBrowserView = new JCheckBox(App.bundle.getString("show_filebrowser_first")); //todo devlinx9
+        chkFirstFileBrowserView = new JCheckBox(App.bundle.getString("show_filebrowser_first"));
+        chkFirstLocalViewInFileBrowserView = new JCheckBox(App.bundle.getString("show_local_view_first_in_filebrowser"));
         chkPromptForSudo = new JCheckBox(App.bundle.getString("prompt_for_sudo"));
         chkUseSudo = new JCheckBox(App.bundle.getString("use_sudo_if_fails"));
         chkTransferTemporaryDirectory = new JCheckBox(App.bundle.getString("transfer_temporary_directory"));
         chkDirectoryCache = new JCheckBox(App.bundle.getString("directory_caching"));
         chkShowPathBar = new JCheckBox(App.bundle.getString("current_folder"));
         chkShowMessagePrompt = new JCheckBox(App.bundle.getString("show_banner"));
+
+        chkStartMaximized = new JCheckBox(App.bundle.getString("start_maximized"));
 
         chkLogWrap = new JCheckBox(App.bundle.getString("word_wrap"));
         spLogLinesPerPage = new JSpinner(new SpinnerNumberModel(50, 10, 500, 1));
@@ -430,12 +452,15 @@ public class SettingsDialog extends JDialog {
         chkConfirmBeforeMoveOrCopy.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkShowHiddenFilesByDefault.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkFirstFileBrowserView.setAlignmentX(Box.LEFT_ALIGNMENT);
+        chkFirstLocalViewInFileBrowserView.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkTransferTemporaryDirectory.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkUseSudo.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkPromptForSudo.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkDirectoryCache.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkShowPathBar.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkShowMessagePrompt.setAlignmentX(Box.LEFT_ALIGNMENT);
+
+        chkStartMaximized.setAlignmentX(Box.LEFT_ALIGNMENT);
 
         chkLogWrap.setAlignmentX(Box.LEFT_ALIGNMENT);
         spLogLinesPerPage.setAlignmentX(Box.LEFT_ALIGNMENT);
@@ -452,6 +477,8 @@ public class SettingsDialog extends JDialog {
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkFirstFileBrowserView);
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
+        vbox.add(chkFirstLocalViewInFileBrowserView);
+        vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkTransferTemporaryDirectory);
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkUseSudo);
@@ -464,9 +491,13 @@ public class SettingsDialog extends JDialog {
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkShowMessagePrompt);
         vbox.add(Box.createRigidArea(new Dimension(10, 20)));
+        vbox.add(chkStartMaximized);
+        vbox.add(Box.createRigidArea(new Dimension(10, 20)));
 
-        JLabel lbl0 = new JLabel(App.bundle.getString("log_viewer_lines")), lbl1 = new JLabel(App.bundle.getString("connection_timeout")), lbl2 = new JLabel(App.bundle.getString("log_viewer_font_size")),
-                lbl3 = new JLabel(App.bundle.getString("system_refresh_interval"));
+        JLabel lbl0 = new JLabel(App.bundle.getString("log_viewer_lines"));
+        JLabel lbl1 = new JLabel(App.bundle.getString("connection_timeout"));
+        JLabel lbl2 = new JLabel(App.bundle.getString("log_viewer_font_size"));
+        JLabel lbl3 = new JLabel(App.bundle.getString("system_refresh_interval"));
 
         LayoutUtilities.equalizeSize(spLogLinesPerPage, spConnectionTimeout, spLogFontSize, spSysLoadInterval);
 
@@ -513,11 +544,11 @@ public class SettingsDialog extends JDialog {
         settings.setTermWidth((int) this.spTermWidth.getModel().getValue());
         settings.setTermHeight((int) this.spTermHeight.getModel().getValue());
         settings.setTerminalFontSize((int) this.spFontSize.getModel().getValue());
-        settings.setTerminalFontName(this.cmbFonts.getSelectedItem().toString());
-        settings.setTerminalType(this.cmbTermType.getSelectedItem().toString());
+        settings.setTerminalFontName(Objects.requireNonNull(this.cmbFonts.getSelectedItem()).toString());
+        settings.setTerminalType(Objects.requireNonNull(this.cmbTermType.getSelectedItem()).toString());
         settings.setLanguage((Language) this.cmbLanguage.getSelectedItem());
-        settings.setTerminalTheme(this.cmbTermTheme.getSelectedItem().toString());
-        settings.setTerminalPalette(this.cmbTermPalette.getSelectedItem().toString());
+        settings.setTerminalTheme(Objects.requireNonNull(this.cmbTermTheme.getSelectedItem()).toString());
+        settings.setTerminalPalette(Objects.requireNonNull(this.cmbTermPalette.getSelectedItem()).toString());
 
         for (int i = 0; i < paletteButtons.length; i++) {
             settings.getPalleteColors()[i] = paletteButtons[i].getColor().getRGB();
@@ -546,6 +577,7 @@ public class SettingsDialog extends JDialog {
         settings.setConfirmBeforeMoveOrCopy(chkConfirmBeforeMoveOrCopy.isSelected());
         settings.setShowHiddenFilesByDefault(chkShowHiddenFilesByDefault.isSelected());
         settings.setFirstFileBrowserView(chkFirstFileBrowserView.isSelected());
+        settings.setFirstLocalViewInFileBrowser(chkFirstLocalViewInFileBrowserView.isSelected());
         settings.setUseSudo(chkUseSudo.isSelected());
         settings.setTransferTemporaryDirectory(chkTransferTemporaryDirectory.isSelected());
         settings.setPromptForSudo(chkPromptForSudo.isSelected());
@@ -553,6 +585,8 @@ public class SettingsDialog extends JDialog {
         settings.setShowPathBar(chkShowPathBar.isSelected());
         settings.setShowMessagePrompt(chkShowMessagePrompt.isSelected());
         settings.setUseGlobalDarkTheme(chkUseGlobalDarkTheme.isSelected());
+
+        settings.setStartMaximized(chkStartMaximized.isSelected());
 
         settings.setConnectionTimeout((Integer) spConnectionTimeout.getValue());
         settings.setConnectionKeepAlive(spConnectionKeepAlive.isSelected());
@@ -630,11 +664,10 @@ public class SettingsDialog extends JDialog {
         chkConfirmBeforeMoveOrCopy.setSelected(settings.isConfirmBeforeMoveOrCopy());
         chkShowHiddenFilesByDefault.setSelected(settings.isShowHiddenFilesByDefault());
         chkFirstFileBrowserView.setSelected(settings.isFirstFileBrowserView());
+        chkFirstLocalViewInFileBrowserView.setSelected(settings.isFirstLocalViewInFileBrowser());
         chkTransferTemporaryDirectory.setSelected(settings.isTransferTemporaryDirectory());
         chkUseSudo.setSelected(settings.isUseSudo());
-        chkUseSudo.addActionListener(e -> {
-            setStatusCheckBox(chkPromptForSudo, chkUseSudo.isSelected());
-        });
+        chkUseSudo.addActionListener(e -> setStatusCheckBox(chkPromptForSudo, chkUseSudo.isSelected()));
         if (settings.isUseSudo()) {
             chkPromptForSudo.setSelected(settings.isPromptForSudo());
         } else {
@@ -646,6 +679,8 @@ public class SettingsDialog extends JDialog {
         chkShowPathBar.setSelected(settings.isShowPathBar());
         chkShowMessagePrompt.setSelected(settings.isShowMessagePrompt());
         chkUseGlobalDarkTheme.setSelected(settings.isUseGlobalDarkTheme());
+
+        chkStartMaximized.setSelected(settings.isStartMaximized());
 
         spConnectionTimeout.setValue(settings.getConnectionTimeout());
         spConnectionKeepAlive.setSelected(settings.isConnectionKeepAlive());
@@ -767,7 +802,7 @@ public class SettingsDialog extends JDialog {
                         throw new Exception(App.bundle.getString("change_password_failed"));
                     }
                 } catch (Exception e1) {
-                    e1.printStackTrace();
+                    log.error(e1.getMessage(), e1);
                     JOptionPane.showMessageDialog(this, App.bundle.getString("error_operation"));
                 }
                 App.getGlobalSettings().setUsingMasterPassword(true);
@@ -777,7 +812,7 @@ public class SettingsDialog extends JDialog {
                 try {
                     PasswordStore.getSharedInstance().changeStorePassword(new char[0]);
                 } catch (Exception e1) {
-                    e1.printStackTrace();
+                    log.error(e1.getMessage(), e1);
                     JOptionPane.showMessageDialog(this, App.bundle.getString("error_operation"));
                 }
                 App.getGlobalSettings().setUsingMasterPassword(false);

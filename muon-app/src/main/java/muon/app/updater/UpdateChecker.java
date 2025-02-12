@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.markusbernhardt.proxy.ProxySearch;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 
 import java.net.ProxySelector;
@@ -11,6 +12,7 @@ import java.net.URL;
 
 import static util.Constants.API_UPDATE_URL;
 
+@Slf4j
 public class UpdateChecker {
 
     static {
@@ -24,16 +26,16 @@ public class UpdateChecker {
 
             ProxySelector.setDefault(myProxySelector);
 
-            System.out.println("Checking for url");
+            log.info("Checking for url");
             ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             VersionEntry latestRelease = objectMapper.readValue(new URL(API_UPDATE_URL).openStream(),
-                    new TypeReference<VersionEntry>() {
-                    });
-            System.out.println("Latest release: " + latestRelease);
+                                                                new TypeReference<>() {
+                                                                });
+            log.info("Latest release: {}", latestRelease);
             return latestRelease.compareTo(App.VERSION) > 0;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return false;
     }

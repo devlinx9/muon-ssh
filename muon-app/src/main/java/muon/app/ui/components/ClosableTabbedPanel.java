@@ -1,5 +1,8 @@
 package muon.app.ui.components;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import util.FontAwesomeContants;
 
@@ -12,12 +15,15 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
+@Slf4j
 public class ClosableTabbedPanel extends JPanel {
     private final Color unselectedBg = App.SKIN.getSelectedTabColor();
     private final Color selectedBg = App.SKIN.getDefaultBackground();
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final JPanel tabHolder;
+
+    @Getter
     private final JPanel buttonsBox;
 
     /**
@@ -47,7 +53,7 @@ public class ClosableTabbedPanel extends JPanel {
                 App.SKIN.createTabButtonSkin());
         btn.setForeground(App.SKIN.getInfoTextForeground());
         btn.addActionListener(e -> {
-            System.out.println("Callback called");
+            log.debug("Callback called");
             newTabCallback.accept(btn);
         });
         buttonsBox = new JPanel(new GridLayout(1, 0));
@@ -104,7 +110,7 @@ public class ClosableTabbedPanel extends JPanel {
                 if (body instanceof ClosableTabContent) {
                     ClosableTabContent closableTabContent = (ClosableTabContent) body;
                     if (closableTabContent.close()) {
-                        System.out.println("Closing...");
+                        log.debug("Closing...");
                         for (int i = 0; i < tabHolder
                                 .getComponentCount(); i++) {
                             JComponent c = (JComponent) tabHolder
@@ -201,37 +207,18 @@ public class ClosableTabbedPanel extends JPanel {
         return null;
     }
 
-    /**
-     * @return the buttonsBox
-     */
-    public JPanel getButtonsBox() {
-        return buttonsBox;
-    }
-
     public Component[] getTabContents() {
         return cardPanel.getComponents();
     }
 
     public enum NewTabType {
-        LocalTab, RemoteTab
+        LOCAL_TAB, REMOTE_TAB
     }
 
+    @Setter
+    @Getter
     public static class TabTitle {
         private Consumer<String> callback;
-
-        /**
-         * @return the callback
-         */
-        public Consumer<String> getCallback() {
-            return callback;
-        }
-
-        /**
-         * @param callback the callback to set
-         */
-        public void setCallback(Consumer<String> callback) {
-            this.callback = callback;
-        }
     }
 
     private class TabTitleComponent extends JPanel {

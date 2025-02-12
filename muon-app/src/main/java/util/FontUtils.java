@@ -3,16 +3,19 @@
  */
 package util;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.laf.AppSkin;
 
 import java.awt.*;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author subhro
  *
  */
+@Slf4j
 public class FontUtils {
     public static final Map<String, String> TERMINAL_FONTS = new CollectionHelper.OrderedDict<String, String>()
             .putItem("DejaVuSansMono", "DejaVu Sans Mono").putItem("FiraCode-Regular", "Fira Code Regular")
@@ -20,27 +23,27 @@ public class FontUtils {
 
     public static Font loadFont(String path) {
         try (InputStream is = AppSkin.class.getResourceAsStream(path)) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            System.out.println("Font loaded: " + font.getFontName() + " of family: " + font.getFamily());
+            log.info("Font loaded: {} of family: {}", font.getFontName(), font.getFamily());
             return font.deriveFont(Font.PLAIN, 12.0f);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return null;
     }
 
     public static Font loadTerminalFont(String name) {
-        System.out.println("Loading font: " + name);
+        log.debug("Loading font: {}", name);
         try (InputStream is = AppSkin.class.getResourceAsStream(String.format("/fonts/terminal/%s.ttf", name))) {
-            Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            System.out.println("Font loaded: " + font.getFontName() + " of family: " + font.getFamily());
+            log.debug("Font loaded: {} of family: {}", font.getFontName(), font.getFamily());
             return font.deriveFont(Font.PLAIN, 12.0f);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
         }
         return null;
     }

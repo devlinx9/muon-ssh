@@ -1,5 +1,0 @@
-[Desktop Entry]
-Name=Muon SSH client
-Exec=muon
-Icon=${SNAP}/meta/gui/muon.png
-Type=Application

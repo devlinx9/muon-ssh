@@ -1,11 +1,13 @@
 package muon.app.ui.components.session.diskspace;
 
+import lombok.extern.slf4j.Slf4j;
 import util.PathUtils;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public final class DuOutputParser {
     private static final Pattern duPattern = Pattern
             .compile("([\\d]+)\\s+(.+)");
@@ -16,7 +18,7 @@ public final class DuOutputParser {
                 true);
     }
 
-    public final DiskUsageEntry parseList(List<String> lines, int prefixLen) {
+    public DiskUsageEntry parseList(List<String> lines, int prefixLen) {
         for (String line : lines) {
             Matcher matcher = duPattern.matcher(line);
             if (matcher.find()) {
@@ -25,7 +27,7 @@ public final class DuOutputParser {
                     String path = matcher.group(2).substring(prefixLen);
                     addEntry(size, path);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage(), e);
                 }
             }
         }
@@ -34,7 +36,7 @@ public final class DuOutputParser {
     }
 
     private void addEntry(long size, String path) {
-        if (path.length() < 1 || path.equals("/")) {
+        if (path.isEmpty() || path.equals("/")) {
             root.setSize(size);
             return;
         }
