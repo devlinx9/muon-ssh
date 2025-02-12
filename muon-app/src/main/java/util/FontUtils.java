@@ -4,6 +4,7 @@
 package util;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ui.laf.AppSkin;
 
 import java.awt.*;
@@ -21,13 +22,28 @@ public class FontUtils {
             .putItem("DejaVuSansMono", "DejaVu Sans Mono").putItem("FiraCode-Regular", "Fira Code Regular")
             .putItem("Inconsolata-Regular", "Inconsolata Regular").putItem("NotoMono-Regular", "Noto Mono");
 
-    public static Font loadFont(String path) {
-        try (InputStream is = AppSkin.class.getResourceAsStream(path)) {
+    public static Font loadFonts() {
+        String fontPath = "/fonts/Helvetica.ttf";
+        if (App.getGlobalSettings().getLanguage().equals(Language.CHINESE)) {
+            fontPath = "/fonts/WenQuanYi-Micro-Hei-Regular.ttf";
+        }
+
+        try (InputStream is = AppSkin.class
+                .getResourceAsStream(fontPath)) {
             Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(font);
-            log.info("Font loaded: {} of family: {}", font.getFontName(), font.getFamily());
             return font.deriveFont(Font.PLAIN, 12.0f);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public static Font loadFontAwesomeFonts() {
+        try (InputStream is = AppSkin.class.getResourceAsStream("/fonts/fontawesome-webfont.ttf")) {
+            Font font = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(is));
+            return font.deriveFont(Font.PLAIN, 14f);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
