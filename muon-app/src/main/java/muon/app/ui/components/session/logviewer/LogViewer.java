@@ -90,8 +90,8 @@ public class LogViewer extends Page {
     private String promptLogPath() {
         JTextField txt = new SkinnedTextField(30);
         if (JOptionPane.showOptionDialog(this,
-                new Object[]{"Please provide full path of the log file",
-                        txt},
+                new Object[]{bundle.getString("provide_log_file_path"),
+                             txt},
                 "Input", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null, null,
                 null) == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {

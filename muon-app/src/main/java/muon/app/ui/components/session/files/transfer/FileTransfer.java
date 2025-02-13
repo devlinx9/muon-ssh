@@ -130,12 +130,12 @@ public class FileTransfer implements Runnable, AutoCloseable {
                         JTextArea tmpFilePath = new JTextArea(5, 20);
                         tmpFilePath.setText("Files copied in " + tmpDir + " due to permission issues");
                         tmpFilePath.setEnabled(true);
-                        JOptionPane.showMessageDialog(null, tmpFilePath, "Copied to temp directory", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, tmpFilePath, App.bundle.getString("copied_temp_directory"), JOptionPane.WARNING_MESSAGE);
                     }
 
                     if (!App.getGlobalSettings().isPromptForSudo() ||
                         JOptionPane.showConfirmDialog(null,
-                                                      "Permission denied, do you want to copy files from the temporary folder to destination with sudo?",
+                                                      App.bundle.getString("permission_denied_file"),
                                                       App.bundle.getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
                         if (!App.getGlobalSettings().isTransferTemporaryDirectory()) {
@@ -260,7 +260,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
             JComboBox<Constants.ConflictAction> cmbs = new JComboBox<>(conflictOptionsCmb);
 
             if (JOptionPane.showOptionDialog(null,
-                                             new Object[]{"Some file with the same name already exists. Please choose an action", cmbs},
+                                             new Object[]{App.bundle.getString("some_file_exists_action_required"), cmbs},
                                              App.bundle.getString("action_required"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
                                              null) == JOptionPane.YES_OPTION) {
                 action = (ConflictAction) cmbs.getSelectedItem();

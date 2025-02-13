@@ -16,7 +16,7 @@ public class LocalPipeTransfer {
     public void transferFiles(FileBrowser fileBrowser, String currentDirectory, FileInfo[] selectedFiles) {
         SessionInfo info = new NewSessionDlg(App.getAppWindow()).newSession();
         if (info != null) {
-            String path = JOptionPane.showInputDialog("Remote path");
+            String path = JOptionPane.showInputDialog(App.bundle.getString("remote_path"));
             if (path != null) {
                 RemoteSessionInstance ri = new RemoteSessionInstance(info, App.getInputBlocker(),
                         new CachedCredentialProvider() {

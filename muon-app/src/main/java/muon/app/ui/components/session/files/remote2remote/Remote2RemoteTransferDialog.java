@@ -208,7 +208,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             path = txtPath.getText();
             port = (Integer) spPort.getValue();
             if (host.isEmpty() || user.isEmpty() || path.isEmpty() || port <= 0) {
-                JOptionPane.showMessageDialog(this, "Invalid input: all fields mandatory");
+                JOptionPane.showMessageDialog(this, bundle.getString("invalid_input"));
                 continue;
             }
             return new RemoteServerEntry(host, port, user, path);

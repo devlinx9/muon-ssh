@@ -138,7 +138,7 @@ public class SearchPanel extends Page {
                 criteriaBuffer.append(size).append("c");
                 criteriaBuffer.append(" ");
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Invalid size");
+                JOptionPane.showMessageDialog(null, bundle.getString("invalid_size"));
                 return;
             }
         }
@@ -156,8 +156,8 @@ public class SearchPanel extends Page {
             Date d2 = (Date) spDate2.getValue();
 
             if (!d1.before(d2)) {
-                JOptionPane.showMessageDialog(this,
-                        "Start date greater than last date");
+                JOptionPane.showMessageDialog(this, bundle.getString("invalid_date_range")
+                        );
                 return;
             }
 

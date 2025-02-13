@@ -134,7 +134,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     @Override
     public String getText() {
-        return "Terminal";
+        return App.bundle.getString("terminal");
     }
 
     public void openNewTerminal(String command) {

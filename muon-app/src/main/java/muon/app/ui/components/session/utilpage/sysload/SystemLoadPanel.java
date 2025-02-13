@@ -104,7 +104,7 @@ public class SystemLoadPanel extends JPanel {
                                  + (totalMemory != 0
                                     ? (", (Total: " + FormatUtils
                 .humanReadableByteCount(totalMemory, true)
-                                       + ", " + bundle.getString("used2") + ": "
+                                       + ", " + bundle.getString("used") + ": "
                                        + FormatUtils.humanReadableByteCount(usedMemory,
                                                                             true)
                                        + ")")
@@ -115,7 +115,7 @@ public class SystemLoadPanel extends JPanel {
                                   ? (", ( Total: "
                                      + FormatUtils.humanReadableByteCount(totalSwap,
                                                                           true)
-                                     + ", " + bundle.getString("used2") + ": " + FormatUtils
+                                     + ", " + bundle.getString("used") + ": " + FormatUtils
                                              .humanReadableByteCount(usedSwap, true)
                                      + ")")
                                   : ""));

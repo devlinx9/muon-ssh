@@ -86,8 +86,8 @@ public class SnippetPanel extends JPanel {
                     null) == JOptionPane.OK_OPTION) {
                 if (txtCommand.getText().isEmpty()
                         || txtName.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null,
-                            "Please enter name and command");
+                    JOptionPane.showMessageDialog(null, bundle.getString("enter_name_command")
+                            );
                     return;
                 }
                 App.SNIPPET_MANAGER.getSnippetItems().add(new SnippetItem(
@@ -101,7 +101,7 @@ public class SnippetPanel extends JPanel {
             int index = listView.getSelectedIndex();
             if (index < 0) {
                 JOptionPane.showMessageDialog(null,
-                        "Please select an item to edit");
+                        bundle.getString("select_item_edit"));
                 return;
             }
 
@@ -121,8 +121,8 @@ public class SnippetPanel extends JPanel {
                     null) == JOptionPane.OK_OPTION) {
                 if (txtCommand.getText().isEmpty()
                         || txtName.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null,
-                            "Please enter name and command");
+                    JOptionPane.showMessageDialog(null, bundle.getString("enter_name_command")
+                            );
                     return;
                 }
                 snippetItem.setCommand(txtCommand.getText());
@@ -135,7 +135,7 @@ public class SnippetPanel extends JPanel {
         btnDel.addActionListener(e -> {
             int index = listView.getSelectedIndex();
             if (index < 0) {
-                JOptionPane.showMessageDialog(null, "Please select an item");
+                JOptionPane.showMessageDialog(null, bundle.getString("select_item"));
                 return;
             }
 
@@ -149,7 +149,7 @@ public class SnippetPanel extends JPanel {
         btnCopy.addActionListener(e -> {
             int index = listView.getSelectedIndex();
             if (index < 0) {
-                JOptionPane.showMessageDialog(null, "Please select an item");
+                JOptionPane.showMessageDialog(null, bundle.getString("select_item"));
                 return;
             }
 
@@ -163,7 +163,7 @@ public class SnippetPanel extends JPanel {
         btnInsert.addActionListener(e -> {
             int index = listView.getSelectedIndex();
             if (index < 0) {
-                JOptionPane.showMessageDialog(null, "Please select an item");
+                JOptionPane.showMessageDialog(null, bundle.getString("select_item"));
                 return;
             }
 

@@ -1,6 +1,7 @@
 package util;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ssh.RemoteSessionInstance;
 
 import javax.swing.*;
@@ -42,9 +43,9 @@ public class SudoUtils {
                         log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (firstTime.get() || JOptionPane.showOptionDialog(null,
-                                    new Object[]{"User password",
+                                    new Object[]{App.bundle.getString("user_password"),
                                             passwordField},
-                                    "Authentication",
+                                                                                App.bundle.getString("authentication"),
                                     JOptionPane.OK_CANCEL_OPTION,
                                     JOptionPane.PLAIN_MESSAGE, null, null,
                                     null) == JOptionPane.OK_OPTION) {
@@ -103,9 +104,9 @@ public class SudoUtils {
                         log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (JOptionPane.showOptionDialog(null,
-                                    new Object[]{"User password",
+                                    new Object[]{App.bundle.getString("user_password"),
                                             passwordField},
-                                    "Authentication",
+                                                             App.bundle.getString("authentication"),
                                     JOptionPane.OK_CANCEL_OPTION,
                                     JOptionPane.PLAIN_MESSAGE, null, null,
                                     null) == JOptionPane.OK_OPTION) {

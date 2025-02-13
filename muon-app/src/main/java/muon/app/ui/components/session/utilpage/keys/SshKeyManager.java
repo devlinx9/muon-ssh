@@ -3,6 +3,7 @@ package muon.app.ui.components.session.utilpage.keys;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.common.InputTransferChannel;
 import muon.app.common.OutputTransferChannel;
 import muon.app.ssh.RemoteSessionInstance;
@@ -86,16 +87,13 @@ public class SshKeyManager {
             throws Exception {
         if (holder.getLocalPublicKey() != null) {
             if (JOptionPane.showConfirmDialog(null,
-                    "WARNING: This will overwrite the existing SSH key"
-                            + "\n\nIf the key was being used to connect to other servers," + "\nconnection will fail."
-                            + "\nYou have to reconfigure all the servers"
-                            + "\nto use the new key\nDo you still want to continue?",
+                                              App.bundle.getString("overwrite_ssh_key"),
                     "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
                 return;
             }
         }
 
-        JCheckBox chkGenPassPhrase = new JCheckBox("Use passphrase to protect private key (Optional)");
+        JCheckBox chkGenPassPhrase = new JCheckBox(App.bundle.getString("protected_key_optional"));
         JPasswordField txtPassPhrase = new JPasswordField(30);
         txtPassPhrase.setEditable(false);
         chkGenPassPhrase.addActionListener(e -> txtPassPhrase.setEditable(chkGenPassPhrase.isSelected()));

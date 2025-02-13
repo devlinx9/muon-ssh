@@ -67,8 +67,8 @@ public class SshFileOperations {
             JComboBox<String> cmbs = new JComboBox<>(
                     new String[]{"Auto rename", "Overwrite"});
             if (JOptionPane.showOptionDialog(null, new Object[]{
-                            "Some file with the same name already exists. Please choose an action",
-                            cmbs}, "Action required", JOptionPane.YES_NO_OPTION,
+                            App.bundle.getString("file_exists_action"),
+                            cmbs}, App.bundle.getString("action_required"), JOptionPane.YES_NO_OPTION,
                     JOptionPane.PLAIN_MESSAGE, null, null,
                     null) == JOptionPane.YES_OPTION) {
                 action = cmbs.getSelectedIndex();
@@ -97,7 +97,7 @@ public class SshFileOperations {
 
             if (!App.getGlobalSettings().isPromptForSudo()
                     || JOptionPane.showConfirmDialog(null,
-                    "Access denied, rename using sudo?", App.bundle.getString("use_sudo"),
+                    App.bundle.getString("access_denied_rename_sudo"), App.bundle.getString("use_sudo"),
                     JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                 if (!instance.isSessionClosed()) {
                     JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
@@ -147,7 +147,7 @@ public class SshFileOperations {
             JComboBox<String> cmbs = new JComboBox<>(
                     new String[]{"Auto rename", "Overwrite"});
             if (JOptionPane.showOptionDialog(null, new Object[]{
-                            "Some file with the same name already exists. Please choose an action",
+                            App.bundle.getString("some_file_exists_action_required"),
                             cmbs}, App.bundle.getString("action_required"), JOptionPane.YES_NO_OPTION,
                     JOptionPane.PLAIN_MESSAGE, null, null,
                     null) == JOptionPane.YES_OPTION) {
@@ -171,12 +171,12 @@ public class SshFileOperations {
         log.info("Copy: {}", command);
         if (instance.exec(command.toString(), new AtomicBoolean(false)) != 0) {
             if (!App.getGlobalSettings().isUseSudo()) {
-                JOptionPane.showMessageDialog(null, "Access denied");
+                JOptionPane.showMessageDialog(null, App.bundle.getString("access_denied"));
                 return false;
             }
             if (!App.getGlobalSettings().isPromptForSudo()
                     || JOptionPane.showConfirmDialog(null,
-                    "Access denied, copy using sudo?", App.bundle.getString("use_sudo"),
+                    App.bundle.getString("access_denied_copy_sudo"), App.bundle.getString("use_sudo"),
                     JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                 if (!instance.isSessionClosed()) {
                     JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
@@ -231,7 +231,7 @@ public class SshFileOperations {
 
             if (!App.getGlobalSettings().isPromptForSudo()
                     || JOptionPane.showConfirmDialog(null,
-                    "Access denied, rename using sudo?", App.bundle.getString("use_sudo"),
+                    App.bundle.getString("access_denied_rename_sudo"), App.bundle.getString("use_sudo"),
                     JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 return renameWithPrivilege(oldName, newName, instance, password);
             }

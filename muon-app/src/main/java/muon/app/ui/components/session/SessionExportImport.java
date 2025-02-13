@@ -50,7 +50,7 @@ public class SessionExportImport {
         }
         File f = jfc.getSelectedFile();
         if (JOptionPane.showConfirmDialog(App.getAppWindow(),
-                "Existing data will be replaced.\nContinue?") != JOptionPane.YES_OPTION) {
+                                          bundle.getString("replace_data_warning")) != JOptionPane.YES_OPTION) {
             return false;
         }
         byte[] b = new byte[8192];
@@ -60,8 +60,9 @@ public class SessionExportImport {
             try (OutputStream out = new FileOutputStream(file)) {
                 while (true) {
                     int x = in.read(b);
-                    if (x == -1)
+                    if (x == -1) {
                         break;
+                    }
                     out.write(b, 0, x);
                 }
             }
@@ -87,9 +88,9 @@ public class SessionExportImport {
         }
         JComboBox<Constants.ConflictAction> cmbOptionsExistingInfo = new JComboBox<>(conflictOptionsCmb);
 
-        if (JOptionPane.showOptionDialog(App.getAppWindow(), new Object[]{"In repeated sessions do:", cmbOptionsExistingInfo}, bundle.getString("import_sessions"),
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                null) != JOptionPane.OK_OPTION) {
+        if (JOptionPane.showOptionDialog(App.getAppWindow(), new Object[]{bundle.getString("repeated_sessions"), cmbOptionsExistingInfo}, bundle.getString("import_sessions"),
+                                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
+                                         null) != JOptionPane.OK_OPTION) {
             return false;
         }
         try {
@@ -133,11 +134,8 @@ public class SessionExportImport {
             folder.setFolders(folders);
             save(folder, tree.getLastSelection());
 
-            JOptionPane.showMessageDialog(App.getAppWindow(),
-                    "Total=" + total +
-                            "\nImported=" + imported +
-                            "\nSkipped=" + skiped +
-                            "\noverwrited=" + overwrited, "Session information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(App.getAppWindow(), String.format(bundle.getString("imported_totals"), total, imported, skiped, overwrited)
+                    , bundle.getString("session_info"), JOptionPane.INFORMATION_MESSAGE);
         } catch (FileNotFoundException e) {
             log.error(e.getMessage(), e);
         }
@@ -149,13 +147,13 @@ public class SessionExportImport {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             SavedSessionTree savedSessionTree = objectMapper.readValue(new File(System.getProperty("user.home")
-                            + File.separator + "muon-ssh" + File.separator + "session-store.json"),
-                    new TypeReference<>() {
-                    });
+                                                                                + File.separator + "muon-ssh" + File.separator + "session-store.json"),
+                                                                       new TypeReference<>() {
+                                                                       });
             save(savedSessionTree.getFolder(), savedSessionTree.getLastSelection(),
-                    new File(App.CONFIG_DIR, Constants.SESSION_DB_FILE));
+                 new File(App.CONFIG_DIR, Constants.SESSION_DB_FILE));
             Files.copy(Paths.get(System.getProperty("user.home"), "muon-ssh", "snippets.json"),
-                    Paths.get(App.CONFIG_DIR, Constants.SNIPPETS_FILE));
+                       Paths.get(App.CONFIG_DIR, Constants.SNIPPETS_FILE));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

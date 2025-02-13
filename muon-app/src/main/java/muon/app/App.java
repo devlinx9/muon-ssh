@@ -73,7 +73,6 @@ public class App {
         setBundleLanguage();
 
         Security.addProvider(new BouncyCastleProvider());
-
         Security.setProperty("networkaddress.cache.ttl", "1");
         Security.setProperty("networkaddress.cache.negative.ttl", "1");
         Security.setProperty("crypto.policy", "unlimited");
@@ -102,14 +101,13 @@ public class App {
         }
 
         loadSettings();
+        if (firstRun && !isMuonPath) {
+            SessionExportImport.importOnFirstRun();
+        }
 
         if (settings.isManualScaling()) {
             System.setProperty("sun.java2d.uiScale.enabled", "true");
             System.setProperty("sun.java2d.uiScale", String.format("%.2f", settings.getUiScaling()));
-        }
-
-        if (firstRun && !isMuonPath) {
-            SessionExportImport.importOnFirstRun();
         }
 
         if (settings.getEditors().isEmpty()) {
@@ -132,7 +130,7 @@ public class App {
             int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
             log.info("maxKeySize: {}", maxKeySize);
             if (maxKeySize < Integer.MAX_VALUE) {
-                JOptionPane.showMessageDialog(null, App.bundle.getString("unlimited cryptography"));
+                JOptionPane.showMessageDialog(null, App.bundle.getString("unlimited_cryptography"));
             }
         } catch (NoSuchAlgorithmException e1) {
             log.error(e1.getMessage(), e1);

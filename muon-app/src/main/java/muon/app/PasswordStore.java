@@ -200,7 +200,7 @@ public final class PasswordStore {
         while (true) {
             try {
                 JPasswordField txtPass = new JPasswordField(30);
-                if (JOptionPane.showOptionDialog(App.getAppWindow(), new Object[]{"Master password", txtPass},
+                if (JOptionPane.showOptionDialog(App.getAppWindow(), new Object[]{App.bundle.getString("master_password"), txtPass},
                                                  App.bundle.getString("master_password"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
                                                  null) == JOptionPane.OK_OPTION) {
                     this.unlockStore(txtPass.getPassword());

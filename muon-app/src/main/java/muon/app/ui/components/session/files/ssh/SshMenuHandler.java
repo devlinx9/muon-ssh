@@ -564,7 +564,7 @@ public class SshMenuHandler {
     private void delete(FileInfo[] targetList, String baseFolder) {
         boolean delete = true;
         if (App.getGlobalSettings().isConfirmBeforeDelete()) {
-            delete = JOptionPane.showConfirmDialog(null, "Delete selected files?") == JOptionPane.YES_OPTION;
+            delete = JOptionPane.showConfirmDialog(null, bundle.getString("delete_selected_files")) == JOptionPane.YES_OPTION;
         }
         if (!delete) {
             return;

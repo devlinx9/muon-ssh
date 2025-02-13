@@ -396,8 +396,8 @@ public class PropertiesDialog extends JDialog {
                     return;
                 }
                 if (!ret && !fileBrowser.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null,
-                                "Some errors encountered during the operation");
+                        JOptionPane.showMessageDialog(null, bundle.getString("operation_errors")
+                                );
                     }
 
                 for (String line : output.toString().split("\n")) {
@@ -435,7 +435,7 @@ public class PropertiesDialog extends JDialog {
                 if (!ret) {
                     if (!fileBrowser.isSessionClosed()) {
                         JOptionPane.showMessageDialog(null,
-                                "Some errors encountered during the operation");
+                                                      bundle.getString("operation_errors"));
                     }
 
                 }
