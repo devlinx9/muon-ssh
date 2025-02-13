@@ -13,7 +13,4 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <!-- Suppress DEBUG logs from net.schmizz.sshj.common.KeyType -->
-    <logger name="net.schmizz.sshj.common.KeyType" level="INFO"/>
-
 </configuration>

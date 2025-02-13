@@ -251,6 +251,7 @@ public class App {
 
         Locale locale = new Locale.Builder().setLanguage(language.getLangAbbr()).build();
         bundle = ResourceBundle.getBundle(PATH_MESSAGES_FILE, locale);
+        Locale.setDefault(locale);
 
     }
 }
