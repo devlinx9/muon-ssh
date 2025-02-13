@@ -1,6 +1,3 @@
-/**
- *
- */
 package muon.app.ui;
 
 import lombok.Getter;
@@ -40,25 +37,40 @@ import static util.Constants.*;
  */
 @Slf4j
 public class AppWindow extends JFrame {
-    private final CardLayout sessionCard;
-    private final JPanel cardPanel;
+    private final CardLayout sessionCard = new CardLayout();
+    private final JPanel cardPanel = new JPanel(sessionCard, true);
     private final BackgroundTransferPanel uploadPanel;
     private final BackgroundTransferPanel downloadPanel;
     private final Component bottomPanel;
 
     @Getter
     private SessionListPanel sessionListPanel;
+
     private JLabel lblUploadCount;
     private JLabel lblDownloadCount;
     private JPopupMenu popup;
     private JLabel lblUpdate;
     private JLabel lblUpdateText;
 
-    /**
-     *
-     */
     public AppWindow() {
         super(APPLICATION_NAME);
+        setWindowProperties();
+
+        this.cardPanel.setDoubleBuffered(true);
+
+        this.add(createSessionPanel(), BorderLayout.WEST);
+        this.add(this.cardPanel);
+
+        this.bottomPanel = createBottomPanel();
+        this.add(this.bottomPanel, BorderLayout.SOUTH);
+
+        this.uploadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblUploadCount.setText(count + "")));
+        this.downloadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblDownloadCount.setText(count + "")));
+
+        checkForUpdates();
+    }
+
+    private void setWindowProperties() {
         try {
             this.setIconImage(ImageIO.read(Objects.requireNonNull(AppWindow.class.getResource("/muon.png"))));
         } catch (Exception e) {
@@ -66,6 +78,22 @@ public class AppWindow extends JFrame {
         }
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+        setWindowsSizeAndPosition();
+    }
+
+    private void checkForUpdates() {
+        new Thread(() -> {
+            if (UpdateChecker.isNewUpdateAvailable()) {
+                lblUpdate.setText(FontAwesomeContants.FA_DOWNLOAD);
+                lblUpdate.setVisible(true);
+                lblUpdateText.setText("Update available");
+                lblUpdateText.setVisible(true);
+
+            }
+        }).start();
+    }
+
+    private void setWindowsSizeAndPosition() {
         Insets inset = Toolkit.getDefaultToolkit().getScreenInsets(
                 GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration());
 
@@ -83,28 +111,6 @@ public class AppWindow extends JFrame {
         }
 
         this.setLocationRelativeTo(null);
-
-        this.sessionCard = new CardLayout();
-        this.cardPanel = new JPanel(this.sessionCard, true);
-        this.cardPanel.setDoubleBuffered(true);
-
-        this.add(createSessionPanel(), BorderLayout.WEST);
-        this.add(this.cardPanel);
-
-
-        this.bottomPanel = createBottomPanel();
-        this.add(this.bottomPanel, BorderLayout.SOUTH);
-
-        this.uploadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblUploadCount.setText(count + "")));
-
-        this.downloadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblDownloadCount.setText(count + "")));
-
-        new Thread(() -> {
-            if (UpdateChecker.isNewUpdateAvailable()) {
-                lblUpdate.setText(FontAwesomeContants.FA_DOWNLOAD);
-                lblUpdateText.setText("Update available");
-            }
-        }).start();
     }
 
     public void createFirstSessionPanel() {
@@ -119,10 +125,6 @@ public class AppWindow extends JFrame {
         btnNew.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
         btnNew.addActionListener(e -> this.createFirstSessionPanel());
 
-        JButton btnSettings = new JButton(FontAwesomeContants.FA_COG);
-        btnSettings.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
-        btnSettings.addActionListener(e -> openSettings(null));
-
         JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
         btnToggle.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
 
@@ -130,14 +132,8 @@ public class AppWindow extends JFrame {
         topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
         topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
         topBox.add(btnToggle);
-        topBox.add(Box.createHorizontalGlue());
+        topBox.add(Box.createRigidArea(new Dimension(10, 10)));
         topBox.add(btnNew);
-        Component rigidArea1 = Box.createRigidArea(new Dimension(5, 0));
-        topBox.add(rigidArea1);
-        topBox.add(btnSettings);
-        Component rigidArea2 = Box.createRigidArea(new Dimension(5, 0));
-        topBox.add(rigidArea2);
-
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new MatteBorder(0, 0, 0, 1, App.SKIN.getDefaultBorderColor()));
 
@@ -149,9 +145,6 @@ public class AppWindow extends JFrame {
             boolean isVisible = btnNew.isVisible();
             sessionListPanel.setVisible(!isVisible);
             btnNew.setVisible(!isVisible);
-            btnSettings.setVisible(!isVisible);
-            rigidArea2.setVisible(!isVisible);
-            rigidArea1.setVisible(!isVisible);
             topBox.setBorder(null);
 
             if (!isVisible) {
@@ -172,6 +165,7 @@ public class AppWindow extends JFrame {
 
 
     /**
+     *
      */
     public void showSession(SessionContentPanel sessionContentPanel) {
         cardPanel.add(sessionContentPanel, sessionContentPanel.hashCode() + "");
@@ -181,6 +175,7 @@ public class AppWindow extends JFrame {
     }
 
     /**
+     *
      */
     public void removeSession(SessionContentPanel sessionContentPanel) {
         cardPanel.remove(sessionContentPanel);
@@ -198,120 +193,64 @@ public class AppWindow extends JFrame {
         b1.setBackground(App.SKIN.getTableBackgroundColor());
         b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()),
                                         new EmptyBorder(5, 5, 5, 5)));
-        b1.add(Box.createRigidArea(new Dimension(10, 10)));
+        b1.add(createSpacer(10, 10));
+        b1.add(createBrandLabel());
+        b1.add(createSpacer(10, 10));
 
-        MouseListener ml = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (Desktop.isDesktopSupported()) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(REPOSITORY_URL));
-                    } catch (IOException | URISyntaxException ex) {
-                        log.error(ex.getMessage(), ex);
-                    }
-                }
-            }
-        };
-
-
-        JLabel lblBrand = new JLabel(APPLICATION_NAME + " " + APPLICATION_VERSION);
-        lblBrand.addMouseListener(ml);
-        lblBrand.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        lblBrand.setVerticalAlignment(SwingConstants.CENTER);
-        b1.add(lblBrand);
-        b1.add(Box.createRigidArea(new Dimension(10, 10)));
-
-        JLabel lblUrl = new JLabel(REPOSITORY_URL);
-        lblUrl.addMouseListener(ml);
-        lblUrl.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        b1.add(lblUrl);
-
+        b1.add(createRepositoryLabel());
         b1.add(Box.createHorizontalGlue());
 
-        JLabel lblUpload = new JLabel();
-        lblUpload.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
-        lblUpload.setText(FontAwesomeContants.FA_CLOUD_UPLOAD);
+        JLabel lblUpload = createUploadLabel();
         b1.add(lblUpload);
-        b1.add(Box.createRigidArea(new Dimension(5, 10)));
-        lblUploadCount = new JLabel("0");
+        b1.add(createSpacer(5, 10));
+        createUploadLabelCount(lblUpload);
+
         b1.add(lblUploadCount);
+        b1.add(createSpacer(10, 10));
 
-        lblUpload.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                showPopup(uploadPanel, lblUpload);
-            }
-        });
-
-        lblUploadCount.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                showPopup(uploadPanel, lblUpload);
-            }
-        });
-
-        b1.add(Box.createRigidArea(new Dimension(10, 10)));
-
-        JLabel lblDownload = new JLabel();
-        lblDownload.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
-        lblDownload.setText(FontAwesomeContants.FA_CLOUD_DOWNLOAD);
+        JLabel lblDownload = createDownloadLabel();
         b1.add(lblDownload);
-        b1.add(Box.createRigidArea(new Dimension(5, 10)));
-        lblDownloadCount = new JLabel("0");
+        b1.add(createSpacer(5, 10));
+        createDownloadCountLabel(lblDownload);
         b1.add(lblDownloadCount);
 
-        lblDownload.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                showPopup(downloadPanel, lblDownload);
-            }
-        });
-
-        lblDownloadCount.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                showPopup(downloadPanel, lblDownload);
-            }
-        });
-
-        b1.add(Box.createRigidArea(new Dimension(30, 10)));
-
-        JLabel lblHelp = new JLabel();
-        lblHelp.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
-
-        lblHelp.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (Desktop.isDesktopSupported()) {
-                    try {
-                        Desktop.getDesktop().browse(new URI(HELP_URL));
-                    } catch (IOException | URISyntaxException ex) {
-                        log.error(ex.getMessage(), ex);
-                    }
-                }
-            }
-        });
-
-        lblHelp.setText(FontAwesomeContants.FA_QUESTION_CIRCLE);
-        lblHelp.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        b1.add(lblHelp);
-        b1.add(Box.createRigidArea(new Dimension(10, 10)));
-
-        lblUpdate = new JLabel();
-        lblUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        lblUpdate.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                openUpdateURL();
-            }
-        });
-
-        lblUpdate.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
-        lblUpdate.setText(FontAwesomeContants.FA_REFRESH);
+        b1.add(createSpacer(10, 10));
+        createUpdateLabel();
         b1.add(lblUpdate);
 
-        b1.add(Box.createRigidArea(new Dimension(5, 10)));
+        b1.add(createSpacer(5, 5));
+        createUpdateTextLabel();
+        b1.add(lblUpdateText);
 
+        b1.add(createSpacer(10, 10));
+        b1.add(createSettingLabel());
+
+        b1.add(createSpacer(10, 10));
+        b1.add(createHelpLabel());
+
+        return b1;
+    }
+
+    private JLabel createHelpLabel() {
+        JLabel lblHelp = createIconLabel(FontAwesomeContants.FA_QUESTION_CIRCLE);
+        lblHelp.addMouseListener(createMouseListener(HELP_URL));
+        return lblHelp;
+    }
+
+    private JLabel createSettingLabel() {
+        JLabel lblSetting;
+        lblSetting = createIconLabel(FontAwesomeContants.FA_COG);
+        lblSetting.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblSetting.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                openSettings(null);
+            }
+        });
+        return lblSetting;
+    }
+
+    private void createUpdateTextLabel() {
         lblUpdateText = new JLabel(bundle.getString("chk_update"));
         lblUpdateText.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblUpdateText.addMouseListener(new MouseAdapter() {
@@ -321,12 +260,106 @@ public class AppWindow extends JFrame {
             }
         });
 
-        b1.add(lblUpdateText);
-
-        b1.add(Box.createRigidArea(new Dimension(10, 10)));
-
-        return b1;
+        lblUpdateText.setVisible(false);
     }
+
+    private void createUpdateLabel() {
+        lblUpdate = createIconLabel(FontAwesomeContants.FA_REFRESH);
+        lblUpdate.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblUpdate.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                openUpdateURL();
+            }
+        });
+        lblUpdate.setVisible(false);
+    }
+
+    private void createDownloadCountLabel(JLabel lblDownload) {
+        lblDownloadCount = new JLabel("0");
+        lblDownloadCount.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblDownloadCount.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                showPopup(downloadPanel, lblDownload);
+            }
+        });
+    }
+
+    private JLabel createUploadLabel() {
+        JLabel lblUpload = createIconLabel(FontAwesomeContants.FA_CLOUD_UPLOAD);
+        lblUpload.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                showPopup(uploadPanel, lblUpload);
+            }
+        });
+        return lblUpload;
+    }
+
+    private JLabel createDownloadLabel() {
+        JLabel lblDownload = createIconLabel(FontAwesomeContants.FA_CLOUD_DOWNLOAD);
+        lblDownload.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                showPopup(downloadPanel, lblDownload);
+            }
+        });
+        return lblDownload;
+    }
+
+    private void createUploadLabelCount(JLabel lblUpload) {
+        lblUploadCount = new JLabel("0");
+        lblUploadCount.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblUploadCount.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                showPopup(uploadPanel, lblUpload);
+            }
+        });
+    }
+
+    private Component createSpacer(int width, int height) {
+        return Box.createRigidArea(new Dimension(width, height));
+    }
+
+    private JLabel createBrandLabel() {
+        JLabel lblBrand = new JLabel("Version: " + APPLICATION_VERSION);
+        lblBrand.addMouseListener(createMouseListener(REPOSITORY_URL));
+        lblBrand.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblBrand.setVerticalAlignment(SwingConstants.CENTER);
+        return lblBrand;
+    }
+
+    private JLabel createRepositoryLabel() {
+        JLabel lblUrl = new JLabel(REPOSITORY_URL);
+        lblUrl.addMouseListener(createMouseListener(REPOSITORY_URL));
+        lblUrl.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return lblUrl;
+    }
+
+    private JLabel createIconLabel(String icon) {
+        JLabel label = new JLabel(icon);
+        label.setFont(App.SKIN.getIconFont().deriveFont((float) 16.0));
+        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        return label;
+    }
+
+    private MouseListener createMouseListener(String url) {
+        return new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().browse(new URI(url));
+                    } catch (IOException | URISyntaxException ex) {
+                        log.error(ex.getMessage(), ex);
+                    }
+                }
+            }
+        };
+    }
+
 
     protected void openUpdateURL() {
         if (Desktop.isDesktopSupported()) {
