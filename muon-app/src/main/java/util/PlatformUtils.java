@@ -26,6 +26,9 @@ import java.util.*;
  */
 @Slf4j
 public class PlatformUtils {
+
+    public static final String VISUAL_STUDIO_CODE = "Visual Studio Code";
+
     public static void openWithDefaultApp(File file, boolean openWith) throws IOException {
         String os = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH);
         if (os.contains("mac")) {
@@ -62,10 +65,10 @@ public class PlatformUtils {
         }
 
         try {
-            Shell32 INSTANCE = Native.load("shell32", Shell32.class);
+            Shell32 instance = Native.load("shell32", Shell32.class);
             WinDef.HWND h = null;
             WString file = new WString(f.getAbsolutePath());
-            INSTANCE.ShellExecuteW(h, new WString("open"), file, null, null, 1);
+            instance.shellExecuteW(h, new WString("open"), file, null, null, 1);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             try {
@@ -146,14 +149,14 @@ public class PlatformUtils {
             try {
                 String vscode = detectVSCode(false);
                 if (vscode != null) {
-                    EditorEntry ent = new EditorEntry("Visual Studio Code", vscode);
+                    EditorEntry ent = new EditorEntry(VISUAL_STUDIO_CODE, vscode);
                     list.add(ent);
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 String vscode = detectVSCode(true);
                 if (vscode != null) {
-                    EditorEntry ent = new EditorEntry("Visual Studio Code", vscode);
+                    EditorEntry ent = new EditorEntry(VISUAL_STUDIO_CODE, vscode);
                     list.add(ent);
                 }
             }
@@ -186,7 +189,7 @@ public class PlatformUtils {
 
         } else if (App.IS_MAC) {
             Map<String, String> knownEditorMap = new CollectionHelper.Dict<String, String>().putItem(
-                    "Visual Studio Code", "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code");
+                    VISUAL_STUDIO_CODE, "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code");
             for (String key : knownEditorMap.keySet()) {
                 File file = new File(knownEditorMap.get(key));
                 if (file.exists()) {
@@ -197,7 +200,7 @@ public class PlatformUtils {
 
         } else {
             Map<String, String> knownEditorMap = new CollectionHelper.Dict<String, String>()
-                    .putItem("Visual Studio Code", "/usr/bin/code").putItem("Atom", "/usr/bin/atom")
+                    .putItem(VISUAL_STUDIO_CODE, "/usr/bin/code").putItem("Atom", "/usr/bin/atom")
                     .putItem("Sublime Text", "/usr/bin/subl").putItem("Gedit", "/usr/bin/gedit")
                     .putItem("Kate", "/usr/bin/kate");
             for (String key : knownEditorMap.keySet()) {
@@ -228,7 +231,7 @@ public class PlatformUtils {
     }
 
     public interface Shell32 extends ShellAPI, StdCallLibrary {
-        WinDef.HINSTANCE ShellExecuteW(WinDef.HWND hwnd, WString lpOperation, WString lpFile, WString lpParameters,
+        WinDef.HINSTANCE shellExecuteW(WinDef.HWND hwnd, WString lpOperation, WString lpFile, WString lpParameters,
                                        WString lpDirectory, int nShowCmd);
     }
 

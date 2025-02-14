@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.SkinnedTextArea;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.TabbedPanel;
-import muon.app.ui.components.session.SessionInfo.JumpType;
+import util.enums.JumpType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -24,32 +24,17 @@ public class SessionInfoPanel extends JPanel {
     public static final int DEFAULT_MAX_PORT = 65535;
     private static final long serialVersionUID = 6679029920589652547L;
     private JTextField inpHostName;
-    private JSpinner inpPort;
     private JTextField inpUserName;
     private JPasswordField inpPassword;
     private JTextField inpLocalFolder;
     private JTextField inpRemoteFolder;
     private JTextField inpKeyFile;
-    private JButton inpLocalBrowse;
-    private JButton inpKeyBrowse;
-    private JButton inpKeyShowPass;
-    private JLabel lblHost;
-    private JLabel lblPort;
-    private JLabel lblUser;
-    private JLabel lblPass;
     private JLabel lblLocalFolder;
     private JLabel lblRemoteFolder;
-    private JLabel lblKeyFile;
-    private JLabel lblProxyType;
-    private JLabel lblProxyHost;
-    private JLabel lblProxyPort;
-    private JLabel lblProxyUser;
-    private JLabel lblProxyPass;
     private SpinnerNumberModel portModel;
     private SpinnerNumberModel proxyPortModel;
     private JComboBox<String> cmbProxy;
     private JTextField inpProxyHostName;
-    private JSpinner inpProxyPort;
     private JTextField inpProxyUserName;
     private JPasswordField inpProxyPassword;
     private JCheckBox chkUseJumpHosts;
@@ -57,7 +42,6 @@ public class SessionInfoPanel extends JPanel {
     private JRadioButton radMultiHopPortForwarding;
     private JumpHostPanel panJumpHost;
     private PortForwardingPanel panPF;
-    private TabbedPanel tabs;
     private SessionInfo info;
 
     public SessionInfoPanel() {
@@ -173,7 +157,7 @@ public class SessionInfoPanel extends JPanel {
     private void createUI() {
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(10, 0, 10, 0));
-        tabs = new TabbedPanel();
+        TabbedPanel tabs = new TabbedPanel();
         tabs.addTab(bundle.getString("connection"), createConnectionPanel());
         tabs.addTab(bundle.getString("directories"), createDirectoryPanel());
         tabs.addTab(bundle.getString("proxy"), createProxyPanel());
@@ -276,12 +260,12 @@ public class SessionInfoPanel extends JPanel {
         Insets noInset = new Insets(5, 10, 0, 10);
 
         // -----------
-        lblProxyType = new JLabel(bundle.getString("proxy_type"));
-        lblProxyHost = new JLabel(bundle.getString("proxy_host"));
+        JLabel lblProxyType = new JLabel(bundle.getString("proxy_type"));
+        JLabel lblProxyHost = new JLabel(bundle.getString("proxy_host"));
         lblProxyHost.setHorizontalAlignment(JLabel.LEADING);
-        lblProxyPort = new JLabel(bundle.getString("proxy_port"));
-        lblProxyUser = new JLabel(bundle.getString("proxy_user"));
-        lblProxyPass = new JLabel(bundle.getString("proxy_password") + bundle.getString("warning_plain_text"));
+        JLabel lblProxyPort = new JLabel(bundle.getString("proxy_port"));
+        JLabel lblProxyUser = new JLabel(bundle.getString("proxy_user"));
+        JLabel lblProxyPass = new JLabel(bundle.getString("proxy_password") + bundle.getString("warning_plain_text"));
 
         cmbProxy = new JComboBox<>(new String[]{"NONE", "HTTP", "SOCKS"});
         cmbProxy.addActionListener(e -> info.setProxyType(cmbProxy.getSelectedIndex()));
@@ -310,7 +294,7 @@ public class SessionInfoPanel extends JPanel {
         });
         proxyPortModel = new SpinnerNumberModel(8080, 1, DEFAULT_MAX_PORT, 1);
         proxyPortModel.addChangeListener(arg0 -> info.setProxyPort((Integer) proxyPortModel.getValue()));
-        inpProxyPort = new JSpinner(proxyPortModel);
+        JSpinner inpProxyPort = new JSpinner(proxyPortModel);
         inpProxyUserName = new SkinnedTextField(10);// new
         inpProxyUserName.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -507,7 +491,7 @@ public class SessionInfoPanel extends JPanel {
             }
         });
 
-        inpLocalBrowse = new JButton(bundle.getString("browse"));
+        JButton inpLocalBrowse = new JButton(bundle.getString("browse"));
         inpLocalBrowse.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             jfc.setFileHidingEnabled(false);
@@ -578,14 +562,14 @@ public class SessionInfoPanel extends JPanel {
         Insets topInset = new Insets(20, 10, 0, 10);
         Insets noInset = new Insets(5, 10, 0, 10);
 
-        lblHost = new JLabel(bundle.getString("host"));
+        JLabel lblHost = new JLabel(bundle.getString("host"));
         lblHost.setHorizontalAlignment(JLabel.LEADING);
-        lblPort = new JLabel(bundle.getString("port"));
-        lblUser = new JLabel(bundle.getString("user"));
-        lblPass = new JLabel(bundle.getString("password"));
+        JLabel lblPort = new JLabel(bundle.getString("port"));
+        JLabel lblUser = new JLabel(bundle.getString("user"));
+        JLabel lblPass = new JLabel(bundle.getString("password"));
         lblLocalFolder = new JLabel(bundle.getString("local_folder"));
         lblRemoteFolder = new JLabel(bundle.getString("remote_folder"));
-        lblKeyFile = new JLabel(bundle.getString("private_key_file"));
+        JLabel lblKeyFile = new JLabel(bundle.getString("private_key_file"));
 
         inpHostName = new SkinnedTextField(10);
         inpHostName.getDocument().addDocumentListener(new DocumentListener() {
@@ -612,7 +596,7 @@ public class SessionInfoPanel extends JPanel {
 
         portModel = new SpinnerNumberModel(22, 1, DEFAULT_MAX_PORT, 1);
         portModel.addChangeListener(arg0 -> info.setPort((Integer) portModel.getValue()));
-        inpPort = new JSpinner(portModel);
+        JSpinner inpPort = new JSpinner(portModel);
         inpUserName = new SkinnedTextField(10);
         inpUserName.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -682,7 +666,7 @@ public class SessionInfoPanel extends JPanel {
             }
         });
 
-        inpKeyBrowse = new JButton(bundle.getString("browse"));// new
+        JButton inpKeyBrowse = new JButton(bundle.getString("browse"));// new
         inpKeyBrowse.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             jfc.setFileHidingEnabled(false);
@@ -692,18 +676,17 @@ public class SessionInfoPanel extends JPanel {
             jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
             if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 String selectedFile = jfc.getSelectedFile().getAbsolutePath();
-                if (selectedFile.endsWith(".ppk")) {
-                    if (!isSupportedPuttyKeyFile(jfc.getSelectedFile())) {
+                if (selectedFile.endsWith(".ppk") && !isSupportedPuttyKeyFile(jfc.getSelectedFile())) {
                         JOptionPane.showMessageDialog(this, bundle.getString("unsupported_key")
                         );
                         return;
                     }
-                }
+
                 inpKeyFile.setText(jfc.getSelectedFile().getAbsolutePath());
             }
         });
 
-        inpKeyShowPass = new JButton(bundle.getString("show"));
+        JButton inpKeyShowPass = new JButton(bundle.getString("show"));
         inpKeyShowPass.addActionListener(e -> {
             SkinnedTextArea ta = new SkinnedTextArea();
             ta.setText(inpPassword.getText());

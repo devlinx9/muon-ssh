@@ -6,8 +6,9 @@ import lombok.Setter;
 import muon.app.ui.components.settings.DarkTerminalTheme;
 import muon.app.ui.components.settings.EditorEntry;
 import util.CollectionHelper;
-import util.Constants;
-import util.Language;
+import util.enums.ConflictAction;
+import util.enums.Language;
+import util.enums.TransferMode;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -23,8 +24,8 @@ public class Settings {
     public static final String CLEAR_BUFFER = "Clear buffer";
     public static final String FIND_KEY = "Find";
     private boolean usingMasterPassword = false;
-    private Constants.TransferMode fileTransferMode = Constants.TransferMode.NORMAL;
-    private Constants.ConflictAction conflictAction = Constants.ConflictAction.AUTORENAME;
+    private TransferMode fileTransferMode = TransferMode.NORMAL;
+    private ConflictAction conflictAction = ConflictAction.AUTORENAME;
     private boolean confirmBeforeDelete = true;
     private boolean startMaximized = true;
     private boolean confirmBeforeMoveOrCopy = false;
@@ -99,11 +100,11 @@ public class Settings {
     @JsonSetter("fileTransferMode")
     public void setOldFileTransferMode(String s) {
         if (s == null) {
-            fileTransferMode = Constants.TransferMode.NORMAL;
+            fileTransferMode = TransferMode.NORMAL;
         } else if (s.equalsIgnoreCase("prompt")) {
-            fileTransferMode = Constants.TransferMode.NORMAL;
+            fileTransferMode = TransferMode.NORMAL;
         } else {
-            fileTransferMode = Constants.TransferMode.BACKGROUND;
+            fileTransferMode = TransferMode.BACKGROUND;
         }
     }
 
@@ -112,16 +113,16 @@ public class Settings {
 
         switch (s.toLowerCase()) {
             case "overwrite":
-                conflictAction = Constants.ConflictAction.OVERWRITE;
+                conflictAction = ConflictAction.OVERWRITE;
                 break;
             case "autorename":
-                conflictAction = Constants.ConflictAction.AUTORENAME;
+                conflictAction = ConflictAction.AUTORENAME;
                 break;
             case "prompt":
-                conflictAction = Constants.ConflictAction.PROMPT;
+                conflictAction = ConflictAction.PROMPT;
                 break;
             default:
-                conflictAction = Constants.ConflictAction.SKIP;
+                conflictAction = ConflictAction.SKIP;
                 break;
         }
     }

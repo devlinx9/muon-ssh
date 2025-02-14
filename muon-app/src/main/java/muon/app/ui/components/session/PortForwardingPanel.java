@@ -3,8 +3,8 @@ package muon.app.ui.components.session;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
-import muon.app.ui.components.session.PortForwardingRule.PortForwardingType;
 import util.FontAwesomeContants;
+import util.enums.PortForwardingType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

@@ -1,7 +1,7 @@
 package util;
 
 import muon.app.common.FileInfo;
-import muon.app.common.FileType;
+import util.enums.FileType;
 
 import java.util.Locale;
 

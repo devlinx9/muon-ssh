@@ -11,6 +11,8 @@ import muon.app.ui.components.session.files.view.AddressBar;
 import muon.app.ui.components.session.files.view.DndTransferData;
 import muon.app.ui.components.session.files.view.DndTransferHandler;
 import util.PathUtils;
+import util.enums.DndSourceType;
+import util.enums.PanelOrientation;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -22,7 +24,6 @@ import java.util.List;
 @Slf4j
 public class LocalFileBrowserView extends AbstractFileBrowserView {
     private final LocalMenuHandler menuHandler;
-    private final DndTransferHandler transferHandler;
     private final JPopupMenu addressPopup;
     private LocalFileSystem fs;
 
@@ -30,8 +31,8 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
         super(orientation, fileBrowser);
         this.menuHandler = new LocalMenuHandler(fileBrowser, this);
         this.menuHandler.initMenuHandler(this.folderView);
-        this.transferHandler = new DndTransferHandler(this.folderView, null, this, DndTransferData.DndSourceType.LOCAL,
-                                                      this.fileBrowser);
+        DndTransferHandler transferHandler = new DndTransferHandler(this.folderView, null, this, DndSourceType.LOCAL,
+                                                                    this.fileBrowser);
         this.folderView.setTransferHandler(transferHandler);
         this.folderView.setFolderViewTransferHandler(transferHandler);
         this.addressPopup = menuHandler.createAddressPopup();

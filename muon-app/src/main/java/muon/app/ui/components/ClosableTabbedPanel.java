@@ -211,9 +211,7 @@ public class ClosableTabbedPanel extends JPanel {
         return cardPanel.getComponents();
     }
 
-    public enum NewTabType {
-        LOCAL_TAB, REMOTE_TAB
-    }
+
 
     @Setter
     @Getter

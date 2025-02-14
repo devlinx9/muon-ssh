@@ -51,13 +51,11 @@ public class SearchPanel extends Page {
     private JRadioButton radAny;
     private JRadioButton radWeek;
     private JRadioButton radCust;
-    private JRadioButton radBoth;
     private JRadioButton radFile;
     private JRadioButton radFolder;
     private JSpinner spDate1;
     private JSpinner spDate2;
     private JTextField txtFolder;
-    private JButton btnSearch;
     private SearchTableModel model;
     private JTable table;
     private JLabel lblStat;
@@ -429,7 +427,7 @@ public class SearchPanel extends Page {
         lblLookfor.setAlignmentX(LEFT_ALIGNMENT);
 
         ButtonGroup btnGroup2 = new ButtonGroup();
-        radBoth = new JRadioButton(bundle.getString("both_file_folder"));
+        JRadioButton radBoth = new JRadioButton(bundle.getString("both_file_folder"));
         radBoth.setAlignmentX(LEFT_ALIGNMENT);
         radFile = new JRadioButton(bundle.getString("file_only"));
         radFile.setAlignmentX(LEFT_ALIGNMENT);
@@ -442,7 +440,7 @@ public class SearchPanel extends Page {
 
         radBoth.setSelected(true);
 
-        btnSearch = new JButton(bundle.getString("search"));
+        JButton btnSearch = new JButton(bundle.getString("search"));
         btnSearch.setAlignmentX(LEFT_ALIGNMENT);
 
         btnSearch.addActionListener(e -> find());

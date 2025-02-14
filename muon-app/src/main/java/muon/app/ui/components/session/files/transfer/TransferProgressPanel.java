@@ -14,7 +14,6 @@ import java.util.function.Consumer;
 
 public class TransferProgressPanel extends JPanel {
     private final JProgressBar prg;
-    private final JButton stop;
     private int dragSource;
     private final AlphaComposite alphaComposite = AlphaComposite.SrcOver
             .derive(0.65f);
@@ -37,7 +36,7 @@ public class TransferProgressPanel extends JPanel {
         prg = new JProgressBar();
         b1.add(prg);
         b1.add(Box.createHorizontalStrut(10));
-        stop = new JButton("Stop");
+        JButton stop = new JButton("Stop");
         stop.addActionListener(e -> {
             if (stopCallback != null) {
                 stopCallback.accept(Boolean.TRUE);

@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.common.FileType;
 import util.FileIconUtil;
 import util.FormatUtils;
+import util.enums.FileType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

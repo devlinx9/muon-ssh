@@ -39,11 +39,14 @@ public class ServicePanel extends UtilPageItemView {
             + "; systemctl list-units -t service -a --plain --no-pager --no-legend --full";
     private final ServiceTableModel model = new ServiceTableModel();
     private JTable table;
-    private JButton btnStart, btnStop, btnRestart, btnReload, btnEnable,
-            btnDisable, btnRefresh;
+    private JButton btnStart;
+    private JButton btnStop;
+    private JButton btnRestart;
+    private JButton btnReload;
+    private JButton btnEnable;
+    private JButton btnDisable;
     private JTextField txtFilter;
     private JCheckBox chkRunAsSuperUser;
-    private JButton btnFilter;
     private List<ServiceEntry> list;
 
     /**
@@ -234,7 +237,7 @@ public class ServicePanel extends UtilPageItemView {
         JLabel lbl1 = new JLabel(bundle.getString("search"));
         txtFilter = new SkinnedTextField(30);
         txtFilter.addActionListener(e -> filter());
-        btnFilter = new JButton(bundle.getString("search"));
+        JButton btnFilter = new JButton(bundle.getString("search"));
 
         Box b1 = Box.createHorizontalBox();
         b1.add(lbl1);
@@ -257,7 +260,7 @@ public class ServicePanel extends UtilPageItemView {
         btnReload = new JButton(bundle.getString("reload"));
         btnEnable = new JButton(bundle.getString("enable"));
         btnDisable = new JButton(bundle.getString("disable"));
-        btnRefresh = new JButton(bundle.getString("refresh"));
+        JButton btnRefresh = new JButton(bundle.getString("refresh"));
 
         chkRunAsSuperUser = new JCheckBox(
                 bundle.getString("actions_sudo"));

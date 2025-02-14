@@ -8,7 +8,7 @@ import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.session.NewSessionDlg;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.files.FileBrowser;
-import util.Constants;
+import util.enums.ConflictAction;
 
 import javax.swing.*;
 
@@ -57,7 +57,7 @@ public class LocalPipeTransfer {
 
                 SshFileSystem sshFS = ri.getSshFs();
                 fileBrowser.newFileTransfer(fileBrowser.getSSHFileSystem(), sshFS, selectedFiles, path, this.hashCode(),
-                        Constants.ConflictAction.PROMPT, null);
+                                            ConflictAction.PROMPT, null);
             }
         }
     }

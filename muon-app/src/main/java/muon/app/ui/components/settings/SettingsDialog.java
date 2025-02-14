@@ -11,7 +11,12 @@ import muon.app.Settings;
 import muon.app.ui.components.KeyShortcutComponent;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
-import util.*;
+import util.FontUtils;
+import util.LayoutUtilities;
+import util.OptionPaneUtils;
+import util.enums.ConflictAction;
+import util.enums.Language;
+import util.enums.TransferMode;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -19,23 +24,18 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.io.File;
-import java.util.List;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author subhro
- *
  */
 @Slf4j
 public class SettingsDialog extends JDialog {
     private final EditorTableModel editorModel = new EditorTableModel();
-    private final JButton btnSave;
-    private final JButton btnCancel;
-    private final JButton btnReset;
-    private final DefaultComboBoxModel<Constants.ConflictAction> conflictOptions = new DefaultComboBoxModel<>(Constants.ConflictAction.values());
-    private final DefaultComboBoxModel<Constants.TransferMode> transferModes = new DefaultComboBoxModel<>(Constants.TransferMode.values());
-    private final List<String> conflictOption1 = Arrays.asList(App.bundle.getString("overwrite"), App.bundle.getString("auto_rename"), App.bundle.getString("skip"), App.bundle.getString("prompt"));
-    private final List<String> conflictOption2 = Arrays.asList(App.bundle.getString("overwrite"), App.bundle.getString("auto_rename"), App.bundle.getString("skip"));
+    private final DefaultComboBoxModel<ConflictAction> conflictOptions = new DefaultComboBoxModel<>(ConflictAction.values());
+    private final DefaultComboBoxModel<TransferMode> transferModes = new DefaultComboBoxModel<>(TransferMode.values());
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final JList<String> navList;
@@ -77,8 +77,8 @@ public class SettingsDialog extends JDialog {
     private JSpinner spLogFontSize;
     private JSpinner spConnectionTimeout;
     private JSpinner spSysLoadInterval;
-    private JComboBox<Constants.TransferMode> cmbTransferMode;
-    private JComboBox<Constants.ConflictAction> cmbConflictAction;
+    private JComboBox<TransferMode> cmbTransferMode;
+    private JComboBox<ConflictAction> cmbConflictAction;
     private Color defaultForegroundColor = Color.gray;
     private JTable editorTable;
     private JCheckBox chkUseManualScaling;
@@ -133,11 +133,11 @@ public class SettingsDialog extends JDialog {
 
         Box bottomBox = Box.createHorizontalBox();
         bottomBox.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()),
-                new EmptyBorder(10, 10, 10, 10)));
+                                               new EmptyBorder(10, 10, 10, 10)));
 
-        btnCancel = new JButton(App.bundle.getString("cancel"));
-        btnSave = new JButton(App.bundle.getString("save"));
-        btnReset = new JButton(App.bundle.getString("reset"));
+        JButton btnCancel = new JButton(App.bundle.getString("cancel"));
+        JButton btnSave = new JButton(App.bundle.getString("save"));
+        JButton btnReset = new JButton(App.bundle.getString("reset"));
 
         btnSave.addActionListener(e -> applySettings());
 
@@ -209,35 +209,35 @@ public class SettingsDialog extends JDialog {
         resizeNumericSpinner(spFontSize);
 
         Component boxTermSize = createRow(new JLabel(App.bundle.getString("columns")), Box.createRigidArea(new Dimension(10, 10)),
-                spTermWidth, Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("rows")),
-                Box.createRigidArea(new Dimension(10, 10)), spTermHeight, Box.createHorizontalGlue(),
-                new JButton(App.bundle.getString("reset")));
+                                          spTermWidth, Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("rows")),
+                                          Box.createRigidArea(new Dimension(10, 10)), spTermHeight, Box.createHorizontalGlue(),
+                                          new JButton(App.bundle.getString("reset")));
 
         Component boxTermBell = createRow(chkAudibleBell);
 
         Component boxFontRow = createRow(new JLabel(App.bundle.getString("font_name")), Box.createRigidArea(new Dimension(10, 10)), cmbFonts,
-                Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("font_size")),
-                Box.createRigidArea(new Dimension(10, 10)), spFontSize);
+                                         Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("font_size")),
+                                         Box.createRigidArea(new Dimension(10, 10)), spFontSize);
 
         chkPuttyLikeCopyPaste = new JCheckBox(App.bundle.getString("copy_like_putty"));
 
         cmbTermType = new JComboBox<>(new String[]{"xterm-256color", "xterm", "vt100", "ansi"});
         cmbTermType.setEditable(true);
         d = new Dimension(Math.max(100, cmbTermType.getPreferredSize().width * 2),
-                cmbTermType.getPreferredSize().height);
+                          cmbTermType.getPreferredSize().height);
         cmbTermType.setMaximumSize(d);
         cmbTermType.setMinimumSize(d);
         cmbTermType.setPreferredSize(d);
 
         Component boxTermType = createRow(new JLabel(App.bundle.getString("terminal_type")), Box.createRigidArea(new Dimension(10, 10)),
-                cmbTermType);
+                                          cmbTermType);
 
 
         cmbLanguage = new JComboBox<>();
         cmbLanguage.setModel(new DefaultComboBoxModel(Language.values()));
         cmbLanguage.setEditable(true);
         d = new Dimension(Math.max(100, cmbLanguage.getPreferredSize().width * 2),
-                cmbLanguage.getPreferredSize().height);
+                          cmbLanguage.getPreferredSize().height);
         cmbLanguage.setMaximumSize(d);
         cmbLanguage.setMinimumSize(d);
         cmbLanguage.setPreferredSize(d);
@@ -246,7 +246,7 @@ public class SettingsDialog extends JDialog {
         cmbLanguage.setSelectedItem(settings.getLanguage());
 
         Component boxLanguage = createRow(new JLabel(App.bundle.getString("language")), Box.createRigidArea(new Dimension(10, 10)),
-                cmbLanguage);
+                                          cmbLanguage);
 
         Component boxTermCopy = createRow(chkPuttyLikeCopyPaste);
 
@@ -261,7 +261,7 @@ public class SettingsDialog extends JDialog {
 
 
         d = new Dimension(Math.max(100, cmbTermTheme.getPreferredSize().width * 2),
-                cmbTermTheme.getPreferredSize().height);
+                          cmbTermTheme.getPreferredSize().height);
         cmbTermTheme.setMaximumSize(d);
         cmbTermTheme.setMinimumSize(d);
         cmbTermTheme.setPreferredSize(d);
@@ -286,15 +286,16 @@ public class SettingsDialog extends JDialog {
 
         cmbTermPalette = new JComboBox<>(new String[]{"xterm", "windows", "custom"});
         Dimension d1 = new Dimension(Math.max(100, cmbTermPalette.getPreferredSize().width * 2),
-                cmbTermPalette.getPreferredSize().height);
+                                     cmbTermPalette.getPreferredSize().height);
         cmbTermPalette.setMaximumSize(d1);
         cmbTermPalette.setMinimumSize(d1);
         cmbTermPalette.setPreferredSize(d1);
 
         cmbTermPalette.addActionListener(e -> {
             int index = cmbTermPalette.getSelectedIndex();
-            if (index == 2)
+            if (index == 2) {
                 return;
+            }
             ColorPalette palette = index == 0 ? ColorPalette.XTERM_PALETTE : ColorPalette.WINDOWS_PALETTE;
             Color[] colors = palette.getIndexColors();
             for (int i = 0; i < paletteButtons.length; i++) {
@@ -317,12 +318,12 @@ public class SettingsDialog extends JDialog {
         }
 
         JLabel[] labels = {new JLabel(Settings.COPY_KEY), new JLabel(Settings.PASTE_KEY),
-                new JLabel(Settings.CLEAR_BUFFER), new JLabel(Settings.FIND_KEY)};
+                           new JLabel(Settings.CLEAR_BUFFER), new JLabel(Settings.FIND_KEY)};
 
         LayoutUtilities.equalizeSize(labels[0], labels[1], labels[2], labels[3]);
 
         Component[] kcPanels = {createRow(labels[0], kcc[0]), createRow(labels[1], kcc[1]),
-                createRow(labels[2], kcc[2]), createRow(labels[3], kcc[3])};
+                                createRow(labels[2], kcc[2]), createRow(labels[3], kcc[3])};
 
         Box panel = Box.createVerticalBox();
 
@@ -364,20 +365,20 @@ public class SettingsDialog extends JDialog {
         panel.add(createRow(new JLabel(App.bundle.getString("default_color"))));
         panel.add(Box.createVerticalStrut(10));
         panel.add(createRow(new JLabel(App.bundle.getString("text")), Box.createRigidArea(new Dimension(10, 10)), defaultColorFg,
-                Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("background")),
-                Box.createRigidArea(new Dimension(10, 10)), defaultColorBg));
+                            Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("background")),
+                            Box.createRigidArea(new Dimension(10, 10)), defaultColorBg));
         panel.add(Box.createVerticalStrut(10));
         panel.add(createRow(new JLabel(App.bundle.getString("selection_color"))));
         panel.add(Box.createVerticalStrut(10));
         panel.add(createRow(new JLabel(App.bundle.getString("text")), Box.createRigidArea(new Dimension(10, 10)), defaultSelectionFg,
-                Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("background")),
-                Box.createRigidArea(new Dimension(10, 10)), defaultSelectionBg));
+                            Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("background")),
+                            Box.createRigidArea(new Dimension(10, 10)), defaultSelectionBg));
         panel.add(Box.createVerticalStrut(10));
         panel.add(createRow(new JLabel(App.bundle.getString("search_pattern"))));
         panel.add(Box.createVerticalStrut(10));
         panel.add(createRow(new JLabel(App.bundle.getString("text")), Box.createRigidArea(new Dimension(10, 10)), defaultFoundFg,
-                Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("background")),
-                Box.createRigidArea(new Dimension(10, 10)), defaultFoundBg));
+                            Box.createRigidArea(new Dimension(20, 10)), new JLabel(App.bundle.getString("background")),
+                            Box.createRigidArea(new Dimension(10, 10)), defaultFoundBg));
         panel.add(Box.createVerticalStrut(30));
         panel.add(createRow(new JLabel(App.bundle.getString("color_palette")), Box.createRigidArea(new Dimension(10, 10)), cmbTermPalette));
         panel.add(Box.createVerticalStrut(10));
@@ -432,7 +433,7 @@ public class SettingsDialog extends JDialog {
         cmbConflictAction = new JComboBox<>(conflictOptions);
 
         Dimension d1 = new Dimension(Math.max(200, cmbTransferMode.getPreferredSize().width * 2),
-                cmbTransferMode.getPreferredSize().height);
+                                     cmbTransferMode.getPreferredSize().height);
 
         cmbTransferMode.setMaximumSize(d1);
         cmbTransferMode.setMinimumSize(d1);
@@ -601,9 +602,8 @@ public class SettingsDialog extends JDialog {
         settings.setManualScaling(chkUseManualScaling.isSelected());
         settings.setUiScaling((double) spScaleValue.getValue());
 
-        settings.setConflictAction((Constants.ConflictAction) cmbConflictAction.getSelectedItem());
-        settings.setFileTransferMode((Constants.TransferMode) cmbTransferMode.getSelectedItem());
-
+        settings.setConflictAction((ConflictAction) cmbConflictAction.getSelectedItem());
+        settings.setFileTransferMode((TransferMode) cmbTransferMode.getSelectedItem());
 
 
         App.saveSettings();
@@ -693,14 +693,14 @@ public class SettingsDialog extends JDialog {
         cmbTransferMode.addActionListener(e -> {
             if (cmbTransferMode.getSelectedIndex() == 0) {
                 conflictOptions.removeAllElements();
-                for (Constants.ConflictAction conflictAction : Constants.ConflictAction.values()) {
+                for (ConflictAction conflictAction : ConflictAction.values()) {
                     if (conflictAction.getKey() < 4) {
                         conflictOptions.addElement(conflictAction);
                     }
                 }
             } else {
                 conflictOptions.removeAllElements();
-                for (Constants.ConflictAction conflictAction : Constants.ConflictAction.values()) {
+                for (ConflictAction conflictAction : ConflictAction.values()) {
                     if (conflictAction.getKey() < 3) {
                         conflictOptions.addElement(conflictAction);
                     }
@@ -838,8 +838,8 @@ public class SettingsDialog extends JDialog {
         JPasswordField pass1 = new JPasswordField(30);
         JPasswordField pass2 = new JPasswordField(30);
         while (JOptionPane.showOptionDialog(this,
-                new Object[]{App.bundle.getString("new_master_password"), pass1, App.bundle.getString("reenter_master_password"), pass2}, App.bundle.getString("master_password"),
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+                                            new Object[]{App.bundle.getString("new_master_password"), pass1, App.bundle.getString("reenter_master_password"), pass2}, App.bundle.getString("master_password"),
+                                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
             char[] password1 = pass1.getPassword();
             char[] password2 = pass2.getPassword();
 

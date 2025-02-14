@@ -8,7 +8,6 @@ import lombok.Setter;
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
-import java.awt.*;
 
 @Setter
 @Getter
@@ -43,12 +42,6 @@ public class CustomJediterm extends JediTermWidget {
     @Override
     protected JScrollBar createScrollBar() {
         return new JScrollBar();
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        
-        return super.getPreferredSize();
     }
 
     @Override

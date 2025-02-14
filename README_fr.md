@@ -1,4 +1,4 @@
-# Muon SSH Terminal/SFTP client ( Formerly Snowflake ) ![Java CI](https://github.com/subhra74/snowflake/workflows/Java%20CI/badge.svg?branch=master) [![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
+# Muon SSH Terminal/SFTP client ( Formerly Snowflake ) [![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
 
 - <a href="https://github.com/devlinx9/muon-ssh/blob/master/README_es.md">Español</a>
 - <a href="https://github.com/devlinx9/muon-ssh/blob/master/README.md">English</a>
@@ -15,7 +15,9 @@ Il dispose d'un navigateur de fichiers SFTP amélioré, d'un émulateur de termi
 
 Muon fournit des fonctionnalités similaires aux panneaux de contrôle Web, mais fonctionne via SSH à partir de l'ordinateur local, donc aucune installation de serveur n'est requise. Il fonctionne sous Linux et Windows. Muon a été testé avec divers serveurs Linux et UNIX, tels que Ubuntu Server, CentOS, RHEL, OpenSUSE, FreeBSD, OpenBSD, NetBSD et HP-UX.
 
-[![IMAGE ALT TEXT](https://raw.githubusercontent.com/subhra74/snowflake-screenshots/master/Capture32.PNG)](https://youtu.be/G2qHZ2NodeM "View on YouTube")
+<div>
+  <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png">
+</div>
 
 ## Installation
 
@@ -27,6 +29,11 @@ Muon SSH est disponible sous forme de paquet Debian (.deb) pour les utilisateurs
 Vous pouvez l’installer avec la commande suivante :
 ```sh
 sudo snap install muon-ssh
+```
+or last build package (may brake something)
+
+```sh
+sudo snap install muon-ssh --edge
 ```
 
 ### Deb package
@@ -77,66 +84,7 @@ sudo dpkg -i muon_package.deb
       <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.jar">Portable JAR (Java 11)</a>
     </td>
   </tr>
-  <tr>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.1.0/muonssh_2.1.0.deb">v2.1.0</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.1.0/muonssh_2.1.0.exe">Exe file</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.1.0/muonssh_2.1.0.deb">DEB installer</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.1.0/muonssh_2.1.0.dmg">DMG installer</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.1.0/muonssh_2.1.0.jar">Generic installer</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.1.0/muonssh_2.1.0.jar">Portable JAR (Java 11)</a>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.0.0/muonssh_2.0.0.deb">v2.0.0</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.0.0/muonssh_2.0.0.exe">Exe file</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.0.0/muonssh_2.0.0.deb">DEB installer</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.0.0/muonssh_2.0.0.dmg">DMG installer</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.0.0/muonssh_2.0.0.jar">Generic installer</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.0.0/muonssh_2.0.0.jar">Portable JAR (Java 11)</a>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v1.2.1/muon_1.2.1.deb">v1.2.1</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v1.2.1/muon_1.2.1.exe">Exe file</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v1.2.1/muon_1.2.1.deb">DEB installer</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v1.2.1/muon_1.2.1.dmg">DMG installer</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v1.2.1/muon_1.2.1.jar">Generic installer</a>
-    </td>   
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v1.2.1/muon_1.2.1.jar">Portable JAR (Java 11)</a>
-    </td>
-  </tr>
+  
 </table>
 
 

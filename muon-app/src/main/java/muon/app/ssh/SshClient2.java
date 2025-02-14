@@ -19,6 +19,7 @@ import net.schmizz.sshj.transport.Transport;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import net.schmizz.sshj.userauth.method.AuthKeyboardInteractive;
 import net.schmizz.sshj.userauth.method.AuthNone;
+import util.enums.JumpType;
 
 import javax.swing.*;
 import java.io.Closeable;
@@ -44,7 +45,6 @@ public class SshClient2 implements Closeable {
     private final InputBlocker inputBlocker;
     private final CachedCredentialProvider cachedCredentialProvider;
     private SSHClient sshj;
-    private DefaultConfig defaultConfig;
     private SshClient2 previousHop;
     private ServerSocket ss;
 
@@ -163,7 +163,7 @@ public class SshClient2 implements Closeable {
     private void connect(Deque<HopEntry> hopStack) throws IOException, OperationCancelledException {
         this.inputBlocker.blockInput();
         try {
-            defaultConfig = new DefaultConfig();
+            DefaultConfig defaultConfig = new DefaultConfig();
             if (App.getGlobalSettings().isShowMessagePrompt()) {
                 log.info("enabled KeepAliveProvider");
                 defaultConfig.setKeepAliveProvider(KeepAliveProvider.KEEP_ALIVE);
@@ -183,7 +183,7 @@ public class SshClient2 implements Closeable {
                     log.info("adding host key verifier");
                     this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
                     log.info("Host key verifier added");
-                    if (this.info.getJumpType() == SessionInfo.JumpType.TCP_FORWARDING) {
+                    if (this.info.getJumpType() == JumpType.TCP_FORWARDING) {
                         log.info("tcp forwarding...");
                         this.connectViaTcpForwarding();
                     } else {

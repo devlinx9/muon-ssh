@@ -15,25 +15,14 @@ import static muon.app.App.bundle;
 
 public class RemoteKeyPanel extends JPanel {
     private final JTextField txtKeyFile;
-    private final JButton btnGenNewKey;
-    private final JButton btnRefresh;
-    private final JButton btnAdd;
-    private final JButton btnRemove;
-    private final JButton btnEdit;
     private final JTextArea txtPubKey;
-    private final Consumer<?> callback1;
-    private final Consumer<?> callback2;
     private final DefaultListModel<String> model;
     private final JList<String> jList;
-    private final SessionInfo info;
     private Consumer<String> callback3;
 
     public RemoteKeyPanel(SessionInfo info, Consumer<?> callback1,
                           Consumer<?> callback2, Consumer<String> callback3) {
         super(new BorderLayout());
-        this.info = info;
-        this.callback1 = callback1;
-        this.callback2 = callback3;
         JLabel lblTitle = new JLabel(bundle.getString("public_key_file"));
         txtKeyFile = new SkinnedTextField(20);
         txtKeyFile.setBorder(null);
@@ -50,8 +39,8 @@ public class RemoteKeyPanel extends JPanel {
         txtPubKey.setLineWrap(true);
         JScrollPane jScrollPane = new SkinnedScrollPane(txtPubKey);
 
-        btnGenNewKey = new JButton(bundle.getString("generate_new_key"));
-        btnRefresh = new JButton(bundle.getString("generate"));
+        JButton btnGenNewKey = new JButton(bundle.getString("generate_new_key"));
+        JButton btnRefresh = new JButton(bundle.getString("generate"));
 
         btnGenNewKey.addActionListener(e -> callback1.accept(null));
 
@@ -73,9 +62,9 @@ public class RemoteKeyPanel extends JPanel {
         jList = new JList<>(model);
         jList.setBackground(App.SKIN.getTextFieldBackground());
 
-        btnAdd = new JButton(bundle.getString("add"));
-        btnEdit = new JButton(bundle.getString("edit"));
-        btnRemove = new JButton();
+        JButton btnAdd = new JButton(bundle.getString("add"));
+        JButton btnEdit = new JButton(bundle.getString("edit"));
+        JButton btnRemove = new JButton();
 
         btnAdd.addActionListener(e -> {
             String text = JOptionPane.showInputDialog(null, bundle.getString("new_entry"));

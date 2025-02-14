@@ -4,15 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.common.*;
+import muon.app.common.FileInfo;
+import muon.app.common.FileSystem;
+import muon.app.common.InputTransferChannel;
+import muon.app.common.OutputTransferChannel;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ssh.SSHRemoteFileInputStream;
 import muon.app.ssh.SSHRemoteFileOutputStream;
 import muon.app.ssh.SshFileSystem;
-import util.Constants;
-import util.Constants.ConflictAction;
 import util.PathUtils;
 import util.SudoUtils;
+import util.enums.ConflictAction;
+import util.enums.FileType;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -44,10 +47,10 @@ public class FileTransfer implements Runnable, AutoCloseable {
     private long processedBytes;
     private int processedFilesCount;
     private long totalFiles;
-    private Constants.ConflictAction conflictAction; // 0 -> overwrite, 1 -> auto rename, 2
+    private ConflictAction conflictAction; // 0 -> overwrite, 1 -> auto rename, 2
 
     public FileTransfer(FileSystem sourceFs, FileSystem targetFs, FileInfo[] files, String targetFolder,
-                        FileTransferProgress callback, Constants.ConflictAction defaultConflictAction, RemoteSessionInstance instance) {
+                        FileTransferProgress callback, ConflictAction defaultConflictAction, RemoteSessionInstance instance) {
         this.sourceFs = sourceFs;
         this.targetFs = targetFs;
         this.files = files;
@@ -55,7 +58,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
         this.callback = callback;
         this.conflictAction = defaultConflictAction;
         this.instance = instance;
-        if (defaultConflictAction == Constants.ConflictAction.CANCEL) {
+        if (defaultConflictAction == ConflictAction.CANCEL) {
             throw new IllegalArgumentException("defaultConflictAction can not be ConflictAction.Cancel");
         }
     }
@@ -66,7 +69,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
         List<FileInfo> list = targetFs.list(targetFolder);
         List<FileInfo> dupList = new ArrayList<>();
 
-        if (this.conflictAction == Constants.ConflictAction.PROMPT) {
+        if (this.conflictAction == ConflictAction.PROMPT) {
             this.conflictAction = checkForConflict(dupList);
             if (!dupList.isEmpty() && this.conflictAction == ConflictAction.CANCEL) {
                 log.info("Operation cancelled by user");
@@ -250,14 +253,14 @@ public class FileTransfer implements Runnable, AutoCloseable {
         ConflictAction action = ConflictAction.CANCEL;
         if (!dupList.isEmpty()) {
 
-            DefaultComboBoxModel<Constants.ConflictAction> conflictOptionsCmb = new DefaultComboBoxModel<>(Constants.ConflictAction.values());
+            DefaultComboBoxModel<ConflictAction> conflictOptionsCmb = new DefaultComboBoxModel<>(ConflictAction.values());
             conflictOptionsCmb.removeAllElements();
-            for (Constants.ConflictAction conflictActionCmb : Constants.ConflictAction.values()) {
+            for (ConflictAction conflictActionCmb : ConflictAction.values()) {
                 if (conflictActionCmb.getKey() < 3) {
                     conflictOptionsCmb.addElement(conflictActionCmb);
                 }
             }
-            JComboBox<Constants.ConflictAction> cmbs = new JComboBox<>(conflictOptionsCmb);
+            JComboBox<ConflictAction> cmbs = new JComboBox<>(conflictOptionsCmb);
 
             if (JOptionPane.showOptionDialog(null,
                                              new Object[]{App.bundle.getString("some_file_exists_action_required"), cmbs},

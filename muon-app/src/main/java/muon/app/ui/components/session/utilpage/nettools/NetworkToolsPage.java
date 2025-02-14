@@ -27,15 +27,9 @@ import static muon.app.App.bundle;
 @Slf4j
 public class NetworkToolsPage extends UtilPageItemView {
     private JTextArea txtOutput;
-    private DefaultComboBoxModel<String> modelHost;
-    private DefaultComboBoxModel<String> modelPort;
     private JComboBox<String> cmbHost;
     private JComboBox<String> cmbPort;
     private JComboBox<String> cmbDNSTool;
-    private JButton btn1;
-    private JButton btn2;
-    private JButton btn3;
-    private JButton btn4;
 
     /**
      *
@@ -46,8 +40,8 @@ public class NetworkToolsPage extends UtilPageItemView {
 
     @Override
     protected void createUI() {
-        modelHost = new DefaultComboBoxModel<>();
-        modelPort = new DefaultComboBoxModel<>();
+        DefaultComboBoxModel<String> modelHost = new DefaultComboBoxModel<>();
+        DefaultComboBoxModel<String> modelPort = new DefaultComboBoxModel<>();
 
         cmbHost = new JComboBox<>(modelHost);
         cmbPort = new JComboBox<>(modelPort);
@@ -60,10 +54,10 @@ public class NetworkToolsPage extends UtilPageItemView {
         JPanel grid = new JPanel(new GridLayout(1, 4, 10, 10));
         grid.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        btn1 = new JButton("Ping");
-        btn2 = new JButton("Port check");
-        btn3 = new JButton("Traceroute");
-        btn4 = new JButton("DNS lookup");
+        JButton btn1 = new JButton("Ping");
+        JButton btn2 = new JButton("Port check");
+        JButton btn3 = new JButton("Traceroute");
+        JButton btn4 = new JButton("DNS lookup");
 
         btn1.addActionListener(e -> {
             if (JOptionPane.showOptionDialog(this,

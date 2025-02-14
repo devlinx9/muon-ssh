@@ -20,8 +20,10 @@ import muon.app.ui.laf.AppSkinLight;
 import muon.app.updater.VersionEntry;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import util.Constants;
-import util.Language;
 import util.PlatformUtils;
+import util.enums.ConflictAction;
+import util.enums.Language;
+import util.enums.TransferMode;
 
 import javax.swing.*;
 import java.io.File;
@@ -118,8 +120,8 @@ public class App {
         }
 
         setBundleLanguage();
-        Constants.TransferMode.update();
-        Constants.ConflictAction.update();
+        TransferMode.update();
+        ConflictAction.update();
 
 
         SKIN = settings.isUseGlobalDarkTheme() ? new AppSkinDark() : new AppSkinLight();

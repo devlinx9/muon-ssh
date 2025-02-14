@@ -27,6 +27,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 public class SshKeyManager {
+
+    public static final String SSH = ".ssh";
+    public static final String USER_HOME = "user.home";
+
     public static SshKeyHolder getKeyDetails(SessionContentPanel content) throws Exception {
         SshKeyHolder holder = new SshKeyHolder();
         loadLocalKey(getPubKeyPath(content.getInfo()), holder);
@@ -37,7 +41,7 @@ public class SshKeyManager {
     private static void loadLocalKey(String pubKeyPath, SshKeyHolder holder) {
         try {
             Path defaultPath = pubKeyPath == null
-                    ? Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa.pub").toAbsolutePath()
+                    ? Paths.get(System.getProperty(USER_HOME), SSH, "id_rsa.pub").toAbsolutePath()
                     : Paths.get(pubKeyPath);
             byte[] bytes = Files.readAllBytes(defaultPath);
             holder.setLocalPublicKey(new String(bytes, StandardCharsets.UTF_8));
@@ -112,9 +116,9 @@ public class SshKeyManager {
     }
 
     public static void generateLocalKeys(SshKeyHolder holder, String passPhrase) throws Exception {
-        Path sshDir = Paths.get(System.getProperty("user.home"), ".ssh");
-        Path pubKeyPath = Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa.pub").toAbsolutePath();
-        Path keyPath = Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa").toAbsolutePath();
+        Path sshDir = Paths.get(System.getProperty(USER_HOME), SSH);
+        Path pubKeyPath = Paths.get(System.getProperty(USER_HOME), SSH, "id_rsa.pub").toAbsolutePath();
+        Path keyPath = Paths.get(System.getProperty(USER_HOME), SSH, "id_rsa").toAbsolutePath();
         JSch jsch = new JSch();
         KeyPair kpair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
         Files.createDirectories(sshDir);
@@ -174,13 +178,13 @@ public class SshKeyManager {
     public static void saveAuthorizedKeysFile(String authorizedKeys, SshFileSystem fileSystem) throws Exception {
         boolean found = false;
         try {
-            fileSystem.getInfo(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));
+            fileSystem.getInfo(PathUtils.combineUnix(fileSystem.getHome(), SSH));
             found = true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
         if (!found) {
-            fileSystem.mkdir(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));
+            fileSystem.mkdir(PathUtils.combineUnix(fileSystem.getHome(), SSH));
         }
         OutputTransferChannel otc = fileSystem.outputTransferChannel();
         try (OutputStream out = otc

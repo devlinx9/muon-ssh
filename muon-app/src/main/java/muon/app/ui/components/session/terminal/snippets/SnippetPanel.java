@@ -26,11 +26,6 @@ public class SnippetPanel extends JPanel {
     private final List<SnippetItem> snippetList = new ArrayList<>();
     private final JList<SnippetItem> listView = new JList<>(listModel);
     private final JTextField searchTextField;
-    private final JButton btnCopy;
-    private final JButton btnInsert;
-    private final JButton btnAdd;
-    private final JButton btnEdit;
-    private final JButton btnDel;
 
     public SnippetPanel(Consumer<String> callback, Consumer<String> callback2) {
         super(new BorderLayout());
@@ -68,11 +63,11 @@ public class SnippetPanel extends JPanel {
         listView.setCellRenderer(new SnippetListRenderer());
         listView.setBackground(App.SKIN.getTableBackgroundColor());
 
-        btnAdd = new JButton(bundle.getString("add"));
-        btnEdit = new JButton(bundle.getString("edit"));
-        btnDel = new JButton(bundle.getString("delete"));
-        btnInsert = new JButton(bundle.getString("insert"));
-        btnCopy = new JButton(bundle.getString("copy"));
+        JButton btnAdd = new JButton(bundle.getString("add"));
+        JButton btnEdit = new JButton(bundle.getString("edit"));
+        JButton btnDel = new JButton(bundle.getString("delete"));
+        JButton btnInsert = new JButton(bundle.getString("insert"));
+        JButton btnCopy = new JButton(bundle.getString("copy"));
 
         btnAdd.addActionListener(e -> {
             JTextField txtName = new SkinnedTextField(30);

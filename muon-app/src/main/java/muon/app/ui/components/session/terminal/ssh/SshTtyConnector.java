@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class SshTtyConnector implements DisposableTtyConnector {
     private InputStreamReader myInputStreamReader;
-    private InputStream myInputStream = null;
     private OutputStream myOutputStream = null;
     private SessionChannel shell;
     private Session channel;
@@ -69,7 +68,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
 
             this.shell = (SessionChannel) this.channel.startShell();
 
-            myInputStream = shell.getInputStream();
+            InputStream myInputStream = shell.getInputStream();
             myOutputStream = shell.getOutputStream();
             myInputStreamReader = new InputStreamReader(myInputStream, StandardCharsets.UTF_8);
 

@@ -38,6 +38,9 @@ import java.util.zip.GZIPInputStream;
  */
 @Slf4j
 public class LogContent extends JPanel implements ClosableTabContent {
+    public static final String NIMBUS_OVERRIDES = "Nimbus.Overrides";
+    public static final String MUON = "muon";
+    public static final String INDEX = "index";
     private final SessionContentPanel holder;
 
     @Getter
@@ -45,20 +48,15 @@ public class LogContent extends JPanel implements ClosableTabContent {
     private File indexFile;
     private RandomAccessFile raf;
     private long totalLines;
-    private final int linePerPage = 50;
+    private static final int linePerPage = 50;
     private long currentPage;
     private long pageCount;
-    private final JButton btnNextPage;
-    private final JButton btnPrevPage;
-    private final JButton btnFirstPage;
-    private final JButton btnLastPage;
     private final JTextArea textArea;
     private final JLabel lblCurrentPage;
     private final JLabel lblTotalPage;
     private final PagedLogSearchPanel logSearchPanel;
     private final Highlighter.HighlightPainter painter;
     private final TextGutter gutter;
-    private final StartPage startPage;
     private final Consumer<String> callback;
 
     /**
@@ -69,7 +67,6 @@ public class LogContent extends JPanel implements ClosableTabContent {
         super(new BorderLayout(), true);
         this.holder = holder;
         this.callback = callback;
-        this.startPage = startPage;
         this.remoteFile = remoteLogFile;
         lblCurrentPage = new JLabel();
         lblCurrentPage.setHorizontalAlignment(JLabel.CENTER);
@@ -78,30 +75,30 @@ public class LogContent extends JPanel implements ClosableTabContent {
 
         UIDefaults skin = App.SKIN.createToolbarSkin();
 
-        btnFirstPage = new JButton();
+        JButton btnFirstPage = new JButton();
         btnFirstPage.setToolTipText("First page");
-        btnFirstPage.putClientProperty("Nimbus.Overrides", skin);
+        btnFirstPage.putClientProperty(NIMBUS_OVERRIDES, skin);
         btnFirstPage.setFont(App.SKIN.getIconFont());
         btnFirstPage.setText(FontAwesomeContants.FA_FAST_BACKWARD);
         btnFirstPage.addActionListener(e -> firstPage());
 
-        btnNextPage = new JButton();
+        JButton btnNextPage = new JButton();
         btnNextPage.setToolTipText("Next page");
-        btnNextPage.putClientProperty("Nimbus.Overrides", skin);
+        btnNextPage.putClientProperty(NIMBUS_OVERRIDES, skin);
         btnNextPage.setFont(App.SKIN.getIconFont());
         btnNextPage.setText(FontAwesomeContants.FA_STEP_FORWARD);
         btnNextPage.addActionListener(e -> nextPage());
 
-        btnPrevPage = new JButton("");
+        JButton btnPrevPage = new JButton("");
         btnPrevPage.setToolTipText("Previous page");
-        btnPrevPage.putClientProperty("Nimbus.Overrides", skin);
+        btnPrevPage.putClientProperty(NIMBUS_OVERRIDES, skin);
         btnPrevPage.setFont(App.SKIN.getIconFont());
         btnPrevPage.setText(FontAwesomeContants.FA_STEP_BACKWARD);
         btnPrevPage.addActionListener(e -> previousPage());
 
-        btnLastPage = new JButton();
+        JButton btnLastPage = new JButton();
         btnLastPage.setToolTipText("Last page");
-        btnLastPage.putClientProperty("Nimbus.Overrides", skin);
+        btnLastPage.putClientProperty(NIMBUS_OVERRIDES, skin);
         btnLastPage.setFont(App.SKIN.getIconFont());
         btnLastPage.setText(FontAwesomeContants.FA_FAST_FORWARD);
         btnLastPage.addActionListener(e -> lastPage());
@@ -148,7 +145,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
 
         JButton btnReload = new JButton();
         btnReload.setToolTipText("Reload");
-        btnReload.putClientProperty("Nimbus.Overrides", skin);
+        btnReload.putClientProperty(NIMBUS_OVERRIDES, skin);
         btnReload.setFont(App.SKIN.getIconFont());
         btnReload.setText(FontAwesomeContants.FA_UNDO);
         btnReload.addActionListener(e -> {
@@ -168,7 +165,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
 
         JButton btnBookMark = new JButton();
         btnBookMark.setToolTipText("Add to bookmark/pin");
-        btnBookMark.putClientProperty("Nimbus.Overrides", skin);
+        btnBookMark.putClientProperty(NIMBUS_OVERRIDES, skin);
         btnBookMark.setFont(App.SKIN.getIconFont());
         btnBookMark.setText(FontAwesomeContants.FA_BOOKMARK);
         btnBookMark.addActionListener(e -> startPage.pinLog(remoteLogFile));
@@ -258,8 +255,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     if (this.totalLines > 0) {
                         this.pageCount = (long) Math
                                 .ceil((double) totalLines / linePerPage);
-                        System.out
-                                .println("Number of pages: " + this.pageCount);
+                        log.info("Number of pages: {}", this.pageCount);
                         if (this.currentPage > this.pageCount) {
                             this.currentPage = this.pageCount;
                         }
@@ -377,7 +373,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
     private boolean indexFile(boolean xz, AtomicBoolean stopFlag) {
         try {
             File tempFile = Files.createTempFile(
-                    "muon" + UUID.randomUUID(), "index").toFile();
+                    MUON + UUID.randomUUID(), INDEX).toFile();
             log.info("Temp file: {}", tempFile);
             try (OutputStream outputStream = new FileOutputStream(tempFile)) {
                 String command = "LANG=C awk '{len=length($0); print len; }' \""
@@ -408,7 +404,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         byte[] longBytes = new byte[8];
         long offset = 0;
         File tempFile = Files
-                .createTempFile("muon" + UUID.randomUUID(), "index")
+                .createTempFile(MUON + UUID.randomUUID(), INDEX)
                 .toFile();
         try (OutputStream outputStream = new FileOutputStream(tempFile);
              BufferedReader br = new BufferedReader(
@@ -513,7 +509,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
             throws Exception {
         byte[] longBytes = new byte[8];
         File tempFile = Files
-                .createTempFile("muon" + UUID.randomUUID(), "index")
+                .createTempFile(MUON + UUID.randomUUID(), INDEX)
                 .toFile();
         StringBuilder command = new StringBuilder();
         command.append("awk '{if(index(tolower($0),\"").append(text.toLowerCase(Locale.ENGLISH)).append("\")){ print NR}}' \"").append(this.remoteFile).append("\"");
@@ -521,7 +517,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         try (OutputStream outputStream = new FileOutputStream(tempFile)) {
 
             File searchIndexes = Files.createTempFile(
-                    "muon" + UUID.randomUUID(), "index").toFile();
+                    MUON + UUID.randomUUID(), INDEX).toFile();
             if (holder.getRemoteSessionInstance().execBin(command.toString(),
                     stopFlag, outputStream, null) == 0) {
                 try (BufferedReader br = new BufferedReader(

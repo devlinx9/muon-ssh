@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.session.importer.SSHConfigImporter;
 import util.Constants;
+import util.enums.ConflictAction;
 
 import javax.swing.*;
 import java.io.*;
@@ -79,14 +80,14 @@ public class SessionExportImport {
         }
         File f = jfc.getSelectedFile();
 
-        DefaultComboBoxModel<Constants.ConflictAction> conflictOptionsCmb = new DefaultComboBoxModel<>(Constants.ConflictAction.values());
+        DefaultComboBoxModel<ConflictAction> conflictOptionsCmb = new DefaultComboBoxModel<>(ConflictAction.values());
         conflictOptionsCmb.removeAllElements();
-        for (Constants.ConflictAction conflictActionCmb : Constants.ConflictAction.values()) {
+        for (ConflictAction conflictActionCmb : ConflictAction.values()) {
             if (conflictActionCmb.getKey() < 3) {
                 conflictOptionsCmb.addElement(conflictActionCmb);
             }
         }
-        JComboBox<Constants.ConflictAction> cmbOptionsExistingInfo = new JComboBox<>(conflictOptionsCmb);
+        JComboBox<ConflictAction> cmbOptionsExistingInfo = new JComboBox<>(conflictOptionsCmb);
 
         if (JOptionPane.showOptionDialog(App.getAppWindow(), new Object[]{bundle.getString("repeated_sessions"), cmbOptionsExistingInfo}, bundle.getString("import_sessions"),
                                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
@@ -115,13 +116,13 @@ public class SessionExportImport {
                 item.add(session);
                 sessionFolder.setItems(item);
                 if (folders.contains(sessionFolder)) {
-                    if (cmbOptionsExistingInfo.getSelectedItem() == Constants.ConflictAction.SKIP) {
+                    if (cmbOptionsExistingInfo.getSelectedItem() == ConflictAction.SKIP) {
                         continue;
                     }
-                    if (cmbOptionsExistingInfo.getSelectedItem() == Constants.ConflictAction.AUTORENAME) {
+                    if (cmbOptionsExistingInfo.getSelectedItem() == ConflictAction.AUTORENAME) {
                         sessionFolder.setName("Copy of " + sessionFolder.getName());
                         folders.add(sessionFolder);
-                    } else if (cmbOptionsExistingInfo.getSelectedItem() == Constants.ConflictAction.OVERWRITE) {
+                    } else if (cmbOptionsExistingInfo.getSelectedItem() == ConflictAction.OVERWRITE) {
                         folders.set(folders.indexOf(sessionFolder), sessionFolder);
                     }
                     imported++;

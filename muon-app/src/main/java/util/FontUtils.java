@@ -6,6 +6,7 @@ package util;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.laf.AppSkin;
+import util.enums.Language;
 
 import java.awt.*;
 import java.io.InputStream;

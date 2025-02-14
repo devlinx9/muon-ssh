@@ -3,13 +3,13 @@ package muon.app.ui.components.session.files.local;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.common.FileType;
 import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.view.FolderView;
 import util.PathUtils;
 import util.PlatformUtils;
+import util.enums.FileType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -33,9 +33,6 @@ public class LocalMenuHandler {
     private JMenuItem mDelete;
     private JMenuItem mNewFile;
     private JMenuItem mNewFolder;
-    private JMenuItem mCopy;
-    private JMenuItem mPaste;
-    private JMenuItem mCut;
     private JMenuItem mAddToFav;
     private JMenuItem mOpen;
     private JMenuItem mOpenInFileExplorer;
@@ -105,15 +102,15 @@ public class LocalMenuHandler {
         mNewFolder = new JMenuItem(bundle.getString("new_folder"));
         mNewFolder.addActionListener(e -> newFolder(fileBrowserView.getCurrentDirectory()));
 
-        mCopy = new JMenuItem(bundle.getString("copy"));
+        JMenuItem mCopy = new JMenuItem(bundle.getString("copy"));
         mCopy.addActionListener(e -> {
         });
 
-        mPaste = new JMenuItem(bundle.getString("paste"));
+        JMenuItem mPaste = new JMenuItem(bundle.getString("paste"));
         mPaste.addActionListener(e -> {
         });
 
-        mCut = new JMenuItem(bundle.getString("cut"));
+        JMenuItem mCut = new JMenuItem(bundle.getString("cut"));
         mCut.addActionListener(e -> {
         });
 

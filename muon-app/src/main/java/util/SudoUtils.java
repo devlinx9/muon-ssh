@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 public class SudoUtils {
-    private static final JPasswordField passwordField = new JPasswordField(30);
+    private static final JPasswordField J_PASSWORD_FIELD = new JPasswordField(30);
 
     public static int runSudo(String command, RemoteSessionInstance instance, String password) {
         String prompt = UUID.randomUUID().toString();
@@ -44,19 +44,19 @@ public class SudoUtils {
                         if (sb.indexOf(prompt) != -1) {
                             if (firstTime.get() || JOptionPane.showOptionDialog(null,
                                     new Object[]{App.bundle.getString("user_password"),
-                                            passwordField},
+                                                 J_PASSWORD_FIELD},
                                                                                 App.bundle.getString("authentication"),
                                     JOptionPane.OK_CANCEL_OPTION,
                                     JOptionPane.PLAIN_MESSAGE, null, null,
                                     null) == JOptionPane.OK_OPTION) {
                                 if (firstTime.get()) {
                                     firstTime.set(false);
-                                    passwordField.setText(password);
+                                    J_PASSWORD_FIELD.setText(password);
 
                                 }
                                 sb = new StringBuilder();
                                 out.write(
-                                        (new String(passwordField.getPassword())
+                                        (new String(J_PASSWORD_FIELD.getPassword())
                                                 + "\n").getBytes());
                                 out.flush();
                             } else {
@@ -105,14 +105,14 @@ public class SudoUtils {
                         if (sb.indexOf(prompt) != -1) {
                             if (JOptionPane.showOptionDialog(null,
                                     new Object[]{App.bundle.getString("user_password"),
-                                            passwordField},
+                                                 J_PASSWORD_FIELD},
                                                              App.bundle.getString("authentication"),
                                     JOptionPane.OK_CANCEL_OPTION,
                                     JOptionPane.PLAIN_MESSAGE, null, null,
                                     null) == JOptionPane.OK_OPTION) {
                                 sb = new StringBuilder();
                                 out.write(
-                                        (new String(passwordField.getPassword())
+                                        (new String(J_PASSWORD_FIELD.getPassword())
                                                 + "\n").getBytes());
                                 out.flush();
                             } else {

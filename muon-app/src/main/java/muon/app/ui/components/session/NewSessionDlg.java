@@ -21,26 +21,16 @@ import static muon.app.App.bundle;
 public class NewSessionDlg extends JDialog implements ActionListener, TreeSelectionListener, TreeModelListener {
 
     private static final long serialVersionUID = -1182844921331289546L;
+    public static final String BUTTON_NAME = "button.name";
 
     private DefaultTreeModel treeModel;
     private JTree tree;
     private DefaultMutableTreeNode rootNode;
-    private JScrollPane jsp;
     private SessionInfoPanel sessionInfoPanel;
-    private JButton btnNewHost;
-    private JButton btnDel;
-    private JButton btnDup;
-    private JButton btnNewFolder;
-    private JButton btnExport;
-    private JButton btnImport;
     private JButton btnConnect;
     private JButton btnCancel;
     private JTextField txtName;
-    private JPanel namePanel;
     private NamedItem selectedInfo;
-    private String lastSelected;
-    private JPanel prgPanel;
-    private JPanel pdet;
     private SessionInfo info;
     private JLabel lblName;
 
@@ -89,37 +79,37 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
 
         tree.setEditable(false);
-        jsp = new JScrollPane(tree);
+        JScrollPane jsp = new JScrollPane(tree);
         jsp.setBorder(new LineBorder(App.SKIN.getDefaultBorderColor(), 1));
 
-        btnNewHost = new JButton(bundle.getString("new_site"));
+        JButton btnNewHost = new JButton(bundle.getString("new_site"));
         btnNewHost.addActionListener(this);
-        btnNewHost.putClientProperty("button.name", "btnNewHost");
-        btnNewFolder = new JButton(bundle.getString("new_folder"));
+        btnNewHost.putClientProperty(BUTTON_NAME, "btnNewHost");
+        JButton btnNewFolder = new JButton(bundle.getString("new_folder"));
         btnNewFolder.addActionListener(this);
-        btnNewFolder.putClientProperty("button.name", "btnNewFolder");
-        btnDel = new JButton(bundle.getString("remove"));
+        btnNewFolder.putClientProperty(BUTTON_NAME, "btnNewFolder");
+        JButton btnDel = new JButton(bundle.getString("remove"));
         btnDel.addActionListener(this);
-        btnDel.putClientProperty("button.name", "btnDel");
-        btnDup = new JButton(bundle.getString("duplicate"));
+        btnDel.putClientProperty(BUTTON_NAME, "btnDel");
+        JButton btnDup = new JButton(bundle.getString("duplicate"));
         btnDup.addActionListener(this);
-        btnDup.putClientProperty("button.name", "btnDup");
+        btnDup.putClientProperty(BUTTON_NAME, "btnDup");
 
         btnConnect = new JButton(bundle.getString("connect"));
         btnConnect.addActionListener(this);
-        btnConnect.putClientProperty("button.name", "btnConnect");
+        btnConnect.putClientProperty(BUTTON_NAME, "btnConnect");
 
         btnCancel = new JButton(bundle.getString("cancel"));
         btnCancel.addActionListener(this);
-        btnCancel.putClientProperty("button.name", "btnCancel");
+        btnCancel.putClientProperty(BUTTON_NAME, "btnCancel");
 
-        btnExport = new JButton(bundle.getString("export"));
+        JButton btnExport = new JButton(bundle.getString("export"));
         btnExport.addActionListener(this);
-        btnExport.putClientProperty("button.name", "btnExport");
+        btnExport.putClientProperty(BUTTON_NAME, "btnExport");
 
-        btnImport = new JButton(bundle.getString("import"));
+        JButton btnImport = new JButton(bundle.getString("import"));
         btnImport.addActionListener(this);
-        btnImport.putClientProperty("button.name", "btnImport");
+        btnImport.putClientProperty(BUTTON_NAME, "btnImport");
 
         normalizeButtonSize();
 
@@ -152,13 +142,13 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
         sessionInfoPanel = new SessionInfoPanel();
 
-        namePanel = new JPanel();
+        JPanel namePanel = new JPanel();
 
         JPanel pp = new JPanel(new BorderLayout());
         pp.add(namePanel, BorderLayout.NORTH);
         pp.add(sessionInfoPanel);
 
-        pdet = new JPanel(new BorderLayout());
+        JPanel pdet = new JPanel(new BorderLayout());
 
         JScrollPane scrollPane = new JScrollPane(pp);
         scrollPane.setBorder(null);
@@ -214,7 +204,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         namePanel.add(lblName);
         namePanel.add(txtName);
 
-        prgPanel = new JPanel();
+        JPanel prgPanel = new JPanel();
 
         JLabel lbl = new JLabel(bundle.getString("connecting"));
         prgPanel.add(lbl);
@@ -233,12 +223,12 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     }
 
     private void loadTree(SavedSessionTree stree) {
-        this.lastSelected = stree.getLastSelection();
+        String lastSelected = stree.getLastSelection();
         rootNode = SessionStore.getNode(stree.getFolder());
         rootNode.setAllowsChildren(true);
         treeModel.setRoot(rootNode);
         try {
-            if (this.lastSelected != null) {
+            if (lastSelected != null) {
                 selectNode(lastSelected, rootNode);
             } else {
                 DefaultMutableTreeNode n;
@@ -303,7 +293,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
             parentNode = (DefaultMutableTreeNode) (parentPath.getLastPathComponent());
         }
 
-        switch ((String) btn.getClientProperty("button.name")) {
+        switch ((String) btn.getClientProperty(BUTTON_NAME)) {
             case "btnNewHost":
                 if (parentNode == null) {
                     parentNode = rootNode;
@@ -448,7 +438,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
     @Override
     public void valueChanged(TreeSelectionEvent e) {
-//        log.info("value changed");
+        log.debug("value changed");
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
         if (node == null)
@@ -491,7 +481,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
     @Override
     public void treeNodesChanged(TreeModelEvent e) {
-//        log.info("treeNodesChanged");
+        log.debug("treeNodesChanged");
     }
 
     @Override

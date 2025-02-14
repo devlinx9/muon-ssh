@@ -25,7 +25,6 @@ import static muon.app.App.bundle;
 public class LogViewer extends Page {
     private final ClosableTabbedPanel tabs;
     private final StartPage startPage;
-    private final JPanel content;
     private final SessionContentPanel sessionContent;
     private final Set<String> openLogs = new LinkedHashSet<>();
 
@@ -35,7 +34,7 @@ public class LogViewer extends Page {
     public LogViewer(SessionContentPanel sessionContent) {
         this.sessionContent = sessionContent;
         startPage = new StartPage(this::openLog, sessionContent.getInfo().getId());
-        content = new JPanel();
+        JPanel content = new JPanel();
         tabs = new ClosableTabbedPanel(e -> {
             String path = promptLogPath();
             if (path != null) {

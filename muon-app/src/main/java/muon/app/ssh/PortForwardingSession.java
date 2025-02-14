@@ -2,13 +2,13 @@ package muon.app.ssh;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.PortForwardingRule;
-import muon.app.ui.components.session.PortForwardingRule.PortForwardingType;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.Parameters;
 import net.schmizz.sshj.connection.channel.forwarded.RemotePortForwarder.Forward;
 import net.schmizz.sshj.connection.channel.forwarded.SocketForwardingConnectListener;
 import net.schmizz.sshj.transport.TransportException;
+import util.enums.PortForwardingType;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
