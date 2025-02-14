@@ -202,11 +202,11 @@
                             <goal>jdeb</goal>
                         </goals>
                         <configuration>
-                            <controlDir>${basedir}/src/deb/control</controlDir>
+                            <controlDir>${basedir}/deb/control</controlDir>
                             <deb>${project.build.directory}/muonssh_${project.version}.deb</deb>
                             <dataSet>
                                 <data>
-                                    <src>${basedir}/src/deb/opt/muonssh/muonssh-logo.png</src>
+                                    <src>${basedir}/deb/opt/muonssh/muonssh-logo.png</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -217,7 +217,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${basedir}/src/deb/usr/share/applications/muonssh.desktop</src>
+                                    <src>${basedir}/deb/usr/share/applications/muonssh.desktop</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -228,7 +228,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${basedir}/src/deb/usr/bin/muonssh</src>
+                                    <src>${basedir}/deb/usr/bin/muonssh</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -267,7 +267,7 @@
                             <goal>launch4j</goal>
                         </goals>
                         <configuration>
-                            <icon>src/exe/muonssh.ico</icon>
+                            <icon>${basedir}/exe/muonssh.ico</icon>
                             <headerType>gui</headerType>
                             <outfile>target/muonssh_${project.version}.exe</outfile>
                             <jar>target/muonssh_${project.version}.jar</jar>
@@ -303,7 +303,7 @@
                 <version>1.15.0</version>
                 <configuration>
                     <plist>
-                        <CFBundleIconFile>src/dmg/muonssh-logo.icns</CFBundleIconFile>
+                        <CFBundleIconFile>dmg/muonssh-logo.icns</CFBundleIconFile>
                         <CFBundleDisplayName>Muon</CFBundleDisplayName>
                         <CFBundleDevelopmentRegion>English</CFBundleDevelopmentRegion>
                         <JVMMainClassName>muon.app.App</JVMMainClassName>

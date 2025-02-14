@@ -35,11 +35,6 @@ or last build package (may brake something)
 ```sh
 sudo snap install muon-ssh --edge
 ```
-or last build package (may brake something)
-
-```sh
-sudo snap install muon-ssh --edge
-```
 
 
 ### Deb package
@@ -128,4 +123,12 @@ sudo dpkg -i muon_package.deb
   <a href="https://github.com/devlinx9/muon-ssh/wiki">
     https://github.com/devlinx9/muon-ssh/wiki
   </a>
+</p>
+
+
+<h2>Devs:</h2>
+
+<p>
+<b>Main branch: it's for stable version</b> <br>
+<b>Develop branch: it's for current development</b>
 </p>
