@@ -61,8 +61,8 @@
         <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.70</version>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.79</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
@@ -110,9 +110,9 @@
 
         <!--https://mvnrepository.com/artifact/com.jcraft/jsch -->
         <dependency>
-            <groupId>com.jcraft</groupId>
+            <groupId>com.github.mwiede</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.1.54</version>
+            <version>0.2.23</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.markusbernhardt/proxy-vole -->
