@@ -1,130 +1,175 @@
-# Muon SSH Terminal/SFTP client ( Formerly Snowflake ) [![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
+# Muon SSH Terminal/Client SFTP (anciennement Snowflake)
 
-- <a href="https://github.com/devlinx9/muon-ssh/blob/master/README_es.md">Español</a>
-- <a href="https://github.com/devlinx9/muon-ssh/blob/master/README.md">English</a>
-- <a href="https://github.com/devlinx9/muon-ssh/blob/master/README_pt.md">Portuguese</a>
-- <a href="https://github.com/devlinx9/muon-ssh/blob/master/README_ru.md">Pусский</a>
-- <a href="https://github.com/devlinx9/muon-ssh/blob/master/README_fr.md">Français</a>
-- <a href="https://github.com/devlinx9/muon-ssh/blob/master/README_de.md">Deutsch</a>
+[![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
 
-Une façon amusante et facile de travailler avec des serveurs distants via SSH. 
+<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"> </div> 
 
-Ce projet a été renommé Muon en raison de la confusion de son ancien nom "Snowflake" car il existe un produit populaire portant le même nom. Muon est un client SSH graphique. 
+**Muon SSH Terminal/Client SFTP** est un puissant client SSH graphique conçu pour simplifier le travail avec les serveurs distants. Anciennement connu sous le nom de "Snowflake", le projet a été renommé pour éviter toute confusion avec un autre produit populaire du même nom.
 
-Il dispose d'un navigateur de fichiers SFTP amélioré, d'un émulateur de terminal SSH, d'un gestionnaire de processus de ressources à distance, d'un analyseur d'espace disque de serveur, d'un éditeur de texte à distance, d'un énorme visualiseur de journaux à distance et de nombreux autres outils utiles, ce qui facilite le travail avec des serveurs distants. 
+Ce projet est la continuation du travail de **subhra74**, qui l'a initialement développé sous le nom de Snowflake.
 
-Muon fournit des fonctionnalités similaires aux panneaux de contrôle Web, mais fonctionne via SSH à partir de l'ordinateur local, donc aucune installation de serveur n'est requise. Il fonctionne sous Linux et Windows. Muon a été testé avec divers serveurs Linux et UNIX, tels que Ubuntu Server, CentOS, RHEL, OpenSUSE, FreeBSD, OpenBSD, NetBSD et HP-UX.
+---
 
-<div>
-  <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png">
-</div>
+## Pourquoi le support multilingue ?
+
+Tout le monde ne préfère ou ne se sent pas à l'aise de travailler avec des logiciels en anglais. En offrant un support multilingue, nous visons à rendre notre outil plus convivial et accessible à un public mondial, en veillant à ce que les utilisateurs puissent travailler dans la langue qui leur est la plus confortable.
+
+- [Español](README_es.md)
+- [English](README.md)
+- [Portuguese](README_pt.md)
+- [Pусский](README_ru.md)
+- [Français](README_fr.md)
+- [Deutsch](README_de.md)
+- [中文](README_zh.md)
+
+---
+
+## Table des matières
+- [À propos de Muon SSH](#à-propos-de-muon-ssh)
+- [Fonctionnalités](#fonctionnalités)
+- [Installation](#installation)
+    - [Paquet Snap (Recommandé)](#paquet-snap-recommandé)
+    - [Paquet Deb](#paquet-deb)
+- [Public cible](#public-cible)
+- [Téléchargement](#téléchargement)
+- [Compilation à partir du code source](#compilation-à-partir-du-code-source)
+- [Journal des modifications](#journal-des-modifications)
+- [Licence et bibliothèques tierces](#licence-et-bibliothèques-tierces)
+- [Feuille de route](#feuille-de-route)
+- [Documentation](#documentation)
+- [Développement](#développement)
+
+---
+
+## À propos de Muon SSH
+Muon SSH est un client SSH graphique riche en fonctionnalités qui fournit une interface intuitive pour gérer les serveurs distants. Il comprend des outils tels que :
+- Navigateur de fichiers SFTP amélioré
+- Émulateur de terminal SSH
+- Gestionnaire de ressources/processus distants
+- Analyseur d'espace disque du serveur
+- Éditeur de texte distant avec coloration syntaxique
+- Visionneuse de fichiers journaux volumineux
+- Et bien plus encore
+
+Muon SSH élimine le besoin d'installations côté serveur, car il fonctionne entièrement via SSH depuis votre machine locale. Il est compatible avec Linux et Windows et a été testé sur divers serveurs Linux/UNIX, notamment Ubuntu, CentOS, RHEL, OpenSUSE, FreeBSD, OpenBSD, NetBSD et HP-UX.
+
+---
+
+## Fonctionnalités
+- **Interface graphique pour les opérations sur les fichiers**: Simplifie les tâches courantes sur les fichiers avec une interface intuitive.
+- **Éditeur de texte intégré**: Modifiez les fichiers à distance avec coloration syntaxique et support sudo.
+- **Visionneuse de fichiers journaux/texte**: Visualisez et recherchez rapidement dans les fichiers journaux ou texte volumineux.
+- **Recherche de fichiers et de contenu**: Exploitez la puissance de la commande `find` pour des recherches rapides.
+- **Émulateur de terminal**: Exécutez des commandes facilement avec le terminal intégré.
+- **Gestionnaire de tâches**: Surveillez et gérez les processus distants.
+- **Analyseur d'espace disque**: Visualisez l'utilisation du disque avec un outil graphique.
+- **Gestion des clés SSH**: Gérez facilement les clés SSH.
+- **Outils réseau**: Accédez à une suite d'utilitaires réseau.
+- **Support multilingue**: Utilisez Muon SSH dans votre langue préférée.
+
+---
 
 ## Installation
 
-### Snap (Recommended)
-[![Install Muon SSH Terminal using Snap](https://snapcraft.io/muon-ssh/badge.svg)](https://snapcraft.io/muon-ssh)
+### Paquet Snap (Recommandé)
+[![Installez Muon SSH Terminal avec Snap](https://snapcraft.io/muon-ssh/badge.svg)](https://snapcraft.io/muon-ssh)
 
-Muon SSH est disponible sous forme de paquet Debian (.deb) pour les utilisateurs préférant une installation manuelle.
+Muon SSH est disponible en tant que paquet Snap, garantissant une installation et une mise à jour faciles sur plusieurs distributions Linux.
 
-Vous pouvez l’installer avec la commande suivante :
-```sh
-sudo snap install muon-ssh
-```
-or last build package (may brake something)
-
-```sh
-sudo snap install muon-ssh --edge
+Pour installer, exécutez :
+```sh  
+sudo snap install muon-ssh  
 ```
 
-### Deb package
-Muon SSH est disponible sous forme de paquet Debian (.deb) pour les utilisateurs préférant une installation manuelle.
-
-Vous pouvez l’installer avec la commande suivante :
-```sh
-sudo dpkg -i muon_package.deb
+Pour la dernière version (peut être instable) :
+```sh  
+sudo snap install muon-ssh --edge    
 ```
 
-<h3>Public objectif</h3>
-<p>L'application est principalement destinée aux développeurs webbackend qui déploient et déboguent souvent leur code sur des serveurs distants et n'aiment pas trop les commandes complexes basées sur les terminaux. Cela peut également être utile pour les administrateurs système qui gèrent manuellement de nombreux serveurs distants.
-</p>
+### Paquet Deb
+Muon SSH est également disponible en tant que paquet Debian. Installez-le en utilisant :
+```sh  
+sudo dpkg -i muon_package.deb   
+```
 
-<h3>Comment ça marche</h3>
-<div>
-  <img src="https://github.com/subhra74/snowflake-screenshots/raw/master/arch-overview2.png">
-</div>
+---
 
-<h2>Télécharger*:</h2>
+## Public cible
+Muon SSH est conçu pour :
+
+**Développeurs Web/Backend:** Simplifiez le déploiement et le débogage sur les serveurs distants.
+
+**Administrateurs système:** Gérez plusieurs serveurs distants efficacement sans recourir à des commandes terminal complexes.
+
+---
+
+## Téléchargement
+**Remarque**: Java 11 ou supérieur est requis.
 
 <table>
   <tr>
-    <th>Versions</th>
+    <th>Version</th>
     <th>Windows</th>
     <th>Ubuntu/Mint/Debian</th>
-    <th>MacOS</th>
-    <th>Autres OSes</th>
+    <th>Mac OSes</th>
     <th>Portable</th>
   </tr>
-<tr>
+  <tr>
     <td>
       <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.deb">v2.4.0</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.exe">Exe file</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.exe">Fichier Exe</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.deb">DEB installer</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.deb">Installeur DEB</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.dmg">DMG installer</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.dmg">Installeur DMG</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.jar">Generic installer</a>
-    </td>
-    <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.jar">Portable JAR (Java 11)</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.jar">JAR portable (Java 11)</a>
     </td>
   </tr>
-  
 </table>
 
+Pour d'autres versions, visitez la <a href="https://github.com/devlinx9/muon-ssh/releases">page des versions</a>.
 
-<p>
-<a href="https://github.com/devlinx9/muon-ssh/releases">Autres versions</a>
-</p>
+---
 
-<p>
-<b>* Vous devez avoir Java 11 installé au minimum</b>
-</p>
+## Compilation à partir du code source
+Muon SSH est un projet Maven standard. Pour le compiler à partir du code source, assurez-vous d'avoir Java et Maven installés, puis exécutez :
+```sh  
+mvn clean install  
+```
 
+Le fichier JAR compilé se trouvera dans le répertoire `target`.
 
-<h2>Construire à la source:</h2>
-<pre> Il s'agit d'un projet Maven standard. Si vous avez configuré Java et Maven, utilisez: 
- <b>mvn clean install</b> pour compiler le projet.
- Le jar sera créé dans le répertoire de destination.
- </pre>
+---
 
-<h2>Caractéristiques:</h2>
+## Feuille de route
+Voir [ROADMAP.md](ROADMAP.md)
 
-<ul>
-  <li>Interface graphique simple pour les opérations courantes sur les fichiers</li>
-  <li>Éditeur de texte intégré avec coloration syntaxique et prise en charge sudo</li>
-  <li>Affichez et recherchez simplement d'énormes fichiers texte de journal en un tournemain</li>
-  <li>Recherche rapide et puissante de fichiers et de contenu, alimentée par la commande de recherche</li>
-  <li>Terminal intégré et extrait de commande</li>
-  <li>Gestionnaire de tâches complet</li>
-  <li>Analyseur d'espace disque graphique intégré</li>
-  <li>Outils spécifiques à Linux</li>
-  <li>Gérez facilement les clés SSH</li>
-  <li>Outils réseau</li>
-  <li>Prise en charge multilingue</li>
-</ul>
+---
 
+## Documentation
+Pour une documentation détaillée, consultez le <a href="https://github.com/devlinx9/muon-ssh/wiki">Wiki de Muon SSH</a>.
 
+---
 
-<h2>Documentation:</h2>
+## Développement
+**Branche principale**: <a href="https://github.com/devlinx9/muon-ssh">Version stable</a>
 
-<p>
-  <a href="https://github.com/devlinx9/muon-ssh/wiki">
-    https://github.com/devlinx9/muon-ssh/wiki
-  </a>
-</p>
+**Branche de développement**: <a href="https://github.com/devlinx9/muon-ssh/tree/develop">Développement actif</a>
+
+---
+
+## Licence et bibliothèques tierces
+**Muon SSH**: Voir [LICENSE](LICENSE)
+
+**JSch**: Voir [LICENSE-Jsch](LICENSE-Jsch)
+
+---
+
+## Journal des modifications
+Pour une liste détaillée des modifications, corrections de bugs et nouvelles fonctionnalités, consultez le [CHANGELOG.md](CHANGELOG.md)
