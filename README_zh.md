@@ -51,7 +51,7 @@ Muon SSH 是一款功能丰富的图形化 SSH 客户端，提供直观的界面
 - 大日志文件查看器
 - 以及更多功能
 
-Muon SSH 无需在服务器端安装任何软件，因为它完全通过 SSH 从本地机器运行。它兼容 Linux 和 Windows，并已在多种 Linux/UNIX 服务器上测试，包括 Ubuntu、CentOS、RHEL、OpenSUSE、FreeBSD、OpenBSD、NetBSD 和 HP-UX。
+Muon SSH 无需在服务器端安装任何软件，因为它完全通过 SSH 从本地机器运行。它兼容 Linux, Mac 和 Windows，并已在多种 Linux/UNIX 服务器上测试，包括 Ubuntu、CentOS、RHEL、OpenSUSE、FreeBSD、OpenBSD、NetBSD 和 HP-UX。
 
 ---
 

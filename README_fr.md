@@ -51,7 +51,7 @@ Muon SSH est un client SSH graphique riche en fonctionnalités qui fournit une i
 - Visionneuse de fichiers journaux volumineux
 - Et bien plus encore
 
-Muon SSH élimine le besoin d'installations côté serveur, car il fonctionne entièrement via SSH depuis votre machine locale. Il est compatible avec Linux et Windows et a été testé sur divers serveurs Linux/UNIX, notamment Ubuntu, CentOS, RHEL, OpenSUSE, FreeBSD, OpenBSD, NetBSD et HP-UX.
+Muon SSH élimine le besoin d'installations côté serveur, car il fonctionne entièrement via SSH depuis votre machine locale. Il est compatible avec Linux, Mac et Windows et a été testé sur divers serveurs Linux/UNIX, notamment Ubuntu, CentOS, RHEL, OpenSUSE, FreeBSD, OpenBSD, NetBSD et HP-UX.
 
 ---
 
