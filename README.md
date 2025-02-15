@@ -130,7 +130,7 @@ Muon SSH is designed for:
   </tr>
 
 </table>
-For other releases, visit <a href="https://github.com/devlinx9/muon-ssh/releases.">release page</a> 
+For other releases, visit <a href="https://github.com/devlinx9/muon-ssh/releases">release page</a> 
 
 ## Building from Source
 Muon SSH is a standard Maven project. To build from source, ensure you have Java and Maven installed, then run:
