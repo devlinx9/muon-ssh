@@ -1,9 +1,57 @@
-# Roadmap
+# Project Roadmap
 
-We are currently working on defining and finalizing the roadmap for Muon SSH. We are planning new features, improvements, and updates to make Muon SSH even better for our users.
+Welcome to the project **MuonSSH** roadmap! 
 
-Stay tuned for more details! In the meantime, feel free to check out our [GitHub repository](https://github.com/devlinx9/muon-ssh) for the latest developments and releases.
+This document outlines the current status, upcoming releases, and future plans for the project. We encourage everyone to participate, share ideas, and contribute to the development process.
 
 ---
 
-Thank you for your patience and support!
+
+## Current tasks: **v2.4.0**
+
+### Known Issues:
+- [ ] [#73](https://github.com/devlinx9/muon-ssh/issues/73): Create new Top level folder
+- [ ] [#90](https://github.com/devlinx9/muon-ssh/issues/90): Key password should not be required to use other features when saved for the session
+- [ ] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo
+- [ ] [#110](https://github.com/devlinx9/muon-ssh/issues/110): Master password protect nothing
+- [ ] [#75](https://github.com/devlinx9/muon-ssh/issues/75): Cannot open file on local machine through file browser
+
+
+### Features:
+- [ ] [#81](https://github.com/devlinx9/muon-ssh/issues/81): X11forward support
+- [ ] [#103](https://github.com/devlinx9/muon-ssh/issues/103): Implement folder downloads.
+- [ ] [#28](https://github.com/devlinx9/muon-ssh/issues/28): Advance permissions for folders and files
+- [ ] Improved documentation and tutorials.
+
+---
+
+## Future tasks
+
+- X11 support
+- Rewrite core modules for better maintainability.
+- Fixes in UI management
+- Local terminal
+- Jediterm xterm support
+- K8s support
+
+---
+
+## Old Versions
+
+Here’s a list of previous releases [CHANGELOG.md](CHANGELOG.md)
+
+---
+
+## How to Participate
+
+We welcome contributions from everyone! Here’s how you can get involved:
+
+1. **Report Issues**: Found a bug or have a feature request? Open an [issue](https://github.com/devlinx9/muon-ssh/issues).
+2. **Contribute Code**: Fork the repository, make your changes, and submit a pull request.
+3. **Improve Documentation**: Help us make the project more accessible by improving docs.
+4. **Spread the Word**: Share the project with others and grow the community.
+5. **Join Discussions**: Participate in discussions on [GitHub Discussions](https://github.com/yourusername/yourrepo/discussions).
+
+---
+
+Thank you for being part of this journey! Together, we can make this project even better. 🚀
