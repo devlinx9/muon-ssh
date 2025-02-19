@@ -27,18 +27,18 @@ This document outlines the current status, upcoming releases, and future plans f
 
 ## Future tasks
 
-- X11 support
 - Rewrite core modules for better maintainability.
 - Fixes in UI management
 - Local terminal
 - Jediterm xterm support
 - K8s support
+- Java 21
 
 ---
 
-## Old Versions
+## Older tasks
 
-Here’s a list of previous releases [CHANGELOG.md](CHANGELOG.md)
+Here’s a list of previous tasks [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
