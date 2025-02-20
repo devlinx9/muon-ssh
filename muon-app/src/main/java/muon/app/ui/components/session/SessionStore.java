@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.PasswordStore;
+import muon.app.ui.components.session.dialog.TreeManager;
 import util.Constants;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -78,7 +79,8 @@ public class SessionStore {
     public static synchronized SessionFolder convertModelFromTree(DefaultMutableTreeNode node) {
         SessionFolder folder = new SessionFolder();
         folder.setName(node.getUserObject() + "");
-        folder.setId(((NamedItem) node.getUserObject()).getId());
+        String folderId = ((NamedItem) node.getUserObject()).getId();
+        folder.setId(folderId == null ? TreeManager.getNewUuid(node) : folderId);
         Enumeration<TreeNode> childrens = node.children();
         while (childrens.hasMoreElements()) {
             DefaultMutableTreeNode c = (DefaultMutableTreeNode) childrens.nextElement();
@@ -141,12 +143,12 @@ public class SessionStore {
 
     public static String preprocessJson(File file) throws IOException {
         String content = new String(Files.readAllBytes(file.toPath()));
-        content = content.replaceAll("\"TcpForwarding\"", "\"TCP_FORWARDING\"");
-        content = content.replaceAll("\"PortForwarding\"", "\"PORT_FORWARDING\"");
-        content = content.replaceAll("\"DragDrop\"", "\"DRAG_DROP\"");
-        content = content.replaceAll("\"DirLink\"", "\"DIR_LINK\"");
-        content = content.replaceAll("\"FileLink\"", "\"FILE_LINK\"");
-        content = content.replaceAll("\"KeyStore\"", "\"KEY_STORE\"");
+        content = content.replace("\"TcpForwarding\"", "\"TCP_FORWARDING\"");
+        content = content.replace("\"PortForwarding\"", "\"PORT_FORWARDING\"");
+        content = content.replace("\"DragDrop\"", "\"DRAG_DROP\"");
+        content = content.replace("\"DirLink\"", "\"DIR_LINK\"");
+        content = content.replace("\"FileLink\"", "\"FILE_LINK\"");
+        content = content.replace("\"KeyStore\"", "\"KEY_STORE\"");
         return content;
     }
 }

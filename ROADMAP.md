@@ -15,6 +15,8 @@ This document outlines the current status, upcoming releases, and future plans f
 - [ ] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo
 - [ ] [#110](https://github.com/devlinx9/muon-ssh/issues/110): Master password protect nothing
 - [ ] [#75](https://github.com/devlinx9/muon-ssh/issues/75): Cannot open file on local machine through file browser
+- Fix the muonssh import option, set the zip file
+- Fix the snowflake import option
 
 
 ### Features:

@@ -8,7 +8,7 @@ import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
-import muon.app.ui.components.session.NewSessionDlg;
+import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import util.Constants;

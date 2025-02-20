@@ -3,7 +3,7 @@ package muon.app.ui;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.session.NewSessionDlg;
+import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.SessionListPanel;
@@ -124,6 +124,7 @@ public class AppWindow extends JFrame {
         JButton btnNew = new JButton(FontAwesomeContants.FA_TELEVISION);
         btnNew.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
         btnNew.addActionListener(e -> this.createFirstSessionPanel());
+        btnNew.setToolTipText(bundle.getString("new_connection"));
 
         JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
         btnToggle.setFont(App.SKIN.getIconFont().deriveFont(14.0f));

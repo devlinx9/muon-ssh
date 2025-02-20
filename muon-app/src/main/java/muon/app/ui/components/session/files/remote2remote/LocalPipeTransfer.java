@@ -5,7 +5,7 @@ import muon.app.common.FileInfo;
 import muon.app.ssh.CachedCredentialProvider;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ssh.SshFileSystem;
-import muon.app.ui.components.session.NewSessionDlg;
+import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.files.FileBrowser;
 import util.enums.ConflictAction;
