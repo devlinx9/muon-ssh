@@ -79,7 +79,10 @@ public class SessionStore {
     public static synchronized SessionFolder convertModelFromTree(DefaultMutableTreeNode node) {
         SessionFolder folder = new SessionFolder();
         folder.setName(node.getUserObject() + "");
-        String folderId = ((NamedItem) node.getUserObject()).getId();
+        String folderId = node.getUserObject().toString();
+        if (!folderId.equals("Empty_Root")) {
+            folderId = ((NamedItem) node.getUserObject()).getId();
+        }
         folder.setId(folderId == null ? TreeManager.getNewUuid(node) : folderId);
         Enumeration<TreeNode> childrens = node.children();
         while (childrens.hasMoreElements()) {

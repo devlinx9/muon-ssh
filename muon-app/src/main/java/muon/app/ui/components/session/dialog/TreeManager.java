@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import static muon.app.App.bundle;
+
 @Slf4j
 public class TreeManager {
 
@@ -20,23 +22,27 @@ public class TreeManager {
     }
 
     protected DefaultMutableTreeNode loadTree(SavedSessionTree stree, DefaultTreeModel treeModel, JTree tree) {
-        DefaultMutableTreeNode dummyRoot = new DefaultMutableTreeNode("Empty Root");
-        dummyRoot.setAllowsChildren(true);
-        String lastSelected = stree.getLastSelection();
         DefaultMutableTreeNode rootNode = SessionStore.getNode(stree.getFolder());
-        rootNode.setAllowsChildren(true);
-        dummyRoot.add(rootNode);
-        treeModel.setRoot(dummyRoot);
+        DefaultMutableTreeNode emptyRoot = new DefaultMutableTreeNode("Empty_Root");
+        String lastSelected = stree.getLastSelection();
+
+        if (rootNode.getUserObject().toString().equals("Empty_Root")) {
+            emptyRoot = rootNode;
+        } else {
+            rootNode.setAllowsChildren(true);
+            emptyRoot.add(rootNode);
+        }
+        emptyRoot.setAllowsChildren(true);
+        treeModel.setRoot(emptyRoot);
         tree.setRootVisible(false);
         tree.setShowsRootHandles(true);
         try {
             if (lastSelected != null) {
                 selectNode(lastSelected, rootNode, tree);
             } else {
-                DefaultMutableTreeNode n;
-                n = findFirstInfoNode(rootNode);
+                DefaultMutableTreeNode n = findFirstInfoNode(rootNode);
                 if (n == null) {
-                    n = NewSessionDlg.getNode(rootNode, rootNode, treeModel);
+                    n = getNode(rootNode, rootNode, treeModel);
                     tree.scrollPathToVisible(new TreePath(n.getPath()));
                     TreePath path = new TreePath(n.getPath());
                     tree.setSelectionPath(path);
@@ -46,7 +52,7 @@ public class TreeManager {
             log.error(e.getMessage(), e);
         }
         treeModel.nodeChanged(rootNode);
-        return rootNode;
+        return emptyRoot;
     }
 
     protected boolean selectNode(String id, DefaultMutableTreeNode node, JTree tree) {
@@ -115,6 +121,17 @@ public class TreeManager {
         }
 
         return uuids;
+    }
+
+    public static DefaultMutableTreeNode getNode(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode rootNode, DefaultTreeModel treeModel) {
+        SessionInfo sessionInfo = new SessionInfo();
+        sessionInfo.setName(bundle.getString("new_site"));
+        sessionInfo.setId(getNewUuid(rootNode));
+        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(sessionInfo);
+        childNode.setUserObject(sessionInfo);
+        childNode.setAllowsChildren(false);
+        treeModel.insertNodeInto(childNode, parentNode, parentNode.getChildCount());
+        return childNode;
     }
 
 }

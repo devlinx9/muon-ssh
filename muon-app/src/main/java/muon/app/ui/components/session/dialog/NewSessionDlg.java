@@ -17,6 +17,7 @@ import java.util.Enumeration;
 
 import static muon.app.App.bundle;
 import static muon.app.ui.components.session.dialog.TreeManager.getNewUuid;
+import static muon.app.ui.components.session.dialog.TreeManager.getNode;
 
 @Slf4j
 public class NewSessionDlg extends JDialog implements ActionListener, TreeSelectionListener, TreeModelListener {
@@ -331,16 +332,26 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     private void deleteNode() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (node != null && node.getParent() != null) {
-            DefaultMutableTreeNode sibling = node.getNextSibling();
+            DefaultMutableTreeNode sibling = getSibling(node);
             if (sibling != null) {
                 String id = ((NamedItem) sibling.getUserObject()).getId();
                 treeManager.selectNode(id, sibling, tree);
             } else {
                 DefaultMutableTreeNode parentNode1 = (DefaultMutableTreeNode) node.getParent();
-                tree.setSelectionPath(new TreePath(parentNode1.getPath()));
+                if (!parentNode1.getUserObject().toString().equals("Empty_Root")) {
+                    tree.setSelectionPath(new TreePath(parentNode1.getPath()));
+                }
             }
             treeModel.removeNodeFromParent(node);
         }
+    }
+
+    private static DefaultMutableTreeNode getSibling(DefaultMutableTreeNode node) {
+        DefaultMutableTreeNode sibling = node.getNextSibling();
+        if (sibling == null) {
+            sibling = node.getPreviousSibling();
+        }
+        return sibling;
     }
 
     private void createNewFolder(DefaultMutableTreeNode parentNode) {
@@ -376,17 +387,6 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         tree.setSelectionPath(path);
     }
 
-    static DefaultMutableTreeNode getNode(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode rootNode, DefaultTreeModel treeModel) {
-        SessionInfo sessionInfo = new SessionInfo();
-        sessionInfo.setName(bundle.getString("new_site"));
-        sessionInfo.setId(getNewUuid(rootNode));
-        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(sessionInfo);
-        childNode.setUserObject(sessionInfo);
-        childNode.setAllowsChildren(false);
-        treeModel.insertNodeInto(childNode, parentNode, parentNode.getChildCount());
-        return childNode;
-    }
-
     private void connectClicked() {
         save();
         this.info = (SessionInfo) selectedInfo;
@@ -411,9 +411,14 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         log.debug("value changed");
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
-        if (node == null)
-        // Nothing is selected.
-        {
+        if (tree.getRowCount() == 0){
+            lblName.setVisible(false);
+            txtName.setVisible(false);
+            sessionInfoPanel.setVisible(false);
+            btnConnect.setVisible(false);
+        }
+        // Nothing is selected
+        if (node == null) {
             return;
         }
 
@@ -441,7 +446,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     }
 
     private void save() {
-        String id = null; //TODO fix the saving option for another tree
+        String id = null;
         TreePath path = tree.getSelectionPath();
         if (path != null) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
@@ -465,6 +470,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
     @Override
     public void treeNodesRemoved(TreeModelEvent e) {
+        log.debug("treeNodesRemoved");
     }
 
     @Override
