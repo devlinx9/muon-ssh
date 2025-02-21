@@ -15,7 +15,6 @@ import java.util.Objects;
 class TreeTransferHandler extends TransferHandler {
     DataFlavor nodesFlavor;
     DataFlavor[] flavors = new DataFlavor[1];
-    DefaultMutableTreeNode[] nodesToRemove;
     DefaultMutableTreeNode toRemove;
 
     public TreeTransferHandler() {
