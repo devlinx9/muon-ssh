@@ -120,6 +120,7 @@ class TreeTransferHandler extends TransferHandler {
             this.node = node;
         }
 
+        @Override
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (!isDataFlavorSupported(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
@@ -127,10 +128,12 @@ class TreeTransferHandler extends TransferHandler {
             return node;
         }
 
+        @Override
         public DataFlavor[] getTransferDataFlavors() {
             return flavors;
         }
 
+        @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             return nodesFlavor.equals(flavor);
         }
