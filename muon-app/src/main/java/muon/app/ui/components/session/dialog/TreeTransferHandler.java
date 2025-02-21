@@ -21,7 +21,7 @@ class TreeTransferHandler extends TransferHandler {
     public TreeTransferHandler() {
         try {
             String mimeType = DataFlavor.javaJVMLocalObjectMimeType + ";class=\""
-                    + javax.swing.tree.DefaultMutableTreeNode[].class.getName() + "\"";
+                              + javax.swing.tree.DefaultMutableTreeNode[].class.getName() + "\"";
             nodesFlavor = new DataFlavor(mimeType);
             flavors[0] = nodesFlavor;
         } catch (ClassNotFoundException e) {
@@ -29,6 +29,7 @@ class TreeTransferHandler extends TransferHandler {
         }
     }
 
+    @Override
     public boolean canImport(TransferHandler.TransferSupport support) {
         if (!support.isDrop()) {
             return false;
@@ -51,6 +52,7 @@ class TreeTransferHandler extends TransferHandler {
     }
 
 
+    @Override
     protected Transferable createTransferable(JComponent c) {
         JTree tree = (JTree) c;
         TreePath[] paths = tree.getSelectionPaths();
@@ -65,10 +67,12 @@ class TreeTransferHandler extends TransferHandler {
     }
 
 
+    @Override
     public int getSourceActions(JComponent c) {
         return COPY_OR_MOVE;
     }
 
+    @Override
     public boolean importData(TransferHandler.TransferSupport support) {
         if (!canImport(support)) {
             return false;
@@ -83,6 +87,9 @@ class TreeTransferHandler extends TransferHandler {
         } catch (java.io.IOException ioe) {
             log.info("I/O error: {}", ioe.getMessage());
         }
+        if (node == null) {
+            return false;
+        }
         // Get drop location info.
         JTree.DropLocation dl = (JTree.DropLocation) support.getDropLocation();
         int childIndex = dl.getChildIndex();
@@ -90,22 +97,24 @@ class TreeTransferHandler extends TransferHandler {
         DefaultMutableTreeNode parent = (DefaultMutableTreeNode) dest.getLastPathComponent();
         JTree tree = (JTree) support.getComponent();
         DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+
         model.removeNodeFromParent(node);
         // Configure for drop mode.
         int index = childIndex; // DropMode.INSERT
-        if (childIndex == -1) { // DropMode.ON
+        if (childIndex == -1 || index > parent.getChildCount()) { // DropMode.ON
             index = parent.getChildCount();
         }
         // Add data to model.
-        model.insertNodeInto(node, parent, index++);
+        model.insertNodeInto(node, parent, index);
         return true;
     }
 
+    @Override
     public String toString() {
         return getClass().getName();
     }
 
-public class NodesTransferable implements Transferable {
+    public class NodesTransferable implements Transferable {
         DefaultMutableTreeNode node;
 
         public NodesTransferable(DefaultMutableTreeNode node) {
@@ -113,8 +122,9 @@ public class NodesTransferable implements Transferable {
         }
 
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-            if (!isDataFlavorSupported(flavor))
+            if (!isDataFlavorSupported(flavor)) {
                 throw new UnsupportedFlavorException(flavor);
+            }
             return node;
         }
 
