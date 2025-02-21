@@ -655,7 +655,7 @@ public class SshMenuHandler {
                        || Toolkit.getDefaultToolkit().getSystemClipboard()
                                .isDataFlavorAvailable(DataFlavor.javaFileListFlavor));
         if (!ret) {
-            log.info("Nothing on clipboard");
+            log.debug("Nothing on clipboard");
         }
         return ret;
     }

@@ -234,7 +234,7 @@ public class FolderView extends JPanel {
                     }
                 } else if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
                     selectRow(e);
-                    log.info("called");
+                    log.debug("called");
                     listener.createMenu(popup, getSelectedFiles());
                     popup.pack();
                     popup.show(table, e.getX(), e.getY());
@@ -285,7 +285,7 @@ public class FolderView extends JPanel {
                     }
                 } else if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
                     selectRow(e);
-                    log.info("called");
+                    log.debug("called");
                     listener.createMenu(popup, getSelectedFiles());
                     popup.pack();
                     popup.show(table, e.getX(), e.getY());
