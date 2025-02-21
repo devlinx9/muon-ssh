@@ -12,6 +12,7 @@ import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ssh.SSHRemoteFileInputStream;
 import muon.app.ssh.SSHRemoteFileOutputStream;
 import muon.app.ssh.SshFileSystem;
+import muon.app.ui.components.session.SessionExportImport;
 import util.PathUtils;
 import util.SudoUtils;
 import util.enums.ConflictAction;
@@ -253,14 +254,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
         ConflictAction action = ConflictAction.CANCEL;
         if (!dupList.isEmpty()) {
 
-            DefaultComboBoxModel<ConflictAction> conflictOptionsCmb = new DefaultComboBoxModel<>(ConflictAction.values());
-            conflictOptionsCmb.removeAllElements();
-            for (ConflictAction conflictActionCmb : ConflictAction.values()) {
-                if (conflictActionCmb.getKey() < 3) {
-                    conflictOptionsCmb.addElement(conflictActionCmb);
-                }
-            }
-            JComboBox<ConflictAction> cmbs = new JComboBox<>(conflictOptionsCmb);
+            JComboBox<ConflictAction> cmbs = SessionExportImport.getUserConflictAction();
 
             if (JOptionPane.showOptionDialog(null,
                                              new Object[]{App.bundle.getString("some_file_exists_action_required"), cmbs},

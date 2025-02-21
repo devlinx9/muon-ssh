@@ -5,6 +5,7 @@ import muon.app.App;
 import muon.app.ui.components.SkinnedSplitPane;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.*;
+import util.enums.ImportOption;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -277,24 +278,44 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         if (parentNode.getUserObject() instanceof SessionInfo) {
             parentNode = (DefaultMutableTreeNode) parentNode.getParent();
         }
-        JComboBox<String> cmbImports = new JComboBox<>(
-                new String[]{"Putty", "WinSCP", "Muon session store", "SSH config file"});
+        JComboBox<ImportOption> cmbImports = new JComboBox<>(ImportOption.values());
 
         if (JOptionPane.showOptionDialog(this, new Object[]{bundle.getString("import_from"), cmbImports}, bundle.getString("import_sessions"),
                                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
                                          null) == JOptionPane.OK_OPTION) {
-            if (cmbImports.getSelectedIndex() < 2) {
+            manageImportOptions(parentNode, cmbImports);
+        }
+    }
+
+    private void manageImportOptions(DefaultMutableTreeNode parentNode, JComboBox<ImportOption> cmbImports) {
+        ImportOption selectedOption = (ImportOption) cmbImports.getSelectedItem();
+        if (selectedOption == null) {
+            return;
+        }
+
+        switch (selectedOption) {
+            case PUTTY:
+            case WINSCP:
                 new ImportDlg(this, cmbImports.getSelectedIndex(), parentNode).setVisible(true);
                 treeModel.nodeStructureChanged(parentNode);
-            } else {
-                if (cmbImports.getSelectedIndex() == 3) {
-                    if (SessionExportImport.importSessionsSSHConfig()) {
-                        rootNode = treeManager.loadTree(SessionStore.load(), treeModel, tree);
-                    }
-                } else if (SessionExportImport.importSessions()) {
+                break;
+            case SSH_CONFIG_FILE:
+                if (SessionExportImport.importSessionsSSHConfig()) {
                     rootNode = treeManager.loadTree(SessionStore.load(), treeModel, tree);
                 }
-            }
+                break;
+            case MUON_SESSION_STORE:
+                if (SessionExportImport.importMuonSessions()) {
+                    rootNode = treeManager.loadTree(SessionStore.load(), treeModel, tree);
+                }
+                break;
+            case PREVIOUS_MUON_VERSIONS:
+                if (SessionExportImport.importSessionsPreviousVersion()) {
+                    rootNode = treeManager.loadTree(SessionStore.load(), treeModel, tree);
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -411,7 +432,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         log.debug("value changed");
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
 
-        if (tree.getRowCount() == 0){
+        if (tree.getRowCount() == 0) {
             lblName.setVisible(false);
             txtName.setVisible(false);
             sessionInfoPanel.setVisible(false);

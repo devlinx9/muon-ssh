@@ -11,13 +11,12 @@ This document outlines the current status, upcoming releases, and future plans f
 
 ### Known Issues:
 - [x] [#73](https://github.com/devlinx9/muon-ssh/issues/73): Create new Top level folder
+- [x] [#116](https://github.com/devlinx9/muon-ssh/issues/116): importing sessions from Snowflake to muon-ssh
+- [x] Fix the muonssh import option, set the zip file extension
 - [ ] [#90](https://github.com/devlinx9/muon-ssh/issues/90): Key password should not be required to use other features when saved for the session
 - [ ] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo
 - [ ] [#110](https://github.com/devlinx9/muon-ssh/issues/110): Master password protect nothing
 - [ ] [#75](https://github.com/devlinx9/muon-ssh/issues/75): Cannot open file on local machine through file browser
-- Fix the muonssh import option, set the zip file
-- Fix the snowflake import option
-
 
 ### Features:
 - [x] Open in second screen by default
