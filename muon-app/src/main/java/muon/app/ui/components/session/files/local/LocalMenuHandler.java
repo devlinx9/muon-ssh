@@ -7,9 +7,9 @@ import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.view.FolderView;
-import util.PathUtils;
-import util.PlatformUtils;
-import util.enums.FileType;
+import muon.app.util.PathUtils;
+import muon.app.util.PlatformUtils;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import java.awt.*;

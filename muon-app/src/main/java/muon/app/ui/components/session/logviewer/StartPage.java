@@ -6,7 +6,7 @@ package muon.app.ui.components.session.logviewer;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
-import util.CollectionHelper;
+import muon.app.util.CollectionHelper;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;

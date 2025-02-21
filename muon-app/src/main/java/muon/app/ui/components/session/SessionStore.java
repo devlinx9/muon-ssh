@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.PasswordStore;
 import muon.app.ui.components.session.dialog.TreeManager;
-import util.Constants;
+import muon.app.util.Constants;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;

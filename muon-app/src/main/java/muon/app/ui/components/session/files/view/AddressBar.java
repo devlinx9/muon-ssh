@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.files.AddressBarComboBoxEditor;
-import util.LayoutUtilities;
+import muon.app.util.LayoutUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

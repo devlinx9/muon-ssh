@@ -13,10 +13,10 @@ import muon.app.ssh.SSHRemoteFileInputStream;
 import muon.app.ssh.SSHRemoteFileOutputStream;
 import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.session.SessionExportImport;
-import util.PathUtils;
-import util.SudoUtils;
-import util.enums.ConflictAction;
-import util.enums.FileType;
+import muon.app.util.PathUtils;
+import muon.app.util.SudoUtils;
+import muon.app.util.enums.ConflictAction;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import java.io.IOException;

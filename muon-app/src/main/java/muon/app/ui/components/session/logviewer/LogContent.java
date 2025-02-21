@@ -12,8 +12,8 @@ import muon.app.ui.components.SkinnedTextArea;
 import muon.app.ui.components.TextGutter;
 import muon.app.ui.components.session.SessionContentPanel;
 import org.tukaani.xz.XZInputStream;
-import util.FontAwesomeContants;
-import util.LayoutUtilities;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.LayoutUtilities;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;

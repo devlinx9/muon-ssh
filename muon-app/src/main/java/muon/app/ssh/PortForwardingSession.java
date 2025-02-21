@@ -8,7 +8,7 @@ import net.schmizz.sshj.connection.channel.direct.Parameters;
 import net.schmizz.sshj.connection.channel.forwarded.RemotePortForwarder.Forward;
 import net.schmizz.sshj.connection.channel.forwarded.SocketForwardingConnectListener;
 import net.schmizz.sshj.transport.TransportException;
-import util.enums.PortForwardingType;
+import muon.app.util.enums.PortForwardingType;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

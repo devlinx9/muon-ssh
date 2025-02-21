@@ -9,8 +9,8 @@ import muon.app.ui.components.ClosableTabbedPanel.TabTitle;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
-import util.FontAwesomeContants;
-import util.PathUtils;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.util.LinkedHashSet;

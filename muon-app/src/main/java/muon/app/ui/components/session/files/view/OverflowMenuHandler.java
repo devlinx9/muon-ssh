@@ -5,7 +5,7 @@ import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.AbstractFileBrowserView;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.local.LocalFileBrowserView;
-import util.PathUtils;
+import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

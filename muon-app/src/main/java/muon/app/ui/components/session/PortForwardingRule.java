@@ -2,7 +2,7 @@ package muon.app.ui.components.session;
 
 import lombok.Getter;
 import lombok.Setter;
-import util.enums.PortForwardingType;
+import muon.app.util.enums.PortForwardingType;
 
 /*
  * Port forwarding rule, meaning of host, sourcePort and targetPort changes depending on the type of port forwarding

@@ -12,7 +12,7 @@ import muon.app.ui.components.session.files.transfer.BackgroundTransferPanel;
 import muon.app.ui.components.settings.SettingsDialog;
 import muon.app.ui.components.settings.SettingsPageName;
 import muon.app.updater.UpdateChecker;
-import util.FontAwesomeContants;
+import muon.app.util.FontAwesomeContants;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -30,7 +30,7 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 import static muon.app.App.bundle;
-import static util.Constants.*;
+import static muon.app.util.Constants.*;
 
 /**
  * @author subhro

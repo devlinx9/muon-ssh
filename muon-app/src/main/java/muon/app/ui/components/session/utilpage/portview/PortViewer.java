@@ -9,7 +9,7 @@ import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
-import util.SudoUtils;
+import muon.app.util.SudoUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

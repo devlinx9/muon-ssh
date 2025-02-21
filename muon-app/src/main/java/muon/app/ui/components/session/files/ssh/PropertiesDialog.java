@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.ui.components.session.files.FileBrowser;
-import util.FormatUtils;
-import util.enums.FileType;
+import muon.app.util.FormatUtils;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

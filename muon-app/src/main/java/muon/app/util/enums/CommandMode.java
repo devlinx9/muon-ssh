@@ -1,4 +1,4 @@
-package util.enums;
+package muon.app.util.enums;
 
 public enum CommandMode {
         KILL_AS_ROOT, KILL_AS_USER, LIST_PROCESS

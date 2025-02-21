@@ -1,7 +1,7 @@
 package muon.app.ui.components.session.diskspace;
 
 import lombok.extern.slf4j.Slf4j;
-import util.PathUtils;
+import muon.app.util.PathUtils;
 
 import java.util.List;
 import java.util.regex.Matcher;

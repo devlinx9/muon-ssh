@@ -1,7 +1,7 @@
 package muon.app.ui.components.session.files.remote2remote;
 
 import muon.app.App;
-import util.FontAwesomeContants;
+import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

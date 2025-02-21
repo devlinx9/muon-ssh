@@ -17,10 +17,10 @@ import muon.app.ui.components.session.files.ssh.SshFileBrowserView;
 import muon.app.ui.components.session.files.transfer.FileTransfer;
 import muon.app.ui.components.session.files.transfer.FileTransferProgress;
 import muon.app.ui.components.session.files.view.DndTransferData;
-import util.FontAwesomeContants;
-import util.enums.ConflictAction;
-import util.enums.PanelOrientation;
-import util.enums.TransferMode;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.enums.ConflictAction;
+import muon.app.util.enums.PanelOrientation;
+import muon.app.util.enums.TransferMode;
 
 import javax.swing.*;
 import java.awt.*;

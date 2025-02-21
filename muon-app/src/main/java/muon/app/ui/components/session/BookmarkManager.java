@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import util.Constants;
+import muon.app.util.Constants;
 
 import java.io.File;
 import java.io.IOException;

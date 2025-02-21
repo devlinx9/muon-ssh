@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.session.importer.SSHConfigImporter;
-import util.Constants;
-import util.enums.ConflictAction;
+import muon.app.util.Constants;
+import muon.app.util.enums.ConflictAction;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

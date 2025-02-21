@@ -10,7 +10,7 @@ import muon.app.App;
 import java.net.ProxySelector;
 import java.net.URL;
 
-import static util.Constants.API_UPDATE_URL;
+import static muon.app.util.Constants.API_UPDATE_URL;
 
 @Slf4j
 public class UpdateChecker {

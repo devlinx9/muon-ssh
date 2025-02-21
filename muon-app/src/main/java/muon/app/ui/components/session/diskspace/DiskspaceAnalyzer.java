@@ -8,8 +8,8 @@ import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
-import util.FontAwesomeContants;
-import util.OptionPaneUtils;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

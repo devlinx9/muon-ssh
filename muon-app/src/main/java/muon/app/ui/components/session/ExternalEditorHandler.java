@@ -10,9 +10,9 @@ import muon.app.ssh.SSHRemoteFileInputStream;
 import muon.app.ssh.SSHRemoteFileOutputStream;
 import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.session.FileChangeWatcher.FileModificationInfo;
-import util.OptionPaneUtils;
-import util.PlatformUtils;
-import util.TimeUtils;
+import muon.app.util.OptionPaneUtils;
+import muon.app.util.PlatformUtils;
+import muon.app.util.TimeUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

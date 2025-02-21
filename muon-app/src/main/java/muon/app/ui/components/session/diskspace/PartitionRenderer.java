@@ -1,6 +1,6 @@
 package muon.app.ui.components.session.diskspace;
 
-import util.FormatUtils;
+import muon.app.util.FormatUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

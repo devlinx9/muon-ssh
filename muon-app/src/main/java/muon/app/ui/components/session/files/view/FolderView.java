@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.ui.components.SkinnedScrollPane;
-import util.enums.FileType;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;

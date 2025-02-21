@@ -9,9 +9,9 @@ import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
-import util.FontAwesomeContants;
-import util.PathUtils;
-import util.ScriptLoader;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.PathUtils;
+import muon.app.util.ScriptLoader;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;

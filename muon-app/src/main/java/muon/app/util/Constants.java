@@ -1,4 +1,4 @@
-package util;
+package muon.app.util;
 
 public class Constants {
     public static final String BASE_URL = "https://github.com/devlinx9";

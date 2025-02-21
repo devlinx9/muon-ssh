@@ -19,11 +19,11 @@ import muon.app.ui.laf.AppSkinDark;
 import muon.app.ui.laf.AppSkinLight;
 import muon.app.updater.VersionEntry;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import util.Constants;
-import util.PlatformUtils;
-import util.enums.ConflictAction;
-import util.enums.Language;
-import util.enums.TransferMode;
+import muon.app.util.Constants;
+import muon.app.util.PlatformUtils;
+import muon.app.util.enums.ConflictAction;
+import muon.app.util.enums.Language;
+import muon.app.util.enums.TransferMode;
 
 import javax.swing.*;
 import java.io.File;
@@ -34,8 +34,8 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static util.Constants.APPLICATION_VERSION;
-import static util.Constants.UPDATE_URL;
+import static muon.app.util.Constants.APPLICATION_VERSION;
+import static muon.app.util.Constants.UPDATE_URL;
 
 @Slf4j
 public class App {

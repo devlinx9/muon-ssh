@@ -5,7 +5,7 @@ import muon.app.App;
 import muon.app.ui.components.SkinnedSplitPane;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.*;
-import util.enums.ImportOption;
+import muon.app.util.enums.ImportOption;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

@@ -12,8 +12,8 @@ import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 
-import static util.FontUtils.loadFontAwesomeFonts;
-import static util.FontUtils.loadFonts;
+import static muon.app.util.FontUtils.loadFontAwesomeFonts;
+import static muon.app.util.FontUtils.loadFonts;
 
 /**
  * @author subhro

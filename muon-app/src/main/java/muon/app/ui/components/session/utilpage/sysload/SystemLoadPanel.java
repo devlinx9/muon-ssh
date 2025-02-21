@@ -1,7 +1,7 @@
 package muon.app.ui.components.session.utilpage.sysload;
 
 import lombok.Setter;
-import util.FormatUtils;
+import muon.app.util.FormatUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

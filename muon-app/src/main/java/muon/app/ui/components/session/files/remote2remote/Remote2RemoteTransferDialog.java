@@ -11,9 +11,9 @@ import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
-import util.Constants;
-import util.FontAwesomeContants;
-import util.enums.FileType;
+import muon.app.util.Constants;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;

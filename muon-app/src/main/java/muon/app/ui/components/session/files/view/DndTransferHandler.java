@@ -7,9 +7,9 @@ import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.files.AbstractFileBrowserView;
 import muon.app.ui.components.session.files.FileBrowser;
-import util.Win32DragHandler;
-import util.enums.DndSourceType;
-import util.enums.FileType;
+import muon.app.util.Win32DragHandler;
+import muon.app.util.enums.DndSourceType;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import util.enums.JumpType;
+import muon.app.util.enums.JumpType;
 
 import java.io.Serializable;
 import java.util.ArrayList;

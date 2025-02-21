@@ -7,9 +7,9 @@ import muon.app.common.FileSystem;
 import muon.app.ui.components.ClosableTabContent;
 import muon.app.ui.components.ClosableTabbedPanel.TabTitle;
 import muon.app.ui.components.session.files.view.*;
-import util.LayoutUtilities;
-import util.PathUtils;
-import util.enums.PanelOrientation;
+import muon.app.util.LayoutUtilities;
+import muon.app.util.PathUtils;
+import muon.app.util.enums.PanelOrientation;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

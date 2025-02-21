@@ -8,7 +8,7 @@ import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.files.FileBrowser;
-import util.enums.ConflictAction;
+import muon.app.util.enums.ConflictAction;
 
 import javax.swing.*;
 

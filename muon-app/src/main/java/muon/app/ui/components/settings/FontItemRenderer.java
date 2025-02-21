@@ -5,7 +5,7 @@ package muon.app.ui.components.settings;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import util.FontUtils;
+import muon.app.util.FontUtils;
 
 import javax.swing.*;
 import java.awt.*;

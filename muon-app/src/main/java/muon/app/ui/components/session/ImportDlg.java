@@ -1,5 +1,8 @@
 package muon.app.ui.components.session;
 
+import muon.app.util.importers.PuttyImporter;
+import muon.app.util.importers.WinScpImporter;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;

@@ -3,7 +3,7 @@ package muon.app.ui.components.session;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
-import util.FontAwesomeContants;
+import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import java.awt.*;

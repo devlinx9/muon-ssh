@@ -5,10 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 import muon.app.ui.components.settings.DarkTerminalTheme;
 import muon.app.ui.components.settings.EditorEntry;
-import util.CollectionHelper;
-import util.enums.ConflictAction;
-import util.enums.Language;
-import util.enums.TransferMode;
+import muon.app.util.CollectionHelper;
+import muon.app.util.enums.ConflictAction;
+import muon.app.util.enums.Language;
+import muon.app.util.enums.TransferMode;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

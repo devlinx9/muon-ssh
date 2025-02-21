@@ -2,7 +2,7 @@ package muon.app.ui.components.session.processview;
 
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
-import util.enums.CommandMode;
+import muon.app.util.enums.CommandMode;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

@@ -2,7 +2,7 @@ package muon.app.ui.components.session.diskspace;
 
 import lombok.Getter;
 import lombok.Setter;
-import util.FormatUtils;
+import muon.app.util.FormatUtils;
 
 import java.util.ArrayList;
 import java.util.List;

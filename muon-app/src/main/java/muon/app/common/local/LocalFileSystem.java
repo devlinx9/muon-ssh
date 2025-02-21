@@ -5,8 +5,8 @@ import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
 import muon.app.common.InputTransferChannel;
 import muon.app.common.OutputTransferChannel;
-import util.PathUtils;
-import util.enums.FileType;
+import muon.app.util.PathUtils;
+import muon.app.util.enums.FileType;
 
 import java.io.*;
 import java.nio.file.Files;

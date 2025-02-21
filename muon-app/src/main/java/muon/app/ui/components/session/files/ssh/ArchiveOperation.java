@@ -2,7 +2,7 @@ package muon.app.ui.components.session.files.ssh;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.ssh.RemoteSessionInstance;
-import util.PathUtils;
+import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.util.LinkedHashMap;

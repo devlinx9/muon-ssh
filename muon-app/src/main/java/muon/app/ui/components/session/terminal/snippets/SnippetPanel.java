@@ -3,7 +3,7 @@ package muon.app.ui.components.session.terminal.snippets;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
-import util.FontAwesomeContants;
+import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;

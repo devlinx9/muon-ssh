@@ -10,9 +10,9 @@ import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.view.AddressBar;
 import muon.app.ui.components.session.files.view.DndTransferData;
 import muon.app.ui.components.session.files.view.DndTransferHandler;
-import util.PathUtils;
-import util.enums.DndSourceType;
-import util.enums.PanelOrientation;
+import muon.app.util.PathUtils;
+import muon.app.util.enums.DndSourceType;
+import muon.app.util.enums.PanelOrientation;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;

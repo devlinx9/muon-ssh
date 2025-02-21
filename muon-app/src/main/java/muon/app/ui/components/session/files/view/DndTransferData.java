@@ -3,8 +3,8 @@ package muon.app.ui.components.session.files.view;
 import lombok.Getter;
 import lombok.Setter;
 import muon.app.common.FileInfo;
-import util.enums.DndSourceType;
-import util.enums.TransferAction;
+import muon.app.util.enums.DndSourceType;
+import muon.app.util.enums.TransferAction;
 
 import java.io.Serializable;
 import java.util.Arrays;

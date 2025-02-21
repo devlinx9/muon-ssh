@@ -6,9 +6,9 @@ import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ui.components.SkinnedTextField;
-import util.PathUtils;
-import util.SudoUtils;
-import util.enums.FileType;
+import muon.app.util.PathUtils;
+import muon.app.util.SudoUtils;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import java.io.FileNotFoundException;

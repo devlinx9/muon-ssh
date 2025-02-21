@@ -19,7 +19,7 @@ import net.schmizz.sshj.transport.Transport;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import net.schmizz.sshj.userauth.method.AuthKeyboardInteractive;
 import net.schmizz.sshj.userauth.method.AuthNone;
-import util.enums.JumpType;
+import muon.app.util.enums.JumpType;
 
 import javax.swing.*;
 import java.io.Closeable;
@@ -127,7 +127,7 @@ public class SshClient2 implements Closeable {
                 JPasswordField txtPassword = new JPasswordField(30);
                 JCheckBox chkUseCache = new JCheckBox(App.bundle.getString("remember_session"));
                 txtUser.setText(user);
-                int ret = JOptionPane.showOptionDialog(null,
+                int ret = JOptionPane.showOptionDialog(App.getAppWindow(),
                                                        new Object[]{"User", txtUser, "Password", txtPassword, chkUseCache}, App.bundle.getString("authentication"),
                                                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
                 if (ret == JOptionPane.OK_OPTION) {

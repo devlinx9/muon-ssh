@@ -8,7 +8,7 @@ import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextArea;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
-import util.ScriptLoader;
+import muon.app.util.ScriptLoader;
 
 import javax.swing.*;
 import java.awt.*;

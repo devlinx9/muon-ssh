@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.SkinnedTextArea;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.TabbedPanel;
-import util.enums.JumpType;
+import muon.app.util.enums.JumpType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

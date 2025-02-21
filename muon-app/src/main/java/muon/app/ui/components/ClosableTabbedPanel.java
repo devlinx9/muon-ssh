@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import util.FontAwesomeContants;
+import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;

@@ -12,7 +12,7 @@ import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.sftp.Response;
 import net.schmizz.sshj.sftp.SFTPException;
-import util.PathUtils;
+import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.io.ByteArrayOutputStream;

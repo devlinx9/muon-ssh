@@ -11,12 +11,12 @@ import muon.app.Settings;
 import muon.app.ui.components.KeyShortcutComponent;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
-import util.FontUtils;
-import util.LayoutUtilities;
-import util.OptionPaneUtils;
-import util.enums.ConflictAction;
-import util.enums.Language;
-import util.enums.TransferMode;
+import muon.app.util.FontUtils;
+import muon.app.util.LayoutUtilities;
+import muon.app.util.OptionPaneUtils;
+import muon.app.util.enums.ConflictAction;
+import muon.app.util.enums.Language;
+import muon.app.util.enums.TransferMode;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;

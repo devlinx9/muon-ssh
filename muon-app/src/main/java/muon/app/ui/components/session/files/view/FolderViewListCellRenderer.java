@@ -2,8 +2,8 @@ package muon.app.ui.components.session.files.view;
 
 import muon.app.App;
 import muon.app.common.FileInfo;
-import util.FileIconUtil;
-import util.FontAwesomeContants;
+import muon.app.util.FileIconUtil;
+import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

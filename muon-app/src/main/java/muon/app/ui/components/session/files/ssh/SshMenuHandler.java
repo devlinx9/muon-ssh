@@ -13,10 +13,10 @@ import muon.app.ui.components.session.files.view.DndTransferHandler;
 import muon.app.ui.components.session.files.view.FolderView;
 import muon.app.ui.components.settings.EditorEntry;
 import muon.app.ui.components.settings.SettingsPageName;
-import util.PathUtils;
-import util.enums.DndSourceType;
-import util.enums.FileType;
-import util.enums.TransferAction;
+import muon.app.util.PathUtils;
+import muon.app.util.enums.DndSourceType;
+import muon.app.util.enums.FileType;
+import muon.app.util.enums.TransferAction;
 
 import javax.swing.*;
 import java.awt.*;

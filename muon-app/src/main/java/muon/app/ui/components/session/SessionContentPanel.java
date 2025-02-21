@@ -24,8 +24,8 @@ import muon.app.ui.components.session.processview.ProcessViewer;
 import muon.app.ui.components.session.search.SearchPanel;
 import muon.app.ui.components.session.terminal.TerminalHolder;
 import muon.app.ui.components.session.utilpage.UtilityPage;
-import util.LayoutUtilities;
-import util.enums.ConflictAction;
+import muon.app.util.LayoutUtilities;
+import muon.app.util.enums.ConflictAction;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;

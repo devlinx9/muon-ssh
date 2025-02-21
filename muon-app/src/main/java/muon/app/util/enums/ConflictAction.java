@@ -1,4 +1,4 @@
-package util.enums;
+package muon.app.util.enums;
 
 import lombok.Getter;
 
