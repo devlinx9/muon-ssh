@@ -10,7 +10,7 @@ This document outlines the current status, upcoming releases, and future plans f
 ## Current tasks: **v2.4.0**
 
 ### Known Issues:
-- [ ] [#73](https://github.com/devlinx9/muon-ssh/issues/73): Create new Top level folder
+- [x] [#73](https://github.com/devlinx9/muon-ssh/issues/73): Create new Top level folder
 - [ ] [#90](https://github.com/devlinx9/muon-ssh/issues/90): Key password should not be required to use other features when saved for the session
 - [ ] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo
 - [ ] [#110](https://github.com/devlinx9/muon-ssh/issues/110): Master password protect nothing
@@ -20,6 +20,7 @@ This document outlines the current status, upcoming releases, and future plans f
 
 
 ### Features:
+- [x] Open in second screen by default
 - [ ] [#81](https://github.com/devlinx9/muon-ssh/issues/81): X11forward support
 - [ ] [#103](https://github.com/devlinx9/muon-ssh/issues/103): Implement folder downloads.
 - [ ] [#28](https://github.com/devlinx9/muon-ssh/issues/28): Advance permissions for folders and files
