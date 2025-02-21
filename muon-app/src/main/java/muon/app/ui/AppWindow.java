@@ -3,10 +3,10 @@ package muon.app.ui;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.SessionListPanel;
+import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
 import muon.app.ui.components.session.files.transfer.BackgroundTransferPanel;
 import muon.app.ui.components.settings.SettingsDialog;
@@ -94,14 +94,42 @@ public class AppWindow extends JFrame {
     }
 
     private void setWindowsSizeAndPosition() {
-        Insets inset = Toolkit.getDefaultToolkit().getScreenInsets(
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration());
+        // Get the graphics environment
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] screens = ge.getScreenDevices();
+        if (App.getGlobalSettings().isOpenInSecondScreen() && screens.length > 1) {
+            // Get the default configuration of the second screen (index 1)
+            GraphicsConfiguration gc = screens[1].getDefaultConfiguration();
+            Rectangle bounds = gc.getBounds(); // Get the bounds of the second screen
 
-        Dimension screenD = Toolkit.getDefaultToolkit().getScreenSize();
+            // Get the screen insets (e.g., taskbar size) for the second screen
+            Insets inset = Toolkit.getDefaultToolkit().getScreenInsets(gc);
 
-        int screenWidth = screenD.width - inset.left - inset.right;
-        int screenHeight = screenD.height - inset.top - inset.bottom;
+            // Calculate the available screen size (excluding insets)
+            int screenWidth = bounds.width - inset.left - inset.right;
+            int screenHeight = bounds.height - inset.top - inset.bottom;
 
+            // Set the window size based on the available screen size
+            setScreenWidthAndHeight(screenWidth, screenHeight);
+
+            // Set the window location to the second screen
+            int x = bounds.x + inset.left; // Adjust for insets
+            int y = bounds.y + inset.top;  // Adjust for insets
+            setLocation(x, y);
+        } else {
+            // Fallback to primary screen if no second screen is detected
+            Dimension screenD = Toolkit.getDefaultToolkit().getScreenSize();
+            int screenWidth = screenD.width;
+            int screenHeight = screenD.height;
+
+            setScreenWidthAndHeight(screenWidth, screenHeight);
+
+            // Center on the primary screen
+            setLocationRelativeTo(null);
+        }
+    }
+
+    private void setScreenWidthAndHeight(int screenWidth, int screenHeight) {
         if (screenWidth < 1024 || screenHeight < 650 || App.getGlobalSettings().isStartMaximized()) {
             setSize(screenWidth, screenHeight);
         } else {
@@ -109,8 +137,6 @@ public class AppWindow extends JFrame {
             int height = (screenHeight * 80) / 100;
             setSize(width, height);
         }
-
-        this.setLocationRelativeTo(null);
     }
 
     public void createFirstSessionPanel() {

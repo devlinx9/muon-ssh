@@ -401,7 +401,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     }
 
     public SessionInfo newSession() {
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(App.getAppWindow());
         setVisible(true);
         return this.info;
     }

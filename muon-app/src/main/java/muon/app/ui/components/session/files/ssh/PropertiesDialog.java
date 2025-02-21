@@ -205,7 +205,7 @@ public class PropertiesDialog extends JDialog {
         add(b);
         add(b2, BorderLayout.SOUTH);
         pack();
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(App.getAppWindow());
     }
 
     private boolean[] extractPermissions(int permissions) {
@@ -273,7 +273,8 @@ public class PropertiesDialog extends JDialog {
                     FormatUtils.humanReadableByteCount(totalSize, true));
         }
         btnCalculate1.setEnabled(hasAnyDir);
-        int fc = 0, dc = 0;
+        int fc = 0;
+        int dc = 0;
         for (FileInfo f : files) {
             if (f.getType() == FileType.DIRECTORY
                     || f.getType() == FileType.DIR_LINK) {
@@ -427,13 +428,12 @@ public class PropertiesDialog extends JDialog {
                     biConsumer.accept(null, false);
                     return;
                 }
-                if (!ret) {
-                    if (!fileBrowser.isSessionClosed()) {
+                if (!ret && !fileBrowser.isSessionClosed()) {
                         JOptionPane.showMessageDialog(null,
                                                       bundle.getString("operation_errors"));
                     }
 
-                }
+
                 String[] lines = output.toString().split("\n");
                 if (lines.length >= 2) {
                     Matcher matcher = DF_PATTERN.matcher(lines[1]);

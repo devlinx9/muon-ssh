@@ -33,6 +33,7 @@ public class Settings {
     private boolean firstFileBrowserView = false;
     private boolean firstLocalViewInFileBrowser = false;
     private boolean transferTemporaryDirectory = false;
+    private boolean openInSecondScreen = false;
     private boolean useSudo = false;
     private boolean promptForSudo = false;
     private boolean directoryCache = true;

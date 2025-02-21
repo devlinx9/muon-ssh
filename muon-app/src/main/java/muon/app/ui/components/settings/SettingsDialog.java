@@ -64,6 +64,7 @@ public class SettingsDialog extends JDialog {
     private JCheckBox chkUseSudo;
     private JCheckBox chkPromptForSudo;
     private JCheckBox chkTransferTemporaryDirectory;
+    private JCheckBox chkOpenInSecondScreen;
     private JCheckBox chkDirectoryCache;
     private JCheckBox chkShowPathBar;
     private JCheckBox chkConfirmBeforeTerminalClosing;
@@ -413,6 +414,7 @@ public class SettingsDialog extends JDialog {
         chkPromptForSudo = new JCheckBox(App.bundle.getString("prompt_for_sudo"));
         chkUseSudo = new JCheckBox(App.bundle.getString("use_sudo_if_fails"));
         chkTransferTemporaryDirectory = new JCheckBox(App.bundle.getString("transfer_temporary_directory"));
+        chkOpenInSecondScreen = new JCheckBox(App.bundle.getString("open_second_screen"));
         chkDirectoryCache = new JCheckBox(App.bundle.getString("directory_caching"));
         chkShowPathBar = new JCheckBox(App.bundle.getString("current_folder"));
         chkShowMessagePrompt = new JCheckBox(App.bundle.getString("show_banner"));
@@ -455,6 +457,7 @@ public class SettingsDialog extends JDialog {
         chkFirstFileBrowserView.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkFirstLocalViewInFileBrowserView.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkTransferTemporaryDirectory.setAlignmentX(Box.LEFT_ALIGNMENT);
+        chkOpenInSecondScreen.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkUseSudo.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkPromptForSudo.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkDirectoryCache.setAlignmentX(Box.LEFT_ALIGNMENT);
@@ -481,6 +484,8 @@ public class SettingsDialog extends JDialog {
         vbox.add(chkFirstLocalViewInFileBrowserView);
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkTransferTemporaryDirectory);
+        vbox.add(Box.createRigidArea(new Dimension(10, 10)));
+        vbox.add(chkOpenInSecondScreen);
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkUseSudo);
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
@@ -581,6 +586,7 @@ public class SettingsDialog extends JDialog {
         settings.setFirstLocalViewInFileBrowser(chkFirstLocalViewInFileBrowserView.isSelected());
         settings.setUseSudo(chkUseSudo.isSelected());
         settings.setTransferTemporaryDirectory(chkTransferTemporaryDirectory.isSelected());
+        settings.setOpenInSecondScreen(chkOpenInSecondScreen.isSelected());
         settings.setPromptForSudo(chkPromptForSudo.isSelected());
         settings.setDirectoryCache(chkDirectoryCache.isSelected());
         settings.setShowPathBar(chkShowPathBar.isSelected());
@@ -666,6 +672,7 @@ public class SettingsDialog extends JDialog {
         chkFirstFileBrowserView.setSelected(settings.isFirstFileBrowserView());
         chkFirstLocalViewInFileBrowserView.setSelected(settings.isFirstLocalViewInFileBrowser());
         chkTransferTemporaryDirectory.setSelected(settings.isTransferTemporaryDirectory());
+        chkOpenInSecondScreen.setSelected(settings.isOpenInSecondScreen());
         chkUseSudo.setSelected(settings.isUseSudo());
         chkUseSudo.addActionListener(e -> setStatusCheckBox(chkPromptForSudo, chkUseSudo.isSelected()));
         if (settings.isUseSudo()) {
