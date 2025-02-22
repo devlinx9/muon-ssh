@@ -62,8 +62,8 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     @Getter
     private RemoteSessionInstance remoteSessionInstance;
     private ThreadPoolExecutor backgroundTransferPool;
-    private char[] cachedPassword;
-    private char[] cachedPassPhrase;
+    private String cachedPassword;
+    private String cachedPassPhrase;
     private String cachedUser;
     private PortForwardingSession pfSession;
 
@@ -304,22 +304,22 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     }
 
     @Override
-    public synchronized char[] getCachedPassword() {
+    public synchronized String getCachedPassword() {
         return cachedPassword;
     }
 
     @Override
-    public synchronized void cachePassword(char[] password) {
+    public synchronized void cachePassword(String password) {
         this.cachedPassword = password;
     }
 
     @Override
-    public synchronized char[] getCachedPassPhrase() {
+    public synchronized String getCachedPassPhrase() {
         return cachedPassPhrase;
     }
 
     @Override
-    public synchronized void setCachedPassPhrase(char[] cachedPassPhrase) {
+    public synchronized void setCachedPassPhrase(String cachedPassPhrase) {
         this.cachedPassPhrase = cachedPassPhrase;
     }
 

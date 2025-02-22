@@ -6,6 +6,7 @@ import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.HopEntry;
 import muon.app.ui.components.session.SessionInfo;
+import muon.app.util.enums.JumpType;
 import net.schmizz.keepalive.KeepAliveProvider;
 import net.schmizz.sshj.DefaultConfig;
 import net.schmizz.sshj.SSHClient;
@@ -19,7 +20,6 @@ import net.schmizz.sshj.transport.Transport;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import net.schmizz.sshj.userauth.method.AuthKeyboardInteractive;
 import net.schmizz.sshj.userauth.method.AuthNone;
-import muon.app.util.enums.JumpType;
 
 import javax.swing.*;
 import java.io.Closeable;
@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class SshClient2 implements Closeable {
     private static final int CONNECTION_TIMEOUT = App.getGlobalSettings().getConnectionTimeout() * 1000;
+    public static final String LOCALHOST = "127.0.0.1";
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
     @Getter
@@ -130,15 +131,16 @@ public class SshClient2 implements Closeable {
                 int ret = JOptionPane.showOptionDialog(App.getAppWindow(),
                                                        new Object[]{"User", txtUser, "Password", txtPassword, chkUseCache}, App.bundle.getString("authentication"),
                                                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
-                if (ret == JOptionPane.OK_OPTION) {
-                    user = txtUser.getText();
-                    password = txtPassword.getPassword();
-                    if (chkUseCache.isSelected()) {
-                        cachedCredentialProvider.setCachedUser(user);
-                        cachedCredentialProvider.cachePassword(password);
-                    }
-                } else {
+
+                if (ret != JOptionPane.OK_OPTION) {
                     throw new OperationCancelledException();
+                }
+
+                user = txtUser.getText();
+                password = txtPassword.getPassword();
+                if (chkUseCache.isSelected()) {
+                    cachedCredentialProvider.setCachedUser(user);
+                    cachedCredentialProvider.cachePassword(new String(password));
                 }
             }
             try {
@@ -163,38 +165,13 @@ public class SshClient2 implements Closeable {
     private void connect(Deque<HopEntry> hopStack) throws IOException, OperationCancelledException {
         this.inputBlocker.blockInput();
         try {
-            DefaultConfig defaultConfig = new DefaultConfig();
-            if (App.getGlobalSettings().isShowMessagePrompt()) {
-                log.info("enabled KeepAliveProvider");
-                defaultConfig.setKeepAliveProvider(KeepAliveProvider.KEEP_ALIVE);
-            }
-            sshj = new SSHClient(defaultConfig);
-
-            sshj.setConnectTimeout(CONNECTION_TIMEOUT);
-            sshj.setTimeout(CONNECTION_TIMEOUT);
+            initializeSSHClient();
             if (hopStack.isEmpty()) {
                 this.setupProxyAndSocketFactory();
                 this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
                 sshj.connect(info.getHost(), info.getPort());
             } else {
-                try {
-                    log.info("Tunneling through...");
-                    tunnelThrough(hopStack);
-                    log.info("adding host key verifier");
-                    this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
-                    log.info("Host key verifier added");
-                    if (this.info.getJumpType() == JumpType.TCP_FORWARDING) {
-                        log.info("tcp forwarding...");
-                        this.connectViaTcpForwarding();
-                    } else {
-                        log.info("port forwarding...");
-                        this.connectViaPortForwarding();
-                    }
-                } catch (Exception e) {
-                    log.error(e.getMessage(), e);
-                    disconnect();
-                    throw new IOException(e);
-                }
+                createTunnel(hopStack);
             }
 
             sshj.getConnection().getKeepAlive().setKeepAliveInterval(5);
@@ -281,8 +258,40 @@ public class SshClient2 implements Closeable {
         }
     }
 
+    private void initializeSSHClient() {
+        DefaultConfig defaultConfig = new DefaultConfig();
+        if (App.getGlobalSettings().isShowMessagePrompt()) {
+            log.info("enabled KeepAliveProvider");
+            defaultConfig.setKeepAliveProvider(KeepAliveProvider.KEEP_ALIVE);
+        }
+        sshj = new SSHClient(defaultConfig);
+        sshj.setConnectTimeout(CONNECTION_TIMEOUT);
+        sshj.setTimeout(CONNECTION_TIMEOUT);
+    }
+
+    private void createTunnel(Deque<HopEntry> hopStack) throws IOException {
+        try {
+            log.info("Tunneling through...");
+            tunnelThrough(hopStack);
+            log.info("adding host key verifier");
+            this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
+            log.info("Host key verifier added");
+            if (this.info.getJumpType() == JumpType.TCP_FORWARDING) {
+                log.info("tcp forwarding...");
+                this.connectViaTcpForwarding();
+            } else {
+                log.info("port forwarding...");
+                this.connectViaPortForwarding();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            disconnect();
+            throw new IOException(e);
+        }
+    }
+
     private boolean isPasswordSet() {
-        return info.getPassword() != null && !info.getPassword().isEmpty();
+        return this.info.getPassword() != null && !this.info.getPassword().isEmpty();
     }
 
     private String getUser() {
@@ -294,8 +303,8 @@ public class SshClient2 implements Closeable {
     }
 
     private char[] getPassword() {
-        char[] password = cachedCredentialProvider.getCachedPassword();
-        if (password == null && (this.info.getPassword() != null && !this.info.getPassword().isEmpty())) {
+        char[] password = cachedCredentialProvider.getCachedPassword() == null ? null : cachedCredentialProvider.getCachedPassword().toCharArray();
+        if (password == null && isPasswordSet()) {
             password = this.info.getPassword().toCharArray();
         }
         return password;
@@ -416,13 +425,13 @@ public class SshClient2 implements Closeable {
     private void connectViaPortForwarding() throws Exception {
         ss = new ServerSocket();
         ss.setReuseAddress(true);
-        ss.bind(new InetSocketAddress("127.0.0.1", 0));
+        ss.bind(new InetSocketAddress(LOCALHOST, 0));
         int port = ss.getLocalPort();
         new Thread(() -> {
             try {
                 this.previousHop
                         .newLocalPortForwarder(
-                                new Parameters("127.0.0.1", port, this.info.getHost(), this.info.getPort()), ss)
+                                new Parameters(LOCALHOST, port, this.info.getHost(), this.info.getPort()), ss)
                         .listen();
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
@@ -431,7 +440,7 @@ public class SshClient2 implements Closeable {
         while (!ss.isBound()) {
             Thread.sleep(100);
         }
-        this.sshj.connect("127.0.0.1", port);
+        this.sshj.connect(LOCALHOST, port);
     }
 
     public LocalPortForwarder newLocalPortForwarder(Parameters parameters, ServerSocket serverSocket) {

@@ -28,7 +28,7 @@ public class PasswordFinderDialog implements PasswordFinder {
         // if pass phrase was already cached
         if (firstAttempt.get() && this.cachedCredentialProvider.getCachedPassPhrase() != null) {
             firstAttempt.set(false);
-            return this.cachedCredentialProvider.getCachedPassPhrase();
+            return this.cachedCredentialProvider.getCachedPassPhrase().toCharArray();
         }
         firstAttempt.set(false);
         JPasswordField txtPass = new JPasswordField();
@@ -40,7 +40,7 @@ public class PasswordFinderDialog implements PasswordFinder {
         if (ret == JOptionPane.OK_OPTION) {
             char[] passPhrase = txtPass.getPassword();
             if (chkUseCache.isSelected()) {
-                this.cachedCredentialProvider.setCachedPassPhrase(passPhrase);
+                this.cachedCredentialProvider.setCachedPassPhrase(new String(passPhrase));
             }
             return passPhrase;
         }
