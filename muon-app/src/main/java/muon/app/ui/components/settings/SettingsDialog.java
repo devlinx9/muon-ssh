@@ -6,8 +6,8 @@ package muon.app.ui.components.settings;
 import com.jediterm.terminal.emulator.ColorPalette;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.PasswordStore;
-import muon.app.Settings;
+import muon.app.common.PasswordStore;
+import muon.app.common.Settings;
 import muon.app.ui.components.KeyShortcutComponent;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
@@ -28,11 +28,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static muon.app.App.bundle;
+
 /**
  * @author subhro
  */
 @Slf4j
 public class SettingsDialog extends JDialog {
+    public static final String CHANGE_PASSWORD_FAILED = "change_password_failed";
     private final EditorTableModel editorModel = new EditorTableModel();
     private final DefaultComboBoxModel<ConflictAction> conflictOptions = new DefaultComboBoxModel<>(ConflictAction.values());
     private final DefaultComboBoxModel<TransferMode> transferModes = new DefaultComboBoxModel<>(TransferMode.values());
@@ -797,35 +800,54 @@ public class SettingsDialog extends JDialog {
         btnChangeMasterPassword = new JButton(App.bundle.getString("change_master_password"));
 
         chkUseMasterPassword.addActionListener(e -> {
-            if (chkUseMasterPassword.isSelected()) {
+            try {
+                if (!chkUseMasterPassword.isSelected()) {
+                    if (App.getGlobalSettings().isUsingMasterPassword() && !PasswordStore.getSharedInstance().unlockUsingMasterPassword()) {
+                        chkUseMasterPassword.setSelected(true);
+                        throw new IllegalArgumentException(App.bundle.getString(CHANGE_PASSWORD_FAILED));
+                    }
+                    PasswordStore.getSharedInstance().changeStorePassword(new char[0]);
+                    updateSettingsAndNotify(false, "password_unprotected");
+                    return;
+                }
+
                 char[] password = promptPassword();
                 if (password == null) {
                     chkUseMasterPassword.setSelected(false);
                     btnChangeMasterPassword.setEnabled(false);
                     return;
                 }
-                try {
-                    if (!PasswordStore.getSharedInstance().changeStorePassword(password)) {
-                        throw new Exception(App.bundle.getString("change_password_failed"));
-                    }
-                } catch (Exception e1) {
-                    log.error(e1.getMessage(), e1);
-                    JOptionPane.showMessageDialog(this, App.bundle.getString("error_operation"));
+                if (!PasswordStore.getSharedInstance().changeStorePassword(password)) {
+                    throw new Exception(App.bundle.getString(CHANGE_PASSWORD_FAILED));
                 }
-                App.getGlobalSettings().setUsingMasterPassword(true);
-                App.saveSettings();
-                JOptionPane.showMessageDialog(this, App.bundle.getString("password_aes"));
-            } else {
-                try {
-                    PasswordStore.getSharedInstance().changeStorePassword(new char[0]);
-                } catch (Exception e1) {
-                    log.error(e1.getMessage(), e1);
-                    JOptionPane.showMessageDialog(this, App.bundle.getString("error_operation"));
-                }
-                App.getGlobalSettings().setUsingMasterPassword(false);
-                App.saveSettings();
-                JOptionPane.showMessageDialog(this, App.bundle.getString("password_unprotected"));
+                updateSettingsAndNotify(true, "password_aes");
+            } catch (Exception ex) {
+                log.error(ex.getMessage(), ex);
+                JOptionPane.showMessageDialog(this, App.bundle.getString("error_operation"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
             }
+
+        });
+
+        btnChangeMasterPassword.addActionListener(e -> {
+            try {
+                if (App.getGlobalSettings().isUsingMasterPassword() && !PasswordStore.getSharedInstance().unlockUsingMasterPassword()) {
+                    throw new IllegalArgumentException(App.bundle.getString(CHANGE_PASSWORD_FAILED));
+                }
+
+                char[] password = promptPassword();
+                if (password == null) {
+                    throw new IllegalArgumentException(App.bundle.getString(CHANGE_PASSWORD_FAILED));
+                }
+
+                if (!PasswordStore.getSharedInstance().changeStorePassword(password)) {
+                    throw new IllegalArgumentException(App.bundle.getString(CHANGE_PASSWORD_FAILED));
+                }
+                updateSettingsAndNotify(true, "password_aes");
+            } catch (Exception ex) {
+                log.error(ex.getMessage(), ex);
+                JOptionPane.showMessageDialog(this, App.bundle.getString("error_operation"), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+            }
+
         });
 
         chkUseMasterPassword.setAlignmentX(Box.LEFT_ALIGNMENT);
@@ -833,12 +855,22 @@ public class SettingsDialog extends JDialog {
 
         Box vbox = Box.createVerticalBox();
         vbox.add(chkUseMasterPassword);
-        vbox.add(Box.createRigidArea(new Dimension(10, 10)));
+        vbox.add(Box.createRigidArea(new
+
+                                             Dimension(10, 10)));
         vbox.add(btnChangeMasterPassword);
-        vbox.setBorder(new EmptyBorder(30, 10, 10, 10));
+        vbox.setBorder(new
+
+                               EmptyBorder(30, 10, 10, 10));
         panel.add(vbox);
 
         return panel;
+    }
+
+    private void updateSettingsAndNotify(boolean usingMasterPassword, String messageKey) {
+        App.getGlobalSettings().setUsingMasterPassword(usingMasterPassword);
+        App.saveSettings();
+        JOptionPane.showMessageDialog(this, App.bundle.getString(messageKey));
     }
 
     private char[] promptPassword() {

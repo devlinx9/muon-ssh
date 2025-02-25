@@ -6,10 +6,11 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.PasswordStore;
+import muon.app.common.PasswordStore;
 import muon.app.ui.components.session.dialog.TreeManager;
 import muon.app.util.Constants;
 
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import java.io.File;
@@ -19,8 +20,14 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
 
+import static muon.app.App.bundle;
+
 @Slf4j
 public class SessionStore {
+
+    protected SessionStore() {
+
+    }
 
     public static synchronized SavedSessionTree load() {
         File file = Paths.get(App.CONFIG_DIR, Constants.SESSION_DB_FILE).toFile();
@@ -42,6 +49,9 @@ public class SessionStore {
                 log.debug("Loading passwords... done");
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
+                JOptionPane.showMessageDialog(App.getAppWindow(),
+                                              String.format(bundle.getString("error_occurred"), e.getMessage()), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                return null;
             }
             return savedSessionTree;
         } catch (IOException e) {

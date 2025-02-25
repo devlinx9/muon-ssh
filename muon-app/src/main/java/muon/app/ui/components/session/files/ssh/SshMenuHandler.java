@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static muon.app.App.bundle;
+import static muon.app.App.getAppWindow;
 
 @Slf4j
 public class SshMenuHandler {
@@ -159,13 +160,13 @@ public class SshMenuHandler {
         mRunScriptInBackground = new JMenuItem(bundle.getString("run_file_in_background"));
         mRunScriptInBackground.addActionListener(e -> openRunInBackground(fileBrowserView.getCurrentDirectory(), folderView.getSelectedFiles()[0].getPath()));
 
+        KeyStroke ksRename = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
         AbstractAction aRename = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 rename(folderView.getSelectedFiles()[0], fileBrowserView.getCurrentDirectory());
             }
         };
-        KeyStroke ksRename = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
         mRename = new JMenuItem(bundle.getString("rename"));
         mRename.addActionListener(aRename);
         map.put(ksRename, "mRename");
@@ -528,7 +529,7 @@ public class SshMenuHandler {
     }
 
     private void rename(FileInfo info, String baseFolder) {
-        String text = JOptionPane.showInputDialog(bundle.getString("please_new_name"), info.getName());
+        String text = JOptionPane.showInputDialog(App.getAppWindow(), bundle.getString("please_new_name"), info.getName());
         if (text != null && !text.isEmpty()) {
             renameAsync(info.getPath(), PathUtils.combineUnix(PathUtils.getParent(info.getPath()), text), baseFolder);
         }
@@ -554,7 +555,7 @@ public class SshMenuHandler {
     private void delete(FileInfo[] targetList, String baseFolder) {
         boolean delete = true;
         if (App.getGlobalSettings().isConfirmBeforeDelete()) {
-            delete = JOptionPane.showConfirmDialog(null, bundle.getString("delete_selected_files")) == JOptionPane.YES_OPTION;
+            delete = JOptionPane.showConfirmDialog(getAppWindow(), bundle.getString("delete_selected_files")) == JOptionPane.YES_OPTION;
         }
         if (!delete) {
             return;
