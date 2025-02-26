@@ -34,6 +34,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static muon.app.util.PlatformUtils.IS_LINUX;
+import static muon.app.util.PlatformUtils.IS_MAC;
 
 /**
  * @author subhro
@@ -270,7 +271,12 @@ public class SshClient2 implements Closeable {
                 sshj.registerX11Forwarder(new MuonSocketForwardingConnectListener(
                         SshUtil.socketAddress("/tmp/.X11-unix/X0")
                 ));
-            } else {
+            } else if(IS_MAC){
+                sshj.registerX11Forwarder(new MuonSocketForwardingConnectListener(
+                        SshUtil.socketAddress("/private/tmp/com.apple.launchd.ezzemjFmFP/org.xquartz:0")
+                ));
+            }
+            else {
                 sshj.registerX11Forwarder(new SocketForwardingConnectListener(
                         new InetSocketAddress("localhost", 6000)
                 ));
