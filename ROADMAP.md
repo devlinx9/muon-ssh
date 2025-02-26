@@ -17,6 +17,7 @@ This document outlines the current status, upcoming releases, and future plans f
 - [x] [#110](https://github.com/devlinx9/muon-ssh/issues/110): Master password protect nothing
 - [x] [#75](https://github.com/devlinx9/muon-ssh/issues/75): Cannot open file on local machine through file browser
 - [x] [#104](https://github.com/devlinx9/muon-ssh/issues/104): Settings not saving
+- [x] [#117](https://github.com/devlinx9/muon-ssh/issues/117): Cursor doesn't not appear.
 
 ### Features:
 - [x] Open in second screen by default

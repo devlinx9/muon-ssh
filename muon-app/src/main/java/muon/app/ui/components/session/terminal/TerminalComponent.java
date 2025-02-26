@@ -69,6 +69,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
             contentPane.repaint();
             tty = new SshTtyConnector(info, command, sessionContentPanel);
             term.setTtyConnector(tty);
+            term.getTerminal().setCursorVisible(true);
             term.start();
         });
         reconnectionBox.add(Box.createHorizontalGlue());
