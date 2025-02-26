@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static muon.app.App.bundle;
+import static muon.app.util.PlatformUtils.IS_MAC;
+import static muon.app.util.PlatformUtils.IS_WINDOWS;
 
 
 @Slf4j
@@ -69,11 +71,16 @@ public class LocalMenuHandler {
         mOpenInNewTab = new JMenuItem(bundle.getString("open_new_tab"));
         mOpenInNewTab.addActionListener(e -> openNewTab());
 
-        mOpenInFileExplorer = new JMenuItem(
-                App.IS_WINDOWS ? "Open in Windows Explorer" : (App.IS_MAC ? "Open in Finder" : "Open in File Browser"));
+        if (IS_WINDOWS) {
+            mOpenInFileExplorer = new JMenuItem(
+                    "Open in Windows Explorer");
+        } else {
+            mOpenInFileExplorer = new JMenuItem(
+                    IS_MAC ? "Open in Finder" : "Open in File Browser");
+        }
         mOpenInFileExplorer.addActionListener(e -> {
             try {
-                PlatformUtils.openFolderInExplorer(folderView.getSelectedFiles()[0].getPath(), null);
+                PlatformUtils.openFolderInFileBrowser(folderView.getSelectedFiles()[0].getPath());
             } catch (FileNotFoundException e1) {
                 log.error(e1.getMessage(), e1);
             }

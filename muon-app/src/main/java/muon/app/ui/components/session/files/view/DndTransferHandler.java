@@ -24,6 +24,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.List;
 
+import static muon.app.util.PlatformUtils.IS_WINDOWS;
+
 @Slf4j
 public class DndTransferHandler extends TransferHandler implements Transferable {
     public static final DataFlavor DATA_FLAVOR_DATA_FILE = new DataFlavor(DndTransferData.class, "data-file");
@@ -49,7 +51,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
     @Override
     public void exportAsDrag(JComponent comp, InputEvent e, int action) {
         if (info != null) {
-            if (App.IS_WINDOWS) {
+            if (IS_WINDOWS) {
                 try {
                     this.tempDir = Files.createTempDirectory(App.APP_INSTANCE_ID).toFile();
                     log.info("New monitor");
@@ -206,7 +208,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
         }
 
         if (DATA_FLAVOR_FILE_LIST.equals(flavor)) {
-            if (App.IS_WINDOWS && tempDir != null) {
+            if (IS_WINDOWS && tempDir != null) {
                 return List.of(tempDir);
             }
         }

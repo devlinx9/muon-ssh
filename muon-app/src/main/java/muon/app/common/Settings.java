@@ -3,7 +3,6 @@ package muon.app.common;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Getter;
 import lombok.Setter;
-import muon.app.App;
 import muon.app.ui.components.settings.DarkTerminalTheme;
 import muon.app.ui.components.settings.EditorEntry;
 import muon.app.util.CollectionHelper;
@@ -16,6 +15,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static muon.app.util.PlatformUtils.IS_MAC;
 
 @Getter
 @Setter
@@ -72,15 +73,15 @@ public class Settings {
     private int defaultHrefBg = DarkTerminalTheme.HREF_BG;
     private Map<String, Integer> keyCodeMap = new CollectionHelper.OrderedDict<String, Integer>()
             .putItem(COPY_KEY, KeyEvent.VK_C).putItem(PASTE_KEY, KeyEvent.VK_V)
-            .putItem(CLEAR_BUFFER, App.IS_MAC ? KeyEvent.VK_K : KeyEvent.VK_L).putItem(FIND_KEY, KeyEvent.VK_F);
+            .putItem(CLEAR_BUFFER, IS_MAC ? KeyEvent.VK_K : KeyEvent.VK_L).putItem(FIND_KEY, KeyEvent.VK_F);
 
     private Map<String, Integer> keyModifierMap = new CollectionHelper.Dict<String, Integer>()
             .putItem(COPY_KEY,
-                     App.IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+                     IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
             .putItem(PASTE_KEY,
-                     App.IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
-            .putItem(CLEAR_BUFFER, App.IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK)
-            .putItem(FIND_KEY, App.IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK);
+                     IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
+            .putItem(CLEAR_BUFFER, IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK)
+            .putItem(FIND_KEY, IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK);
 
     private boolean dualPaneMode = true;
     private boolean listViewEnabled = false;

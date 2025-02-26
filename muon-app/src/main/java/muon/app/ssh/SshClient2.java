@@ -6,6 +6,7 @@ import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.HopEntry;
 import muon.app.ui.components.session.SessionInfo;
+import muon.app.util.SshUtil;
 import muon.app.util.enums.JumpType;
 import net.schmizz.keepalive.KeepAliveProvider;
 import net.schmizz.sshj.DefaultConfig;
@@ -15,21 +16,24 @@ import net.schmizz.sshj.connection.channel.direct.LocalPortForwarder;
 import net.schmizz.sshj.connection.channel.direct.Parameters;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.forwarded.RemotePortForwarder;
+import net.schmizz.sshj.connection.channel.forwarded.SocketForwardingConnectListener;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.transport.Transport;
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import net.schmizz.sshj.userauth.method.AuthKeyboardInteractive;
 import net.schmizz.sshj.userauth.method.AuthNone;
 
 import javax.swing.*;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.ServerSocket;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static muon.app.util.PlatformUtils.IS_LINUX;
 
 /**
  * @author subhro
@@ -175,6 +179,8 @@ public class SshClient2 implements Closeable {
             }
 
             sshj.getConnection().getKeepAlive().setKeepAliveInterval(5);
+            setX11Forwarding();
+
             if (closed.get()) {
                 disconnect();
                 throw new OperationCancelledException();
@@ -258,6 +264,20 @@ public class SshClient2 implements Closeable {
         }
     }
 
+    private void setX11Forwarding() throws IOException {
+        if (info.isUseX11Forwarding()) {
+            if (IS_LINUX) {
+                sshj.registerX11Forwarder(new MuonSocketForwardingConnectListener(
+                        SshUtil.socketAddress("/tmp/.X11-unix/X0")
+                ));
+            } else {
+                sshj.registerX11Forwarder(new SocketForwardingConnectListener(
+                        new InetSocketAddress("localhost", 6000)
+                ));
+            }
+        }
+    }
+
     private void initializeSSHClient() {
         DefaultConfig defaultConfig = new DefaultConfig();
         if (App.getGlobalSettings().isShowMessagePrompt()) {
@@ -333,6 +353,12 @@ public class SshClient2 implements Closeable {
             throw new IOException("Closed by user");
         }
         Session session = sshj.startSession();
+
+        if (info.isUseX11Forwarding()) {
+            // Request X11 forwarding
+            session.reqX11Forwarding("MIT-MAGIC-COOKIE-1", generateSecureRandomCookie(), 0);
+        }
+
         if (closed.get()) {
             disconnect();
             throw new IOException("Closed by user");
@@ -455,5 +481,72 @@ public class SshClient2 implements Closeable {
 
     public Transport getTransport() {
         return this.sshj.getTransport();
+    }
+
+    private String generateSecureRandomCookie() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder cookie = new StringBuilder(32);
+        for (int i = 0; i < 32; i++) {
+            int n = random.nextInt(16);
+            if (n < 10) {
+                cookie.append(n);
+            } else {
+                cookie.append((char) ('a' + (n - 10)));
+            }
+        }
+        return cookie.toString();
+    }
+
+
+    public static void main(String... args) throws IOException, InterruptedException {
+        final SSHClient ssh = new SSHClient();
+        try {
+            // Load known hosts
+            ssh.loadKnownHosts();
+
+            // Allow connections to any host (for testing purposes only)
+            ssh.addHostKeyVerifier(new PromiscuousVerifier());
+
+            // Register X11 forwarding
+            ssh.registerX11Forwarder(new MuonSocketForwardingConnectListener(
+                    SshUtil.socketAddress("/tmp/.X11-unix/X0")
+            ));
+
+            // Connect to the SSH server
+            ssh.connect("localhost");
+
+            // Authenticate using public key
+//                    ssh.authPublickey(System.getProperty("user.name"));
+
+            ssh.authPassword("devlinx", "5*210Diez*");
+
+
+            // Start a session
+            try (Session sess = ssh.startSession()) {
+                // Request X11 forwarding
+                sess.reqX11Forwarding("MIT-MAGIC-COOKIE-1", "b0956167c9ad8f34c8a2788878307dc9", 0);
+
+                // Execute the X11 application (e.g., xcalc)
+                try (Session.Command cmd = sess.exec("/usr/bin/xeyes")) {
+                    // Copy the input stream to the output stream
+                    copyStream(cmd.getInputStream(), System.out);
+
+                    // Wait for the command to complete
+                    cmd.join();
+                }
+            }
+        } finally {
+            // Disconnect the SSH client
+            ssh.disconnect();
+        }
+    }
+
+    // Helper method to copy data from an input stream to an output stream
+    private static void copyStream(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[8192];
+        int len;
+        while ((len = in.read(buffer)) != -1) {
+            out.write(buffer, 0, len);
+        }
     }
 }

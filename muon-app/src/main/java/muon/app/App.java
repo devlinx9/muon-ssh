@@ -48,10 +48,7 @@ public class App {
     private static final String PATH_MESSAGES_FILE = "i18n/messages";
     public static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     public static final SnippetManager SNIPPET_MANAGER = new SnippetManager();
-    public static final boolean IS_MAC = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH)
-            .startsWith("mac");
-    public static final boolean IS_WINDOWS = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH)
-            .contains("windows");
+
     public static final String APP_INSTANCE_ID = UUID.randomUUID().toString();
     public static GraphicalHostKeyVerifier HOST_KEY_VERIFIER;
     public static ResourceBundle bundle;

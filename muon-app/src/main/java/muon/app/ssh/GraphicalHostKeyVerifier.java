@@ -33,7 +33,7 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
 
         int resp = JOptionPane.showConfirmDialog(null,
                 String.format(
-                        App.bundle.getString("unverifiable_host"),
+                        App.bundle.getString("unverifiable_action"),
                         hostname, type, SecurityUtils.getFingerprint(key)));
 
         if (resp == JOptionPane.YES_OPTION) {

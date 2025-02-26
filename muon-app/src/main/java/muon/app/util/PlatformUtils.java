@@ -12,7 +12,6 @@ import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.win32.StdCallLibrary;
 import lombok.extern.slf4j.Slf4j;
-import muon.app.App;
 import muon.app.ui.components.settings.EditorEntry;
 
 import java.io.File;
@@ -22,23 +21,27 @@ import java.util.*;
 
 /**
  * @author subhro
- *
  */
 @Slf4j
 public class PlatformUtils {
-
+    public static final String OS_NAME = "os.name";
+    public static final boolean IS_MAC = System.getProperty(OS_NAME, "").toLowerCase(Locale.ENGLISH)
+            .startsWith("mac");
+    public static final boolean IS_WINDOWS = System.getProperty(OS_NAME, "").toLowerCase(Locale.ENGLISH)
+            .contains("windows");
+    public static final boolean IS_LINUX = System.getProperty(OS_NAME, "").toLowerCase(Locale.ENGLISH)
+            .contains("linux");
     public static final String VISUAL_STUDIO_CODE = "Visual Studio Code";
 
     public static void openWithDefaultApp(File file, boolean openWith) throws IOException {
-        String os = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH);
-        if (os.contains("mac")) {
+        if (IS_MAC) {
             openMac(file);
-        } else if (os.contains("linux")) {
+        } else if (IS_LINUX) {
             openLinux(file);
-        } else if (os.contains("windows")) {
+        } else if (IS_WINDOWS) {
             openWin(file, openWith);
         } else {
-            throw new IOException("Unsupported OS: '" + System.getProperty("os.name", "") + "'");
+            throw new IOException("Unsupported OS: '" + System.getProperty(OS_NAME, "") + "'");
         }
     }
 
@@ -112,31 +115,17 @@ public class PlatformUtils {
 
     /**
      * @param folder folder to open in explorer
-     * @param file   if any file needs to be selected in folder, mentioned in
-     *               previous argument
      */
-    public static void openFolderInExplorer(String folder, String file) throws FileNotFoundException {
-        if (file == null) {
-            openFolder2(folder);
-            return;
-        }
+    public static void openFolderInFileBrowser(String folder) throws FileNotFoundException {
         try {
-            File f = new File(folder, file);
-            if (!f.exists()) {
-                throw new FileNotFoundException();
+            ProcessBuilder builder = new ProcessBuilder();
+            if (PlatformUtils.IS_WINDOWS) {
+                // Windows
+                builder.command(Arrays.asList("explorer", "/select,", folder));
+            } else {
+                // Linux or Mac
+                builder.command(Arrays.asList("xdg-open", folder));
             }
-            ProcessBuilder builder = new ProcessBuilder();
-            builder.command(Arrays.asList("explorer", "/select,", f.getAbsolutePath()));
-            builder.start();
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
-    }
-
-    private static void openFolder2(String folder) {
-        try {
-            ProcessBuilder builder = new ProcessBuilder();
-            builder.command(Arrays.asList("explorer", folder));
             builder.start();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -145,7 +134,7 @@ public class PlatformUtils {
 
     public static List<EditorEntry> getKnownEditors() {
         List<EditorEntry> list = new ArrayList<>();
-        if (App.IS_WINDOWS) {
+        if (IS_WINDOWS) {
             try {
                 String vscode = detectVSCode(false);
                 if (vscode != null) {
@@ -163,7 +152,7 @@ public class PlatformUtils {
 
             try {
                 String npp = Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE,
-                        "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Notepad++", "DisplayIcon");
+                                                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Notepad++", "DisplayIcon");
                 EditorEntry ent = new EditorEntry("Notepad++", npp);
                 list.add(ent);
             } catch (Exception e) {
@@ -172,14 +161,14 @@ public class PlatformUtils {
 
             try {
                 String atom = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER,
-                        "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
+                                                                  "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
                 EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
                 list.add(ent);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 try {
                     String atom = Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE,
-                            "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
+                                                                      "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
                     EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
                     list.add(ent);
                 } catch (Exception e1) {
@@ -187,7 +176,7 @@ public class PlatformUtils {
                 }
             }
 
-        } else if (App.IS_MAC) {
+        } else if (IS_MAC) {
             Map<String, String> knownEditorMap = new CollectionHelper.Dict<String, String>().putItem(
                     VISUAL_STUDIO_CODE, "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code");
             for (String key : knownEditorMap.keySet()) {
@@ -219,7 +208,7 @@ public class PlatformUtils {
         String[] keys = Advapi32Util.registryGetKeys(hkey, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
         for (String key : keys) {
             Map<String, Object> values = Advapi32Util.registryGetValues(hkey,
-                    "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + key);
+                                                                        "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + key);
             if (values.containsKey("DisplayName")) {
                 String text = (values.get("DisplayName") + "").toLowerCase(Locale.ENGLISH);
                 if (text.contains("visual studio code")) {

@@ -78,6 +78,10 @@ public class SessionInfo extends NamedItem implements Serializable {
     @Getter
     private List<PortForwardingRule> portForwardingRules = new ArrayList<>();
 
+    @Setter
+    @Getter
+    private boolean useX11Forwarding = false;
+
     private String password;
 
     /**
@@ -109,6 +113,7 @@ public class SessionInfo extends NamedItem implements Serializable {
         info.setPrivateKeyFile(privateKeyFile);
         info.setUser(user);
         info.setName(name);
+        info.setUseX11Forwarding(useX11Forwarding);
         return info;
     }
 
@@ -127,7 +132,7 @@ public class SessionInfo extends NamedItem implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(host, user, localFolder, remoteFolder, port, favouriteRemoteFolders, favouriteLocalFolders, privateKeyFile, proxyPort, proxyHost, proxyUser, proxyPassword, proxyType, useJumpHosts, jumpType
-                , jumpHosts, portForwardingRules, password);
+                , jumpHosts, portForwardingRules, password, useX11Forwarding);
     }
 
 

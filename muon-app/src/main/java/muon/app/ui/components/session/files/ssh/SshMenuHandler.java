@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 
 import static muon.app.App.bundle;
 import static muon.app.App.getAppWindow;
+import static muon.app.util.PlatformUtils.IS_WINDOWS;
 
 @Slf4j
 public class SshMenuHandler {
@@ -110,7 +111,7 @@ public class SshMenuHandler {
         mOpen.setAccelerator(ksOpen);
 
 
-        if (App.IS_WINDOWS) {
+        if (IS_WINDOWS) {
             mOpenWithMenu = new JMenuItem(bundle.getString("open_with"));
             mOpenWithMenu.addActionListener(e -> {
                 FileInfo fileInfo = folderView.getSelectedFiles()[0];
@@ -422,7 +423,7 @@ public class SshMenuHandler {
                 popup.add(mOpen);
                 count++;
 
-                if (App.IS_WINDOWS) {
+                if (IS_WINDOWS) {
                     popup.add(mOpenWithMenu);
                     count++;
                 }

@@ -43,6 +43,8 @@ public class SessionInfoPanel extends JPanel {
     private JumpHostPanel panJumpHost;
     private PortForwardingPanel panPF;
     private SessionInfo info;
+    private JCheckBox chkUseX11Forwarding;
+
 
     public SessionInfoPanel() {
         createUI();
@@ -89,6 +91,8 @@ public class SessionInfoPanel extends JPanel {
         setProxyPassword(info.getProxyPassword() == null ? new char[0] : info.getProxyPassword().toCharArray());
 
         setJumpHostDetails(info.isUseJumpHosts(), info.getJumpType(), info.getJumpHosts());
+        this.chkUseX11Forwarding.setSelected(info.isUseX11Forwarding());
+
         panPF.setInfo(info);
     }
 
@@ -677,10 +681,10 @@ public class SessionInfoPanel extends JPanel {
             if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 String selectedFile = jfc.getSelectedFile().getAbsolutePath();
                 if (selectedFile.endsWith(".ppk") && !isSupportedPuttyKeyFile(jfc.getSelectedFile())) {
-                        JOptionPane.showMessageDialog(this, bundle.getString("unsupported_key")
-                        );
-                        return;
-                    }
+                    JOptionPane.showMessageDialog(this, bundle.getString("unsupported_key")
+                                                 );
+                    return;
+                }
 
                 inpKeyFile.setText(jfc.getSelectedFile().getAbsolutePath());
             }
@@ -694,6 +698,10 @@ public class SessionInfoPanel extends JPanel {
             ta.setLineWrap(false);
             JOptionPane.showMessageDialog(this, ta, bundle.getString("password"), JOptionPane.PLAIN_MESSAGE);
         });
+
+        chkUseX11Forwarding = new JCheckBox("X11 forwarding");
+
+        chkUseX11Forwarding.addActionListener(e -> info.setUseX11Forwarding(chkUseX11Forwarding.isSelected()));
 
         GridBagConstraints c = new GridBagConstraints();
         c.weightx = 1;
@@ -780,9 +788,15 @@ public class SessionInfoPanel extends JPanel {
         c.insets = new Insets(5, 0, 0, 10);
         panel.add(inpKeyBrowse, c);
 
-        JPanel panel2 = new JPanel(new BorderLayout());
         c.gridx = 0;
         c.gridy = 11;
+        c.gridwidth = 2;
+        c.insets = noInset;
+        panel.add(chkUseX11Forwarding, c);
+
+        JPanel panel2 = new JPanel(new BorderLayout());
+        c.gridx = 0;
+        c.gridy = 12;
         c.gridwidth = 1;
         c.weightx = 1;
         c.weighty = 10;
@@ -808,7 +822,7 @@ public class SessionInfoPanel extends JPanel {
                 return false;
             }
             if (content.contains("Encryption:")
-                    && (content.contains("Encryption: aes256-cbc") || content.contains("Encryption: none"))) {
+                && (content.contains("Encryption: aes256-cbc") || content.contains("Encryption: none"))) {
                 return true;
             }
         } catch (Exception e) {
