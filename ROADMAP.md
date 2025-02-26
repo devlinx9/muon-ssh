@@ -16,13 +16,12 @@ This document outlines the current status, upcoming releases, and future plans f
 - [x] [#90](https://github.com/devlinx9/muon-ssh/issues/90): Key password should not be required to use other features when saved for the session
 - [x] [#110](https://github.com/devlinx9/muon-ssh/issues/110): Master password protect nothing
 - [x] [#75](https://github.com/devlinx9/muon-ssh/issues/75): Cannot open file on local machine through file browser
-- [ ] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo
+- [x] [#104](https://github.com/devlinx9/muon-ssh/issues/104): Settings not saving
 
 ### Features:
 - [x] Open in second screen by default
-- [ ] [#81](https://github.com/devlinx9/muon-ssh/issues/81): X11forward support
+- [x] [#81](https://github.com/devlinx9/muon-ssh/issues/81): X11forward support
 - [ ] [#103](https://github.com/devlinx9/muon-ssh/issues/103): Implement folder downloads.
-- [ ] [#28](https://github.com/devlinx9/muon-ssh/issues/28): Advance permissions for folders and files
 - [ ] Improved documentation and tutorials.
 
 ---

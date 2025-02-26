@@ -20,12 +20,12 @@ import muon.app.ui.laf.AppSkin;
 import muon.app.ui.laf.AppSkinDark;
 import muon.app.ui.laf.AppSkinLight;
 import muon.app.updater.VersionEntry;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import muon.app.util.Constants;
 import muon.app.util.PlatformUtils;
 import muon.app.util.enums.ConflictAction;
 import muon.app.util.enums.Language;
 import muon.app.util.enums.TransferMode;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.swing.*;
 import java.io.File;
@@ -168,8 +168,7 @@ public class App {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
             try {
-                settings = objectMapper.readValue(file, new TypeReference<>() {
-                });
+                settings = objectMapper.readValue(file, Settings.class);
                 return settings;
             } catch (IOException e) {
                 log.error(e.getMessage(), e);

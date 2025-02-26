@@ -102,7 +102,7 @@ public class Settings {
 
     @JsonSetter("fileTransferMode")
     public void setOldFileTransferMode(String s) {
-        if (s == null) {
+        if (s == null || s.equalsIgnoreCase("normal")) {
             fileTransferMode = TransferMode.NORMAL;
         } else if (s.equalsIgnoreCase("prompt")) {
             fileTransferMode = TransferMode.NORMAL;
