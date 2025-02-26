@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -151,6 +152,13 @@ public class LocalMenuHandler {
         if (files.length == 1) {
             FileInfo file = files[0];
             if (file.getType() == FileType.FILE_LINK || file.getType() == FileType.FILE) {
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        PlatformUtils.openWithDefaultApp(new File(file.getPath()), false);
+                    } catch (Exception e) {
+                        log.error(e.getMessage(), e);
+                    }
+                });
             }
         }
     }

@@ -15,8 +15,8 @@ This document outlines the current status, upcoming releases, and future plans f
 - [x] Fix the muonssh import option, set the zip file extension
 - [x] [#90](https://github.com/devlinx9/muon-ssh/issues/90): Key password should not be required to use other features when saved for the session
 - [x] [#110](https://github.com/devlinx9/muon-ssh/issues/110): Master password protect nothing
+- [x] [#75](https://github.com/devlinx9/muon-ssh/issues/75): Cannot open file on local machine through file browser
 - [ ] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo
-- [ ] [#75](https://github.com/devlinx9/muon-ssh/issues/75): Cannot open file on local machine through file browser
 
 ### Features:
 - [x] Open in second screen by default
