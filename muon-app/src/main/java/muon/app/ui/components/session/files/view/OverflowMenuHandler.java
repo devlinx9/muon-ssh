@@ -5,7 +5,7 @@ import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.AbstractFileBrowserView;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.local.LocalFileBrowserView;
-import util.PathUtils;
+import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,9 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static muon.app.App.bundle;
 
 public class OverflowMenuHandler {
-    private final JRadioButtonMenuItem mSortName;
-    private final JRadioButtonMenuItem mSortSize;
-    private final JRadioButtonMenuItem mSortModified;
     private final JRadioButtonMenuItem mSortAsc;
     private final JRadioButtonMenuItem mSortDesc;
     private final JCheckBoxMenuItem mShowHiddenFiles;
@@ -28,7 +25,6 @@ public class OverflowMenuHandler {
     private final JPopupMenu popup;
     private final AbstractFileBrowserView fileBrowserView;
     private final JMenu favouriteLocations;
-    private final JMenu mSortMenu;
     private final FileBrowser fileBrowser;
     private FolderView folderView;
 
@@ -53,11 +49,11 @@ public class OverflowMenuHandler {
 
         ButtonGroup bg1 = new ButtonGroup();
 
-        mSortName = createSortMenuItem("Name", 0, bg1);
+        JRadioButtonMenuItem mSortName = createSortMenuItem("Name", 0, bg1);
 
-        mSortSize = createSortMenuItem("Size", 2, bg1);
+        JRadioButtonMenuItem mSortSize = createSortMenuItem("Size", 2, bg1);
 
-        mSortModified = createSortMenuItem("Modification date", 3, bg1);
+        JRadioButtonMenuItem mSortModified = createSortMenuItem("Modification date", 3, bg1);
 
         ButtonGroup bg2 = new ButtonGroup();
 
@@ -68,7 +64,7 @@ public class OverflowMenuHandler {
         this.favouriteLocations = new JMenu(bundle.getString("bookmarks"));
 
         popup = new JPopupMenu();
-        mSortMenu = new JMenu("Sort");
+        JMenu mSortMenu = new JMenu("Sort");
 
         mSortMenu.add(mSortName);
         mSortMenu.add(mSortSize);

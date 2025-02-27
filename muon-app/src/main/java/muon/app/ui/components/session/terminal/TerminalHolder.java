@@ -7,7 +7,7 @@ import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.terminal.snippets.SnippetPanel;
-import util.FontAwesomeContants;
+import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import javax.swing.event.AncestorEvent;
@@ -134,7 +134,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     @Override
     public String getText() {
-        return "Terminal";
+        return App.bundle.getString("terminal");
     }
 
     public void openNewTerminal(String command) {

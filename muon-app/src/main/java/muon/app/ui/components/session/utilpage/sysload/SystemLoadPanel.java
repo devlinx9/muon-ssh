@@ -1,7 +1,7 @@
 package muon.app.ui.components.session.utilpage.sysload;
 
 import lombok.Setter;
-import util.FormatUtils;
+import muon.app.util.FormatUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -10,9 +10,6 @@ import java.awt.*;
 import static muon.app.App.bundle;
 
 public class SystemLoadPanel extends JPanel {
-    private final LineGraph cpuGraph;
-    private final LineGraph memGraph;
-    private final LineGraph swpGraph;
     private final double[] cpuStats = new double[10];
     private final double[] memStats = new double[10];
     private final double[] swpStats = new double[10];
@@ -43,7 +40,7 @@ public class SystemLoadPanel extends JPanel {
         cpuLabel.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(cpuLabel);
 
-        cpuGraph = new LineGraph();
+        LineGraph cpuGraph = new LineGraph();
         cpuGraph.setValues(cpuStats);
         cpuGraph.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(cpuGraph);
@@ -53,7 +50,7 @@ public class SystemLoadPanel extends JPanel {
         memoryLabel.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(memoryLabel);
 
-        memGraph = new LineGraph();
+        LineGraph memGraph = new LineGraph();
         memGraph.setValues(memStats);
         memGraph.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(memGraph);
@@ -63,7 +60,7 @@ public class SystemLoadPanel extends JPanel {
         swapLabel.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(swapLabel);
 
-        swpGraph = new LineGraph();
+        LineGraph swpGraph = new LineGraph();
         swpGraph.setValues(swpStats);
         swpGraph.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(swpGraph);
@@ -104,7 +101,7 @@ public class SystemLoadPanel extends JPanel {
                                  + (totalMemory != 0
                                     ? (", (Total: " + FormatUtils
                 .humanReadableByteCount(totalMemory, true)
-                                       + ", " + bundle.getString("used2") + ": "
+                                       + ", " + bundle.getString("used") + ": "
                                        + FormatUtils.humanReadableByteCount(usedMemory,
                                                                             true)
                                        + ")")
@@ -115,7 +112,7 @@ public class SystemLoadPanel extends JPanel {
                                   ? (", ( Total: "
                                      + FormatUtils.humanReadableByteCount(totalSwap,
                                                                           true)
-                                     + ", " + bundle.getString("used2") + ": " + FormatUtils
+                                     + ", " + bundle.getString("used") + ": " + FormatUtils
                                              .humanReadableByteCount(usedSwap, true)
                                      + ")")
                                   : ""));

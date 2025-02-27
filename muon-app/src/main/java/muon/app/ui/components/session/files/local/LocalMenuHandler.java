@@ -3,24 +3,27 @@ package muon.app.ui.components.session.files.local;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.common.FileType;
 import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.view.FolderView;
-import util.PathUtils;
-import util.PlatformUtils;
+import muon.app.util.PathUtils;
+import muon.app.util.PlatformUtils;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import static muon.app.App.bundle;
+import static muon.app.util.PlatformUtils.IS_MAC;
+import static muon.app.util.PlatformUtils.IS_WINDOWS;
 
 
 @Slf4j
@@ -33,9 +36,6 @@ public class LocalMenuHandler {
     private JMenuItem mDelete;
     private JMenuItem mNewFile;
     private JMenuItem mNewFolder;
-    private JMenuItem mCopy;
-    private JMenuItem mPaste;
-    private JMenuItem mCut;
     private JMenuItem mAddToFav;
     private JMenuItem mOpen;
     private JMenuItem mOpenInFileExplorer;
@@ -71,11 +71,16 @@ public class LocalMenuHandler {
         mOpenInNewTab = new JMenuItem(bundle.getString("open_new_tab"));
         mOpenInNewTab.addActionListener(e -> openNewTab());
 
-        mOpenInFileExplorer = new JMenuItem(
-                App.IS_WINDOWS ? "Open in Windows Explorer" : (App.IS_MAC ? "Open in Finder" : "Open in File Browser"));
+        if (IS_WINDOWS) {
+            mOpenInFileExplorer = new JMenuItem(
+                    "Open in Windows Explorer");
+        } else {
+            mOpenInFileExplorer = new JMenuItem(
+                    IS_MAC ? "Open in Finder" : "Open in File Browser");
+        }
         mOpenInFileExplorer.addActionListener(e -> {
             try {
-                PlatformUtils.openFolderInExplorer(folderView.getSelectedFiles()[0].getPath(), null);
+                PlatformUtils.openFolderInFileBrowser(folderView.getSelectedFiles()[0].getPath());
             } catch (FileNotFoundException e1) {
                 log.error(e1.getMessage(), e1);
             }
@@ -105,15 +110,15 @@ public class LocalMenuHandler {
         mNewFolder = new JMenuItem(bundle.getString("new_folder"));
         mNewFolder.addActionListener(e -> newFolder(fileBrowserView.getCurrentDirectory()));
 
-        mCopy = new JMenuItem(bundle.getString("copy"));
+        JMenuItem mCopy = new JMenuItem(bundle.getString("copy"));
         mCopy.addActionListener(e -> {
         });
 
-        mPaste = new JMenuItem(bundle.getString("paste"));
+        JMenuItem mPaste = new JMenuItem(bundle.getString("paste"));
         mPaste.addActionListener(e -> {
         });
 
-        mCut = new JMenuItem(bundle.getString("cut"));
+        JMenuItem mCut = new JMenuItem(bundle.getString("cut"));
         mCut.addActionListener(e -> {
         });
 
@@ -154,6 +159,13 @@ public class LocalMenuHandler {
         if (files.length == 1) {
             FileInfo file = files[0];
             if (file.getType() == FileType.FILE_LINK || file.getType() == FileType.FILE) {
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        PlatformUtils.openWithDefaultApp(new File(file.getPath()), false);
+                    } catch (Exception e) {
+                        log.error(e.getMessage(), e);
+                    }
+                });
             }
         }
     }
@@ -195,7 +207,7 @@ public class LocalMenuHandler {
     private void delete(FileInfo[] selectedFiles, String baseFolder) {
         boolean delete = true;
         if (App.getGlobalSettings().isConfirmBeforeDelete()) {
-            delete = JOptionPane.showConfirmDialog(null, "Delete selected files?") == JOptionPane.YES_OPTION;
+            delete = JOptionPane.showConfirmDialog(App.getAppWindow(), bundle.getString("delete_selected_files")) == JOptionPane.YES_OPTION;
         }
         if (!delete) {
             return;

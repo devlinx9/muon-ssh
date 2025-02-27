@@ -20,7 +20,6 @@ import static muon.app.App.bundle;
 public class KeyPage extends UtilPageItemView {
     private RemoteKeyPanel remoteKeyPanel;
     private LocalKeyPanel localKeyPanel;
-    private TabbedPanel tabs;
     private SshKeyHolder keyHolder;
 
     /**
@@ -39,7 +38,7 @@ public class KeyPage extends UtilPageItemView {
     @Override
     protected void createUI() {
         keyHolder = new SshKeyHolder();
-        tabs = new TabbedPanel();
+        TabbedPanel tabs = new TabbedPanel();
         remoteKeyPanel = new RemoteKeyPanel(holder.getInfo(), a -> {
             holder.disableUi();
             holder.EXECUTOR.submit(() -> {

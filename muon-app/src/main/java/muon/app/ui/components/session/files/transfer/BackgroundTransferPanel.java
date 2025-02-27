@@ -2,7 +2,7 @@ package muon.app.ui.components.session.files.transfer;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import util.FontAwesomeContants;
+import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

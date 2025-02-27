@@ -9,9 +9,9 @@ import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
-import util.FontAwesomeContants;
-import util.PathUtils;
-import util.ScriptLoader;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.PathUtils;
+import muon.app.util.ScriptLoader;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -51,13 +51,11 @@ public class SearchPanel extends Page {
     private JRadioButton radAny;
     private JRadioButton radWeek;
     private JRadioButton radCust;
-    private JRadioButton radBoth;
     private JRadioButton radFile;
     private JRadioButton radFolder;
     private JSpinner spDate1;
     private JSpinner spDate2;
     private JTextField txtFolder;
-    private JButton btnSearch;
     private SearchTableModel model;
     private JTable table;
     private JLabel lblStat;
@@ -138,7 +136,7 @@ public class SearchPanel extends Page {
                 criteriaBuffer.append(size).append("c");
                 criteriaBuffer.append(" ");
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Invalid size");
+                JOptionPane.showMessageDialog(null, bundle.getString("invalid_size"));
                 return;
             }
         }
@@ -156,8 +154,8 @@ public class SearchPanel extends Page {
             Date d2 = (Date) spDate2.getValue();
 
             if (!d1.before(d2)) {
-                JOptionPane.showMessageDialog(this,
-                        "Start date greater than last date");
+                JOptionPane.showMessageDialog(this, bundle.getString("invalid_date_range")
+                        );
                 return;
             }
 
@@ -429,7 +427,7 @@ public class SearchPanel extends Page {
         lblLookfor.setAlignmentX(LEFT_ALIGNMENT);
 
         ButtonGroup btnGroup2 = new ButtonGroup();
-        radBoth = new JRadioButton(bundle.getString("both_file_folder"));
+        JRadioButton radBoth = new JRadioButton(bundle.getString("both_file_folder"));
         radBoth.setAlignmentX(LEFT_ALIGNMENT);
         radFile = new JRadioButton(bundle.getString("file_only"));
         radFile.setAlignmentX(LEFT_ALIGNMENT);
@@ -442,7 +440,7 @@ public class SearchPanel extends Page {
 
         radBoth.setSelected(true);
 
-        btnSearch = new JButton(bundle.getString("search"));
+        JButton btnSearch = new JButton(bundle.getString("search"));
         btnSearch.setAlignmentX(LEFT_ALIGNMENT);
 
         btnSearch.addActionListener(e -> find());

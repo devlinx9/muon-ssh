@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.files.AddressBarComboBoxEditor;
-import util.LayoutUtilities;
+import muon.app.util.LayoutUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -17,6 +17,7 @@ import java.io.File;
 
 @Slf4j
 public class AddressBar extends JPanel {
+    public static final String TOGGLE_SELECTED = "toggle.selected";
     private final AddressBarBreadCrumbs addressBar;
     private final JComboBox<String> txtAddressBar;
     private final JButton btnEdit;
@@ -117,7 +118,7 @@ public class AddressBar extends JPanel {
         panBtn.add(btnEdit);
         add(panBtn, BorderLayout.EAST);
         add(panBtn2, BorderLayout.WEST);
-        btnEdit.putClientProperty("toggle.selected", Boolean.FALSE);
+        btnEdit.putClientProperty(TOGGLE_SELECTED, Boolean.FALSE);
     }
 
     public void switchToPathBar() {
@@ -125,7 +126,7 @@ public class AddressBar extends JPanel {
         addrPanel.remove(txtAddressBar);
         addrPanel.add(addressBar);
         btnEdit.setIcon(UIManager.getIcon("AddressBar.edit"));
-        btnEdit.putClientProperty("toggle.selected", Boolean.FALSE);
+        btnEdit.putClientProperty(TOGGLE_SELECTED, Boolean.FALSE);
         btnEdit.setText("\uf023");
     }
 
@@ -134,7 +135,7 @@ public class AddressBar extends JPanel {
         addrPanel.add(txtAddressBar);
         remove(panBtn2);
         btnEdit.setIcon(UIManager.getIcon("AddressBar.toggle"));
-        btnEdit.putClientProperty("toggle.selected", Boolean.TRUE);
+        btnEdit.putClientProperty(TOGGLE_SELECTED, Boolean.TRUE);
         txtAddressBar.getEditor().selectAll();
         btnEdit.setText("\uf13e");
     }
@@ -157,7 +158,7 @@ public class AddressBar extends JPanel {
     }
 
     private boolean isSelected() {
-        return btnEdit.getClientProperty("toggle.selected") == Boolean.TRUE;
+        return btnEdit.getClientProperty(TOGGLE_SELECTED) == Boolean.TRUE;
     }
 
     private void createAndShowPopup() {

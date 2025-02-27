@@ -10,9 +10,9 @@ import muon.app.ssh.SSHRemoteFileInputStream;
 import muon.app.ssh.SSHRemoteFileOutputStream;
 import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.session.FileChangeWatcher.FileModificationInfo;
-import util.OptionPaneUtils;
-import util.PlatformUtils;
-import util.TimeUtils;
+import muon.app.util.OptionPaneUtils;
+import muon.app.util.PlatformUtils;
+import muon.app.util.TimeUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -35,7 +35,6 @@ import static muon.app.App.bundle;
 public class ExternalEditorHandler extends JDialog {
     private final JProgressBar progressBar;
     private final JLabel progressLabel;
-    private final JButton btnCanel;
     private final JFrame frame;
     private final AtomicBoolean stopFlag = new AtomicBoolean(false);
     private FileChangeWatcher fileWatcher;
@@ -53,7 +52,7 @@ public class ExternalEditorHandler extends JDialog {
         progressLabel = new JLabel("Transferring...");
         progressLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
         progressLabel.setFont(App.SKIN.getDefaultFont().deriveFont(18.0f));
-        btnCanel = new JButton(bundle.getString("cancel"));
+        JButton btnCanel = new JButton(bundle.getString("cancel"));
         Box bottomBox = Box.createHorizontalBox();
         bottomBox.add(Box.createHorizontalGlue());
         bottomBox.add(btnCanel);

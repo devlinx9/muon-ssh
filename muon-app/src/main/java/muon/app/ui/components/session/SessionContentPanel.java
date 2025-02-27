@@ -24,8 +24,8 @@ import muon.app.ui.components.session.processview.ProcessViewer;
 import muon.app.ui.components.session.search.SearchPanel;
 import muon.app.ui.components.session.terminal.TerminalHolder;
 import muon.app.ui.components.session.utilpage.UtilityPage;
-import util.Constants;
-import util.LayoutUtilities;
+import muon.app.util.LayoutUtilities;
+import muon.app.util.enums.ConflictAction;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;
@@ -42,6 +42,7 @@ import java.util.function.Consumer;
  */
 @Slf4j
 public class SessionContentPanel extends JPanel implements PageHolder, CachedCredentialProvider {
+    public static final String PAGE_ID = "pageId";
     public final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
     @Getter
@@ -49,25 +50,20 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final JRootPane rootPane;
-    private final JPanel contentPane;
     private final DisabledPanel disabledPanel;
     private final TransferProgressPanel progressPanel = new TransferProgressPanel();
     private final TabbedPage[] pages;
     public final FileBrowser fileBrowser;
     private final LogViewer logViewer;
     private final TerminalHolder terminalHolder;
-    private final DiskspaceAnalyzer diskspaceAnalyzer;
-    private final SearchPanel searchPanel;
-    private final ProcessViewer processViewer;
-    private final UtilityPage utilityPage;
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final Deque<RemoteSessionInstance> cachedSessions = new LinkedList<>();
 
     @Getter
     private RemoteSessionInstance remoteSessionInstance;
     private ThreadPoolExecutor backgroundTransferPool;
-    private char[] cachedPassword;
-    private char[] cachedPassPhrase;
+    private String cachedPassword;
+    private String cachedPassPhrase;
     private String cachedUser;
     private PortForwardingSession pfSession;
 
@@ -85,10 +81,10 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         fileBrowser = new FileBrowser(info, this, null, this.hashCode());
         logViewer = new LogViewer(this);
         terminalHolder = new TerminalHolder(info, this);
-        diskspaceAnalyzer = new DiskspaceAnalyzer(this);
-        searchPanel = new SearchPanel(this);
-        processViewer = new ProcessViewer(this);
-        utilityPage = new UtilityPage(this);
+        DiskspaceAnalyzer diskspaceAnalyzer = new DiskspaceAnalyzer(this);
+        SearchPanel searchPanel = new SearchPanel(this);
+        ProcessViewer processViewer = new ProcessViewer(this);
+        UtilityPage utilityPage = new UtilityPage(this);
 
         Page[] pageArr;
         if (App.getGlobalSettings().isFirstFileBrowserView()) {
@@ -107,7 +103,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             TabbedPage tabbedPage = new TabbedPage(pageArr[i], this);
             this.pages[i] = tabbedPage;
             this.cardPanel.add(tabbedPage.getPage(), tabbedPage.getId());
-            pageArr[i].putClientProperty("pageId", tabbedPage.getId());
+            pageArr[i].putClientProperty(PAGE_ID, tabbedPage.getId());
         }
 
         LayoutUtilities.equalizeSize(this.pages);
@@ -118,12 +114,12 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
 
         contentTabs.add(Box.createHorizontalGlue());
 
-        this.contentPane = new JPanel(new BorderLayout(), true);
-        this.contentPane.add(contentTabs, BorderLayout.NORTH);
-        this.contentPane.add(this.cardPanel);
+        JPanel contentPane = new JPanel(new BorderLayout(), true);
+        contentPane.add(contentTabs, BorderLayout.NORTH);
+        contentPane.add(this.cardPanel);
 
         this.rootPane = new JRootPane();
-        this.rootPane.setContentPane(this.contentPane);
+        this.rootPane.setContentPane(contentPane);
 
         this.add(this.rootPane);
 
@@ -205,17 +201,17 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     }
 
     public void openLog(FileInfo remoteFile) {
-        showPage(this.logViewer.getClientProperty("pageId") + "");
+        showPage(this.logViewer.getClientProperty(PAGE_ID) + "");
         logViewer.openLog(remoteFile);
     }
 
     public void openFileInBrowser(String path) {
-        showPage(this.fileBrowser.getClientProperty("pageId") + "");
+        showPage(this.fileBrowser.getClientProperty(PAGE_ID) + "");
         fileBrowser.openPath(path);
     }
 
     public void openTerminal(String command) {
-        showPage(this.terminalHolder.getClientProperty("pageId") + "");
+        showPage(this.terminalHolder.getClientProperty(PAGE_ID) + "");
         this.terminalHolder.openNewTerminal(command);
     }
 
@@ -262,7 +258,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         }
     }
 
-    public void uploadInBackground(FileInfo[] localFiles, String targetRemoteDirectory, Constants.ConflictAction confiAction) {
+    public void uploadInBackground(FileInfo[] localFiles, String targetRemoteDirectory, ConflictAction confiAction) {
         RemoteSessionInstance instance = createBackgroundSession();
         FileSystem sourceFs = new LocalFileSystem();
         FileSystem targetFs = instance.getSshFs();
@@ -271,7 +267,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         App.addUpload(new BackgroundFileTransfer(transfer, instance, this));
     }
 
-    public void downloadInBackground(FileInfo[] remoteFiles, String targetLocalDirectory, Constants.ConflictAction confiAction) {
+    public void downloadInBackground(FileInfo[] remoteFiles, String targetLocalDirectory, ConflictAction confiAction) {
         FileSystem targetFs = new LocalFileSystem();
         RemoteSessionInstance instance = createBackgroundSession();
         SshFileSystem sourceFs = instance.getSshFs();
@@ -308,22 +304,22 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     }
 
     @Override
-    public synchronized char[] getCachedPassword() {
+    public synchronized String getCachedPassword() {
         return cachedPassword;
     }
 
     @Override
-    public synchronized void cachePassword(char[] password) {
+    public synchronized void cachePassword(String password) {
         this.cachedPassword = password;
     }
 
     @Override
-    public synchronized char[] getCachedPassPhrase() {
+    public synchronized String getCachedPassPhrase() {
         return cachedPassPhrase;
     }
 
     @Override
-    public synchronized void setCachedPassPhrase(char[] cachedPassPhrase) {
+    public synchronized void setCachedPassPhrase(String cachedPassPhrase) {
         this.cachedPassPhrase = cachedPassPhrase;
     }
 

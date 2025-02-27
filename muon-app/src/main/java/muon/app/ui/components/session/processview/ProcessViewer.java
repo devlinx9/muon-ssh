@@ -8,10 +8,10 @@ import muon.app.App;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
-import muon.app.ui.components.session.processview.ProcessListPanel.CommandMode;
-import util.FontAwesomeContants;
-import util.ScriptLoader;
-import util.SudoUtils;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.ScriptLoader;
+import muon.app.util.SudoUtils;
+import muon.app.util.enums.CommandMode;
 
 import javax.swing.*;
 import java.awt.*;

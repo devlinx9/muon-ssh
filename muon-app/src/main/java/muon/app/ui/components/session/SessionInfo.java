@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import muon.app.util.enums.JumpType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -77,35 +78,11 @@ public class SessionInfo extends NamedItem implements Serializable {
     @Getter
     private List<PortForwardingRule> portForwardingRules = new ArrayList<>();
 
+    @Setter
+    @Getter
+    private boolean useX11Forwarding = false;
+
     private String password;
-
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
 
     /**
      * @return the password
@@ -136,6 +113,7 @@ public class SessionInfo extends NamedItem implements Serializable {
         info.setPrivateKeyFile(privateKeyFile);
         info.setUser(user);
         info.setName(name);
+        info.setUseX11Forwarding(useX11Forwarding);
         return info;
     }
 
@@ -154,10 +132,8 @@ public class SessionInfo extends NamedItem implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(host, user, localFolder, remoteFolder, port, favouriteRemoteFolders, favouriteLocalFolders, privateKeyFile, proxyPort, proxyHost, proxyUser, proxyPassword, proxyType, useJumpHosts, jumpType
-                , jumpHosts, portForwardingRules, password);
+                , jumpHosts, portForwardingRules, password, useX11Forwarding);
     }
 
-    public enum JumpType {
-        TCP_FORWARDING, PORT_FORWARDING
-    }
+
 }

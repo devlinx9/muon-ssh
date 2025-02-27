@@ -2,6 +2,7 @@ package muon.app.ui.components.session.processview;
 
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
+import muon.app.util.enums.CommandMode;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -21,9 +22,7 @@ public class ProcessListPanel extends JPanel {
     private final ProcessTableModel model;
     private final JTable table;
     private final JTextField txtFilter;
-    private final RowFilter<ProcessTableModel, Integer> rowFilter;
     private final JPopupMenu killPopup;
-    private final JPopupMenu prioPopup;
     private final BiConsumer<String, CommandMode> consumer;
     private final JLabel lblProcessCount;
     private JButton btnKill;
@@ -49,7 +48,7 @@ public class ProcessListPanel extends JPanel {
 
         lblProcessCount = new JLabel(bundle.getString("total_processes") + " 0");
 
-        rowFilter = new RowFilter<>() {
+        RowFilter<ProcessTableModel, Integer> rowFilter = new RowFilter<>() {
             @Override
             public boolean include(
                     Entry<? extends ProcessTableModel, ? extends Integer> entry) {
@@ -144,7 +143,7 @@ public class ProcessListPanel extends JPanel {
 
         killPopup.pack();
 
-        prioPopup = new JPopupMenu();
+        JPopupMenu prioPopup = new JPopupMenu();
         JMenuItem mPrio = new JMenuItem(bundle.getString("change_priority"));
         JMenuItem mPrioAsRoot = new JMenuItem(bundle.getString("change_priority_sudo"));
         prioPopup.add(mPrio);
@@ -212,9 +211,7 @@ public class ProcessListPanel extends JPanel {
         }
     }
 
-    public enum CommandMode {
-        KILL_AS_ROOT, KILL_AS_USER, LIST_PROCESS
-    }
+
 
     private void enableProcessesButtons(){
         btnKill.setEnabled(table.getSelectedRows().length > 0);

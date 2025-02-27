@@ -1,13 +1,13 @@
 package muon.app.ssh;
 
 public interface CachedCredentialProvider {
-    char[] getCachedPassword();
+    String getCachedPassword();
 
-    void cachePassword(char[] password);
+    void cachePassword(String password);
 
-    char[] getCachedPassPhrase();
+    String getCachedPassPhrase();
 
-    void setCachedPassPhrase(char[] cachedPassPhrase);
+    void setCachedPassPhrase(String cachedPassPhrase);
 
     String getCachedUser();
 

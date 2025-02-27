@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import muon.app.common.Settings;
+import muon.app.common.SnippetManager;
 import muon.app.ssh.GraphicalHostKeyVerifier;
 import muon.app.ssh.GraphicalInputBlocker;
 import muon.app.ssh.InputBlocker;
@@ -18,10 +20,12 @@ import muon.app.ui.laf.AppSkin;
 import muon.app.ui.laf.AppSkinDark;
 import muon.app.ui.laf.AppSkinLight;
 import muon.app.updater.VersionEntry;
+import muon.app.util.Constants;
+import muon.app.util.PlatformUtils;
+import muon.app.util.enums.ConflictAction;
+import muon.app.util.enums.Language;
+import muon.app.util.enums.TransferMode;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import util.Constants;
-import util.Language;
-import util.PlatformUtils;
 
 import javax.swing.*;
 import java.io.File;
@@ -32,8 +36,8 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static util.Constants.APPLICATION_VERSION;
-import static util.Constants.UPDATE_URL;
+import static muon.app.util.Constants.APPLICATION_VERSION;
+import static muon.app.util.Constants.UPDATE_URL;
 
 @Slf4j
 public class App {
@@ -44,10 +48,7 @@ public class App {
     private static final String PATH_MESSAGES_FILE = "i18n/messages";
     public static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     public static final SnippetManager SNIPPET_MANAGER = new SnippetManager();
-    public static final boolean IS_MAC = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH)
-            .startsWith("mac");
-    public static final boolean IS_WINDOWS = System.getProperty("os.name", "").toLowerCase(Locale.ENGLISH)
-            .contains("windows");
+
     public static final String APP_INSTANCE_ID = UUID.randomUUID().toString();
     public static GraphicalHostKeyVerifier HOST_KEY_VERIFIER;
     public static ResourceBundle bundle;
@@ -73,7 +74,6 @@ public class App {
         setBundleLanguage();
 
         Security.addProvider(new BouncyCastleProvider());
-
         Security.setProperty("networkaddress.cache.ttl", "1");
         Security.setProperty("networkaddress.cache.negative.ttl", "1");
         Security.setProperty("crypto.policy", "unlimited");
@@ -102,14 +102,13 @@ public class App {
         }
 
         loadSettings();
+        if (firstRun && !isMuonPath) {
+            SessionExportImport.importOnFirstRun();
+        }
 
         if (settings.isManualScaling()) {
             System.setProperty("sun.java2d.uiScale.enabled", "true");
             System.setProperty("sun.java2d.uiScale", String.format("%.2f", settings.getUiScaling()));
-        }
-
-        if (firstRun && !isMuonPath) {
-            SessionExportImport.importOnFirstRun();
         }
 
         if (settings.getEditors().isEmpty()) {
@@ -120,8 +119,8 @@ public class App {
         }
 
         setBundleLanguage();
-        Constants.TransferMode.update();
-        Constants.ConflictAction.update();
+        TransferMode.update();
+        ConflictAction.update();
 
 
         SKIN = settings.isUseGlobalDarkTheme() ? new AppSkinDark() : new AppSkinLight();
@@ -132,7 +131,7 @@ public class App {
             int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
             log.info("maxKeySize: {}", maxKeySize);
             if (maxKeySize < Integer.MAX_VALUE) {
-                JOptionPane.showMessageDialog(null, App.bundle.getString("unlimited cryptography"));
+                JOptionPane.showMessageDialog(null, App.bundle.getString("unlimited_cryptography"));
             }
         } catch (NoSuchAlgorithmException e1) {
             log.error(e1.getMessage(), e1);
@@ -169,8 +168,7 @@ public class App {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
             try {
-                settings = objectMapper.readValue(file, new TypeReference<>() {
-                });
+                settings = objectMapper.readValue(file, Settings.class);
                 return settings;
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
@@ -253,6 +251,7 @@ public class App {
 
         Locale locale = new Locale.Builder().setLanguage(language.getLangAbbr()).build();
         bundle = ResourceBundle.getBundle(PATH_MESSAGES_FILE, locale);
+        Locale.setDefault(locale);
 
     }
 }

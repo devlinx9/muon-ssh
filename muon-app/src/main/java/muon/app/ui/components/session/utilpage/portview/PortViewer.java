@@ -9,7 +9,7 @@ import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
-import util.SudoUtils;
+import muon.app.util.SudoUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,11 +32,8 @@ public class PortViewer extends UtilPageItemView {
     public static final String LSOF_COMMAND = "sh -c \"export PATH=$PATH:/usr/sbin; echo;echo "
             + SEPARATOR + ";lsof -b -n -i tcp -P -s tcp:LISTEN -F cn 2>&1\"";
     private final SocketTableModel model = new SocketTableModel();
-    private JTable table;
-    private JButton btnRefresh;
     private JTextField txtFilter;
     private JCheckBox chkRunAsSuperUser;
-    private JButton btnFilter;
     private List<SocketEntry> list;
 
     /**
@@ -131,14 +128,14 @@ public class PortViewer extends UtilPageItemView {
 
     @Override
     protected void createUI() {
-        table = new JTable(model);
+        JTable table = new JTable(model);
         table.setShowGrid(false);
         table.setIntercellSpacing(new Dimension(0, 0));
         table.setFillsViewportHeight(true);
 
         JLabel lbl1 = new JLabel(bundle.getString("search"));
         txtFilter = new SkinnedTextField(30);
-        btnFilter = new JButton(bundle.getString("search"));
+        JButton btnFilter = new JButton(bundle.getString("search"));
 
         Box b1 = Box.createHorizontalBox();
         b1.add(lbl1);
@@ -155,7 +152,7 @@ public class PortViewer extends UtilPageItemView {
 
         Box box = Box.createHorizontalBox();
         box.setBorder(new EmptyBorder(10, 0, 0, 0));
-        btnRefresh = new JButton(bundle.getString("refresh"));
+        JButton btnRefresh = new JButton(bundle.getString("refresh"));
         btnRefresh.addActionListener(e -> getListingSockets());
 
         chkRunAsSuperUser = new JCheckBox(

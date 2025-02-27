@@ -2,7 +2,7 @@ package muon.app.ui.components.session.files.ssh;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.ssh.RemoteSessionInstance;
-import util.PathUtils;
+import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.util.LinkedHashMap;
@@ -64,13 +64,12 @@ public class ArchiveOperation {
         archivePath = archivePath.toLowerCase(Locale.ENGLISH);
         for (String key : extractCommands.keySet()) {
             if (archivePath.endsWith(key) && (key.equals(".xz")
-                    || key.equals(".gz") || key.equals(".bz2"))) {
-                if (!(archivePath.endsWith(".tar.xz")
+                    || key.equals(".gz") || key.equals(".bz2")) && !(archivePath.endsWith(".tar.xz")
                         || archivePath.endsWith(".tar.gz")
                         || archivePath.endsWith(".tar.bz2"))) {
                     return true;
                 }
-            }
+
         }
         return false;
     }

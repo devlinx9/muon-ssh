@@ -88,8 +88,9 @@ public class AddressBarBreadCrumbs extends JPanel {
         segments = path.split(unix ? "\\/" : "\\\\");
         for (int i = 0; i < segments.length; i++) {
             String text = segments[i];
-            if (text.isEmpty())
+            if (text.isEmpty()) {
                 continue;
+            }
             JButton btn = new JButton(segments[i]);
             btn.putClientProperty("Nimbus.Overrides", this.toolBarButtonSkin);
             btn.addMouseListener(ma);

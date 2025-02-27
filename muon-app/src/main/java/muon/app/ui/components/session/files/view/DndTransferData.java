@@ -3,6 +3,8 @@ package muon.app.ui.components.session.files.view;
 import lombok.Getter;
 import lombok.Setter;
 import muon.app.common.FileInfo;
+import muon.app.util.enums.DndSourceType;
+import muon.app.util.enums.TransferAction;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -48,11 +50,7 @@ public class DndTransferData implements Serializable {
         this.sessionHashcode = info;
     }
 
-    public enum DndSourceType {
-        SSH, SFTP, FTP, LOCAL
-    }
 
-    public enum TransferAction {
-        DRAG_DROP, CUT, COPY
-    }
+
+
 }

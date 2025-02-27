@@ -6,7 +6,7 @@ package muon.app.ui.components.session.logviewer;
 import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
-import util.CollectionHelper;
+import muon.app.util.CollectionHelper;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -128,7 +128,7 @@ public class StartPage extends JPanel {
     private String promptLogPath() {
         JTextField txt = new SkinnedTextField(30);
         if (JOptionPane.showOptionDialog(this,
-                new Object[]{"Please provide full path of the log file",
+                new Object[]{bundle.getString("provide_log_file_path"),
                         txt},
                 "Input", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null, null,

@@ -13,8 +13,8 @@ import muon.app.ui.components.session.utilpage.portview.PortViewer;
 import muon.app.ui.components.session.utilpage.services.ServicePanel;
 import muon.app.ui.components.session.utilpage.sysinfo.SysInfoPanel;
 import muon.app.ui.components.session.utilpage.sysload.SysLoadPage;
-import util.FontAwesomeContants;
-import util.LayoutUtilities;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.LayoutUtilities;
 
 import javax.swing.*;
 import javax.swing.border.MatteBorder;

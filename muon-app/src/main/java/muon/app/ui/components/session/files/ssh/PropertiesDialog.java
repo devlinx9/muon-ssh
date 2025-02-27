@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.common.FileType;
 import muon.app.ui.components.session.files.FileBrowser;
-import util.FormatUtils;
+import muon.app.util.FormatUtils;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,26 +32,19 @@ public class PropertiesDialog extends JDialog {
     public static final int S_IROTH = 00004; // read by others
     public static final int S_IWOTH = 00002; // write by others
     public static final int S_IXOTH = 00001; // execute/search by others
-    static final int[] perms = new int[]{S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP,
-            S_IWGRP, S_IXGRP, S_IROTH, S_IWOTH, S_IXOTH};
+    static final int[] PERMS = new int[]{S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP,
+                                         S_IWGRP, S_IXGRP, S_IROTH, S_IWOTH, S_IXOTH};
     private static final String USER_GROUP_REGEX = "^[^\\s]+\\s+[^\\s]+\\s+([^\\s]+)\\s+([^\\s]+)";
     private static final Pattern DU_PATTERN = Pattern
             .compile("([\\d]+)\\s+(.+)");
     private static final Pattern DF_PATTERN = Pattern.compile(
             "[^\\s]+\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+%)\\s+[^\\s]+");
     private final JCheckBox[] chkPermissons;
-    private final JLabel lblOwner;
-    private final JLabel lblGroup;
-    private final JLabel lblOther;
-    private final String[] labels = new String[]{"read", "write", "execute"};
     private final JTextField txtSize;
     private final JTextField txtFreeSpace;
-    private final JButton btnGetDiskSpaceUsed;
     private final FileBrowser fileBrowser;
     private final AtomicBoolean modified = new AtomicBoolean(false);
     private final JButton btnOK;
-    private final JButton btnCancel;
-    private int permissions;
     @Getter
     private int dialogResult = JOptionPane.CANCEL_OPTION;
     private FileInfo[] details;
@@ -75,6 +68,7 @@ public class PropertiesDialog extends JDialog {
         setTitle("Properties");
         chkPermissons = new JCheckBox[9];
         for (int i = 0; i < 9; i++) {
+            String[] labels = new String[]{"read", "write", "execute"};
             chkPermissons[i] = new JCheckBox(labels[i % 3]);
             chkPermissons[i].setAlignmentX(Box.LEFT_ALIGNMENT);
             chkPermissons[i].addActionListener(e -> {
@@ -82,15 +76,16 @@ public class PropertiesDialog extends JDialog {
                 updateButtonState();
             });
         }
-        lblOwner = new JLabel("Owner permissions");
+        JLabel lblOwner = new JLabel("Owner permissions");
         lblOwner.setAlignmentX(Box.LEFT_ALIGNMENT);
-        lblGroup = new JLabel("Group permissions");
+        JLabel lblGroup = new JLabel("Group permissions");
         lblGroup.setAlignmentX(Box.LEFT_ALIGNMENT);
-        lblOther = new JLabel("Other permissions");
+        JLabel lblOther = new JLabel("Other permissions");
         lblOther.setAlignmentX(Box.LEFT_ALIGNMENT);
 
         Box b = Box.createVerticalBox();
 
+        JButton btnGetDiskSpaceUsed;
         if (multimode) {
             txtFileCount = new JTextField(30);
             b.add(addPropertyField(txtFileCount, "Total"));
@@ -186,7 +181,7 @@ public class PropertiesDialog extends JDialog {
             chmodAsync(getPermissions(), details);
             dispose();
         });
-        btnCancel = new JButton(bundle.getString("cancel"));
+        JButton btnCancel = new JButton(bundle.getString("cancel"));
         btnCancel.addActionListener(e -> {
             dialogResult = JOptionPane.CANCEL_OPTION;
             dispose();
@@ -199,7 +194,7 @@ public class PropertiesDialog extends JDialog {
         b.add(Box.createVerticalGlue());
 
         int w = Math.max(btnOK.getPreferredSize().width,
-                btnCancel.getPreferredSize().width);
+                         btnCancel.getPreferredSize().width);
         btnOK.setPreferredSize(
                 new Dimension(w, btnOK.getPreferredSize().height));
         btnCancel.setPreferredSize(
@@ -210,13 +205,13 @@ public class PropertiesDialog extends JDialog {
         add(b);
         add(b2, BorderLayout.SOUTH);
         pack();
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(App.getAppWindow());
     }
 
     private boolean[] extractPermissions(int permissions) {
         boolean[] perms = new boolean[9];
         for (int i = 0; i < 9; i++) {
-            perms[i] = (permissions & PropertiesDialog.perms[i]) != 0;
+            perms[i] = (permissions & PropertiesDialog.PERMS[i]) != 0;
         }
         return perms;
     }
@@ -227,7 +222,7 @@ public class PropertiesDialog extends JDialog {
         log.info("Extra: {}", details.getExtra());
         btnCalculate2.setEnabled(details.getType() == FileType.DIRECTORY
                 || details.getType() == FileType.DIR_LINK);
-        this.permissions = details.getPermission();
+        int permissions = details.getPermission();
         if (this.pattern != null && details.getExtra() != null
                 && !details.getExtra().isEmpty()) {
             Matcher matcher = pattern.matcher(details.getExtra());
@@ -278,7 +273,8 @@ public class PropertiesDialog extends JDialog {
                     FormatUtils.humanReadableByteCount(totalSize, true));
         }
         btnCalculate1.setEnabled(hasAnyDir);
-        int fc = 0, dc = 0;
+        int fc = 0;
+        int dc = 0;
         for (FileInfo f : files) {
             if (f.getType() == FileType.DIRECTORY
                     || f.getType() == FileType.DIR_LINK) {
@@ -294,7 +290,7 @@ public class PropertiesDialog extends JDialog {
         int perms = 0;
         for (int i = 0; i < 9; i++) {
             if (chkPermissons[i].isSelected()) {
-                perms |= PropertiesDialog.perms[i];
+                perms |= PropertiesDialog.PERMS[i];
             }
         }
         return perms;
@@ -396,8 +392,8 @@ public class PropertiesDialog extends JDialog {
                     return;
                 }
                 if (!ret && !fileBrowser.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null,
-                                "Some errors encountered during the operation");
+                        JOptionPane.showMessageDialog(null, bundle.getString("operation_errors")
+                                );
                     }
 
                 for (String line : output.toString().split("\n")) {
@@ -432,13 +428,12 @@ public class PropertiesDialog extends JDialog {
                     biConsumer.accept(null, false);
                     return;
                 }
-                if (!ret) {
-                    if (!fileBrowser.isSessionClosed()) {
+                if (!ret && !fileBrowser.isSessionClosed()) {
                         JOptionPane.showMessageDialog(null,
-                                "Some errors encountered during the operation");
+                                                      bundle.getString("operation_errors"));
                     }
 
-                }
+
                 String[] lines = output.toString().split("\n");
                 if (lines.length >= 2) {
                     Matcher matcher = DF_PATTERN.matcher(lines[1]);

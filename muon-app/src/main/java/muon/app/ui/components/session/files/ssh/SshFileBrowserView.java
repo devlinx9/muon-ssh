@@ -13,8 +13,11 @@ import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.view.AddressBar;
 import muon.app.ui.components.session.files.view.DndTransferData;
 import muon.app.ui.components.session.files.view.DndTransferHandler;
-import util.Constants;
-import util.PathUtils;
+import muon.app.util.PathUtils;
+import muon.app.util.enums.DndSourceType;
+import muon.app.util.enums.PanelOrientation;
+import muon.app.util.enums.TransferAction;
+import muon.app.util.enums.TransferMode;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -22,6 +25,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import static muon.app.App.bundle;
 
 @Slf4j
 public class SshFileBrowserView extends AbstractFileBrowserView {
@@ -34,7 +39,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
         this.menuHandler = new SshMenuHandler(fileBrowser, this);
         this.menuHandler.initMenuHandler(this.folderView);
         this.transferHandler = new DndTransferHandler(this.folderView, this.fileBrowser.getInfo(), this,
-                                                      DndTransferData.DndSourceType.SSH, this.fileBrowser);
+                                                      DndSourceType.SSH, this.fileBrowser);
         this.folderView.setTransferHandler(transferHandler);
         this.folderView.setFolderViewTransferHandler(transferHandler);
         this.addressPopup = menuHandler.createAddressPopup();
@@ -201,17 +206,17 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
     public boolean handleDrop(DndTransferData transferData) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-            && JOptionPane.showConfirmDialog(null, "Move/copy files?") != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(null, bundle.getString("move_copy_files")) != JOptionPane.YES_OPTION) {
             return false;
         }
         try {
             int sessionHashCode = transferData.getInfo();
             log.info("Session hash code: {}", sessionHashCode);
             FileSystem sourceFs = null;
-            if (sessionHashCode == 0 && transferData.getSourceType() == DndTransferData.DndSourceType.LOCAL) {
+            if (sessionHashCode == 0 && transferData.getSourceType() == DndSourceType.LOCAL) {
                 log.info("Source fs is local");
                 sourceFs = new LocalFileSystem();
-            } else if (transferData.getSourceType() == DndTransferData.DndSourceType.SSH
+            } else if (transferData.getSourceType() == DndSourceType.SSH
                        && sessionHashCode == this.fileBrowser.getInfo().hashCode()) {
                 log.info("Source fs is remote");
                 sourceFs = this.fileBrowser.getSSHFileSystem();
@@ -223,7 +228,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                 if (!this.fileBrowser.selectTransferModeAndConflictAction(holder)) {
                     return false;
                 }
-                if (holder.transferMode == Constants.TransferMode.BACKGROUND) {
+                if (holder.transferMode == TransferMode.BACKGROUND) {
                     this.fileBrowser.getHolder().uploadInBackground(transferData.getFiles(), this.path,
                                                                     holder.conflictAction);
                     return true;
@@ -245,18 +250,18 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                         pwd += "/";
                     }
                     if (parent.equals(pwd)) {
-                        JOptionPane.showMessageDialog(null, "Source and target directory is same!");
+                        JOptionPane.showMessageDialog(null, bundle.getString("same_directory"));
                         return false;
                     }
                 }
 
-                if (transferData.getTransferAction() == DndTransferData.TransferAction.COPY) {
+                if (transferData.getTransferAction() == TransferAction.COPY) {
                     menuHandler.copy(Arrays.asList(transferData.getFiles()), getCurrentDirectory());
                 } else {
                     menuHandler.move(Arrays.asList(transferData.getFiles()), getCurrentDirectory());
                 }
             } else if (sourceFs instanceof SshFileSystem
-                       && (transferData.getSourceType() == DndTransferData.DndSourceType.SFTP)) {
+                       && (transferData.getSourceType() == DndSourceType.SFTP)) {
             }
             log.info("12345: {} {}", sourceFs instanceof SshFileSystem, transferData.getSourceType());
             return true;

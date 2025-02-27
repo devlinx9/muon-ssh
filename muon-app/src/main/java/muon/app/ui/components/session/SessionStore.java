@@ -6,9 +6,11 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.PasswordStore;
-import util.Constants;
+import muon.app.common.PasswordStore;
+import muon.app.ui.components.session.dialog.TreeManager;
+import muon.app.util.Constants;
 
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import java.io.File;
@@ -18,8 +20,14 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
 
+import static muon.app.App.bundle;
+
 @Slf4j
 public class SessionStore {
+
+    protected SessionStore() {
+
+    }
 
     public static synchronized SavedSessionTree load() {
         File file = Paths.get(App.CONFIG_DIR, Constants.SESSION_DB_FILE).toFile();
@@ -41,6 +49,9 @@ public class SessionStore {
                 log.debug("Loading passwords... done");
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
+                JOptionPane.showMessageDialog(App.getAppWindow(),
+                                              String.format(bundle.getString("error_occurred"), e.getMessage()), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                return null;
             }
             return savedSessionTree;
         } catch (IOException e) {
@@ -78,7 +89,11 @@ public class SessionStore {
     public static synchronized SessionFolder convertModelFromTree(DefaultMutableTreeNode node) {
         SessionFolder folder = new SessionFolder();
         folder.setName(node.getUserObject() + "");
-        folder.setId(((NamedItem) node.getUserObject()).getId());
+        String folderId = node.getUserObject().toString();
+        if (!folderId.equals("Empty_Root")) {
+            folderId = ((NamedItem) node.getUserObject()).getId();
+        }
+        folder.setId(folderId == null ? TreeManager.getNewUuid(node) : folderId);
         Enumeration<TreeNode> childrens = node.children();
         while (childrens.hasMoreElements()) {
             DefaultMutableTreeNode c = (DefaultMutableTreeNode) childrens.nextElement();
@@ -141,12 +156,12 @@ public class SessionStore {
 
     public static String preprocessJson(File file) throws IOException {
         String content = new String(Files.readAllBytes(file.toPath()));
-        content = content.replaceAll("\"TcpForwarding\"", "\"TCP_FORWARDING\"");
-        content = content.replaceAll("\"PortForwarding\"", "\"PORT_FORWARDING\"");
-        content = content.replaceAll("\"DragDrop\"", "\"DRAG_DROP\"");
-        content = content.replaceAll("\"DirLink\"", "\"DIR_LINK\"");
-        content = content.replaceAll("\"FileLink\"", "\"FILE_LINK\"");
-        content = content.replaceAll("\"KeyStore\"", "\"KEY_STORE\"");
+        content = content.replace("\"TcpForwarding\"", "\"TCP_FORWARDING\"");
+        content = content.replace("\"PortForwarding\"", "\"PORT_FORWARDING\"");
+        content = content.replace("\"DragDrop\"", "\"DRAG_DROP\"");
+        content = content.replace("\"DirLink\"", "\"DIR_LINK\"");
+        content = content.replace("\"FileLink\"", "\"FILE_LINK\"");
+        content = content.replace("\"KeyStore\"", "\"KEY_STORE\"");
         return content;
     }
 }

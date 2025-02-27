@@ -1,12 +1,15 @@
 package muon.app.ssh;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
-import muon.app.common.*;
+import muon.app.common.InputTransferChannel;
+import muon.app.common.OutputTransferChannel;
 import net.schmizz.sshj.sftp.*;
 import net.schmizz.sshj.sftp.FileMode.Type;
 import net.schmizz.sshj.xfer.FilePermission;
-import util.PathUtils;
+import muon.app.util.PathUtils;
+import muon.app.util.enums.FileType;
 
 import java.io.*;
 import java.nio.file.AccessDeniedException;

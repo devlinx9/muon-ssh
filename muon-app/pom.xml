@@ -7,7 +7,7 @@
     <parent>
         <groupId>muon</groupId>
         <artifactId>muon</artifactId>
-        <version>2.3.0</version>
+        <version>2.4.0</version>
     </parent>
     <groupId>muon-app</groupId>
     <artifactId>muon-app</artifactId>
@@ -24,7 +24,7 @@
         <dependency>
             <groupId>muon-jediterm</groupId>
             <artifactId>muon-jediterm</artifactId>
-            <version>2.3.0</version>
+            <version>2.4.0</version>
         </dependency>
 
         <dependency>
@@ -61,8 +61,8 @@
         <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.70</version>
+            <artifactId>bcprov-jdk18on</artifactId>
+            <version>1.79</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
@@ -110,9 +110,9 @@
 
         <!--https://mvnrepository.com/artifact/com.jcraft/jsch -->
         <dependency>
-            <groupId>com.jcraft</groupId>
+            <groupId>com.github.mwiede</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.1.54</version>
+            <version>0.2.23</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.markusbernhardt/proxy-vole -->
@@ -126,7 +126,15 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.30</version>
-            <scope>provided</scope>  <!-- Ensures it's only used at compile-time -->
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.kohlschutter.junixsocket/junixsocket-core -->
+        <dependency>
+            <groupId>com.kohlschutter.junixsocket</groupId>
+            <artifactId>junixsocket-core</artifactId>
+            <version>2.9.0</version>
+            <type>pom</type>
         </dependency>
 
     </dependencies>
@@ -202,11 +210,11 @@
                             <goal>jdeb</goal>
                         </goals>
                         <configuration>
-                            <controlDir>${basedir}/src/deb/control</controlDir>
+                            <controlDir>${basedir}/deb/control</controlDir>
                             <deb>${project.build.directory}/muonssh_${project.version}.deb</deb>
                             <dataSet>
                                 <data>
-                                    <src>${basedir}/src/deb/opt/muonssh/muonssh-logo.png</src>
+                                    <src>${basedir}/deb/opt/muonssh/muonssh-logo.png</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -217,7 +225,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${basedir}/src/deb/usr/share/applications/muonssh.desktop</src>
+                                    <src>${basedir}/deb/usr/share/applications/muonssh.desktop</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -228,7 +236,7 @@
                                     </mapper>
                                 </data>
                                 <data>
-                                    <src>${basedir}/src/deb/usr/bin/muonssh</src>
+                                    <src>${basedir}/deb/usr/bin/muonssh</src>
                                     <type>file</type>
                                     <mapper>
                                         <type>perm</type>
@@ -267,7 +275,7 @@
                             <goal>launch4j</goal>
                         </goals>
                         <configuration>
-                            <icon>src/exe/muonssh.ico</icon>
+                            <icon>${basedir}/exe/muonssh.ico</icon>
                             <headerType>gui</headerType>
                             <outfile>target/muonssh_${project.version}.exe</outfile>
                             <jar>target/muonssh_${project.version}.jar</jar>
@@ -303,7 +311,7 @@
                 <version>1.15.0</version>
                 <configuration>
                     <plist>
-                        <CFBundleIconFile>src/dmg/muonssh-logo.icns</CFBundleIconFile>
+                        <CFBundleIconFile>dmg/muonssh-logo.icns</CFBundleIconFile>
                         <CFBundleDisplayName>Muon</CFBundleDisplayName>
                         <CFBundleDevelopmentRegion>English</CFBundleDevelopmentRegion>
                         <JVMMainClassName>muon.app.App</JVMMainClassName>

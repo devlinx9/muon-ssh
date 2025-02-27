@@ -6,14 +6,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.common.FileType;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.SkinnedTextField;
-import muon.app.ui.components.session.NewSessionDlg;
+import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
-import util.Constants;
-import util.FontAwesomeContants;
+import muon.app.util.Constants;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -31,6 +31,7 @@ import static muon.app.App.bundle;
 
 @Slf4j
 public class Remote2RemoteTransferDialog extends JDialog {
+    public static final String NEW_LINE_STR = "\"\n";
     private final DefaultListModel<RemoteServerEntry> remoteHostModel;
     private final JList<RemoteServerEntry> remoteHostList;
     private final SessionContentPanel session;
@@ -208,7 +209,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             path = txtPath.getText();
             port = (Integer) spPort.getValue();
             if (host.isEmpty() || user.isEmpty() || path.isEmpty() || port <= 0) {
-                JOptionPane.showMessageDialog(this, "Invalid input: all fields mandatory");
+                JOptionPane.showMessageDialog(this, bundle.getString("invalid_input"));
                 continue;
             }
             return new RemoteServerEntry(host, port, user, path);
@@ -223,15 +224,15 @@ public class Remote2RemoteTransferDialog extends JDialog {
     private String createSftpFileList(RemoteServerEntry e) {
         StringBuilder sb = new StringBuilder();
         sb.append("sftp ").append(e.getUser()).append("@").append(e.getHost()).append("<<EOF\n");
-        sb.append("lcd \"").append(this.currentDirectory).append("\"\n");
-        sb.append("cd \"").append(e.getPath()).append("\"\n");
+        sb.append("lcd \"").append(this.currentDirectory).append(NEW_LINE_STR);
+        sb.append("cd \"").append(e.getPath()).append(NEW_LINE_STR);
 
         for (FileInfo finfo : selectedFiles) {
             if (finfo.getType() == FileType.DIRECTORY) {
-                sb.append("mkdir \"").append(finfo.getName()).append("\"\n");
-                sb.append("put -r \"").append(finfo.getName()).append("\"\n");
+                sb.append("mkdir \"").append(finfo.getName()).append(NEW_LINE_STR);
+                sb.append("put -r \"").append(finfo.getName()).append(NEW_LINE_STR);
             } else if (finfo.getType() == FileType.FILE) {
-                sb.append("put -P \"").append(finfo.getName()).append("\"\n");
+                sb.append("put -P \"").append(finfo.getName()).append(NEW_LINE_STR);
             }
         }
         sb.append("bye\n");

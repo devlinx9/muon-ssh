@@ -4,6 +4,7 @@
 package muon.app.ssh;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import net.schmizz.sshj.common.KeyType;
 import net.schmizz.sshj.common.SecurityUtils;
 import net.schmizz.sshj.transport.verification.OpenSSHKnownHosts;
@@ -32,8 +33,7 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
 
         int resp = JOptionPane.showConfirmDialog(null,
                 String.format(
-                        "The authenticity of host '%s' can't be established.\n"
-                                + "%s key fingerprint is %s.\nAre you sure you want to continue connecting (yes/no)?",
+                        App.bundle.getString("unverifiable_action"),
                         hostname, type, SecurityUtils.getFingerprint(key)));
 
         if (resp == JOptionPane.YES_OPTION) {
@@ -53,15 +53,7 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
         final KeyType type = KeyType.fromKey(key);
         final String fp = SecurityUtils.getFingerprint(key);
         final String path = getFile().getAbsolutePath();
-        String msg = String.format("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"
-                + "@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @\n"
-                + "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n"
-                + "IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!\n"
-                + "Someone could be eavesdropping on you right now (man-in-the-middle attack)!\n"
-                + "It is also possible that the host key has just been changed.\n"
-                + "The fingerprint for the %s key sent by the remote host is\n %s.\n"
-                + "Review the file %s.\n"
-                + "Do you still want to connect to this server?", type, fp, path);
+        String msg = String.format(App.bundle.getString("host_key_change_warning"), type, fp, path);
         return JOptionPane.showConfirmDialog(null, msg) == JOptionPane.YES_OPTION;
     }
 

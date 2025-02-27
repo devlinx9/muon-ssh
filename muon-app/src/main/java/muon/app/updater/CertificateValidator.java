@@ -1,6 +1,7 @@
 package muon.app.updater;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 
 import javax.net.ssl.*;
 import javax.swing.*;
@@ -101,6 +102,6 @@ public class CertificateValidator {
     }
 
     private static boolean confirmCert() {
-        return JOptionPane.showConfirmDialog(null, "Update-check\nTrust server certificate?") == JOptionPane.YES_OPTION;
+        return JOptionPane.showConfirmDialog(null, App.bundle.getString("update_check")) == JOptionPane.YES_OPTION;
     }
 }

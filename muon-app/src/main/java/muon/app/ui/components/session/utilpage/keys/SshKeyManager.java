@@ -3,6 +3,7 @@ package muon.app.ui.components.session.utilpage.keys;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.common.InputTransferChannel;
 import muon.app.common.OutputTransferChannel;
 import muon.app.ssh.RemoteSessionInstance;
@@ -11,7 +12,7 @@ import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.sftp.Response;
 import net.schmizz.sshj.sftp.SFTPException;
-import util.PathUtils;
+import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.io.ByteArrayOutputStream;
@@ -26,6 +27,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 public class SshKeyManager {
+
+    public static final String SSH = ".ssh";
+    public static final String USER_HOME = "user.home";
+
     public static SshKeyHolder getKeyDetails(SessionContentPanel content) throws Exception {
         SshKeyHolder holder = new SshKeyHolder();
         loadLocalKey(getPubKeyPath(content.getInfo()), holder);
@@ -36,7 +41,7 @@ public class SshKeyManager {
     private static void loadLocalKey(String pubKeyPath, SshKeyHolder holder) {
         try {
             Path defaultPath = pubKeyPath == null
-                    ? Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa.pub").toAbsolutePath()
+                    ? Paths.get(System.getProperty(USER_HOME), SSH, "id_rsa.pub").toAbsolutePath()
                     : Paths.get(pubKeyPath);
             byte[] bytes = Files.readAllBytes(defaultPath);
             holder.setLocalPublicKey(new String(bytes, StandardCharsets.UTF_8));
@@ -86,16 +91,13 @@ public class SshKeyManager {
             throws Exception {
         if (holder.getLocalPublicKey() != null) {
             if (JOptionPane.showConfirmDialog(null,
-                    "WARNING: This will overwrite the existing SSH key"
-                            + "\n\nIf the key was being used to connect to other servers," + "\nconnection will fail."
-                            + "\nYou have to reconfigure all the servers"
-                            + "\nto use the new key\nDo you still want to continue?",
+                                              App.bundle.getString("overwrite_ssh_key"),
                     "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
                 return;
             }
         }
 
-        JCheckBox chkGenPassPhrase = new JCheckBox("Use passphrase to protect private key (Optional)");
+        JCheckBox chkGenPassPhrase = new JCheckBox(App.bundle.getString("protected_key_optional"));
         JPasswordField txtPassPhrase = new JPasswordField(30);
         txtPassPhrase.setEditable(false);
         chkGenPassPhrase.addActionListener(e -> txtPassPhrase.setEditable(chkGenPassPhrase.isSelected()));
@@ -114,9 +116,9 @@ public class SshKeyManager {
     }
 
     public static void generateLocalKeys(SshKeyHolder holder, String passPhrase) throws Exception {
-        Path sshDir = Paths.get(System.getProperty("user.home"), ".ssh");
-        Path pubKeyPath = Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa.pub").toAbsolutePath();
-        Path keyPath = Paths.get(System.getProperty("user.home"), ".ssh", "id_rsa").toAbsolutePath();
+        Path sshDir = Paths.get(System.getProperty(USER_HOME), SSH);
+        Path pubKeyPath = Paths.get(System.getProperty(USER_HOME), SSH, "id_rsa.pub").toAbsolutePath();
+        Path keyPath = Paths.get(System.getProperty(USER_HOME), SSH, "id_rsa").toAbsolutePath();
         JSch jsch = new JSch();
         KeyPair kpair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
         Files.createDirectories(sshDir);
@@ -176,13 +178,13 @@ public class SshKeyManager {
     public static void saveAuthorizedKeysFile(String authorizedKeys, SshFileSystem fileSystem) throws Exception {
         boolean found = false;
         try {
-            fileSystem.getInfo(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));
+            fileSystem.getInfo(PathUtils.combineUnix(fileSystem.getHome(), SSH));
             found = true;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
         if (!found) {
-            fileSystem.mkdir(PathUtils.combineUnix(fileSystem.getHome(), ".ssh"));
+            fileSystem.mkdir(PathUtils.combineUnix(fileSystem.getHome(), SSH));
         }
         OutputTransferChannel otc = fileSystem.outputTransferChannel();
         try (OutputStream out = otc

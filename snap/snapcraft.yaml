@@ -1,11 +1,8 @@
 name: muon-ssh
-version: "2.3.0"
-summary: Graphical SFTP client and terminal emulator with helpful utilities
+version: "2.4.0"
+summary: Your All-in-One SSH Solution
 description: |
-  Muon is a graphical SSH client. It has a file browser,
-  terminal emulator, resource/process manager, disk space analyzer, 
-  text editor, log viewer, and lots of other helpful tools, 
-  making it easy to work with remote servers.
+  Muon redefines the way you connect to remote servers. As a sleek, graphical SSH client, it combines essential tools into one intuitive interface. Browse files, manage resources, analyze disk space, and edit text seamlessly—all while running commands in its built-in terminal emulator. With added features like a log viewer and process manager, Muon streamlines your workflow, making server management simpler and more efficient. Elevate your remote work experience with Muon: where power meets simplicity.
 
   More information is available on GitHub Repo: https://github.com/devlinx9/muon-ssh
 title: MuonSSH
@@ -20,7 +17,7 @@ compression: lzo
 
 apps:
   muon-ssh:
-    command: usr/lib/jvm/java-17-openjdk-amd64/bin/java -jar $SNAP/jar/muonssh_2.3.0.jar
+    command: usr/lib/jvm/java-17-openjdk-amd64/bin/java -jar $SNAP/jar/muonssh_2.4.0.jar
     common-id: muonssh.desktop
     environment:
       # Needed for fontconfig

@@ -8,8 +8,8 @@ import muon.app.App;
 import muon.app.ui.components.SkinnedScrollPane;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
-import util.FontAwesomeContants;
-import util.OptionPaneUtils;
+import muon.app.util.FontAwesomeContants;
+import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,7 +32,6 @@ public class DiskspaceAnalyzer extends Page {
     private final SessionContentPanel holder;
     private PartitionTableModel model;
     private JTable table;
-    private JTree resultTree;
     private DefaultTreeModel treeModel;
 
     /**
@@ -50,7 +49,7 @@ public class DiskspaceAnalyzer extends Page {
 
     private Component createResultPanel() {
         treeModel = new DefaultTreeModel(new DefaultMutableTreeNode("results", true), true);
-        resultTree = new JTree(treeModel);
+        JTree resultTree = new JTree(treeModel);
         resultTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
         JButton btnStart = new JButton(bundle.getString("start_another_analysis"));

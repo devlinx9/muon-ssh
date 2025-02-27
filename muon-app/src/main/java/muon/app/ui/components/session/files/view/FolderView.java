@@ -3,8 +3,8 @@ package muon.app.ui.components.session.files.view;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.common.FileType;
 import muon.app.ui.components.SkinnedScrollPane;
+import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
@@ -29,7 +29,6 @@ public class FolderView extends JPanel {
     private final JScrollPane tableScroller;
     private final JScrollPane listScroller;
     private final JList<FileInfo> fileList;
-    private final FolderViewEventListener listener;
     private final JPopupMenu popup;
     private final TableRowSorter<?> sorter;
     private boolean showHiddenFiles;
@@ -37,7 +36,6 @@ public class FolderView extends JPanel {
 
     public FolderView(FolderViewEventListener listener, Consumer<String> statusCallback) {
         super(new BorderLayout());
-        this.listener = listener;
         this.popup = new JPopupMenu();
 
         showHiddenFiles = App.getGlobalSettings().isShowHiddenFilesByDefault();
@@ -236,7 +234,7 @@ public class FolderView extends JPanel {
                     }
                 } else if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
                     selectRow(e);
-                    log.info("called");
+                    log.debug("called");
                     listener.createMenu(popup, getSelectedFiles());
                     popup.pack();
                     popup.show(table, e.getX(), e.getY());
@@ -287,7 +285,7 @@ public class FolderView extends JPanel {
                     }
                 } else if (e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) {
                     selectRow(e);
-                    log.info("called");
+                    log.debug("called");
                     listener.createMenu(popup, getSelectedFiles());
                     popup.pack();
                     popup.show(table, e.getX(), e.getY());

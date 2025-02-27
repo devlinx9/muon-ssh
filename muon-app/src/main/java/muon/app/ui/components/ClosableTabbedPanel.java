@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import util.FontAwesomeContants;
+import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -211,9 +211,7 @@ public class ClosableTabbedPanel extends JPanel {
         return cardPanel.getComponents();
     }
 
-    public enum NewTabType {
-        LOCAL_TAB, REMOTE_TAB
-    }
+
 
     @Setter
     @Getter

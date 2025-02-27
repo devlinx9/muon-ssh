@@ -28,8 +28,8 @@ public class LinuxMetrics {
     private long totalSwap;
     @Getter
     private long usedSwap;
-    private long prev_idle;
-    private long prev_total;
+    private long prevIdle;
+    private long prevTotal;
 
     @Getter
     private String OS;
@@ -60,17 +60,17 @@ public class LinuxMetrics {
         for (int i = 1; i < cols.length; i++) {
             total += Long.parseLong(cols[i]);
         }
-        long diff_idle = idle - prev_idle;
-        long diff_total = total - prev_total;
-        this.cpuUsage = (1000 * ((double) diff_total - diff_idle) / diff_total
+        long diffIdle = idle - prevIdle;
+        long diffTotal = total - prevTotal;
+        this.cpuUsage = (1000 * ((double) diffTotal - diffIdle) / diffTotal
                          + 5) / 10;
-        this.prev_idle = idle;
-        this.prev_total = total;
+        this.prevIdle = idle;
+        this.prevTotal = total;
     }
 
     private void updateMemory(String[] lines) {
         long memTotalK = 0, memFreeK = 0, memCachedK = 0, swapTotalK = 0,
-                swapFreeK = 0, swapCachedK = 0;
+                swapFreeK = 0;
         for (int i = 2; i < lines.length; i++) {
             String[] arr = lines[i].split("\\s+");
             if (arr.length >= 2) {
@@ -104,9 +104,8 @@ public class LinuxMetrics {
         }
 
         if (this.totalSwap > 0) {
-            this.usedSwap = this.totalSwap - freeSwap - swapCachedK * 1024;
-            this.swapUsage = ((double) (this.totalSwap - freeSwap
-                                        - swapCachedK * 1024) * 100) / this.totalSwap;
+            this.usedSwap = this.totalSwap - freeSwap;
+            this.swapUsage = ((double) (this.totalSwap - freeSwap) * 100) / this.totalSwap;
         }
     }
 

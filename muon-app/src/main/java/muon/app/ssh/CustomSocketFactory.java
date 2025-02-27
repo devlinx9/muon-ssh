@@ -110,13 +110,9 @@ public class CustomSocketFactory extends SocketFactory {
         out.flush();
 
         String statusLine = readLine(in);
-        if (statusLine == null) {
-            socket.close();
-            throw new IOException("Proxy sent blank response");
-        }
 
         int responseCode = getResponseCode(statusLine);
-        if (responseCode < 200 && responseCode >= 300) {
+        if (responseCode < 200 || responseCode >= 300) {
             socket.close();
             throw new IOException("Invalid response code: " + responseCode);
         }

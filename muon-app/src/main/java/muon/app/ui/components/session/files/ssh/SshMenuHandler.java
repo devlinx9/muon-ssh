@@ -3,10 +3,11 @@ package muon.app.ui.components.session.files.ssh;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.common.FileType;
+import muon.app.common.FileSystem;
 import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.FileBrowser;
+import muon.app.ui.components.session.files.local.LocalFileBrowserView;
 import muon.app.ui.components.session.files.remote2remote.LocalPipeTransfer;
 import muon.app.ui.components.session.files.remote2remote.Remote2RemoteTransferDialog;
 import muon.app.ui.components.session.files.view.DndTransferData;
@@ -14,7 +15,11 @@ import muon.app.ui.components.session.files.view.DndTransferHandler;
 import muon.app.ui.components.session.files.view.FolderView;
 import muon.app.ui.components.settings.EditorEntry;
 import muon.app.ui.components.settings.SettingsPageName;
-import util.PathUtils;
+import muon.app.util.PathUtils;
+import muon.app.util.enums.DndSourceType;
+import muon.app.util.enums.FileType;
+import muon.app.util.enums.TransferAction;
+import muon.app.util.enums.TransferMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +40,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import static muon.app.App.bundle;
+import static muon.app.App.getAppWindow;
+import static muon.app.util.PlatformUtils.IS_WINDOWS;
 
 @Slf4j
 public class SshMenuHandler {
@@ -42,24 +49,12 @@ public class SshMenuHandler {
     private final SshFileOperations fileOperations;
     private final SshFileBrowserView fileBrowserView;
     private final ArchiveOperation archiveOperation;
-    private AbstractAction aOpenInTab;
-    private AbstractAction aOpen;
-    private AbstractAction aRename;
-    private AbstractAction aDelete;
-    private AbstractAction aNewFile;
-    private AbstractAction aNewFolder;
-    private AbstractAction aCopy;
-    private AbstractAction aPaste;
-    private AbstractAction aCut;
-    private AbstractAction aAddToFav;
-    private AbstractAction aChangePerm;
     private AbstractAction aSendFiles;
     private AbstractAction aUpload;
     private AbstractAction aDownload;
-    private AbstractAction aCreateLink;
-    private AbstractAction aCopyPath;
-    private KeyStroke ksOpenInTab, ksOpen, ksRename, ksDelete, ksNewFile, ksNewFolder, ksCopy, ksPaste, ksCut,
-            ksAddToFav, ksChangePerm, ksSendFiles, ksUpload, ksDownload, ksCreateLink, ksCopyPath;
+    private KeyStroke ksSendFiles;
+    private KeyStroke ksUpload;
+    private KeyStroke ksDownload;
     private JMenuItem mOpenInTab, mOpen, mRename, mDelete, mNewFile, mNewFolder, mCopy, mPaste, mCut, mAddToFav,
             mChangePerm, mSendFiles, mUpload, mOpenWithDefApp, mOpenWthInternalEdit, mEditorConfig, mOpenWithLogView,
             mDownload, mCreateLink, mCopyPath, mOpenFolderInTerminal, mOpenTerminalHere, mRunScriptInTerminal,
@@ -84,10 +79,10 @@ public class SshMenuHandler {
     }
 
     private void initMenuItems(InputMap map, ActionMap act) {
-        ksOpenInTab = KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK);
+        KeyStroke ksOpenInTab = KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK);
         mOpenInTab = new JMenuItem(bundle.getString("open_in_tab"));
         mOpenInTab.setAccelerator(ksOpenInTab);
-        aOpenInTab = new AbstractAction() {
+        AbstractAction aOpenInTab = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 openNewTab();
@@ -97,7 +92,7 @@ public class SshMenuHandler {
         map.put(ksOpenInTab, "ksOpenInTab");
         act.put("ksOpenInTab", aOpenInTab);
 
-        aOpen = new AbstractAction() {
+        AbstractAction aOpen = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 log.info("Open app");
@@ -111,7 +106,7 @@ public class SshMenuHandler {
                 }
             }
         };
-        ksOpen = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        KeyStroke ksOpen = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
         mOpen = new JMenuItem(bundle.getString("open"));
         mOpen.addActionListener(aOpen);
         map.put(ksOpen, "mOpen");
@@ -119,7 +114,7 @@ public class SshMenuHandler {
         mOpen.setAccelerator(ksOpen);
 
 
-        if (App.IS_WINDOWS) {
+        if (IS_WINDOWS) {
             mOpenWithMenu = new JMenuItem(bundle.getString("open_with"));
             mOpenWithMenu.addActionListener(e -> {
                 FileInfo fileInfo = folderView.getSelectedFiles()[0];
@@ -169,21 +164,21 @@ public class SshMenuHandler {
         mRunScriptInBackground = new JMenuItem(bundle.getString("run_file_in_background"));
         mRunScriptInBackground.addActionListener(e -> openRunInBackground(fileBrowserView.getCurrentDirectory(), folderView.getSelectedFiles()[0].getPath()));
 
-        aRename = new AbstractAction() {
+        KeyStroke ksRename = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
+        AbstractAction aRename = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 rename(folderView.getSelectedFiles()[0], fileBrowserView.getCurrentDirectory());
             }
         };
-        ksRename = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
         mRename = new JMenuItem(bundle.getString("rename"));
         mRename.addActionListener(aRename);
         map.put(ksRename, "mRename");
         act.put("mRename", aRename);
         mRename.setAccelerator(ksRename);
 
-        ksDelete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
-        aDelete = new AbstractAction() {
+        KeyStroke ksDelete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
+        AbstractAction aDelete = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 delete(folderView.getSelectedFiles(), fileBrowserView.getCurrentDirectory());
@@ -195,8 +190,8 @@ public class SshMenuHandler {
         act.put("ksDelete", aDelete);
         mDelete.setAccelerator(ksDelete);
 
-        ksNewFile = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
-        aNewFile = new AbstractAction() {
+        KeyStroke ksNewFile = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+        AbstractAction aNewFile = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 newFile(fileBrowserView.getCurrentDirectory(), folderView.getFiles());
@@ -208,8 +203,8 @@ public class SshMenuHandler {
         act.put("ksNewFile", aNewFile);
         mNewFile.setAccelerator(ksNewFile);
 
-        ksNewFolder = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
-        aNewFolder = new AbstractAction() {
+        KeyStroke ksNewFolder = KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK);
+        AbstractAction aNewFolder = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 newFolder(fileBrowserView.getCurrentDirectory(), folderView.getFiles());
@@ -221,8 +216,8 @@ public class SshMenuHandler {
         map.put(ksNewFolder, "ksNewFolder");
         act.put("ksNewFolder", aNewFolder);
 
-        ksCopy = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK);
-        aCopy = new AbstractAction() {
+        KeyStroke ksCopy = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK);
+        AbstractAction aCopy = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 copyToClipboard(false);
@@ -234,8 +229,8 @@ public class SshMenuHandler {
         act.put("ksCopy", aCopy);
         mCopy.setAccelerator(ksCopy);
 
-        ksCopyPath = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
-        aCopyPath = new AbstractAction() {
+        KeyStroke ksCopyPath = KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+        AbstractAction aCopyPath = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 copyPathToClipboard();
@@ -247,8 +242,8 @@ public class SshMenuHandler {
         act.put("ksCopyPath", aCopyPath);
         mCopyPath.setAccelerator(ksCopyPath);
 
-        ksPaste = KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK);
-        aPaste = new AbstractAction() {
+        KeyStroke ksPaste = KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK);
+        AbstractAction aPaste = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handlePaste();
@@ -260,8 +255,8 @@ public class SshMenuHandler {
         act.put("ksPaste", aPaste);
         mPaste.setAccelerator(ksPaste);
 
-        ksCut = KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK);
-        aCut = new AbstractAction() {
+        KeyStroke ksCut = KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK);
+        AbstractAction aCut = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 copyToClipboard(true);
@@ -273,8 +268,8 @@ public class SshMenuHandler {
         act.put("ksCut", aCut);
         mCut.setAccelerator(ksCut);
 
-        ksAddToFav = KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
-        aAddToFav = new AbstractAction() {
+        KeyStroke ksAddToFav = KeyStroke.getKeyStroke(KeyEvent.VK_B, InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK);
+        AbstractAction aAddToFav = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addToFavourites();
@@ -286,8 +281,8 @@ public class SshMenuHandler {
         act.put("ksAddToFav", aAddToFav);
         mAddToFav.setAccelerator(ksAddToFav);
 
-        ksChangePerm = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK);
-        aChangePerm = new AbstractAction() {
+        KeyStroke ksChangePerm = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.ALT_DOWN_MASK);
+        AbstractAction aChangePerm = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 changePermission(folderView.getSelectedFiles(), fileBrowserView.getCurrentDirectory());
@@ -299,8 +294,8 @@ public class SshMenuHandler {
         act.put("ksChangePerm", aChangePerm);
         mChangePerm.setAccelerator(ksChangePerm);
 
-        ksCreateLink = KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK);
-        aCreateLink = new AbstractAction() {
+        KeyStroke ksCreateLink = KeyStroke.getKeyStroke(KeyEvent.VK_L, InputEvent.CTRL_DOWN_MASK);
+        AbstractAction aCreateLink = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 createLink(fileBrowserView.getCurrentDirectory(), folderView.getSelectedFiles());
@@ -365,8 +360,8 @@ public class SshMenuHandler {
     private void copyToClipboard(boolean cut) {
         FileInfo[] selectedFiles = folderView.getSelectedFiles();
         DndTransferData transferData = new DndTransferData(fileBrowser.getInfo().hashCode(), selectedFiles,
-                                                           fileBrowserView.getCurrentDirectory(), fileBrowserView.hashCode(), DndTransferData.DndSourceType.SSH);
-        transferData.setTransferAction(cut ? DndTransferData.TransferAction.CUT : DndTransferData.TransferAction.COPY);
+                                                           fileBrowserView.getCurrentDirectory(), fileBrowserView.hashCode(), DndSourceType.SSH);
+        transferData.setTransferAction(cut ? TransferAction.CUT : TransferAction.COPY);
 
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new Transferable() {
             @Override
@@ -431,7 +426,7 @@ public class SshMenuHandler {
                 popup.add(mOpen);
                 count++;
 
-                if (App.IS_WINDOWS) {
+                if (IS_WINDOWS) {
                     popup.add(mOpenWithMenu);
                     count++;
                 }
@@ -538,7 +533,7 @@ public class SshMenuHandler {
     }
 
     private void rename(FileInfo info, String baseFolder) {
-        String text = JOptionPane.showInputDialog(bundle.getString("please_new_name"), info.getName());
+        String text = JOptionPane.showInputDialog(App.getAppWindow(), bundle.getString("please_new_name"), info.getName());
         if (text != null && !text.isEmpty()) {
             renameAsync(info.getPath(), PathUtils.combineUnix(PathUtils.getParent(info.getPath()), text), baseFolder);
         }
@@ -564,7 +559,7 @@ public class SshMenuHandler {
     private void delete(FileInfo[] targetList, String baseFolder) {
         boolean delete = true;
         if (App.getGlobalSettings().isConfirmBeforeDelete()) {
-            delete = JOptionPane.showConfirmDialog(null, "Delete selected files?") == JOptionPane.YES_OPTION;
+            delete = JOptionPane.showConfirmDialog(getAppWindow(), bundle.getString("delete_selected_files")) == JOptionPane.YES_OPTION;
         }
         if (!delete) {
             return;
@@ -665,7 +660,7 @@ public class SshMenuHandler {
                        || Toolkit.getDefaultToolkit().getSystemClipboard()
                                .isDataFlavorAvailable(DataFlavor.javaFileListFlavor));
         if (!ret) {
-            log.info("Nothing on clipboard");
+            log.debug("Nothing on clipboard");
         }
         return ret;
     }
@@ -804,7 +799,30 @@ public class SshMenuHandler {
     }
 
     private void downloadFiles(FileInfo[] files, String currentDirectory) {
-        throw new RuntimeException("Not implemented");
+        FileSystem localFileSystem = null;
+        String currentPath;
+        if (fileBrowser.getLeftTabs().getSelectedContent() instanceof LocalFileBrowserView) {
+            var localFileBrowserView = ((LocalFileBrowserView) fileBrowser.getLeftTabs().getSelectedContent());
+            currentPath = localFileBrowserView.getPathText();
+            localFileSystem = localFileBrowserView.getFileSystem();
+        } else if (fileBrowser.getRightTabs().getSelectedContent() instanceof LocalFileBrowserView) {
+            var localFileBrowserView = ((LocalFileBrowserView) fileBrowser.getRightTabs().getSelectedContent());
+            currentPath = localFileBrowserView.getPathText();
+            localFileSystem = localFileBrowserView.getFileSystem();
+        } else {
+            throw new IllegalStateException("Can't Download Files");
+        }
+
+        try {
+            if (App.getGlobalSettings().getFileTransferMode() == TransferMode.BACKGROUND) {
+                fileBrowser.getHolder().downloadInBackground(files, currentPath, App.getGlobalSettings().getConflictAction());
+                return;
+            }
+            fileBrowser.newFileTransfer(this.fileBrowser.getSSHFileSystem(), localFileSystem, files, currentPath, localFileSystem.hashCode(),
+                                        App.getGlobalSettings().getConflictAction(), this.fileBrowser.getSessionInstance());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     private void uploadFiles() throws IOException {
@@ -824,7 +842,7 @@ public class SshMenuHandler {
                     }
                 }
                 DndTransferData uploadData = new DndTransferData(0, list.toArray(new FileInfo[0]), files[0].getParent(),
-                                                                 0, DndTransferData.DndSourceType.LOCAL);
+                                                                 0, DndSourceType.LOCAL);
                 fileBrowserView.handleDrop(uploadData);
             }
         }

@@ -26,7 +26,7 @@ public class FolderViewKeyHandler extends KeyAdapter {
     private String typedString = "";
     private long lastTime = 0L;
 
-    private final long timeFactor = 1000L;
+    private static final long timeFactor = 1000L;
 
     public FolderViewKeyHandler(JTable table, FolderViewTableModel model) {
         super();

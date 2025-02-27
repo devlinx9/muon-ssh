@@ -4,7 +4,7 @@
 package muon.app.ui.components;
 
 import muon.app.App;
-import util.FontAwesomeContants;
+import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import java.awt.*;

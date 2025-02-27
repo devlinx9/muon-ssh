@@ -9,8 +9,8 @@ import com.jediterm.terminal.emulator.ColorPalette;
 import com.jediterm.terminal.ui.settings.DefaultSettingsProvider;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.Settings;
-import util.FontUtils;
+import muon.app.common.Settings;
+import muon.app.util.FontUtils;
 
 import javax.swing.*;
 import java.awt.*;

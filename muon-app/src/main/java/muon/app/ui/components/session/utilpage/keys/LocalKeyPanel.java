@@ -13,20 +13,12 @@ import java.util.function.Consumer;
 import static muon.app.App.bundle;
 
 public class LocalKeyPanel extends JPanel {
-    private final SessionInfo info;
     private final JTextField txtKeyFile;
-    private final JButton btnGenNewKey;
-    private final JButton btnRefresh;
     private final JTextArea txtPubKey;
-    private final Consumer<?> callback1;
-    private final Consumer<?> callback2;
 
     public LocalKeyPanel(SessionInfo info, Consumer<?> callback1,
                          Consumer<?> callback2) {
         super(new BorderLayout());
-        this.info = info;
-        this.callback1 = callback1;
-        this.callback2 = callback2;
         JLabel lblTitle = new JLabel(bundle.getString("public_key_file"));
         txtKeyFile = new SkinnedTextField(20);
         txtKeyFile.setBackground(App.SKIN.getDefaultBackground());
@@ -45,8 +37,8 @@ public class LocalKeyPanel extends JPanel {
         JScrollPane jScrollPane = new JScrollPane(txtPubKey);
         add(jScrollPane);
 
-        btnGenNewKey = new JButton(bundle.getString("generate_new_key"));
-        btnRefresh = new JButton(bundle.getString("refresh"));
+        JButton btnGenNewKey = new JButton(bundle.getString("generate_new_key"));
+        JButton btnRefresh = new JButton(bundle.getString("refresh"));
 
         btnGenNewKey.addActionListener(e -> callback1.accept(null));
 
