@@ -22,8 +22,8 @@ This document outlines the current status, upcoming releases, and future plans f
 ### Features:
 - [x] Open in second screen by default
 - [x] [#81](https://github.com/devlinx9/muon-ssh/issues/81): X11forward support
-- [ ] [#103](https://github.com/devlinx9/muon-ssh/issues/103): Implement folder downloads.
-- [ ] Improved documentation and tutorials.
+- [x] [#103](https://github.com/devlinx9/muon-ssh/issues/103): Implement folder downloads.
+
 
 ---
 

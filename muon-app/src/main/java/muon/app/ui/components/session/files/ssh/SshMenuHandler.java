@@ -3,9 +3,11 @@ package muon.app.ui.components.session.files.ssh;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
+import muon.app.common.FileSystem;
 import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.FileBrowser;
+import muon.app.ui.components.session.files.local.LocalFileBrowserView;
 import muon.app.ui.components.session.files.remote2remote.LocalPipeTransfer;
 import muon.app.ui.components.session.files.remote2remote.Remote2RemoteTransferDialog;
 import muon.app.ui.components.session.files.view.DndTransferData;
@@ -17,6 +19,7 @@ import muon.app.util.PathUtils;
 import muon.app.util.enums.DndSourceType;
 import muon.app.util.enums.FileType;
 import muon.app.util.enums.TransferAction;
+import muon.app.util.enums.TransferMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -796,7 +799,30 @@ public class SshMenuHandler {
     }
 
     private void downloadFiles(FileInfo[] files, String currentDirectory) {
-        throw new RuntimeException("Not implemented");
+        FileSystem localFileSystem = null;
+        String currentPath;
+        if (fileBrowser.getLeftTabs().getSelectedContent() instanceof LocalFileBrowserView) {
+            var localFileBrowserView = ((LocalFileBrowserView) fileBrowser.getLeftTabs().getSelectedContent());
+            currentPath = localFileBrowserView.getPathText();
+            localFileSystem = localFileBrowserView.getFileSystem();
+        } else if (fileBrowser.getRightTabs().getSelectedContent() instanceof LocalFileBrowserView) {
+            var localFileBrowserView = ((LocalFileBrowserView) fileBrowser.getRightTabs().getSelectedContent());
+            currentPath = localFileBrowserView.getPathText();
+            localFileSystem = localFileBrowserView.getFileSystem();
+        } else {
+            throw new IllegalStateException("Can't Download Files");
+        }
+
+        try {
+            if (App.getGlobalSettings().getFileTransferMode() == TransferMode.BACKGROUND) {
+                fileBrowser.getHolder().downloadInBackground(files, currentPath, App.getGlobalSettings().getConflictAction());
+                return;
+            }
+            fileBrowser.newFileTransfer(this.fileBrowser.getSSHFileSystem(), localFileSystem, files, currentPath, localFileSystem.hashCode(),
+                                        App.getGlobalSettings().getConflictAction(), this.fileBrowser.getSessionInstance());
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     private void uploadFiles() throws IOException {

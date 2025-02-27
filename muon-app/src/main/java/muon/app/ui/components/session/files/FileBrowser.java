@@ -35,7 +35,9 @@ import static muon.app.App.bundle;
 @Slf4j
 public class FileBrowser extends Page {
     private final JSplitPane horizontalSplitter;
+    @Getter
     private final ClosableTabbedPanel leftTabs;
+    @Getter
     private final ClosableTabbedPanel rightTabs;
 
     @Getter
