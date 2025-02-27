@@ -1,5 +1,25 @@
 # Changelog
 
+## [v2.4.0] - 2025-02-26
+
+### Added
+- X11 support
+- Download Folders from ssh menu
+
+### Fixed
+- Connection tree fix
+- Import session from snowflake
+- Export session zip file
+- Passphrase and password saved for the session
+- Master password security fix
+- Open files on local machine
+- Saved Settings
+- Cursor fix after reconnection
+
+### Developer Changes
+- Updated libraries.
+- Package reorganization and some code cleanup and optimization.
+
 ## [v2.3.0] - 2025-02-12
 
 ### Added
