@@ -12,6 +12,7 @@ import muon.app.ui.components.session.files.transfer.BackgroundTransferPanel;
 import muon.app.ui.components.settings.SettingsDialog;
 import muon.app.ui.components.settings.SettingsPageName;
 import muon.app.updater.UpdateChecker;
+import muon.app.util.Constants;
 import muon.app.util.FontAwesomeContants;
 
 import javax.imageio.ImageIO;
@@ -391,7 +392,7 @@ public class AppWindow extends JFrame {
     protected void openUpdateURL() {
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().browse(new URI(App.UPDATE_URL2));
+                Desktop.getDesktop().browse(new URI(Constants.UPDATE_URL2));
             } catch (IOException | URISyntaxException ex) {
                 log.error(ex.getMessage(), ex);
             }

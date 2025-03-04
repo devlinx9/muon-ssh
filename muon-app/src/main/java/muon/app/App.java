@@ -42,14 +42,12 @@ import static muon.app.util.Constants.UPDATE_URL;
 @Slf4j
 public class App {
     public static final VersionEntry VERSION = new VersionEntry("v" + APPLICATION_VERSION);
-    public static final String UPDATE_URL2 = UPDATE_URL + "/check-update.html?v="
-                                             + VERSION.getNumericValue();
+
     public static String CONFIG_DIR = System.getProperty("user.home") + File.separatorChar + "muon-ssh";
     private static final String PATH_MESSAGES_FILE = "i18n/messages";
     public static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
     public static final SnippetManager SNIPPET_MANAGER = new SnippetManager();
 
-    public static final String APP_INSTANCE_ID = UUID.randomUUID().toString();
     public static GraphicalHostKeyVerifier HOST_KEY_VERIFIER;
     public static ResourceBundle bundle;
     public static AppSkin SKIN;

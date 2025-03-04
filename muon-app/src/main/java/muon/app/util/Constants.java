@@ -1,5 +1,9 @@
 package muon.app.util;
 
+import java.util.UUID;
+
+import static muon.app.App.VERSION;
+
 public class Constants {
     public static final String BASE_URL = "https://github.com/devlinx9";
     public static final String HELP_URL = "https://github.com/devlinx9/muon-ssh/wiki";
@@ -14,6 +18,12 @@ public class Constants {
     public static final String PINNED_LOGS = "pinned-logs.json";
     public static final String TRANSFER_HOSTS = "transfer-hosts.json";
     public static final String BOOKMARKS_FILE = "bookmarks.json";
+
+    public static final String UPDATE_URL2 = UPDATE_URL + "/check-update.html?v="
+                                             + VERSION.getNumericValue();
+
+    public static final String APP_INSTANCE_ID = UUID.randomUUID().toString();
+
 
 
 }
