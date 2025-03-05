@@ -2,7 +2,7 @@ package muon.app.ui.components.session.terminal;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.ClosableTabbedPanel;
+import muon.app.ui.components.common.ClosableTabbedPanel;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
@@ -34,10 +34,10 @@ public class TerminalHolder extends Page implements AutoCloseable {
         btn = new JButton();
         btn.setToolTipText("Snippets");
         btn.addActionListener(e -> showSnippets());
-        btn.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+        btn.setFont(App.getContext().getSkin().getIconFont().deriveFont(16.0f));
         btn.setText(FontAwesomeContants.FA_BOOKMARK);
-        btn.putClientProperty("Nimbus.Overrides", App.SKIN.createTabButtonSkin());
-        btn.setForeground(App.SKIN.getInfoTextForeground());
+        btn.putClientProperty("Nimbus.Overrides", App.getContext().getSkin().createTabButtonSkin());
+        btn.setForeground(App.getContext().getSkin().getInfoTextForeground());
         tabs.getButtonsBox().add(btn);
 
         long t1 = System.currentTimeMillis();
@@ -134,7 +134,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     @Override
     public String getText() {
-        return App.bundle.getString("terminal");
+        return App.getContext().getBundle().getString("terminal");
     }
 
     public void openNewTerminal(String command) {

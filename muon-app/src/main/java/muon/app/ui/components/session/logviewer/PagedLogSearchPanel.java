@@ -5,7 +5,7 @@ package muon.app.ui.components.session.logviewer;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
@@ -35,17 +35,17 @@ public class PagedLogSearchPanel extends JPanel {
         txtSearch = new SkinnedTextField(20);
         txtSearch.addActionListener(e -> startSearch());
 
-        UIDefaults skin = App.SKIN.createTabButtonSkin();
+        UIDefaults skin = App.getContext().getSkin().createTabButtonSkin();
 
         JButton btnSearch = new JButton();
         btnSearch.putClientProperty("Nimbus.Overrides", skin);
-        btnSearch.setFont(App.SKIN.getIconFont());
+        btnSearch.setFont(App.getContext().getSkin().getIconFont());
         btnSearch.setText(FontAwesomeContants.FA_SEARCH);
         btnSearch.addActionListener(e -> startSearch());
 
         JButton btnNext = new JButton();
         btnNext.putClientProperty("Nimbus.Overrides", skin);
-        btnNext.setFont(App.SKIN.getIconFont());
+        btnNext.setFont(App.getContext().getSkin().getIconFont());
         btnNext.setText(FontAwesomeContants.FA_ANGLE_DOWN);
         btnNext.addActionListener(e -> {
             if (raf == null || this.resultCount < 1)
@@ -67,7 +67,7 @@ public class PagedLogSearchPanel extends JPanel {
 
         JButton btnPrev = new JButton();
         btnPrev.putClientProperty("Nimbus.Overrides", skin);
-        btnPrev.setFont(App.SKIN.getIconFont());
+        btnPrev.setFont(App.getContext().getSkin().getIconFont());
         btnPrev.setText(FontAwesomeContants.FA_ANGLE_UP);
         btnPrev.addActionListener(e -> {
             if (raf == null || this.resultCount < 1)
@@ -98,7 +98,7 @@ public class PagedLogSearchPanel extends JPanel {
         b1.add(lblResults);
 
         setBorder(new CompoundBorder(
-                new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()),
+                new MatteBorder(1, 0, 0, 0, App.getContext().getSkin().getDefaultBorderColor()),
                 new EmptyBorder(5, 5, 5, 5)));
 
         add(b1);

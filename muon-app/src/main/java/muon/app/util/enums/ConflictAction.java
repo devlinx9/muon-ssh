@@ -1,14 +1,14 @@
 package muon.app.util.enums;
 
 import lombok.Getter;
+import muon.app.App;
 
-import static muon.app.App.bundle;
 
 @Getter
 public enum ConflictAction {
 
 
-    OVERWRITE(0, bundle.getString("overwrite")), AUTORENAME(1, bundle.getString("autorename")), SKIP(2, bundle.getString("skip")), PROMPT(3, bundle.getString("prompt")), CANCEL(4, bundle.getString("cancel"));
+    OVERWRITE(0, App.getContext().getBundle().getString("overwrite")), AUTORENAME(1, App.getContext().getBundle().getString("autorename")), SKIP(2, App.getContext().getBundle().getString("skip")), PROMPT(3, App.getContext().getBundle().getString("prompt")), CANCEL(4, App.getContext().getBundle().getString("cancel"));
     private int key;
     private String value;
 
@@ -18,11 +18,11 @@ public enum ConflictAction {
     }
 
     public static void update() {
-        OVERWRITE.setValue(bundle.getString("overwrite"));
-        AUTORENAME.setValue(bundle.getString("autorename"));
-        SKIP.setValue(bundle.getString("skip"));
-        PROMPT.setValue(bundle.getString("prompt"));
-        CANCEL.setValue(bundle.getString("cancel"));
+        OVERWRITE.setValue(App.getContext().getBundle().getString("overwrite"));
+        AUTORENAME.setValue(App.getContext().getBundle().getString("autorename"));
+        SKIP.setValue(App.getContext().getBundle().getString("skip"));
+        PROMPT.setValue(App.getContext().getBundle().getString("prompt"));
+        CANCEL.setValue(App.getContext().getBundle().getString("cancel"));
     }
 
     public void setKey(int key) {

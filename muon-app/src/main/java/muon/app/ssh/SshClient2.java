@@ -3,8 +3,9 @@ package muon.app.ssh;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.HopEntry;
+import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.util.SshUtil;
 import muon.app.util.enums.JumpType;
@@ -49,17 +50,21 @@ public class SshClient2 implements Closeable {
     @Getter
     private final SessionInfo info;
     private final PasswordFinderDialog passwordFinder;
-    private final InputBlocker inputBlocker;
     private final CachedCredentialProvider cachedCredentialProvider;
     private SSHClient sshj;
     private SshClient2 previousHop;
     private ServerSocket ss;
+    private final SessionContentPanel sessionContentPanel;
 
-    public SshClient2(SessionInfo info, InputBlocker inputBlocker, CachedCredentialProvider cachedCredentialProvider) {
+
+    public SshClient2(SessionInfo info,
+                      CachedCredentialProvider cachedCredentialProvider,
+                      SessionContentPanel sessionContentPanel) {
         this.info = info;
-        this.inputBlocker = inputBlocker;
         this.cachedCredentialProvider = cachedCredentialProvider;
         passwordFinder = new PasswordFinderDialog(cachedCredentialProvider);
+        this.sessionContentPanel = sessionContentPanel;
+
     }
 
     private void setupProxyAndSocketFactory() {
@@ -132,10 +137,10 @@ public class SshClient2 implements Closeable {
             if (password == null || password.length < 1) {
                 JTextField txtUser = new SkinnedTextField(30);
                 JPasswordField txtPassword = new JPasswordField(30);
-                JCheckBox chkUseCache = new JCheckBox(App.bundle.getString("remember_session"));
+                JCheckBox chkUseCache = new JCheckBox(App.getContext().getBundle().getString("remember_session"));
                 txtUser.setText(user);
                 int ret = JOptionPane.showOptionDialog(App.getAppWindow(),
-                                                       new Object[]{"User", txtUser, "Password", txtPassword, chkUseCache}, App.bundle.getString("authentication"),
+                                                       new Object[]{"User", txtUser, "Password", txtPassword, chkUseCache}, App.getContext().getBundle().getString("authentication"),
                                                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
 
                 if (ret != JOptionPane.OK_OPTION) {
@@ -169,12 +174,12 @@ public class SshClient2 implements Closeable {
     }
 
     private void connect(Deque<HopEntry> hopStack) throws IOException, OperationCancelledException {
-        this.inputBlocker.blockInput();
+        this.sessionContentPanel.disableUi();
         try {
             initializeSSHClient();
             if (hopStack.isEmpty()) {
                 this.setupProxyAndSocketFactory();
-                this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
+                this.sshj.addHostKeyVerifier(App.getContext().getHostKeyVerifier());
                 sshj.connect(info.getHost(), info.getPort());
             } else {
                 createTunnel(hopStack);
@@ -262,7 +267,7 @@ public class SshClient2 implements Closeable {
             }
             throw e;
         } finally {
-            this.inputBlocker.unblockInput();
+            this.sessionContentPanel.enableUi();
         }
     }
 
@@ -300,7 +305,7 @@ public class SshClient2 implements Closeable {
             log.info("Tunneling through...");
             tunnelThrough(hopStack);
             log.info("adding host key verifier");
-            this.sshj.addHostKeyVerifier(App.HOST_KEY_VERIFIER);
+            this.sshj.addHostKeyVerifier(App.getContext().getHostKeyVerifier());
             log.info("Host key verifier added");
             if (this.info.getJumpType() == JumpType.TCP_FORWARDING) {
                 log.info("tcp forwarding...");
@@ -340,8 +345,8 @@ public class SshClient2 implements Closeable {
         String user = getUser();
         if (user == null || user.isEmpty()) {
             JTextField txtUser = new SkinnedTextField(30);
-            JCheckBox chkCacheUser = new JCheckBox(App.bundle.getString("remember_username"));
-            int ret = JOptionPane.showOptionDialog(null, new Object[]{App.bundle.getString("username"), txtUser, chkCacheUser}, App.bundle.getString("user"),
+            JCheckBox chkCacheUser = new JCheckBox(App.getContext().getBundle().getString("remember_username"));
+            int ret = JOptionPane.showOptionDialog(null, new Object[]{App.getContext().getBundle().getString("username"), txtUser, chkCacheUser}, App.getContext().getBundle().getString("user"),
                                                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
             if (ret == JOptionPane.OK_OPTION) {
                 user = txtUser.getText();
@@ -441,7 +446,7 @@ public class SshClient2 implements Closeable {
         hopInfo.setUser(ent.getUser());
         hopInfo.setPassword(ent.getPassword());
         hopInfo.setPrivateKeyFile(ent.getKeypath());
-        previousHop = new SshClient2(hopInfo, inputBlocker, cachedCredentialProvider);
+        previousHop = new SshClient2(hopInfo, cachedCredentialProvider, sessionContentPanel);
         previousHop.connect(hopStack);
     }
 

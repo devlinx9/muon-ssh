@@ -4,6 +4,7 @@
 package muon.app.ui.components.session.utilpage.sysload;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
 
@@ -12,7 +13,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -127,7 +128,7 @@ public class SysLoadPage extends UtilPageItemView {
 
         topPanel.add(titleLabel);
         topPanel.add(Box.createHorizontalGlue());
-        topPanel.add(new JLabel(bundle.getString("refresh_interval")));
+        topPanel.add(new JLabel(App.getContext().getBundle().getString("refresh_interval")));
         topPanel.add(Box.createHorizontalStrut(5));
         topPanel.add(spInterval);
         topPanel.add(Box.createHorizontalStrut(5));

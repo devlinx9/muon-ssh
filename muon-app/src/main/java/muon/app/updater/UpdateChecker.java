@@ -33,7 +33,7 @@ public class UpdateChecker {
                                                                 new TypeReference<>() {
                                                                 });
             log.info("Latest release: {}", latestRelease);
-            return latestRelease.compareTo(App.VERSION) > 0;
+            return latestRelease.compareTo(App.getContext().getVersion()) > 0;
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

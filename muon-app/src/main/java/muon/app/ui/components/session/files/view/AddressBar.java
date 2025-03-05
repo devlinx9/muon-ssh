@@ -2,7 +2,7 @@ package muon.app.ui.components.session.files.view;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.files.AddressBarComboBoxEditor;
 import muon.app.util.LayoutUtilities;
 
@@ -34,11 +34,11 @@ public class AddressBar extends JPanel {
         addrPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
         this.separator = separator;
 
-        UIDefaults toolbarSkin = App.SKIN.createToolbarSkin();
+        UIDefaults toolbarSkin = App.getContext().getSkin().createToolbarSkin();
 
         JButton btnRoot = new JButton();
         btnRoot.putClientProperty("Nimbus.Overrides", toolbarSkin);
-        btnRoot.setFont(App.SKIN.getIconFont());
+        btnRoot.setFont(App.getContext().getSkin().getIconFont());
         btnRoot.setText("\uf0a0");
         btnRoot.addActionListener(e -> createAndShowPopup());
 
@@ -96,7 +96,7 @@ public class AddressBar extends JPanel {
 
         btnEdit = new JButton();
         btnEdit.putClientProperty("Nimbus.Overrides", toolbarSkin);
-        btnEdit.setFont(App.SKIN.getIconFont());
+        btnEdit.setFont(App.getContext().getSkin().getIconFont());
         btnEdit.setText("\uf023");
         btnEdit.addActionListener(e -> {
             if (!isSelected()) {

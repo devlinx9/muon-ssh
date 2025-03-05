@@ -19,7 +19,7 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static muon.app.App.bundle;
+
 
 @Slf4j
 public class PropertiesDialog extends JDialog {
@@ -181,7 +181,7 @@ public class PropertiesDialog extends JDialog {
             chmodAsync(getPermissions(), details);
             dispose();
         });
-        JButton btnCancel = new JButton(bundle.getString("cancel"));
+        JButton btnCancel = new JButton(App.getContext().getBundle().getString("cancel"));
         btnCancel.addActionListener(e -> {
             dialogResult = JOptionPane.CANCEL_OPTION;
             dispose();
@@ -298,7 +298,7 @@ public class PropertiesDialog extends JDialog {
 
     private Component addPropertyField(JTextField txt, String label) {
         txt.setEditable(false);
-        txt.setBackground(App.SKIN.getDefaultBackground());
+        txt.setBackground(App.getContext().getSkin().getDefaultBackground());
         txt.setBorder(null);
         JLabel lblFileName = new JLabel(label);
         lblFileName.setPreferredSize(
@@ -392,7 +392,7 @@ public class PropertiesDialog extends JDialog {
                     return;
                 }
                 if (!ret && !fileBrowser.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null, bundle.getString("operation_errors")
+                        JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("operation_errors")
                                 );
                     }
 
@@ -430,7 +430,7 @@ public class PropertiesDialog extends JDialog {
                 }
                 if (!ret && !fileBrowser.isSessionClosed()) {
                         JOptionPane.showMessageDialog(null,
-                                                      bundle.getString("operation_errors"));
+                                                      App.getContext().getBundle().getString("operation_errors"));
                     }
 
 
@@ -489,7 +489,7 @@ public class PropertiesDialog extends JDialog {
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 if (!fileBrowser.isSessionClosed()) {
-                    JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                    JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("operation_failed"));
                 }
             }
             SwingUtilities.invokeLater(() -> {

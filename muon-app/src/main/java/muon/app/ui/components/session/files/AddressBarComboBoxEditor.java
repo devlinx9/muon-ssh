@@ -1,6 +1,6 @@
 package muon.app.ui.components.session.files;
 
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedTextField;
 
 import javax.swing.*;
 import java.awt.*;

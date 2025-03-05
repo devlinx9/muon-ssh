@@ -6,7 +6,7 @@ package muon.app.ui.components.session;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.AppWindow;
-import muon.app.ui.components.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
@@ -112,7 +112,7 @@ public class SessionListPanel extends JPanel {
     }
 
     public void removeSession(int index) {
-        if (JOptionPane.showConfirmDialog(window, App.bundle.getString("disconnect_session")) == JOptionPane.YES_OPTION) {
+        if (JOptionPane.showConfirmDialog(window, App.getContext().getBundle().getString("disconnect_session")) == JOptionPane.YES_OPTION) {
             SessionContentPanel sessionContentPanel = sessionListModel.get(index);
             sessionContentPanel.close();
             window.removeSession(sessionContentPanel);
@@ -157,10 +157,10 @@ public class SessionListPanel extends JPanel {
             lblHost = new JLabel();
             lblClose = new JLabel();
 
-            lblIcon.setFont(App.SKIN.getIconFont().deriveFont(24.0f));
-            lblText.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
-            lblHost.setFont(App.SKIN.getDefaultFont().deriveFont(12.0f));
-            lblClose.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+            lblIcon.setFont(App.getContext().getSkin().getIconFont().deriveFont(24.0f));
+            lblText.setFont(App.getContext().getSkin().getDefaultFont().deriveFont(14.0f));
+            lblHost.setFont(App.getContext().getSkin().getDefaultFont().deriveFont(12.0f));
+            lblClose.setFont(App.getContext().getSkin().getIconFont().deriveFont(16.0f));
 
             lblText.setText("Sample server");
             lblHost.setText("server host");
@@ -178,7 +178,7 @@ public class SessionListPanel extends JPanel {
             panel.add(textHolder);
 
             panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-            panel.setBackground(App.SKIN.getDefaultBackground());
+            panel.setBackground(App.getContext().getSkin().getDefaultBackground());
             panel.setOpaque(true);
 
             Dimension d = panel.getPreferredSize();
@@ -206,16 +206,16 @@ public class SessionListPanel extends JPanel {
             lblText.setVisible(isPanelVisible);
             lblHost.setVisible(isPanelVisible);
 
-            panel.setBackground(App.SKIN.getDefaultBackground());
-            lblText.setForeground(App.SKIN.getDefaultForeground());
-            lblHost.setForeground(App.SKIN.getInfoTextForeground());
-            lblIcon.setForeground(App.SKIN.getDefaultForeground());
+            panel.setBackground(App.getContext().getSkin().getDefaultBackground());
+            lblText.setForeground(App.getContext().getSkin().getDefaultForeground());
+            lblHost.setForeground(App.getContext().getSkin().getInfoTextForeground());
+            lblIcon.setForeground(App.getContext().getSkin().getDefaultForeground());
 
             if (isSelected) {
-                panel.setBackground(App.SKIN.getDefaultSelectionBackground());
-                lblText.setForeground(App.SKIN.getDefaultSelectionForeground());
-                lblHost.setForeground(App.SKIN.getDefaultSelectionForeground());
-                lblIcon.setForeground(App.SKIN.getDefaultSelectionForeground());
+                panel.setBackground(App.getContext().getSkin().getDefaultSelectionBackground());
+                lblText.setForeground(App.getContext().getSkin().getDefaultSelectionForeground());
+                lblHost.setForeground(App.getContext().getSkin().getDefaultSelectionForeground());
+                lblIcon.setForeground(App.getContext().getSkin().getDefaultSelectionForeground());
             }
 
             return panel;

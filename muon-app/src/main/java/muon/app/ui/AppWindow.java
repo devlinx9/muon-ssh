@@ -12,7 +12,6 @@ import muon.app.ui.components.session.files.transfer.BackgroundTransferPanel;
 import muon.app.ui.components.settings.SettingsDialog;
 import muon.app.ui.components.settings.SettingsPageName;
 import muon.app.updater.UpdateChecker;
-import muon.app.util.Constants;
 import muon.app.util.FontAwesomeContants;
 
 import javax.imageio.ImageIO;
@@ -30,7 +29,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
-import static muon.app.App.bundle;
 import static muon.app.util.Constants.*;
 
 /**
@@ -38,6 +36,9 @@ import static muon.app.util.Constants.*;
  */
 @Slf4j
 public class AppWindow extends JFrame {
+
+    private final String updateUrl = BASE_UPDATE_URL + "/check-update.html?v="
+                                     + App.getContext().getVersion().getNumericValue();
     private final CardLayout sessionCard = new CardLayout();
     private final JPanel cardPanel = new JPanel(sessionCard, true);
     private final BackgroundTransferPanel uploadPanel;
@@ -149,12 +150,12 @@ public class AppWindow extends JFrame {
 
     private JPanel createSessionPanel() {
         JButton btnNew = new JButton(FontAwesomeContants.FA_TELEVISION);
-        btnNew.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
+        btnNew.setFont(App.getContext().getSkin().getIconFont().deriveFont(14.0f));
         btnNew.addActionListener(e -> this.createFirstSessionPanel());
-        btnNew.setToolTipText(bundle.getString("new_connection"));
+        btnNew.setToolTipText(App.getContext().getBundle().getString("new_connection"));
 
         JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
-        btnToggle.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
+        btnToggle.setFont(App.getContext().getSkin().getIconFont().deriveFont(14.0f));
 
         JPanel topBox = new JPanel();
         topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
@@ -163,7 +164,7 @@ public class AppWindow extends JFrame {
         topBox.add(Box.createRigidArea(new Dimension(10, 10)));
         topBox.add(btnNew);
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.SKIN.getDefaultBorderColor()));
+        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.getContext().getSkin().getDefaultBorderColor()));
 
         sessionListPanel = new SessionListPanel(this);
         panel.add(topBox, BorderLayout.NORTH);
@@ -192,9 +193,6 @@ public class AppWindow extends JFrame {
     }
 
 
-    /**
-     *
-     */
     public void showSession(SessionContentPanel sessionContentPanel) {
         cardPanel.add(sessionContentPanel, sessionContentPanel.hashCode() + "");
         sessionCard.show(cardPanel, sessionContentPanel.hashCode() + "");
@@ -202,9 +200,7 @@ public class AppWindow extends JFrame {
         repaint();
     }
 
-    /**
-     *
-     */
+
     public void removeSession(SessionContentPanel sessionContentPanel) {
         cardPanel.remove(sessionContentPanel);
         revalidate();
@@ -213,13 +209,13 @@ public class AppWindow extends JFrame {
 
     private Component createBottomPanel() {
         popup = new JPopupMenu();
-        popup.setBorder(new LineBorder(App.SKIN.getDefaultBorderColor(), 1));
+        popup.setBorder(new LineBorder(App.getContext().getSkin().getDefaultBorderColor(), 1));
         popup.setPreferredSize(new Dimension(400, 500));
 
         Box b1 = Box.createHorizontalBox();
         b1.setOpaque(true);
-        b1.setBackground(App.SKIN.getTableBackgroundColor());
-        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()),
+        b1.setBackground(App.getContext().getSkin().getTableBackgroundColor());
+        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.getContext().getSkin().getDefaultBorderColor()),
                                         new EmptyBorder(5, 5, 5, 5)));
         b1.add(createSpacer(10, 10));
         b1.add(createBrandLabel());
@@ -231,7 +227,7 @@ public class AppWindow extends JFrame {
         JLabel lblUpload = createUploadLabel();
         b1.add(lblUpload);
         b1.add(createSpacer(5, 10));
-        createUploadLabelCount(lblUpload);
+        createUploadLabelCount();
 
         b1.add(lblUploadCount);
         b1.add(createSpacer(10, 10));
@@ -239,7 +235,7 @@ public class AppWindow extends JFrame {
         JLabel lblDownload = createDownloadLabel();
         b1.add(lblDownload);
         b1.add(createSpacer(5, 10));
-        createDownloadCountLabel(lblDownload);
+        createDownloadCountLabel();
         b1.add(lblDownloadCount);
 
         b1.add(createSpacer(10, 10));
@@ -279,7 +275,7 @@ public class AppWindow extends JFrame {
     }
 
     private void createUpdateTextLabel() {
-        lblUpdateText = new JLabel(bundle.getString("chk_update"));
+        lblUpdateText = new JLabel(App.getContext().getBundle().getString("chk_update"));
         lblUpdateText.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblUpdateText.addMouseListener(new MouseAdapter() {
             @Override
@@ -303,13 +299,13 @@ public class AppWindow extends JFrame {
         lblUpdate.setVisible(false);
     }
 
-    private void createDownloadCountLabel(JLabel lblDownload) {
+    private void createDownloadCountLabel() {
         lblDownloadCount = new JLabel("0");
         lblDownloadCount.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblDownloadCount.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showPopup(downloadPanel, lblDownload);
+                showPopup(downloadPanel);
             }
         });
     }
@@ -319,7 +315,7 @@ public class AppWindow extends JFrame {
         lblUpload.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showPopup(uploadPanel, lblUpload);
+                showPopup(uploadPanel);
             }
         });
         return lblUpload;
@@ -330,19 +326,19 @@ public class AppWindow extends JFrame {
         lblDownload.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showPopup(downloadPanel, lblDownload);
+                showPopup(downloadPanel);
             }
         });
         return lblDownload;
     }
 
-    private void createUploadLabelCount(JLabel lblUpload) {
+    private void createUploadLabelCount() {
         lblUploadCount = new JLabel("0");
         lblUploadCount.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblUploadCount.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showPopup(uploadPanel, lblUpload);
+                showPopup(uploadPanel);
             }
         });
     }
@@ -368,7 +364,7 @@ public class AppWindow extends JFrame {
 
     private JLabel createIconLabel(String icon) {
         JLabel label = new JLabel(icon);
-        label.setFont(App.SKIN.getIconFont().deriveFont((float) 16.0));
+        label.setFont(App.getContext().getSkin().getIconFont().deriveFont((float) 16.0));
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return label;
     }
@@ -392,7 +388,7 @@ public class AppWindow extends JFrame {
     protected void openUpdateURL() {
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().browse(new URI(Constants.UPDATE_URL2));
+                Desktop.getDesktop().browse(new URI(updateUrl));
             } catch (IOException | URISyntaxException ex) {
                 log.error(ex.getMessage(), ex);
             }
@@ -407,7 +403,7 @@ public class AppWindow extends JFrame {
         this.downloadPanel.addNewBackgroundTransfer(transfer);
     }
 
-    private void showPopup(Component panel, Component invoker) {
+    private void showPopup(Component panel) {
         popup.removeAll();
         popup.add(panel);
         popup.setInvoker(bottomPanel);

@@ -1,8 +1,8 @@
 package muon.app.ui.components.session;
 
 import muon.app.App;
-import muon.app.ui.components.SkinnedScrollPane;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.util.FontAwesomeContants;
 import muon.app.util.enums.PortForwardingType;
 
@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static muon.app.App.bundle;
+
 
 public class PortForwardingPanel extends JPanel {
     private final PFTableModel model;
@@ -33,11 +33,11 @@ public class PortForwardingPanel extends JPanel {
 
         Box b1 = Box.createVerticalBox();
         JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.SKIN.getIconFont());
+        btnAdd.setFont(App.getContext().getSkin().getIconFont());
         JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.SKIN.getIconFont());
+        btnDel.setFont(App.getContext().getSkin().getIconFont());
         JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.SKIN.getIconFont());
+        btnEdit.setFont(App.getContext().getSkin().getIconFont());
 
         btnAdd.addActionListener(e -> {
             PortForwardingRule ent = addOrEditEntry(null);
@@ -90,7 +90,7 @@ public class PortForwardingPanel extends JPanel {
     }
 
     private PortForwardingRule addOrEditEntry(PortForwardingRule r) {
-        JComboBox<String> cmbPFType = new JComboBox<>(new String[]{bundle.getString("local"), bundle.getString("remote")});
+        JComboBox<String> cmbPFType = new JComboBox<>(new String[]{App.getContext().getBundle().getString("local"), App.getContext().getBundle().getString("remote")});
 
         JTextField txtHost = new SkinnedTextField(30);
 
@@ -120,7 +120,7 @@ public class PortForwardingPanel extends JPanel {
             String bindAddress = txtBindAddress.getText();
 
             if (host.isEmpty() || bindAddress.isEmpty() || port1 <= 0 || port2 <= 0) {
-                JOptionPane.showMessageDialog(this, bundle.getString("invalid_input"));
+                JOptionPane.showMessageDialog(this, App.getContext().getBundle().getString("invalid_input"));
                 continue;
             }
 
@@ -139,7 +139,7 @@ public class PortForwardingPanel extends JPanel {
 
     private static class PFTableModel extends AbstractTableModel {
 
-        private final String[] columns = {bundle.getString("type"), bundle.getString("host"), bundle.getString("source_port"), bundle.getString("target_port"), bundle.getString("bind_host")};
+        private final String[] columns = {App.getContext().getBundle().getString("type"), App.getContext().getBundle().getString("host"), App.getContext().getBundle().getString("source_port"), App.getContext().getBundle().getString("target_port"), App.getContext().getBundle().getString("bind_host")};
         private final List<PortForwardingRule> list = new ArrayList<>();
 
         @Override

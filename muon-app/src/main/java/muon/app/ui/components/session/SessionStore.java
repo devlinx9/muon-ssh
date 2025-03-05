@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.List;
 
-import static muon.app.App.bundle;
+
 
 @Slf4j
 public class SessionStore {
@@ -30,7 +30,7 @@ public class SessionStore {
     }
 
     public static synchronized SavedSessionTree load() {
-        File file = Paths.get(App.CONFIG_DIR, Constants.SESSION_DB_FILE).toFile();
+        File file = Paths.get(App.getContext().getConfigDir().getAbsolutePath(), Constants.SESSION_DB_FILE).toFile();
         return load(file);
     }
 
@@ -50,7 +50,7 @@ public class SessionStore {
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 JOptionPane.showMessageDialog(App.getAppWindow(),
-                                              String.format(bundle.getString("error_occurred"), e.getMessage()), bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+                                              String.format(App.getContext().getBundle().getString("error_occurred"), e.getMessage()), App.getContext().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
                 return null;
             }
             return savedSessionTree;
@@ -65,7 +65,7 @@ public class SessionStore {
     }
 
     public static synchronized void save(SessionFolder folder, String lastSelectionPath) {
-        File file = Paths.get(App.CONFIG_DIR, Constants.SESSION_DB_FILE).toFile();
+        File file = new File(App.getContext().getConfigDir(), Constants.SESSION_DB_FILE);
         save(folder, lastSelectionPath, file);
     }
 

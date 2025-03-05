@@ -1,4 +1,4 @@
-package muon.app.common;
+package muon.app.common.settings;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Getter;

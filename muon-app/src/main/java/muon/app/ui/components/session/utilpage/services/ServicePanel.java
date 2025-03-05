@@ -4,9 +4,10 @@
 package muon.app.ui.components.session.utilpage.services;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ssh.RemoteSessionInstance;
-import muon.app.ui.components.SkinnedScrollPane;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
 import muon.app.util.SudoUtils;
@@ -21,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -234,10 +235,10 @@ public class ServicePanel extends UtilPageItemView {
         table.setIntercellSpacing(new Dimension(0, 0));
         table.setFillsViewportHeight(true);
 
-        JLabel lbl1 = new JLabel(bundle.getString("search"));
+        JLabel lbl1 = new JLabel(App.getContext().getBundle().getString("search"));
         txtFilter = new SkinnedTextField(30);
         txtFilter.addActionListener(e -> filter());
-        JButton btnFilter = new JButton(bundle.getString("search"));
+        JButton btnFilter = new JButton(App.getContext().getBundle().getString("search"));
 
         Box b1 = Box.createHorizontalBox();
         b1.add(lbl1);
@@ -254,16 +255,16 @@ public class ServicePanel extends UtilPageItemView {
 
         Box box = Box.createHorizontalBox();
 
-        btnStart = new JButton(bundle.getString("start"));
-        btnStop = new JButton(bundle.getString("stop"));
-        btnRestart = new JButton(bundle.getString("restart"));
-        btnReload = new JButton(bundle.getString("reload"));
-        btnEnable = new JButton(bundle.getString("enable"));
-        btnDisable = new JButton(bundle.getString("disable"));
-        JButton btnRefresh = new JButton(bundle.getString("refresh"));
+        btnStart = new JButton(App.getContext().getBundle().getString("start"));
+        btnStop = new JButton(App.getContext().getBundle().getString("stop"));
+        btnRestart = new JButton(App.getContext().getBundle().getString("restart"));
+        btnReload = new JButton(App.getContext().getBundle().getString("reload"));
+        btnEnable = new JButton(App.getContext().getBundle().getString("enable"));
+        btnDisable = new JButton(App.getContext().getBundle().getString("disable"));
+        JButton btnRefresh = new JButton(App.getContext().getBundle().getString("refresh"));
 
         chkRunAsSuperUser = new JCheckBox(
-                bundle.getString("actions_sudo"));
+                App.getContext().getBundle().getString("actions_sudo"));
         box.add(chkRunAsSuperUser);
 
         box.add(Box.createHorizontalGlue());
@@ -377,7 +378,7 @@ public class ServicePanel extends UtilPageItemView {
                     }
                     if (!holder.isSessionClosed()) {
                         JOptionPane.showMessageDialog(null,
-                                bundle.getString("operation_failed"));
+                                App.getContext().getBundle().getString("operation_failed"));
                     }
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);

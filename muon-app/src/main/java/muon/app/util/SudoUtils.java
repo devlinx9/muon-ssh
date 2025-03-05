@@ -43,9 +43,9 @@ public class SudoUtils {
                         log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (firstTime.get() || JOptionPane.showOptionDialog(null,
-                                    new Object[]{App.bundle.getString("user_password"),
+                                    new Object[]{App.getContext().getBundle().getString("user_password"),
                                                  J_PASSWORD_FIELD},
-                                                                                App.bundle.getString("authentication"),
+                                                                                App.getContext().getBundle().getString("authentication"),
                                     JOptionPane.OK_CANCEL_OPTION,
                                     JOptionPane.PLAIN_MESSAGE, null, null,
                                     null) == JOptionPane.OK_OPTION) {
@@ -104,9 +104,9 @@ public class SudoUtils {
                         log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (JOptionPane.showOptionDialog(null,
-                                    new Object[]{App.bundle.getString("user_password"),
+                                    new Object[]{App.getContext().getBundle().getString("user_password"),
                                                  J_PASSWORD_FIELD},
-                                                             App.bundle.getString("authentication"),
+                                                             App.getContext().getBundle().getString("authentication"),
                                     JOptionPane.OK_CANCEL_OPTION,
                                     JOptionPane.PLAIN_MESSAGE, null, null,
                                     null) == JOptionPane.OK_OPTION) {

@@ -1,19 +1,21 @@
 package muon.app.ui.components.session.search;
 
+import muon.app.App;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import static muon.app.App.bundle;
+
 
 public class SearchTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 7212506492710233442L;
     private final List<SearchResult> list = new ArrayList<>();
     private final String[] columns = new String[]{
-            bundle.getString("filename"),
-            bundle.getString("type"),
-            bundle.getString("path")};
+            App.getContext().getBundle().getString("filename"),
+            App.getContext().getBundle().getString("type"),
+            App.getContext().getBundle().getString("path")};
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {

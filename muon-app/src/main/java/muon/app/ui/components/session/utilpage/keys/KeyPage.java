@@ -4,13 +4,14 @@
 package muon.app.ui.components.session.utilpage.keys;
 
 import lombok.extern.slf4j.Slf4j;
-import muon.app.ui.components.TabbedPanel;
+import muon.app.App;
+import muon.app.ui.components.common.TabbedPanel;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
 
 import javax.swing.*;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -106,8 +107,8 @@ public class KeyPage extends UtilPageItemView {
                 }
             });
         });
-        tabs.addTab(bundle.getString("server"), remoteKeyPanel);
-        tabs.addTab(bundle.getString("local_computer"), localKeyPanel);
+        tabs.addTab(App.getContext().getBundle().getString("server"), remoteKeyPanel);
+        tabs.addTab(App.getContext().getBundle().getString("local_computer"), localKeyPanel);
         this.add(tabs);
 
         holder.EXECUTOR.submit(() -> {

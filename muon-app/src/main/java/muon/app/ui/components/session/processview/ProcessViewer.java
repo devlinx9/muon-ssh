@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -67,7 +67,7 @@ public class ProcessViewer extends Page {
 
     @Override
     public String getText() {
-        return bundle.getString("processes");
+        return App.getContext().getBundle().getString("processes");
     }
 
     private void updateProcessList(AtomicBoolean stopFlag) {
@@ -92,7 +92,7 @@ public class ProcessViewer extends Page {
                         if (holder.getRemoteSessionInstance().exec(cmd, stopFlag, new StringBuilder(),
                                                                    new StringBuilder()) != 0) {
                             if (!holder.isSessionClosed()) {
-                                JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                                JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("operation_failed"));
                             }
                         } else {
                             updateProcessList(stopFlag);
@@ -109,7 +109,7 @@ public class ProcessViewer extends Page {
                 holder.EXECUTOR.execute(() -> {
                     if (SudoUtils.runSudo(cmd, holder.getRemoteSessionInstance(), holder.getInfo().getPassword()) != 0) {
                         if (!holder.isSessionClosed()) {
-                            JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                            JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("operation_failed"));
                         }
                     } else {
                         updateProcessList(stopFlag);

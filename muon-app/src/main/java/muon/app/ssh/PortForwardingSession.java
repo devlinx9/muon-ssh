@@ -2,13 +2,14 @@ package muon.app.ssh;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.session.PortForwardingRule;
+import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
+import muon.app.util.enums.PortForwardingType;
 import net.schmizz.sshj.connection.ConnectionException;
 import net.schmizz.sshj.connection.channel.direct.Parameters;
 import net.schmizz.sshj.connection.channel.forwarded.RemotePortForwarder.Forward;
 import net.schmizz.sshj.connection.channel.forwarded.SocketForwardingConnectListener;
 import net.schmizz.sshj.transport.TransportException;
-import muon.app.util.enums.PortForwardingType;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -25,10 +26,11 @@ public class PortForwardingSession {
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
     private final List<ServerSocket> ssList = new ArrayList<>();
 
-    public PortForwardingSession(SessionInfo info, InputBlocker inputBlocker,
-                                 CachedCredentialProvider cachedCredentialProvider) {
+    public PortForwardingSession(SessionInfo info,
+                                 CachedCredentialProvider cachedCredentialProvider,
+                                 SessionContentPanel sessionContentPanel) {
         this.info = info;
-        this.ssh = new SshClient2(info, inputBlocker, cachedCredentialProvider);
+        this.ssh = new SshClient2(info, cachedCredentialProvider, sessionContentPanel);
     }
 
     public void close() {
@@ -106,7 +108,7 @@ public class PortForwardingSession {
                 // Something to hang on to so that the forwarding stays
                 ssh.getTransport().join();
             } catch (ConnectionException | TransportException e) {
-                
+
                 log.error(e.getMessage(), e);
             }
         });

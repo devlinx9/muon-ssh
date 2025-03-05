@@ -20,9 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class SshFileSystem implements FileSystem {
     public static final String PROTO_SFTP = "sftp";
-    private final Object lock = new Object();
     private SFTPClient sftp;
-    private final AtomicBoolean stopFlag = new AtomicBoolean(false);
     private final SshClient2 ssh;
     private String home;
     private final AtomicBoolean closed = new AtomicBoolean(false);
@@ -205,7 +203,7 @@ public class SshFileSystem implements FileSystem {
     }
 
     @Override
-    public String[] getRoots() throws Exception {
+    public String[] getRoots() {
         return new String[]{"/"};
     }
 

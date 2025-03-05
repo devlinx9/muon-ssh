@@ -5,8 +5,8 @@ package muon.app.ui.components.session.search;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.SkinnedScrollPane;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.util.FontAwesomeContants;
@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -136,7 +136,7 @@ public class SearchPanel extends Page {
                 criteriaBuffer.append(size).append("c");
                 criteriaBuffer.append(" ");
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, bundle.getString("invalid_size"));
+                JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("invalid_size"));
                 return;
             }
         }
@@ -154,7 +154,7 @@ public class SearchPanel extends Page {
             Date d2 = (Date) spDate2.getValue();
 
             if (!d1.before(d2)) {
-                JOptionPane.showMessageDialog(this, bundle.getString("invalid_date_range")
+                JOptionPane.showMessageDialog(this, App.getContext().getBundle().getString("invalid_date_range")
                         );
                 return;
             }
@@ -195,7 +195,7 @@ public class SearchPanel extends Page {
     private void findAsync(StringBuilder scriptBuffer, AtomicBoolean stopFlag) {
         SwingUtilities.invokeLater(() -> {
             model.clear();
-            lblStat.setText(bundle.getString("searching"));
+            lblStat.setText(App.getContext().getBundle().getString("searching"));
             lblCount.setText(String.format("%d items", model.getRowCount()));
             disableButtons();
         });
@@ -235,12 +235,12 @@ public class SearchPanel extends Page {
                         String.format("%d items", model.getRowCount()));
             });
 
-            lblStat.setText(bundle.getString("idle"));
+            lblStat.setText(App.getContext().getBundle().getString("idle"));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         } finally {
             SwingUtilities.invokeLater(() -> {
-                lblStat.setText(bundle.getString("idle"));
+                lblStat.setText(App.getContext().getBundle().getString("idle"));
                 lblCount.setText(
                         String.format("%d items", model.getRowCount()));
                 this.holder.enableUi();
@@ -294,16 +294,16 @@ public class SearchPanel extends Page {
 
     @Override
     public String getText() {
-        return bundle.getString("file_search");
+        return App.getContext().getBundle().getString("file_search");
     }
 
     private void createUI() {
         setLayout(new BorderLayout());
-        chkIncludeCompressed = new JCheckBox(bundle.getString("in_compressed_files"));
+        chkIncludeCompressed = new JCheckBox(App.getContext().getBundle().getString("in_compressed_files"));
         chkIncludeCompressed.setAlignmentX(LEFT_ALIGNMENT);
-        radFileName = new JRadioButton(bundle.getString("in_filename"));
+        radFileName = new JRadioButton(App.getContext().getBundle().getString("in_filename"));
         radFileName.setAlignmentX(LEFT_ALIGNMENT);
-        radFileContents = new JRadioButton(bundle.getString("in_filecontent"));
+        radFileContents = new JRadioButton(App.getContext().getBundle().getString("in_filecontent"));
         radFileContents.setAlignmentX(LEFT_ALIGNMENT);
 
         ButtonGroup bg = new ButtonGroup();
@@ -316,7 +316,7 @@ public class SearchPanel extends Page {
         Box b1 = Box.createVerticalBox();
         b1.setOpaque(true);
 
-        JLabel lblName = new JLabel(bundle.getString("search_for"));
+        JLabel lblName = new JLabel(App.getContext().getBundle().getString("search_for"));
         lblName.setAlignmentX(LEFT_ALIGNMENT);
         txtName = new SkinnedTextField(20);
         txtName.addActionListener(e -> find());
@@ -324,7 +324,7 @@ public class SearchPanel extends Page {
         txtName.setMaximumSize(pref);
         txtName.setAlignmentX(LEFT_ALIGNMENT);
 
-        JLabel lblFolder = new JLabel(bundle.getString("search_in"));
+        JLabel lblFolder = new JLabel(App.getContext().getBundle().getString("search_in"));
         lblFolder.setAlignmentX(LEFT_ALIGNMENT);
         txtFolder = new SkinnedTextField(20);
         txtFolder.setPreferredSize(pref);
@@ -333,7 +333,7 @@ public class SearchPanel extends Page {
 
         txtFolder.setText("$HOME");
 
-        JLabel lblSize = new JLabel(bundle.getString("size"));
+        JLabel lblSize = new JLabel(App.getContext().getBundle().getString("size"));
         lblSize.setAlignmentX(LEFT_ALIGNMENT);
 
         txtSize = new SkinnedTextField();
@@ -351,15 +351,15 @@ public class SearchPanel extends Page {
                 new Dimension(20, cmbSize.getPreferredSize().height));
         cmbSize.setAlignmentX(LEFT_ALIGNMENT);
 
-        JLabel lblMtime = new JLabel(bundle.getString("modified"));
+        JLabel lblMtime = new JLabel(App.getContext().getBundle().getString("modified"));
         lblMtime.setAlignmentX(LEFT_ALIGNMENT);
 
         ButtonGroup btnGroup1 = new ButtonGroup();
-        radAny = new JRadioButton(bundle.getString("any_time"));
+        radAny = new JRadioButton(App.getContext().getBundle().getString("any_time"));
         radAny.setAlignmentX(LEFT_ALIGNMENT);
-        radWeek = new JRadioButton(bundle.getString("this_week"));
+        radWeek = new JRadioButton(App.getContext().getBundle().getString("this_week"));
         radWeek.setAlignmentX(LEFT_ALIGNMENT);
-        radCust = new JRadioButton(bundle.getString("between"));
+        radCust = new JRadioButton(App.getContext().getBundle().getString("between"));
         radCust.setAlignmentX(LEFT_ALIGNMENT);
 
         btnGroup1.add(radAny);
@@ -396,9 +396,9 @@ public class SearchPanel extends Page {
 
         radAny.setSelected(true);
 
-        JLabel lblFrom = new JLabel(bundle.getString("from"));
+        JLabel lblFrom = new JLabel(App.getContext().getBundle().getString("from"));
         lblFrom.setAlignmentX(LEFT_ALIGNMENT);
-        JLabel lblTo = new JLabel(bundle.getString("to"));
+        JLabel lblTo = new JLabel(App.getContext().getBundle().getString("to"));
         lblTo.setAlignmentX(LEFT_ALIGNMENT);
 
         SpinnerDateModel sm1 = new SpinnerDateModel();
@@ -423,15 +423,15 @@ public class SearchPanel extends Page {
         spDate2.setEditor(new JSpinner.DateEditor(spDate2, "dd/MM/yyyy"));
         spDate2.setEnabled(false);
 
-        JLabel lblLookfor = new JLabel(bundle.getString("look_for"));
+        JLabel lblLookfor = new JLabel(App.getContext().getBundle().getString("look_for"));
         lblLookfor.setAlignmentX(LEFT_ALIGNMENT);
 
         ButtonGroup btnGroup2 = new ButtonGroup();
-        JRadioButton radBoth = new JRadioButton(bundle.getString("both_file_folder"));
+        JRadioButton radBoth = new JRadioButton(App.getContext().getBundle().getString("both_file_folder"));
         radBoth.setAlignmentX(LEFT_ALIGNMENT);
-        radFile = new JRadioButton(bundle.getString("file_only"));
+        radFile = new JRadioButton(App.getContext().getBundle().getString("file_only"));
         radFile.setAlignmentX(LEFT_ALIGNMENT);
-        radFolder = new JRadioButton(bundle.getString("folder_only"));
+        radFolder = new JRadioButton(App.getContext().getBundle().getString("folder_only"));
         radFolder.setAlignmentX(LEFT_ALIGNMENT);
 
         btnGroup2.add(radBoth);
@@ -440,7 +440,7 @@ public class SearchPanel extends Page {
 
         radBoth.setSelected(true);
 
-        JButton btnSearch = new JButton(bundle.getString("search"));
+        JButton btnSearch = new JButton(App.getContext().getBundle().getString("search"));
         btnSearch.setAlignmentX(LEFT_ALIGNMENT);
 
         btnSearch.addActionListener(e -> find());
@@ -475,7 +475,7 @@ public class SearchPanel extends Page {
         JScrollPane jsp = new SkinnedScrollPane(table);
         jsp.setBorder(null);
 
-        lblStat = new JLabel(bundle.getString("ready"));
+        lblStat = new JLabel(App.getContext().getBundle().getString("ready"));
         lblCount = new JLabel("");
         lblCount.setHorizontalAlignment(JLabel.RIGHT);
 
@@ -558,10 +558,10 @@ public class SearchPanel extends Page {
         statBox.add(lblCount);
         statBox.add(Box.createRigidArea(new Dimension(10, 25)));
         statBox.setBorder(
-                new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()));
+                new MatteBorder(1, 0, 0, 0, App.getContext().getSkin().getDefaultBorderColor()));
 
-        btnShowInBrowser = new JButton(bundle.getString("show_location"));
-        btnCopyPath = new JButton(bundle.getString("copy_path"));
+        btnShowInBrowser = new JButton(App.getContext().getBundle().getString("show_location"));
+        btnCopyPath = new JButton(App.getContext().getBundle().getString("copy_path"));
 
         disableButtons();
 
@@ -609,7 +609,7 @@ public class SearchPanel extends Page {
 
         JPanel pp = new JPanel(new BorderLayout());
         pp.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 0, 1, App.SKIN.getSelectedTabColor()),
+                new MatteBorder(0, 0, 0, 1, App.getContext().getSkin().getSelectedTabColor()),
                 new EmptyBorder(5, 5, 5, 5)));
         pp.add(jspB1);
 

@@ -33,7 +33,7 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
 
         int resp = JOptionPane.showConfirmDialog(null,
                 String.format(
-                        App.bundle.getString("unverifiable_action"),
+                        App.getContext().getBundle().getString("unverifiable_action"),
                         hostname, type, SecurityUtils.getFingerprint(key)));
 
         if (resp == JOptionPane.YES_OPTION) {
@@ -53,7 +53,7 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
         final KeyType type = KeyType.fromKey(key);
         final String fp = SecurityUtils.getFingerprint(key);
         final String path = getFile().getAbsolutePath();
-        String msg = String.format(App.bundle.getString("host_key_change_warning"), type, fp, path);
+        String msg = String.format(App.getContext().getBundle().getString("host_key_change_warning"), type, fp, path);
         return JOptionPane.showConfirmDialog(null, msg) == JOptionPane.YES_OPTION;
     }
 

@@ -13,7 +13,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static muon.app.App.bundle;
+
 
 public class OverflowMenuHandler {
     private final JRadioButtonMenuItem mSortAsc;
@@ -33,7 +33,7 @@ public class OverflowMenuHandler {
         this.fileBrowser = fileBrowser;
         ksHideShow = KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK);
 
-        mShowHiddenFiles = new JCheckBoxMenuItem(bundle.getString("show_hidden_files2"));
+        mShowHiddenFiles = new JCheckBoxMenuItem(App.getContext().getBundle().getString("show_hidden_files2"));
         mShowHiddenFiles.setSelected(App.getGlobalSettings().isShowHiddenFilesByDefault());
 
         aHideShow = new AbstractAction() {
@@ -61,7 +61,7 @@ public class OverflowMenuHandler {
 
         mSortDesc = createSortMenuItem("Sort descending", 1, bg2);
 
-        this.favouriteLocations = new JMenu(bundle.getString("bookmarks"));
+        this.favouriteLocations = new JMenu(App.getContext().getBundle().getString("bookmarks"));
 
         popup = new JPopupMenu();
         JMenu mSortMenu = new JMenu("Sort");

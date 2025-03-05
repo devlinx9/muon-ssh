@@ -5,7 +5,7 @@ package muon.app.ui.components.session.diskspace;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.util.FontAwesomeContants;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -52,7 +52,7 @@ public class DiskspaceAnalyzer extends Page {
         JTree resultTree = new JTree(treeModel);
         resultTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
-        JButton btnStart = new JButton(bundle.getString("start_another_analysis"));
+        JButton btnStart = new JButton(App.getContext().getBundle().getString("start_another_analysis"));
         btnStart.addActionListener(e -> cardLayout.show(this, "firstPanel"));
 
         Box resultBox = Box.createHorizontalBox();
@@ -61,7 +61,7 @@ public class DiskspaceAnalyzer extends Page {
         resultBox.add(Box.createHorizontalStrut(10));
         resultBox.add(btnStart);
 
-        JLabel resultTitle = new JLabel(bundle.getString("directory_usage"));
+        JLabel resultTitle = new JLabel(App.getContext().getBundle().getString("directory_usage"));
         resultTitle.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JPanel resultPanel = new JPanel(new BorderLayout());
@@ -72,16 +72,16 @@ public class DiskspaceAnalyzer extends Page {
     }
 
     private Component createFirstPanel() {
-        JRadioButton radFolder = new JRadioButton(bundle.getString("analyze_folder"));
-        JRadioButton radVolume = new JRadioButton(bundle.getString("analyze_volume"));
-        radFolder.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
-        radVolume.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
+        JRadioButton radFolder = new JRadioButton(App.getContext().getBundle().getString("analyze_folder"));
+        JRadioButton radVolume = new JRadioButton(App.getContext().getBundle().getString("analyze_volume"));
+        radFolder.setFont(App.getContext().getSkin().getDefaultFont().deriveFont(14.0f));
+        radVolume.setFont(App.getContext().getSkin().getDefaultFont().deriveFont(14.0f));
         radFolder.setHorizontalAlignment(JRadioButton.LEFT);
         radVolume.setHorizontalAlignment(JRadioButton.LEFT);
         JLabel lblIcon = new JLabel();
-        lblIcon.setFont(App.SKIN.getIconFont().deriveFont(128.0f));
+        lblIcon.setFont(App.getContext().getSkin().getIconFont().deriveFont(128.0f));
         lblIcon.setText(FontAwesomeContants.FA_HDD_O);
-        JButton btnNext = new JButton(bundle.getString("next"));
+        JButton btnNext = new JButton(App.getContext().getBundle().getString("next"));
         btnNext.addActionListener(e -> {
             if (radVolume.isSelected()) {
                 cardLayout.show(this, "volPanel");
@@ -135,12 +135,12 @@ public class DiskspaceAnalyzer extends Page {
         table.setDefaultRenderer(Object.class, r1);
         table.setDefaultRenderer(Double.class, r2);
         table.setRowHeight(Math.max(r1.getPreferredSize().height, r2.getPreferredSize().height));
-        table.setSelectionForeground(App.SKIN.getDefaultSelectionForeground());
+        table.setSelectionForeground(App.getContext().getSkin().getDefaultSelectionForeground());
         JScrollPane jsp = new SkinnedScrollPane(table);
 
-        JButton btnBack = new JButton(bundle.getString("back"));
-        JButton btnNext = new JButton(bundle.getString("next"));
-        JButton btnReload = new JButton(bundle.getString("reload"));
+        JButton btnBack = new JButton(App.getContext().getBundle().getString("back"));
+        JButton btnNext = new JButton(App.getContext().getBundle().getString("next"));
+        JButton btnReload = new JButton(App.getContext().getBundle().getString("reload"));
 
         btnNext.addActionListener(e -> {
             int x = table.getSelectedRow();
@@ -149,7 +149,7 @@ public class DiskspaceAnalyzer extends Page {
                 cardLayout.show(this, "resultPanel");
                 analyze(model.get(r).getMountPoint());
             } else {
-                JOptionPane.showMessageDialog(this, bundle.getString("select_partition"));
+                JOptionPane.showMessageDialog(this, App.getContext().getBundle().getString("select_partition"));
             }
         });
 
@@ -163,7 +163,7 @@ public class DiskspaceAnalyzer extends Page {
         bottomBox.add(btnNext);
         bottomBox.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        JLabel lblTitle = new JLabel(bundle.getString("select_volume"));
+        JLabel lblTitle = new JLabel(App.getContext().getBundle().getString("select_volume"));
         lblTitle.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         JPanel panel = new JPanel(new BorderLayout());
@@ -185,7 +185,7 @@ public class DiskspaceAnalyzer extends Page {
 
     @Override
     public String getText() {
-        return bundle.getString("diskspace");
+        return App.getContext().getBundle().getString("diskspace");
     }
 
     private void listPartitions(AtomicBoolean stopFlag) {

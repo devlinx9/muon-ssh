@@ -5,6 +5,7 @@ package muon.app.ssh;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
@@ -28,9 +29,10 @@ public class RemoteSessionInstance {
     private final SshFileSystem sshFs;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    public RemoteSessionInstance(SessionInfo info, InputBlocker inputBlocker,
-                                 CachedCredentialProvider cachedCredentialProvider) {
-        this.ssh = new SshClient2(info, inputBlocker, cachedCredentialProvider);
+    public RemoteSessionInstance(SessionInfo info,
+                                 CachedCredentialProvider cachedCredentialProvider,
+                                 SessionContentPanel sessionContentPanel) {
+        this.ssh = new SshClient2(info, cachedCredentialProvider, sessionContentPanel);
         this.sshFs = new SshFileSystem(this.ssh);
     }
 

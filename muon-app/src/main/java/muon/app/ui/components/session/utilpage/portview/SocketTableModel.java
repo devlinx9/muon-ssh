@@ -1,13 +1,15 @@
 package muon.app.ui.components.session.utilpage.portview;
 
+import muon.app.App;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import static muon.app.App.bundle;
+
 
 public class SocketTableModel extends AbstractTableModel {
-    private final String[] columns = {bundle.getString("processes"), bundle.getString("pid"), bundle.getString("host"), bundle.getString("port")};
+    private final String[] columns = {App.getContext().getBundle().getString("processes"), App.getContext().getBundle().getString("pid"), App.getContext().getBundle().getString("host"), App.getContext().getBundle().getString("port")};
     private final List<SocketEntry> list = new ArrayList<>();
 
     public void addEntry(SocketEntry e) {

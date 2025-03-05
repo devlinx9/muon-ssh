@@ -6,14 +6,14 @@ package muon.app.ui.components.session.logviewer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.ClosableTabContent;
-import muon.app.ui.components.SkinnedScrollPane;
-import muon.app.ui.components.SkinnedTextArea;
-import muon.app.ui.components.TextGutter;
+import muon.app.ui.components.common.ClosableTabContent;
+import muon.app.ui.components.common.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedTextArea;
+import muon.app.ui.components.common.TextGutter;
 import muon.app.ui.components.session.SessionContentPanel;
-import org.tukaani.xz.XZInputStream;
 import muon.app.util.FontAwesomeContants;
 import muon.app.util.LayoutUtilities;
+import org.tukaani.xz.XZInputStream;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -34,7 +34,6 @@ import java.util.zip.GZIPInputStream;
 
 /**
  * @author subhro
- *
  */
 @Slf4j
 public class LogContent extends JPanel implements ClosableTabContent {
@@ -48,7 +47,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
     private File indexFile;
     private RandomAccessFile raf;
     private long totalLines;
-    private static final int linePerPage = 50;
+    private static final int LINE_PER_PAGE = 50;
     private long currentPage;
     private long pageCount;
     private final JTextArea textArea;
@@ -73,39 +72,39 @@ public class LogContent extends JPanel implements ClosableTabContent {
         lblTotalPage = new JLabel();
         lblTotalPage.setHorizontalAlignment(JLabel.CENTER);
 
-        UIDefaults skin = App.SKIN.createToolbarSkin();
+        UIDefaults skin = App.getContext().getSkin().createToolbarSkin();
 
         JButton btnFirstPage = new JButton();
         btnFirstPage.setToolTipText("First page");
         btnFirstPage.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnFirstPage.setFont(App.SKIN.getIconFont());
+        btnFirstPage.setFont(App.getContext().getSkin().getIconFont());
         btnFirstPage.setText(FontAwesomeContants.FA_FAST_BACKWARD);
         btnFirstPage.addActionListener(e -> firstPage());
 
         JButton btnNextPage = new JButton();
         btnNextPage.setToolTipText("Next page");
         btnNextPage.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnNextPage.setFont(App.SKIN.getIconFont());
+        btnNextPage.setFont(App.getContext().getSkin().getIconFont());
         btnNextPage.setText(FontAwesomeContants.FA_STEP_FORWARD);
         btnNextPage.addActionListener(e -> nextPage());
 
         JButton btnPrevPage = new JButton("");
         btnPrevPage.setToolTipText("Previous page");
         btnPrevPage.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnPrevPage.setFont(App.SKIN.getIconFont());
+        btnPrevPage.setFont(App.getContext().getSkin().getIconFont());
         btnPrevPage.setText(FontAwesomeContants.FA_STEP_BACKWARD);
         btnPrevPage.addActionListener(e -> previousPage());
 
         JButton btnLastPage = new JButton();
         btnLastPage.setToolTipText("Last page");
         btnLastPage.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnLastPage.setFont(App.SKIN.getIconFont());
+        btnLastPage.setFont(App.getContext().getSkin().getIconFont());
         btnLastPage.setText(FontAwesomeContants.FA_FAST_FORWARD);
         btnLastPage.addActionListener(e -> lastPage());
 
         textArea = new SkinnedTextArea();
         textArea.setEditable(false);
-        textArea.setBackground(App.SKIN.getSelectedTabColor());
+        textArea.setBackground(App.getContext().getSkin().getSelectedTabColor());
         textArea.setWrapStyleWord(true);
         textArea.setFont(textArea.getFont().deriveFont(
                 (float) App.getGlobalSettings().getLogViewerFont()));
@@ -123,7 +122,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
             this.textArea.setLineWrap(chkLineWrap.isSelected());
             App.getGlobalSettings()
                     .setLogViewerUseWordWrap(chkLineWrap.isSelected());
-            App.saveSettings();
+            App.getContext().getSettingsManager().saveSettings();
         });
 
         chkLineWrap
@@ -140,13 +139,13 @@ public class LogContent extends JPanel implements ClosableTabContent {
             gutter.revalidate();
             gutter.repaint();
             App.getGlobalSettings().setLogViewerFont(fontSize);
-            App.saveSettings();
+            App.getContext().getSettingsManager().saveSettings();
         });
 
         JButton btnReload = new JButton();
         btnReload.setToolTipText("Reload");
         btnReload.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnReload.setFont(App.SKIN.getIconFont());
+        btnReload.setFont(App.getContext().getSkin().getIconFont());
         btnReload.setText(FontAwesomeContants.FA_UNDO);
         btnReload.addActionListener(e -> {
             try {
@@ -166,13 +165,13 @@ public class LogContent extends JPanel implements ClosableTabContent {
         JButton btnBookMark = new JButton();
         btnBookMark.setToolTipText("Add to bookmark/pin");
         btnBookMark.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnBookMark.setFont(App.SKIN.getIconFont());
+        btnBookMark.setFont(App.getContext().getSkin().getIconFont());
         btnBookMark.setText(FontAwesomeContants.FA_BOOKMARK);
         btnBookMark.addActionListener(e -> startPage.pinLog(remoteLogFile));
 
         Box toolbar = Box.createHorizontalBox();
         toolbar.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 1, 0, App.SKIN.getDefaultBorderColor()),
+                new MatteBorder(0, 0, 1, 0, App.getContext().getSkin().getDefaultBorderColor()),
                 new EmptyBorder(5, 10, 5, 10)));
         toolbar.add(btnFirstPage);
         toolbar.add(btnPrevPage);
@@ -215,8 +214,8 @@ public class LogContent extends JPanel implements ClosableTabContent {
             @Override
             public void select(long index) {
                 log.info("Search item found on line: {}", index);
-                int page = (int) index / linePerPage;
-                int line = (int) (index % linePerPage);
+                int page = (int) index / LINE_PER_PAGE;
+                int line = (int) (index % LINE_PER_PAGE);
                 log.info("Found on page: {} line: {}", page, line);
                 if (currentPage == page) {
                     if (line < textArea.getLineCount() && line != -1) {
@@ -231,7 +230,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         this.add(logSearchPanel, BorderLayout.SOUTH);
 
         painter = new DefaultHighlighter.DefaultHighlightPainter(
-                App.SKIN.getAddressBarSelectionBackground());
+                App.getContext().getSkin().getAddressBarSelectionBackground());
 
         initPages();
     }
@@ -249,18 +248,18 @@ public class LogContent extends JPanel implements ClosableTabContent {
         holder.EXECUTOR.execute(() -> {
             try {
                 if ((indexFile(true, stopFlag))
-                        || (indexFile(false, stopFlag))) {
+                    || (indexFile(false, stopFlag))) {
                     this.totalLines = this.raf.length() / 16;
                     log.info("Total lines: {}", this.totalLines);
                     if (this.totalLines > 0) {
                         this.pageCount = (long) Math
-                                .ceil((double) totalLines / linePerPage);
+                                .ceil((double) totalLines / LINE_PER_PAGE);
                         log.info("Number of pages: {}", this.pageCount);
                         if (this.currentPage > this.pageCount) {
                             this.currentPage = this.pageCount;
                         }
                         String pageText = getPageText(this.currentPage,
-                                stopFlag);
+                                                      stopFlag);
                         SwingUtilities.invokeLater(() -> {
 
                             this.lblTotalPage.setText(
@@ -269,7 +268,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
                                     .setText((this.currentPage + 1) + "");
 
                             LayoutUtilities.equalizeSize(this.lblTotalPage,
-                                    this.lblCurrentPage);
+                                                         this.lblCurrentPage);
 
                             this.textArea.setText(pageText);
                             if (!Objects.requireNonNull(pageText).isEmpty()) {
@@ -293,8 +292,8 @@ public class LogContent extends JPanel implements ClosableTabContent {
 
     private String getPageText(long page, AtomicBoolean stopFlag)
             throws Exception {
-        long lineStart = page * linePerPage;
-        long lineEnd = lineStart + linePerPage - 1;
+        long lineStart = page * LINE_PER_PAGE;
+        long lineEnd = lineStart + LINE_PER_PAGE - 1;
 
         StringBuilder command = new StringBuilder();
 
@@ -332,9 +331,9 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     .append(" count=")
                     .append(byteRange)
                     .append(" 2>/dev/null | sed -ne '1,")
-                    .append(linePerPage)
+                    .append(LINE_PER_PAGE)
                     .append("p;")
-                    .append(linePerPage + 1)
+                    .append(LINE_PER_PAGE + 1)
                     .append("q'");
         } else {
             long blockToSkip = startOffset / 8192;
@@ -354,9 +353,9 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     .append(" 2>/dev/null | dd bs=1 skip=")
                     .append(bytesToSkip)
                     .append(" 2>/dev/null | sed -ne '1,")
-                    .append(linePerPage)
+                    .append(LINE_PER_PAGE)
                     .append("p;")
-                    .append(linePerPage + 1)
+                    .append(LINE_PER_PAGE + 1)
                     .append("q'");
         }
 
@@ -364,7 +363,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         StringBuilder output = new StringBuilder();
 
         if (holder.getRemoteSessionInstance().exec(command.toString(), stopFlag,
-                output) == 0) {
+                                                   output) == 0) {
             return output.toString();
         }
         return null;
@@ -377,17 +376,17 @@ public class LogContent extends JPanel implements ClosableTabContent {
             log.info("Temp file: {}", tempFile);
             try (OutputStream outputStream = new FileOutputStream(tempFile)) {
                 String command = "LANG=C awk '{len=length($0); print len; }' \""
-                        + remoteFile + "\" | " + (xz ? "xz" : "gzip") + " |cat";
+                                 + remoteFile + "\" | " + (xz ? "xz" : "gzip") + " |cat";
                 log.debug("Command: {}", command);
 
                 if (holder.getRemoteSessionInstance().execBin(command, stopFlag,
-                        outputStream, null) == 0) {
+                                                              outputStream, null) == 0) {
 
                     try (InputStream inputStream = new FileInputStream(
                             tempFile);
                          InputStream gzIn = xz
-                                 ? new XZInputStream(inputStream)
-                                 : new GZIPInputStream(inputStream)) {
+                                            ? new XZInputStream(inputStream)
+                                            : new GZIPInputStream(inputStream)) {
                         this.indexFile = createIndexFile(gzIn);
                         this.raf = new RandomAccessFile(this.indexFile, "r");
                         return true;
@@ -413,11 +412,13 @@ public class LogContent extends JPanel implements ClosableTabContent {
                      outputStream)) {
             while (true) {
                 String line = br.readLine();
-                if (line == null)
+                if (line == null) {
                     break;
+                }
                 line = line.trim();
-                if (line.isEmpty())
+                if (line.isEmpty()) {
                     continue;
+                }
                 toByteArray(offset, longBytes);
                 bout.write(longBytes);
                 long len = Long.parseLong(line);
@@ -472,11 +473,11 @@ public class LogContent extends JPanel implements ClosableTabContent {
                     }
                     this.lblCurrentPage.setText((this.currentPage + 1) + "");
                     LayoutUtilities.equalizeSize(this.lblTotalPage,
-                            this.lblCurrentPage);
+                                                 this.lblCurrentPage);
                     if (line < textArea.getLineCount() && line != -1) {
                         highlightLine(line);
                     }
-                    long lineStart = this.currentPage * linePerPage;
+                    long lineStart = this.currentPage * LINE_PER_PAGE;
                     gutter.setLineStart(lineStart + 1);
                 });
             } catch (Exception e) {
@@ -519,7 +520,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
             File searchIndexes = Files.createTempFile(
                     MUON + UUID.randomUUID(), INDEX).toFile();
             if (holder.getRemoteSessionInstance().execBin(command.toString(),
-                    stopFlag, outputStream, null) == 0) {
+                                                          stopFlag, outputStream, null) == 0) {
                 try (BufferedReader br = new BufferedReader(
                         new InputStreamReader(new FileInputStream(tempFile)));
                      OutputStream out = new FileOutputStream(searchIndexes);
@@ -527,11 +528,13 @@ public class LogContent extends JPanel implements ClosableTabContent {
                              out)) {
                     while (true) {
                         String line = br.readLine();
-                        if (line == null)
+                        if (line == null) {
                             break;
+                        }
                         line = line.trim();
-                        if (line.isEmpty())
+                        if (line.isEmpty()) {
                             continue;
+                        }
                         long lineNo = Long.parseLong(line);
                         toByteArray(lineNo, longBytes);
                         bout.write(longBytes);
@@ -551,7 +554,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
             textArea.setCaretPosition(startIndex);
             textArea.getHighlighter().removeAllHighlights();
             textArea.getHighlighter().addHighlight(startIndex, endIndex,
-                    painter);
+                                                   painter);
             log.info(textArea.modelToView2D(startIndex).toString());
         } catch (Exception e) {
             log.error(e.getMessage(), e);

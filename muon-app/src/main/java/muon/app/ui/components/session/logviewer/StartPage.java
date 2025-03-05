@@ -3,10 +3,15 @@
  */
 package muon.app.ui.components.session.logviewer;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.SkinnedScrollPane;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.util.CollectionHelper;
+import muon.app.util.Constants;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -15,15 +20,18 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
-import static muon.app.App.bundle;
 
 /**
  * @author subhro
- *
  */
+@Slf4j
 public class StartPage extends JPanel {
     private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
     private static final Cursor DEFAULT_CURSOR = new Cursor(
@@ -34,38 +42,41 @@ public class StartPage extends JPanel {
     private final String sessionId;
     private boolean hover = false;
 
+    private static Map<String, List<String>> pinnedLogs = new HashMap<>();
+
+
     /**
      *
      */
     public StartPage(Consumer<String> callback, String sessionId) {
         super(new BorderLayout());
         this.sessionId = sessionId;
-        List<String> pinnedLogs = CollectionHelper
+        List<String> defaultPinnedLogs = CollectionHelper
                 .arrayList("/var/log/gpu-manager.log", "/var/log/syslog");
-        App.loadPinnedLogs();
-        if (App.getPinnedLogs().containsKey(sessionId)) {
-            pinnedLogs = App.getPinnedLogs().get(sessionId);
+        loadPinnedLogs();
+        if (pinnedLogs.containsKey(sessionId)) {
+            defaultPinnedLogs = pinnedLogs.get(sessionId);
         }
 
-        this.finalPinnedLogs = pinnedLogs;
+        this.finalPinnedLogs = defaultPinnedLogs;
 
         pinnedLogsModel = new DefaultListModel<>();
         pinnedLogsModel.addAll(finalPinnedLogs);
         pinnedLogList = new JList<>(pinnedLogsModel);
         pinnedLogList.setCellRenderer(new PinnedLogsRenderer());
-        pinnedLogList.setBackground(App.SKIN.getSelectedTabColor());
+        pinnedLogList.setBackground(App.getContext().getSkin().getSelectedTabColor());
         JScrollPane jsp = new SkinnedScrollPane(pinnedLogList);
         jsp.setBorder(new EmptyBorder(0, 10, 0, 10));
         this.add(jsp);
-        JButton btnAddLog = new JButton(bundle.getString("add_log"));
-        JButton btnDelLog = new JButton(bundle.getString("delete"));
+        JButton btnAddLog = new JButton(App.getContext().getBundle().getString("add_log"));
+        JButton btnDelLog = new JButton(App.getContext().getBundle().getString("delete"));
         btnAddLog.addActionListener(e -> {
             String logPath = promptLogPath();
             if (logPath != null) {
                 finalPinnedLogs.add(logPath);
                 pinnedLogsModel.addElement(logPath);
-                App.getPinnedLogs().put(sessionId, finalPinnedLogs);
-                App.savePinnedLogs();
+                pinnedLogs.put(sessionId, finalPinnedLogs);
+                savePinnedLogs();
             }
         });
         btnDelLog.addActionListener(e -> {
@@ -92,8 +103,9 @@ public class StartPage extends JPanel {
                         if (!pinnedLogList.isSelectedIndex(index)) {
                             pinnedLogList.setSelectedIndex(index);
                         }
-                        if (hover)
+                        if (hover) {
                             return;
+                        }
                         hover = true;
                         pinnedLogList.setCursor(HAND_CURSOR);
                         return;
@@ -128,11 +140,11 @@ public class StartPage extends JPanel {
     private String promptLogPath() {
         JTextField txt = new SkinnedTextField(30);
         if (JOptionPane.showOptionDialog(this,
-                new Object[]{bundle.getString("provide_log_file_path"),
-                        txt},
-                "Input", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
+                                         new Object[]{App.getContext().getBundle().getString("provide_log_file_path"),
+                                                      txt},
+                                         "Input", JOptionPane.OK_CANCEL_OPTION,
+                                         JOptionPane.PLAIN_MESSAGE, null, null,
+                                         null) == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
             return txt.getText();
         }
         return null;
@@ -141,8 +153,8 @@ public class StartPage extends JPanel {
     public void pinLog(String logPath) {
         pinnedLogsModel.addElement(logPath);
         finalPinnedLogs.add(logPath);
-        App.getPinnedLogs().put(sessionId, finalPinnedLogs);
-        App.savePinnedLogs();
+        pinnedLogs.put(sessionId, finalPinnedLogs);
+        savePinnedLogs();
     }
 
     static class PinnedLogsRenderer extends JLabel
@@ -154,7 +166,7 @@ public class StartPage extends JPanel {
             setOpaque(true);
             setBorder(new CompoundBorder(
                     new MatteBorder(0, 0, 2, 0,
-                            App.SKIN.getDefaultBackground()),
+                                    App.getContext().getSkin().getDefaultBackground()),
                     new EmptyBorder(10, 10, 10, 10)));
         }
 
@@ -162,12 +174,38 @@ public class StartPage extends JPanel {
         public Component getListCellRendererComponent(
                 JList<? extends String> list, String value, int index,
                 boolean isSelected, boolean cellHasFocus) {
-            setBackground(isSelected ? App.SKIN.getDefaultSelectionBackground()
-                    : list.getBackground());
-            setForeground(isSelected ? App.SKIN.getDefaultSelectionForeground()
-                    : list.getForeground());
+            setBackground(isSelected ? App.getContext().getSkin().getDefaultSelectionBackground()
+                                     : list.getBackground());
+            setForeground(isSelected ? App.getContext().getSkin().getDefaultSelectionForeground()
+                                     : list.getForeground());
             setText(value);
             return this;
+        }
+    }
+
+    private static synchronized void loadPinnedLogs() {
+        File file = new File(App.getContext().getConfigDir(), Constants.PINNED_LOGS);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        if (file.exists()) {
+            try {
+                pinnedLogs = objectMapper.readValue(file, new TypeReference<>() {
+                });
+                return;
+            } catch (IOException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        pinnedLogs = new HashMap<>();
+    }
+
+    private static synchronized void savePinnedLogs() {
+        File file = new File(App.getContext().getConfigDir(), Constants.PINNED_LOGS);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            objectMapper.writeValue(file, pinnedLogs);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
         }
     }
 }

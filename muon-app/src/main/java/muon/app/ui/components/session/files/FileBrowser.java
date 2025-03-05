@@ -7,8 +7,8 @@ import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ssh.SshFileSystem;
-import muon.app.ui.components.ClosableTabbedPanel;
-import muon.app.ui.components.SkinnedSplitPane;
+import muon.app.ui.components.common.ClosableTabbedPanel;
+import muon.app.ui.components.common.SkinnedSplitPane;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static muon.app.App.bundle;
+
 
 @Slf4j
 public class FileBrowser extends Page {
@@ -201,7 +201,7 @@ public class FileBrowser extends Page {
                                                             SwingUtilities.invokeLater(() -> {
                                                                 holder.endFileTransfer();
                                                                 if (!holder.isSessionClosed()) {
-                                                                    JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                                                                    JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("operation_failed"));
                                                                 }
                                                             });
                                                         }
@@ -262,7 +262,7 @@ public class FileBrowser extends Page {
 
     @Override
     public String getText() {
-        return bundle.getString("file_browser");
+        return App.getContext().getBundle().getString("file_browser");
     }
 
     public void openPath(String path) {
@@ -282,7 +282,7 @@ public class FileBrowser extends Page {
     public boolean handleLocalDrop(DndTransferData transferData, SessionInfo info, FileSystem currentFileSystem,
                                    String currentPath) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-            && JOptionPane.showConfirmDialog(null, bundle.getString("move_copy_files")) != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(null, App.getContext().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
             return false;
         }
 

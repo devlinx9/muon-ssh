@@ -13,7 +13,7 @@ import muon.app.ssh.CachedCredentialProvider;
 import muon.app.ssh.PortForwardingSession;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ssh.SshFileSystem;
-import muon.app.ui.components.DisabledPanel;
+import muon.app.ui.components.common.DisabledPanel;
 import muon.app.ui.components.session.diskspace.DiskspaceAnalyzer;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
@@ -74,9 +74,9 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         super(new BorderLayout());
         this.info = info;
         this.disabledPanel = new DisabledPanel();
-        this.remoteSessionInstance = new RemoteSessionInstance(info, App.getInputBlocker(), this);
+        this.remoteSessionInstance = new RemoteSessionInstance(info, this, this);
         Box contentTabs = Box.createHorizontalBox();
-        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.SKIN.getDefaultBorderColor()));
+        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.getContext().getSkin().getDefaultBorderColor()));
 
         fileBrowser = new FileBrowser(info, this, null, this.hashCode());
         logViewer = new LogViewer(this);
@@ -126,14 +126,14 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         showPage(this.pages[0].getId());
 
         if (info.getPortForwardingRules() != null && !info.getPortForwardingRules().isEmpty()) {
-            this.pfSession = new PortForwardingSession(info, App.getInputBlocker(), this);
+            this.pfSession = new PortForwardingSession(info, this, this);
             this.pfSession.start();
         }
     }
 
     public void reconnect() {
         this.remoteSessionInstance.close();
-        this.remoteSessionInstance = new RemoteSessionInstance(info, App.getInputBlocker(), this);
+        this.remoteSessionInstance = new RemoteSessionInstance(info, this, this);
     }
 
     @Override
@@ -294,7 +294,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
 
     public synchronized RemoteSessionInstance createBackgroundSession() {
         if (this.cachedSessions.isEmpty()) {
-            return new RemoteSessionInstance(info, App.getInputBlocker(), this);
+            return new RemoteSessionInstance(info, this, this);
         }
         return this.cachedSessions.pop();
     }

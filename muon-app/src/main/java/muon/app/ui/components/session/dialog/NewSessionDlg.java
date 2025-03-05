@@ -2,8 +2,8 @@ package muon.app.ui.components.session.dialog;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.SkinnedSplitPane;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedSplitPane;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.*;
 import muon.app.util.enums.ImportOption;
 
@@ -16,7 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
 
-import static muon.app.App.bundle;
+
 import static muon.app.ui.components.session.dialog.TreeManager.getNewUuid;
 import static muon.app.ui.components.session.dialog.TreeManager.getNode;
 
@@ -61,7 +61,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
             }
         });
 
-        setTitle(bundle.getString("session_manager"));
+        setTitle(App.getContext().getBundle().getString("session_manager"));
 
         treeModel = new DefaultTreeModel(null, true);
         treeModel.addTreeModelListener(this);
@@ -88,34 +88,34 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         tree.setEditable(false);
         treeManager = new TreeManager();
         JScrollPane jsp = new JScrollPane(tree);
-        jsp.setBorder(new LineBorder(App.SKIN.getDefaultBorderColor(), 1));
+        jsp.setBorder(new LineBorder(App.getContext().getSkin().getDefaultBorderColor(), 1));
 
-        JButton btnNewHost = new JButton(bundle.getString("new_site"));
+        JButton btnNewHost = new JButton(App.getContext().getBundle().getString("new_site"));
         btnNewHost.addActionListener(this);
         btnNewHost.putClientProperty(BUTTON_NAME, "btnNewHost");
-        JButton btnNewFolder = new JButton(bundle.getString("new_folder"));
+        JButton btnNewFolder = new JButton(App.getContext().getBundle().getString("new_folder"));
         btnNewFolder.addActionListener(this);
         btnNewFolder.putClientProperty(BUTTON_NAME, "btnNewFolder");
-        JButton btnDel = new JButton(bundle.getString("remove"));
+        JButton btnDel = new JButton(App.getContext().getBundle().getString("remove"));
         btnDel.addActionListener(this);
         btnDel.putClientProperty(BUTTON_NAME, "btnDel");
-        JButton btnDup = new JButton(bundle.getString("duplicate"));
+        JButton btnDup = new JButton(App.getContext().getBundle().getString("duplicate"));
         btnDup.addActionListener(this);
         btnDup.putClientProperty(BUTTON_NAME, "btnDup");
 
-        btnConnect = new JButton(bundle.getString("connect"));
+        btnConnect = new JButton(App.getContext().getBundle().getString("connect"));
         btnConnect.addActionListener(this);
         btnConnect.putClientProperty(BUTTON_NAME, "btnConnect");
 
-        btnCancel = new JButton(bundle.getString("cancel"));
+        btnCancel = new JButton(App.getContext().getBundle().getString("cancel"));
         btnCancel.addActionListener(this);
         btnCancel.putClientProperty(BUTTON_NAME, "btnCancel");
 
-        JButton btnExport = new JButton(bundle.getString("export"));
+        JButton btnExport = new JButton(App.getContext().getBundle().getString("export"));
         btnExport.addActionListener(this);
         btnExport.putClientProperty(BUTTON_NAME, "btnExport");
 
-        JButton btnImport = new JButton(bundle.getString("import"));
+        JButton btnImport = new JButton(App.getContext().getBundle().getString("import"));
         btnImport.addActionListener(this);
         btnImport.putClientProperty(BUTTON_NAME, "btnImport");
 
@@ -169,7 +169,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
         namePanel.setBorder(new EmptyBorder(10, 0, 0, 10));
 
-        lblName = new JLabel(bundle.getString("name"));
+        lblName = new JLabel(App.getContext().getBundle().getString("name"));
         lblName.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblName.setHorizontalAlignment(JLabel.LEADING);
         lblName.setBorder(new EmptyBorder(0, 0, 5, 0));
@@ -214,7 +214,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
         JPanel prgPanel = new JPanel();
 
-        JLabel lbl = new JLabel(bundle.getString("connecting"));
+        JLabel lbl = new JLabel(App.getContext().getBundle().getString("connecting"));
         prgPanel.add(lbl);
 
         splitPane.setLeftComponent(treePane);
@@ -280,7 +280,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         }
         JComboBox<ImportOption> cmbImports = new JComboBox<>(ImportOption.values());
 
-        if (JOptionPane.showOptionDialog(this, new Object[]{bundle.getString("import_from"), cmbImports}, bundle.getString("import_sessions"),
+        if (JOptionPane.showOptionDialog(this, new Object[]{App.getContext().getBundle().getString("import_from"), cmbImports}, App.getContext().getBundle().getString("import_sessions"),
                                          JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
                                          null) == JOptionPane.OK_OPTION) {
             manageImportOptions(parentNode, cmbImports);
@@ -385,7 +385,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         }
         SessionFolder folder = new SessionFolder();
         folder.setId(getNewUuid(rootNode));
-        folder.setName(bundle.getString("new_folder"));
+        folder.setName(App.getContext().getBundle().getString("new_folder"));
         DefaultMutableTreeNode childNode1 = new DefaultMutableTreeNode(folder);
         treeModel.insertNodeInto(childNode1, parentNode, parentNode.getChildCount());
         tree.scrollPathToVisible(new TreePath(childNode1.getPath()));
@@ -412,7 +412,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         save();
         this.info = (SessionInfo) selectedInfo;
         if (this.info.getHost() == null || this.info.getHost().isEmpty()) {
-            JOptionPane.showMessageDialog(this, App.bundle.getString("no_hostname"));
+            JOptionPane.showMessageDialog(this, App.getContext().getBundle().getString("no_hostname"));
             this.info = null;
             log.debug("Returned");
         } else {

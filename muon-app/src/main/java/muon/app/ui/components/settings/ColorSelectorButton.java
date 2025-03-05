@@ -24,11 +24,11 @@ public class ColorSelectorButton extends JLabel {
 
     public ColorSelectorButton() {
         setBorder(new CompoundBorder(
-                new LineBorder(App.SKIN.getDefaultBorderColor()),
+                new LineBorder(App.getContext().getSkin().getDefaultBorderColor()),
                 new CompoundBorder(
                         new MatteBorder(5, 5, 5, 5,
-                                        App.SKIN.getSelectedTabColor()),
-                        new LineBorder(App.SKIN.getDefaultBorderColor()))));
+                                        App.getContext().getSkin().getSelectedTabColor()),
+                        new LineBorder(App.getContext().getSkin().getDefaultBorderColor()))));
         setOpaque(true);
         addMouseListener(new MouseAdapter() {
             @Override

@@ -1,8 +1,8 @@
 package muon.app.ui.components.session;
 
 import muon.app.App;
-import muon.app.ui.components.SkinnedScrollPane;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static muon.app.App.bundle;
+
 
 public class JumpHostPanel extends JPanel {
     private final DefaultListModel<HopEntry> hopModel = new DefaultListModel<>();
@@ -22,21 +22,21 @@ public class JumpHostPanel extends JPanel {
     public JumpHostPanel() {
         super(new BorderLayout(5, 5));
         JLabel lblTitle = new JLabel("Intermediate hops");
-        hopList.setBackground(App.SKIN.getTableBackgroundColor());
+        hopList.setBackground(App.getContext().getSkin().getTableBackgroundColor());
 
         JScrollPane scrollPane = new SkinnedScrollPane(hopList);
 
         Box b1 = Box.createVerticalBox();
         JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.SKIN.getIconFont());
+        btnAdd.setFont(App.getContext().getSkin().getIconFont());
         JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.SKIN.getIconFont());
+        btnDel.setFont(App.getContext().getSkin().getIconFont());
         JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.SKIN.getIconFont());
+        btnEdit.setFont(App.getContext().getSkin().getIconFont());
         JButton btnUp = new JButton(FontAwesomeContants.FA_ARROW_UP);
-        btnUp.setFont(App.SKIN.getIconFont());
+        btnUp.setFont(App.getContext().getSkin().getIconFont());
         JButton btnDown = new JButton(FontAwesomeContants.FA_ARROW_DOWN);
-        btnDown.setFont(App.SKIN.getIconFont());
+        btnDown.setFont(App.getContext().getSkin().getIconFont());
 
         btnAdd.addActionListener(e -> {
             HopEntry ent = addOrEditEntry(null);
@@ -165,7 +165,7 @@ public class JumpHostPanel extends JPanel {
         });
 
         while (JOptionPane.showOptionDialog(this,
-                new Object[]{bundle.getString("host"), txtHost, bundle.getString("port"), spPort, bundle.getString("user"), txtUser, bundle.getString("password"), txtPassword, bundle.getString("private_key_file"),
+                new Object[]{App.getContext().getBundle().getString("host"), txtHost, App.getContext().getBundle().getString("port"), spPort, App.getContext().getBundle().getString("user"), txtUser, App.getContext().getBundle().getString("password"), txtPassword, App.getContext().getBundle().getString("private_key_file"),
                         txtKeyFile},
                 "Hop entry", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
                 null) == JOptionPane.OK_OPTION) {
@@ -175,7 +175,7 @@ public class JumpHostPanel extends JPanel {
             String path = txtKeyFile.getText();
             int port = (Integer) spPort.getValue();
             if (host.isEmpty() || user.isEmpty() || port <= 0) {
-                JOptionPane.showMessageDialog(this, App.bundle.getString("invalid_input"));
+                JOptionPane.showMessageDialog(this, App.getContext().getBundle().getString("invalid_input"));
                 continue;
             }
 

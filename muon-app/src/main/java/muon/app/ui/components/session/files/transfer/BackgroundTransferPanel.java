@@ -90,7 +90,7 @@ public class BackgroundTransferPanel extends JPanel {
             progressLabel = new JLabel("Waiting...");
             progressLabel.setBorder(new EmptyBorder(5, 0, 5, 5));
             JLabel removeLabel = new JLabel();
-            removeLabel.setFont(App.SKIN.getIconFont());
+            removeLabel.setFont(App.getContext().getSkin().getIconFont());
             removeLabel.setText(FontAwesomeContants.FA_TRASH);
 
             removeLabel.addMouseListener(new MouseAdapter() {

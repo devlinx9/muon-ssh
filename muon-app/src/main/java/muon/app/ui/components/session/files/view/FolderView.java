@@ -3,7 +3,7 @@ package muon.app.ui.components.session.files.view;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.ui.components.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.util.enums.FileType;
 
 import javax.swing.*;
@@ -46,7 +46,7 @@ public class FolderView extends JPanel {
         TableCellLabelRenderer r1 = new TableCellLabelRenderer();
 
         table = new JTable(folderViewModel);
-        table.setSelectionForeground(App.SKIN.getDefaultSelectionForeground());
+        table.setSelectionForeground(App.getContext().getSkin().getDefaultSelectionForeground());
         table.setDefaultRenderer(FileInfo.class, r1);
         table.setDefaultRenderer(Long.class, r1);
         table.setDefaultRenderer(LocalDateTime.class, r1);
@@ -252,7 +252,7 @@ public class FolderView extends JPanel {
         log.debug("Row height: {}", r1.getHeight());
 
         fileList = new JList<>(folderViewModel);
-        fileList.setBackground(App.SKIN.getTableBackgroundColor());
+        fileList.setBackground(App.getContext().getSkin().getTableBackgroundColor());
         fileList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         fileList.setVisibleRowCount(-1);
         fileList.setCellRenderer(new FolderViewListCellRenderer());

@@ -25,7 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -51,8 +51,8 @@ public class ExternalEditorHandler extends JDialog {
         progressBar = new JProgressBar();
         progressLabel = new JLabel("Transferring...");
         progressLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
-        progressLabel.setFont(App.SKIN.getDefaultFont().deriveFont(18.0f));
-        JButton btnCanel = new JButton(bundle.getString("cancel"));
+        progressLabel.setFont(App.getContext().getSkin().getDefaultFont().deriveFont(18.0f));
+        JButton btnCanel = new JButton(App.getContext().getBundle().getString("cancel"));
         Box bottomBox = Box.createHorizontalBox();
         bottomBox.add(Box.createHorizontalGlue());
         bottomBox.add(btnCanel);
@@ -78,7 +78,7 @@ public class ExternalEditorHandler extends JDialog {
             if (OptionPaneUtils.showOptionDialog(this.frame, messages.toArray(new String[0]),
                     "File changed") == JOptionPane.OK_OPTION) {
                 this.fileWatcher.stopWatching();
-                App.EXECUTOR.submit(() -> {
+                App.getContext().getExecutor().submit(() -> {
                     try {
                         log.info("In app executor");
                         this.saveRemoteFiles(files);
@@ -165,7 +165,7 @@ public class ExternalEditorHandler extends JDialog {
         this.progressLabel.setText(remoteFile.getName());
         File localFile = localFilePath.toFile();
 
-        App.EXECUTOR.submit(() -> {
+        App.getContext().getExecutor().submit(() -> {
             try (InputStream in = remoteFs.inputTransferChannel().getInputStream(remoteFile.getPath());
                  OutputStream out = new FileOutputStream(localFile)) {
                 int cap = 8192;

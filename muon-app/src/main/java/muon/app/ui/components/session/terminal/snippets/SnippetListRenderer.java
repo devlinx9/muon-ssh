@@ -28,9 +28,9 @@ public class SnippetListRenderer extends JPanel
         setBackground(isSelected ? new Color(3, 155, 229)
                 : list.getBackground());
         lblName.setForeground(
-                isSelected ? App.SKIN.getDefaultSelectionForeground()
-                        : App.SKIN.getDefaultForeground());
-        lblCommand.setForeground(App.SKIN.getInfoTextForeground());
+                isSelected ? App.getContext().getSkin().getDefaultSelectionForeground()
+                        : App.getContext().getSkin().getDefaultForeground());
+        lblCommand.setForeground(App.getContext().getSkin().getInfoTextForeground());
         lblName.setText(value.getName());
         lblCommand.setText(value.getCommand());
         return this;

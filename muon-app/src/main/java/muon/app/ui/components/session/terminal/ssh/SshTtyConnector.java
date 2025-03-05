@@ -50,7 +50,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
     @Override
     public boolean init(Questioner q) {
         try {
-            this.wr = new SshClient2(this.info, App.getInputBlocker(), sessionContentPanel);
+            this.wr = new SshClient2(this.info, sessionContentPanel, sessionContentPanel);
             this.wr.connect();
             this.channel = wr.openSession();
             this.channel.setAutoExpand(true);
@@ -148,7 +148,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
         try {
             shell.join();
         } catch (ConnectionException e) {
-            
+
             log.error(e.getMessage(), e);
         }
         return shell.getExitStatus();
@@ -194,7 +194,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
             try {
                 shell.changeWindowDimensions(col, row, wp, hp);
             } catch (TransportException e) {
-                
+
                 log.error(e.getMessage(), e);
             }
         }
