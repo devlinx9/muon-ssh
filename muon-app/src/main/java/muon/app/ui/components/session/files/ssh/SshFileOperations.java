@@ -6,6 +6,7 @@ import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ui.components.common.SkinnedTextField;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 import muon.app.util.SudoUtils;
 import muon.app.util.enums.FileType;
@@ -50,7 +51,7 @@ public class SshFileOperations {
         log.info("Invoke command: {}", command);
         StringBuilder output = new StringBuilder();
         boolean ret = instance.exec(command, stopFlag, output,
-                new StringBuilder()) == 0;
+                                    new StringBuilder()) == 0;
         log.info("output: {}", output);
         return ret;
     }
@@ -71,11 +72,9 @@ public class SshFileOperations {
         if (!dupList.isEmpty()) {
             JComboBox<String> cmbs = new JComboBox<>(
                     new String[]{"Auto rename", "Overwrite"});
-            if (JOptionPane.showOptionDialog(null, new Object[]{
-                            App.getContext().getBundle().getString("file_exists_action"),
-                            cmbs}, App.getContext().getBundle().getString("action_required"), JOptionPane.YES_NO_OPTION,
-                    JOptionPane.PLAIN_MESSAGE, null, null,
-                    null) == JOptionPane.YES_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(null, new Object[]{
+                    App.getContext().getBundle().getString("file_exists_action"),
+                    cmbs}, App.getContext().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
                 action = cmbs.getSelectedIndex();
             } else {
                 return false;
@@ -85,7 +84,7 @@ public class SshFileOperations {
         StringBuilder command = new StringBuilder();
         for (FileInfo fileInfo : files) {
             if (fileInfo.getType() == FileType.DIR_LINK
-                    || fileInfo.getType() == FileType.DIRECTORY) {
+                || fileInfo.getType() == FileType.DIRECTORY) {
                 command.append("mv ");
             } else {
                 command.append("mv -T ");
@@ -101,9 +100,9 @@ public class SshFileOperations {
             }
 
             if (!App.getGlobalSettings().isPromptForSudo()
-                    || JOptionPane.showConfirmDialog(null,
-                    App.getContext().getBundle().getString("access_denied_rename_sudo"), App.getContext().getBundle().getString(USE_SUDO),
-                    JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+                || JOptionPane.showConfirmDialog(null,
+                                                 App.getContext().getBundle().getString("access_denied_rename_sudo"), App.getContext().getBundle().getString(USE_SUDO),
+                                                 JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                 if (!instance.isSessionClosed()) {
                     JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString(OPERATION_FAILED));
                 }
@@ -151,11 +150,9 @@ public class SshFileOperations {
         if (!dupList.isEmpty()) {
             JComboBox<String> cmbs = new JComboBox<>(
                     new String[]{"Auto rename", "Overwrite"});
-            if (JOptionPane.showOptionDialog(null, new Object[]{
-                            App.getContext().getBundle().getString("some_file_exists_action_required"),
-                            cmbs}, App.getContext().getBundle().getString("action_required"), JOptionPane.YES_NO_OPTION,
-                    JOptionPane.PLAIN_MESSAGE, null, null,
-                    null) == JOptionPane.YES_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(null, new Object[]{
+                    App.getContext().getBundle().getString("some_file_exists_action_required"),
+                    cmbs}, App.getContext().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
                 action = cmbs.getSelectedIndex();
             } else {
                 return false;
@@ -165,7 +162,7 @@ public class SshFileOperations {
         StringBuilder command = new StringBuilder();
         for (FileInfo fileInfo : files) {
             if (fileInfo.getType() == FileType.DIR_LINK
-                    || fileInfo.getType() == FileType.DIRECTORY) {
+                || fileInfo.getType() == FileType.DIRECTORY) {
                 command.append("cp -rf ");
             } else {
                 command.append("cp -Tf ");
@@ -180,9 +177,9 @@ public class SshFileOperations {
                 return false;
             }
             if (!App.getGlobalSettings().isPromptForSudo()
-                    || JOptionPane.showConfirmDialog(null,
-                    App.getContext().getBundle().getString("access_denied_copy_sudo"), App.getContext().getBundle().getString(USE_SUDO),
-                    JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+                || JOptionPane.showConfirmDialog(null,
+                                                 App.getContext().getBundle().getString("access_denied_copy_sudo"), App.getContext().getBundle().getString(USE_SUDO),
+                                                 JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                 if (!instance.isSessionClosed()) {
                     JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString(OPERATION_FAILED));
                 }
@@ -214,8 +211,9 @@ public class SshFileOperations {
                     break;
                 }
             }
-            if (!found)
+            if (!found) {
                 break;
+            }
         }
         name = nameBuilder.toString();
         return name;
@@ -235,9 +233,9 @@ public class SshFileOperations {
             }
 
             if (!App.getGlobalSettings().isPromptForSudo()
-                    || JOptionPane.showConfirmDialog(null,
-                    App.getContext().getBundle().getString("access_denied_rename_sudo"), App.getContext().getBundle().getString(USE_SUDO),
-                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                || JOptionPane.showConfirmDialog(null,
+                                                 App.getContext().getBundle().getString("access_denied_rename_sudo"), App.getContext().getBundle().getString(USE_SUDO),
+                                                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 return renameWithPrivilege(oldName, newName, instance, password);
             }
 
@@ -292,9 +290,9 @@ public class SshFileOperations {
                 return false;
             }
             if (!App.getGlobalSettings().isPromptForSudo()
-                    || JOptionPane.showConfirmDialog(null,
-                    "Access denied, delete using sudo?", App.getContext().getBundle().getString(USE_SUDO),
-                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                || JOptionPane.showConfirmDialog(null,
+                                                 "Access denied, delete using sudo?", App.getContext().getBundle().getString(USE_SUDO),
+                                                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 return deletePrivilege(targetList, instance, password);
             }
             if (!instance.isSessionClosed()) {
@@ -329,7 +327,7 @@ public class SshFileOperations {
 
     public boolean newFile(FileInfo[] files, FileSystem fs, String folder,
                            RemoteSessionInstance instance, String password) {
-        String text = JOptionPane.showInputDialog("New file");
+        String text = OptionPaneUtils.showInputDialog(null, App.getContext().getBundle().getString("new_file"), App.getContext().getBundle().getString("new_file"));
         if (text == null || text.isEmpty()) {
             return false;
         }
@@ -341,7 +339,7 @@ public class SshFileOperations {
             }
         }
         if (alreadyExists) {
-            JOptionPane.showMessageDialog(null,App.getContext().getBundle().getString("file_exists"));
+            JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("file_exists"));
             return false;
         }
         try {
@@ -354,9 +352,9 @@ public class SshFileOperations {
                 return false;
             }
             if (!App.getGlobalSettings().isPromptForSudo()
-                    || JOptionPane.showConfirmDialog(null,
-                    "Access denied, new file using sudo?", App.getContext().getBundle().getString(USE_SUDO),
-                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                || JOptionPane.showConfirmDialog(null,
+                                                 "Access denied, new file using sudo?", App.getContext().getBundle().getString(USE_SUDO),
+                                                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 if (!touchWithPrivilege(folder, text, instance, password)) {
                     if (!instance.isSessionClosed()) {
                         JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString(OPERATION_FAILED));
@@ -396,7 +394,7 @@ public class SshFileOperations {
 
     public boolean newFolder(FileInfo[] files, String folder, FileSystem fs,
                              RemoteSessionInstance instance, String password) {
-        String text = JOptionPane.showInputDialog("New folder name");
+        String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getContext().getBundle().getString("new_folder_name"), App.getContext().getBundle().getString("new_folder_name"));
         if (text == null || text.isEmpty()) {
             return false;
         }
@@ -409,7 +407,7 @@ public class SshFileOperations {
         }
         if (alreadyExists) {
             JOptionPane.showMessageDialog(null,
-                    "File with same name already exists");
+                                          "File with same name already exists");
             return false;
         }
         try {
@@ -422,9 +420,9 @@ public class SshFileOperations {
                 return false;
             }
             if (!App.getGlobalSettings().isPromptForSudo()
-                    || JOptionPane.showConfirmDialog(null,
-                    "Access denied, try using sudo?", App.getContext().getBundle().getString(USE_SUDO),
-                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                || JOptionPane.showConfirmDialog(null,
+                                                 "Access denied, try using sudo?", App.getContext().getBundle().getString(USE_SUDO),
+                                                 JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 if (!mkdirWithPrivilege(folder, text, instance, password)) {
                     if (!instance.isSessionClosed()) {
                         JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString(OPERATION_FAILED));
@@ -470,20 +468,18 @@ public class SshFileOperations {
             FileInfo info = files[0];
             txtLinkName.setText(
                     PathUtils.combineUnix(PathUtils.getParent(info.getPath()),
-                            "Link to " + info.getName()));
+                                          "Link to " + info.getName()));
             txtFileName.setText(info.getPath());
         }
 
-        if (JOptionPane.showOptionDialog(null,
-                new Object[]{"Create link", "Link path", txtLinkName,
-                        "File name", txtFileName, chkHardLink},
-                "Create link", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION) {
+        if (OptionPaneUtils.showOptionDialog(null,
+                                             new Object[]{"Create link", "Link path", txtLinkName,
+                                                          "File name", txtFileName, chkHardLink},
+                                             "Create link") == JOptionPane.OK_OPTION) {
             if (!txtLinkName.getText().isEmpty()
-                    && !txtFileName.getText().isEmpty()) {
+                && !txtFileName.getText().isEmpty()) {
                 return createLinkAsync(txtFileName.getText(),
-                        txtLinkName.getText(), chkHardLink.isSelected(), fs);
+                                       txtLinkName.getText(), chkHardLink.isSelected(), fs);
             }
         }
         return false;

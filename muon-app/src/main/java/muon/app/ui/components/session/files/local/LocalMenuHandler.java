@@ -7,6 +7,7 @@ import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.view.FolderView;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 import muon.app.util.PlatformUtils;
 import muon.app.util.enums.FileType;
@@ -181,7 +182,7 @@ public class LocalMenuHandler {
     }
 
     private void rename(FileInfo info, String baseFolder) {
-        String text = JOptionPane.showInputDialog(App.getContext().getBundle().getString("enter_new_name"), info.getName());
+        String text = OptionPaneUtils.showInputDialog(null, App.getContext().getBundle().getString("enter_new_name"), info.getName());
         if (text != null && !text.isEmpty()) {
             renameAsync(info.getPath(), PathUtils.combineUnix(PathUtils.getParent(info.getPath()), text), baseFolder);
         }

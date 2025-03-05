@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.util.FontAwesomeContants;
+import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -72,16 +73,14 @@ public class SnippetPanel extends JPanel {
             JTextField txtName = new SkinnedTextField(30);
             JTextField txtCommand = new SkinnedTextField(30);
 
-            if (JOptionPane.showOptionDialog(null,
-                    new Object[]{"Snippet name", txtName, "Command",
-                            txtCommand},
-                    "New snippet", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE, null, null,
-                    null) == JOptionPane.OK_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(null,
+                                                 new Object[]{"Snippet name", txtName, "Command",
+                                                              txtCommand},
+                                                 "New snippet") == JOptionPane.OK_OPTION) {
                 if (txtCommand.getText().isEmpty()
-                        || txtName.getText().isEmpty()) {
+                    || txtName.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("enter_name_command")
-                            );
+                                                 );
                     return;
                 }
                 App.getContext().getSnippetManager().getSnippetItems().add(new SnippetItem(
@@ -95,7 +94,7 @@ public class SnippetPanel extends JPanel {
             int index = listView.getSelectedIndex();
             if (index < 0) {
                 JOptionPane.showMessageDialog(null,
-                        App.getContext().getBundle().getString("select_item_edit"));
+                                              App.getContext().getBundle().getString("select_item_edit"));
                 return;
             }
 
@@ -107,16 +106,14 @@ public class SnippetPanel extends JPanel {
             txtName.setText(snippetItem.getName());
             txtCommand.setText(snippetItem.getCommand());
 
-            if (JOptionPane.showOptionDialog(null,
-                    new Object[]{"Snippet name", txtName, "Command",
-                            txtCommand},
-                    "New snippet", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE, null, null,
-                    null) == JOptionPane.OK_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(null,
+                                                 new Object[]{"Snippet name", txtName, "Command",
+                                                              txtCommand},
+                                                 "New snippet") == JOptionPane.OK_OPTION) {
                 if (txtCommand.getText().isEmpty()
-                        || txtName.getText().isEmpty()) {
+                    || txtName.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("enter_name_command")
-                            );
+                                                 );
                     return;
                 }
                 snippetItem.setCommand(txtCommand.getText());
@@ -205,7 +202,7 @@ public class SnippetPanel extends JPanel {
         }
         for (SnippetItem item : snippetList) {
             if (item.getCommand().contains(text)
-                    || item.getName().contains(text)) {
+                || item.getName().contains(text)) {
                 this.listModel.addElement(item);
             }
         }

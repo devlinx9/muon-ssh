@@ -1,6 +1,10 @@
 package muon.app.util;
 
 public class PathUtils {
+    protected PathUtils() {
+
+    }
+
     public static String combineUnix(String path1, String path2) {
         return combine(path1, path2, "/");
     }

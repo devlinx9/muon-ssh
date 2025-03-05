@@ -2,6 +2,7 @@ package muon.app.ui.components.session.files.ssh;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.ssh.RemoteSessionInstance;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 
 import javax.swing.*;
@@ -20,12 +21,12 @@ public class ArchiveOperation {
         extractCommands = new LinkedHashMap<>();
         extractCommands.put(".tar", "cat \"%s\"|tar -C \"%s\" -xvf -");
         extractCommands.put(".tar.gz",
-                "gunzip -c <\"%s\"|tar -C \"%s\" -xvf -");
+                            "gunzip -c <\"%s\"|tar -C \"%s\" -xvf -");
         extractCommands.put(".tgz", "gunzip -c <\"%s\"|tar -C \"%s\" -xvf -");
         extractCommands.put(".tar.bz2",
-                "bzip2 -d -c <\"%s\"|tar -C \"%s\" -xvf -");
+                            "bzip2 -d -c <\"%s\"|tar -C \"%s\" -xvf -");
         extractCommands.put(".tbz2",
-                "bzip2 -d -c <\"%s\"|tar -C \"%s\" -xvf -");
+                            "bzip2 -d -c <\"%s\"|tar -C \"%s\" -xvf -");
         extractCommands.put(".tbz", "bzip2 -d -c <\"%s\"|tar -C \"%s\" -xvf -");
         extractCommands.put(".tar.xz", "xz -d -c <\"%s\"|tar -C \"%s\" -xvf -");
         extractCommands.put(".txz", "xz -d -c <\"%s\"|tar -C \"%s\" -xvf -");
@@ -64,11 +65,11 @@ public class ArchiveOperation {
         archivePath = archivePath.toLowerCase(Locale.ENGLISH);
         for (String key : extractCommands.keySet()) {
             if (archivePath.endsWith(key) && (key.equals(".xz")
-                    || key.equals(".gz") || key.equals(".bz2")) && !(archivePath.endsWith(".tar.xz")
-                        || archivePath.endsWith(".tar.gz")
-                        || archivePath.endsWith(".tar.bz2"))) {
-                    return true;
-                }
+                                              || key.equals(".gz") || key.equals(".bz2")) && !(archivePath.endsWith(".tar.xz")
+                                                                                               || archivePath.endsWith(".tar.gz")
+                                                                                               || archivePath.endsWith(".tar.bz2"))) {
+                return true;
+            }
 
         }
         return false;
@@ -94,10 +95,10 @@ public class ArchiveOperation {
         command = String
                 .format(command, archivePath,
                         isSingleArchive(archivePath)
-                                ? PathUtils.combineUnix(targetFolder,
-                                getArchiveFileName(PathUtils
-                                        .getFileName(archivePath)))
-                                : targetFolder);
+                        ? PathUtils.combineUnix(targetFolder,
+                                                getArchiveFileName(PathUtils
+                                                                           .getFileName(archivePath)))
+                        : targetFolder);
         log.info("Invoke command: {}", command);
         StringBuilder output = new StringBuilder();
         boolean ret = client.exec(command, stopFlag, output) == 0;
@@ -108,17 +109,15 @@ public class ArchiveOperation {
     public boolean createArchive(RemoteSessionInstance client,
                                  List<String> files, String targetFolder, AtomicBoolean stopFlag) throws Exception {
         String text = files.size() > 1 ? PathUtils.getFileName(targetFolder)
-                : files.get(0);
+                                       : files.get(0);
         JTextField txtFileName = new JTextField(text);
         JTextField txtTargetFolder = new JTextField(targetFolder);
         JComboBox<String> comboBox = new JComboBox<>(
                 compressCommands.keySet().toArray(new String[0]));
-        if (JOptionPane.showOptionDialog(null,
-                new Object[]{"Archive name", txtFileName, "Target folder",
-                        txtTargetFolder, "Archive type", comboBox},
-                "Create archive", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION) {
+        if (OptionPaneUtils.showOptionDialog(null,
+                                             new Object[]{"Archive name", txtFileName, "Target folder",
+                                                          txtTargetFolder, "Archive type", comboBox},
+                                             "Create archive") == JOptionPane.OK_OPTION) {
 
             StringBuilder sb = new StringBuilder();
             for (String s : files) {
@@ -128,9 +127,9 @@ public class ArchiveOperation {
             String ext = comboBox.getSelectedItem() + "";
 
             String compressCmd = String.format(compressCommands.get(ext),
-                    sb,
-                    PathUtils.combineUnix(txtTargetFolder.getText(),
-                            txtFileName.getText() + "." + ext));
+                                               sb,
+                                               PathUtils.combineUnix(txtTargetFolder.getText(),
+                                                                     txtFileName.getText() + "." + ext));
             String cd = String.format("cd \"%s\";", txtTargetFolder.getText());
             log.info("{}{}", cd, compressCmd);
             StringBuilder output = new StringBuilder();

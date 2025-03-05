@@ -8,11 +8,12 @@ import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.ui.components.common.SkinnedTextField;
-import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
+import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.util.Constants;
 import muon.app.util.FontAwesomeContants;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.enums.FileType;
 
 import javax.swing.*;
@@ -26,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 @Slf4j
@@ -77,7 +77,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             SessionInfo info = new NewSessionDlg(this).newSession();
             if (info != null) {
                 RemoteServerEntry ent = getEntryDetails(info.getHost(), info.getUser(), info.getRemoteFolder(),
-                        info.getPort());
+                                                        info.getPort());
                 if (ent != null) {
                     remoteHostModel.insertElementAt(ent, 0);
                     remoteHostList.setSelectedIndex(0);
@@ -148,7 +148,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
         top.add(lblSearch);
         top.add(txtSearch);
         top.setBorder(new CompoundBorder(new EmptyBorder(0, 10, 10, 10),
-                new MatteBorder(0, 0, 1, 0, App.getContext().getSkin().getDefaultSelectionBackground())));
+                                         new MatteBorder(0, 0, 1, 0, App.getContext().getSkin().getDefaultSelectionBackground())));
 
         this.add(top, BorderLayout.NORTH);
 
@@ -199,11 +199,10 @@ public class Remote2RemoteTransferDialog extends JDialog {
             spPort.setValue(port);
         }
 
-        while (JOptionPane.showOptionDialog(this,
-                new Object[]{"Host", txtHost, "User", txtUser, "Copy to ( target directory)", txtPath, "Port",
-                        spPort},
-                "Remote host details", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION) {
+        while (OptionPaneUtils.showOptionDialog(this,
+                                                new Object[]{"Host", txtHost, "User", txtUser, "Copy to ( target directory)", txtPath, "Port",
+                                                             spPort},
+                                                "Remote host details") == JOptionPane.OK_OPTION) {
             host = txtHost.getText();
             user = txtUser.getText();
             path = txtPath.getText();

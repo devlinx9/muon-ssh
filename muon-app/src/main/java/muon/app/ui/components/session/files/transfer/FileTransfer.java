@@ -13,6 +13,7 @@ import muon.app.ssh.SSHRemoteFileInputStream;
 import muon.app.ssh.SSHRemoteFileOutputStream;
 import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.session.SessionExportImport;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 import muon.app.util.SudoUtils;
 import muon.app.util.enums.ConflictAction;
@@ -256,10 +257,9 @@ public class FileTransfer implements Runnable, AutoCloseable {
 
             JComboBox<ConflictAction> cmbs = SessionExportImport.getUserConflictAction();
 
-            if (JOptionPane.showOptionDialog(null,
-                                             new Object[]{App.getContext().getBundle().getString("some_file_exists_action_required"), cmbs},
-                                             App.getContext().getBundle().getString("action_required"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                                             null) == JOptionPane.YES_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(null,
+                                                 new Object[]{App.getContext().getBundle().getString("some_file_exists_action_required"), cmbs},
+                                                 App.getContext().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
                 action = (ConflictAction) cmbs.getSelectedItem();
             }
         }

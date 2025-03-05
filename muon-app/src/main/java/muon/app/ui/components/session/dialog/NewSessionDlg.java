@@ -5,6 +5,7 @@ import muon.app.App;
 import muon.app.ui.components.common.SkinnedSplitPane;
 import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.*;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.enums.ImportOption;
 
 import javax.swing.*;
@@ -15,7 +16,6 @@ import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Enumeration;
-
 
 import static muon.app.ui.components.session.dialog.TreeManager.getNewUuid;
 import static muon.app.ui.components.session.dialog.TreeManager.getNode;
@@ -280,9 +280,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         }
         JComboBox<ImportOption> cmbImports = new JComboBox<>(ImportOption.values());
 
-        if (JOptionPane.showOptionDialog(this, new Object[]{App.getContext().getBundle().getString("import_from"), cmbImports}, App.getContext().getBundle().getString("import_sessions"),
-                                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                                         null) == JOptionPane.OK_OPTION) {
+        if (OptionPaneUtils.showOptionDialog(this, new Object[]{App.getContext().getBundle().getString("import_from"), cmbImports}, App.getContext().getBundle().getString("import_sessions")) == JOptionPane.OK_OPTION) {
             manageImportOptions(parentNode, cmbImports);
         }
     }

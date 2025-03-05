@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.session.importer.SSHConfigImporter;
 import muon.app.util.Constants;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.enums.ConflictAction;
 
 import javax.swing.*;
@@ -21,7 +22,6 @@ import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
 
 import static muon.app.ui.components.session.SessionStore.load;
 import static muon.app.ui.components.session.SessionStore.save;
@@ -140,9 +140,9 @@ public class SessionExportImport {
 
         JComboBox<ConflictAction> cmbOptionsExistingInfo = getUserConflictAction();
 
-        if (JOptionPane.showOptionDialog(App.getAppWindow(), new Object[]{App.getContext().getBundle().getString("repeated_sessions"), cmbOptionsExistingInfo}, App.getContext().getBundle().getString("import_sessions"),
-                                         JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                                         null) != JOptionPane.OK_OPTION) {
+        if (OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{App.getContext().getBundle().getString("repeated_sessions"), cmbOptionsExistingInfo}, App.getContext()
+                .getBundle()
+                .getString("import_sessions")) != JOptionPane.OK_OPTION) {
             return false;
         }
         try {

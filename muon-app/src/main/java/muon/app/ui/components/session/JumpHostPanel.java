@@ -4,6 +4,7 @@ import muon.app.App;
 import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.util.FontAwesomeContants;
+import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +12,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 
 
 public class JumpHostPanel extends JPanel {
@@ -146,12 +146,15 @@ public class JumpHostPanel extends JPanel {
         b1.add(btnBrowse);
 
         if (e != null) {
-            if (e.getHost() != null)
+            if (e.getHost() != null) {
                 txtHost.setText(e.getHost());
-            if (e.getUser() != null)
+            }
+            if (e.getUser() != null) {
                 txtUser.setText(e.getUser());
-            if (e.getKeypath() != null)
+            }
+            if (e.getKeypath() != null) {
                 txtKeyFile.setText(e.getKeypath());
+            }
             spPort.setValue(e.getPort());
         }
 
@@ -164,11 +167,12 @@ public class JumpHostPanel extends JPanel {
             }
         });
 
-        while (JOptionPane.showOptionDialog(this,
-                new Object[]{App.getContext().getBundle().getString("host"), txtHost, App.getContext().getBundle().getString("port"), spPort, App.getContext().getBundle().getString("user"), txtUser, App.getContext().getBundle().getString("password"), txtPassword, App.getContext().getBundle().getString("private_key_file"),
-                        txtKeyFile},
-                "Hop entry", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION) {
+        while (OptionPaneUtils.showOptionDialog(this,
+                                                new Object[]{App.getContext().getBundle().getString("host"), txtHost, App.getContext().getBundle().getString("port"), spPort, App.getContext()
+                                                        .getBundle().getString("user"), txtUser, App.getContext().getBundle().getString("password"), txtPassword, App.getContext()
+                                                                     .getBundle().getString("private_key_file"),
+                                                             txtKeyFile},
+                                                "Hop entry") == JOptionPane.OK_OPTION) {
             String host = txtHost.getText();
             String user = txtUser.getText();
             String password = txtPassword.getPassword().length > 0 ? new String(txtPassword.getPassword()) : null;

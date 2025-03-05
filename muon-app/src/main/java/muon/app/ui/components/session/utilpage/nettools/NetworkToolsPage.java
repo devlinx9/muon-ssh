@@ -9,6 +9,7 @@ import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.ui.components.common.SkinnedTextArea;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
+import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -19,10 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
-
 /**
  * @author subhro
- *
  */
 @Slf4j
 public class NetworkToolsPage extends UtilPageItemView {
@@ -49,7 +48,7 @@ public class NetworkToolsPage extends UtilPageItemView {
         cmbPort.setEditable(true);
 
         cmbDNSTool = new JComboBox<>(new String[]{"nslookup", "dig",
-                "dig +short", "host", "getent ahostsv4"});
+                                                  "dig +short", "host", "getent ahostsv4"});
 
         JPanel grid = new JPanel(new GridLayout(1, 4, 10, 10));
         grid.setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -60,46 +59,38 @@ public class NetworkToolsPage extends UtilPageItemView {
         JButton btn4 = new JButton("DNS lookup");
 
         btn1.addActionListener(e -> {
-            if (JOptionPane.showOptionDialog(this,
-                    new Object[]{App.getContext().getBundle().getString("host_ping"), cmbHost}, "Ping",
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-                    null, null, null) == JOptionPane.OK_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(this,
+                                                 new Object[]{App.getContext().getBundle().getString("host_ping"), cmbHost}, "Ping") == JOptionPane.OK_OPTION) {
                 executeAsync("ping -c 4 " + cmbHost.getSelectedItem());
             }
         });
 
         btn2.addActionListener(e -> {
-            if (JOptionPane.showOptionDialog(this,
-                    new Object[]{App.getContext().getBundle().getString("host_name"), cmbHost, App.getContext().getBundle().getString("port_number"),
-                            cmbPort},
-                    "Port check", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE, null, null,
-                    null) == JOptionPane.OK_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(this,
+                                                 new Object[]{App.getContext().getBundle().getString("host_name"), cmbHost, App.getContext().getBundle().getString("port_number"),
+                                                              cmbPort},
+                                                 "Port check") == JOptionPane.OK_OPTION) {
                 executeAsync("bash -c 'test cat</dev/tcp/"
-                        + cmbHost.getSelectedItem() + "/"
-                        + cmbPort.getSelectedItem()
-                        + " && echo \"Port Reachable\" || echo \"Port Not reachable\"'");
+                             + cmbHost.getSelectedItem() + "/"
+                             + cmbPort.getSelectedItem()
+                             + " && echo \"Port Reachable\" || echo \"Port Not reachable\"'");
             }
         });
 
         btn3.addActionListener(e -> {
-            if (JOptionPane.showOptionDialog(this,
-                    new Object[]{App.getContext().getBundle().getString("host_name"), cmbHost}, "Traceroute",
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-                    null, null, null) == JOptionPane.OK_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(this,
+                                                 new Object[]{App.getContext().getBundle().getString("host_name"), cmbHost}, "Traceroute") == JOptionPane.OK_OPTION) {
                 executeAsync("traceroute " + cmbHost.getSelectedItem());
             }
         });
 
         btn4.addActionListener(e -> {
-            if (JOptionPane.showOptionDialog(this,
-                    new Object[]{App.getContext().getBundle().getString("host_name"), cmbHost, App.getContext().getBundle().getString("tool_use"),
-                            cmbDNSTool},
-                    "DNS lookup", JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE, null, null,
-                    null) == JOptionPane.OK_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(this,
+                                                 new Object[]{App.getContext().getBundle().getString("host_name"), cmbHost, App.getContext().getBundle().getString("tool_use"),
+                                                              cmbDNSTool},
+                                                 "DNS lookup") == JOptionPane.OK_OPTION) {
                 executeAsync(cmbDNSTool.getSelectedItem() + " "
-                        + cmbHost.getSelectedItem());
+                             + cmbHost.getSelectedItem());
             }
         });
 
@@ -126,12 +117,12 @@ public class NetworkToolsPage extends UtilPageItemView {
             try {
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 if (holder.getRemoteSessionInstance().execBin(cmd, stopFlag,
-                        bout, null) == 0) {
+                                                              bout, null) == 0) {
                     outText.append(bout.toString(StandardCharsets.UTF_8)).append("\n");
                     log.info("Command stdout: {}", outText);
                 } else {
                     JOptionPane.showMessageDialog(this,
-                            App.getContext().getBundle().getString("executed_errors"));
+                                                  App.getContext().getBundle().getString("executed_errors"));
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -144,13 +135,13 @@ public class NetworkToolsPage extends UtilPageItemView {
 
     @Override
     protected void onComponentVisible() {
-        
+
 
     }
 
     @Override
     protected void onComponentHide() {
-        
+
 
     }
 }

@@ -10,8 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.ui.components.common.SkinnedTextField;
-import muon.app.util.CollectionHelper;
 import muon.app.util.Constants;
+import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -51,8 +51,7 @@ public class StartPage extends JPanel {
     public StartPage(Consumer<String> callback, String sessionId) {
         super(new BorderLayout());
         this.sessionId = sessionId;
-        List<String> defaultPinnedLogs = CollectionHelper
-                .arrayList("/var/log/gpu-manager.log", "/var/log/syslog");
+        List<String> defaultPinnedLogs = List.of("/var/log/gpu-manager.log", "/var/log/syslog");
         loadPinnedLogs();
         if (pinnedLogs.containsKey(sessionId)) {
             defaultPinnedLogs = pinnedLogs.get(sessionId);
@@ -139,12 +138,10 @@ public class StartPage extends JPanel {
 
     private String promptLogPath() {
         JTextField txt = new SkinnedTextField(30);
-        if (JOptionPane.showOptionDialog(this,
-                                         new Object[]{App.getContext().getBundle().getString("provide_log_file_path"),
-                                                      txt},
-                                         "Input", JOptionPane.OK_CANCEL_OPTION,
-                                         JOptionPane.PLAIN_MESSAGE, null, null,
-                                         null) == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
+        if (OptionPaneUtils.showOptionDialog(this,
+                                             new Object[]{App.getContext().getBundle().getString("provide_log_file_path"),
+                                                          txt},
+                                             "Input") == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
             return txt.getText();
         }
         return null;

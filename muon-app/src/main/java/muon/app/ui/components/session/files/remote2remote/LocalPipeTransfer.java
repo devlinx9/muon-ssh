@@ -8,15 +8,14 @@ import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.files.FileBrowser;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.enums.ConflictAction;
-
-import javax.swing.*;
 
 public class LocalPipeTransfer {
     public void transferFiles(FileBrowser fileBrowser, String currentDirectory, FileInfo[] selectedFiles) {
         SessionInfo info = new NewSessionDlg(App.getAppWindow()).newSession();
         if (info != null) {
-            String path = JOptionPane.showInputDialog(App.getContext().getBundle().getString("remote_path"));
+            String path = OptionPaneUtils.showInputDialog(null, App.getContext().getBundle().getString("remote_path"), App.getContext().getBundle().getString("remote_path"));
             if (path != null) {
                 RemoteSessionInstance ri =
                         new RemoteSessionInstance(info, new CachedCredentialProvider() {

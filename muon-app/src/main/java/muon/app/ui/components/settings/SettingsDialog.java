@@ -875,11 +875,10 @@ public class SettingsDialog extends JDialog {
     private char[] promptPassword() {
         JPasswordField pass1 = new JPasswordField(30);
         JPasswordField pass2 = new JPasswordField(30);
-        while (JOptionPane.showOptionDialog(this,
-                                            new Object[]{App.getContext().getBundle().getString("new_master_password"), pass1, App.getContext().getBundle().getString("reenter_master_password"), pass2},
-                                            App.getContext().getBundle()
-                                                    .getString("master_password"),
-                                            JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null) == JOptionPane.OK_OPTION) {
+        while (OptionPaneUtils.showOptionDialog(this,
+                                                new Object[]{App.getContext().getBundle().getString("new_master_password"), pass1, App.getContext().getBundle().getString("reenter_master_password"), pass2},
+                                                App.getContext().getBundle()
+                                                        .getString("master_password")) == JOptionPane.OK_OPTION) {
             char[] password1 = pass1.getPassword();
             char[] password2 = pass2.getPassword();
 

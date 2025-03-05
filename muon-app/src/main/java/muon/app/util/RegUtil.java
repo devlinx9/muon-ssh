@@ -12,6 +12,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RegUtil {
+
+    protected RegUtil() {
+
+    }
+
     public static String regGetStr(WinReg.HKEY hkey, String key,
                                    String value) {
         try {

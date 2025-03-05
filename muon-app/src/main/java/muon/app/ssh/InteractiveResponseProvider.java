@@ -4,6 +4,8 @@
 package muon.app.ssh;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
+import muon.app.util.OptionPaneUtils;
 import net.schmizz.sshj.userauth.method.ChallengeResponseProvider;
 import net.schmizz.sshj.userauth.password.Resource;
 
@@ -13,7 +15,6 @@ import java.util.List;
 
 /**
  * @author subhro
- *
  */
 @Slf4j
 public class InteractiveResponseProvider implements ChallengeResponseProvider {
@@ -29,7 +30,7 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
     public void init(Resource resource, String name, String instruction) {
         log.info("ChallengeResponseProvider init - resource: {} name: {} instruction: {}", resource, name, instruction);
         if ((name != null && !name.isEmpty())
-                || (instruction != null && !instruction.isEmpty())) {
+            || (instruction != null && !instruction.isEmpty())) {
             JOptionPane.showMessageDialog(null, name + "\n" + instruction);
         }
     }
@@ -39,16 +40,14 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
         log.info("prompt: {} echo: {}", prompt, echo);
 
         if (echo) {
-            String str = JOptionPane.showInputDialog(prompt);
+            String str = OptionPaneUtils.showInputDialog(null, prompt, App.getContext().getBundle().getString("input"));
             if (str != null) {
                 return str.toCharArray();
             }
         } else {
             JPasswordField passwordField = new JPasswordField(30);
-            int ret = JOptionPane.showOptionDialog(null,
-                    new Object[]{prompt, passwordField}, "Input",
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE,
-                    null, null, null);
+            int ret = OptionPaneUtils.showOptionDialog(null,
+                                                       new Object[]{prompt, passwordField}, App.getContext().getBundle().getString("Input"));
             if (ret == JOptionPane.OK_OPTION) {
                 return passwordField.getPassword();
             }

@@ -7,6 +7,7 @@ import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.HopEntry;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.SshUtil;
 import muon.app.util.enums.JumpType;
 import net.schmizz.keepalive.KeepAliveProvider;
@@ -139,9 +140,8 @@ public class SshClient2 implements Closeable {
                 JPasswordField txtPassword = new JPasswordField(30);
                 JCheckBox chkUseCache = new JCheckBox(App.getContext().getBundle().getString("remember_session"));
                 txtUser.setText(user);
-                int ret = JOptionPane.showOptionDialog(App.getAppWindow(),
-                                                       new Object[]{"User", txtUser, "Password", txtPassword, chkUseCache}, App.getContext().getBundle().getString("authentication"),
-                                                       JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+                int ret = OptionPaneUtils.showOptionDialog(App.getAppWindow(),
+                                                           new Object[]{"User", txtUser, "Password", txtPassword, chkUseCache}, App.getContext().getBundle().getString("authentication"));
 
                 if (ret != JOptionPane.OK_OPTION) {
                     throw new OperationCancelledException();
@@ -346,8 +346,7 @@ public class SshClient2 implements Closeable {
         if (user == null || user.isEmpty()) {
             JTextField txtUser = new SkinnedTextField(30);
             JCheckBox chkCacheUser = new JCheckBox(App.getContext().getBundle().getString("remember_username"));
-            int ret = JOptionPane.showOptionDialog(null, new Object[]{App.getContext().getBundle().getString("username"), txtUser, chkCacheUser}, App.getContext().getBundle().getString("user"),
-                                                   JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+            int ret = OptionPaneUtils.showOptionDialog(null, new Object[]{App.getContext().getBundle().getString("username"), txtUser, chkCacheUser}, App.getContext().getBundle().getString("user"));
             if (ret == JOptionPane.OK_OPTION) {
                 user = txtUser.getText();
                 if (chkCacheUser.isSelected()) {

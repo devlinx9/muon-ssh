@@ -6,6 +6,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 public class TimeUtils {
+    protected TimeUtils() {
+
+    }
     public static LocalDateTime toDateTime(long epochMilli) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli),
                                        ZoneId.systemDefault());

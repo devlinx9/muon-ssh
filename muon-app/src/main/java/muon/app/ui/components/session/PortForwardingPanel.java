@@ -4,6 +4,7 @@ import muon.app.App;
 import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.util.FontAwesomeContants;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.enums.PortForwardingType;
 
 import javax.swing.*;
@@ -12,7 +13,6 @@ import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 public class PortForwardingPanel extends JPanel {
@@ -108,11 +108,10 @@ public class PortForwardingPanel extends JPanel {
             cmbPFType.setSelectedIndex(r.getType() == PortForwardingType.LOCAL ? 0 : 1);
         }
 
-        while (JOptionPane.showOptionDialog(this,
-                new Object[]{"Port forwarding type", cmbPFType, "Host", txtHost, "Source Port", spSourcePort,
-                        "Target Port", spTargetPort, "Bind Address", txtBindAddress},
-                "Port forwarding rule", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION) {
+        while (OptionPaneUtils.showOptionDialog(this,
+                                                new Object[]{"Port forwarding type", cmbPFType, "Host", txtHost, "Source Port", spSourcePort,
+                                                             "Target Port", spTargetPort, "Bind Address", txtBindAddress},
+                                                "Port forwarding rule") == JOptionPane.OK_OPTION) {
 
             String host = txtHost.getText();
             int port1 = (Integer) spSourcePort.getValue();
@@ -139,7 +138,8 @@ public class PortForwardingPanel extends JPanel {
 
     private static class PFTableModel extends AbstractTableModel {
 
-        private final String[] columns = {App.getContext().getBundle().getString("type"), App.getContext().getBundle().getString("host"), App.getContext().getBundle().getString("source_port"), App.getContext().getBundle().getString("target_port"), App.getContext().getBundle().getString("bind_host")};
+        private final String[] columns = {App.getContext().getBundle().getString("type"), App.getContext().getBundle().getString("host"), App.getContext().getBundle().getString("source_port"), App.getContext()
+                .getBundle().getString("target_port"), App.getContext().getBundle().getString("bind_host")};
         private final List<PortForwardingRule> list = new ArrayList<>();
 
         @Override

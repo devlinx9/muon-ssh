@@ -5,12 +5,12 @@ import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.ui.components.common.SkinnedTextArea;
 import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.SessionInfo;
+import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.function.Consumer;
-
 
 
 public class RemoteKeyPanel extends JPanel {
@@ -67,7 +67,7 @@ public class RemoteKeyPanel extends JPanel {
         JButton btnRemove = new JButton();
 
         btnAdd.addActionListener(e -> {
-            String text = JOptionPane.showInputDialog(null, App.getContext().getBundle().getString("new_entry"));
+            String text = OptionPaneUtils.showInputDialog(null, App.getContext().getBundle().getString("new_entry"), App.getContext().getBundle().getString("new_entry"));
             if (text != null && !text.isEmpty()) {
                 model.addElement(text);
                 callback3.accept(getAuthorizedKeys());
@@ -81,7 +81,7 @@ public class RemoteKeyPanel extends JPanel {
                 return;
             }
             String str = model.get(index);
-            String text = JOptionPane.showInputDialog(null, App.getContext().getBundle().getString("new_entry"), str);
+            String text = OptionPaneUtils.showInputDialog(null, App.getContext().getBundle().getString("new_entry"), str);
             if (text != null && !text.isEmpty()) {
                 model.set(index, text);
                 callback3.accept(getAuthorizedKeys());

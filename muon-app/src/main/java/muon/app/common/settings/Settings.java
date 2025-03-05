@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import muon.app.ui.components.settings.DarkTerminalTheme;
 import muon.app.ui.components.settings.EditorEntry;
-import muon.app.util.CollectionHelper;
 import muon.app.util.enums.ConflictAction;
 import muon.app.util.enums.Language;
 import muon.app.util.enums.TransferMode;
@@ -13,9 +12,11 @@ import muon.app.util.enums.TransferMode;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Map.entry;
 import static muon.app.util.PlatformUtils.IS_MAC;
 
 @Getter
@@ -71,17 +72,27 @@ public class Settings {
     private int defaultFoundBg = DarkTerminalTheme.FIND_BG;
     private int defaultHrefFg = DarkTerminalTheme.HREF_FG;
     private int defaultHrefBg = DarkTerminalTheme.HREF_BG;
-    private Map<String, Integer> keyCodeMap = new CollectionHelper.OrderedDict<String, Integer>()
-            .putItem(COPY_KEY, KeyEvent.VK_C).putItem(PASTE_KEY, KeyEvent.VK_V)
-            .putItem(CLEAR_BUFFER, IS_MAC ? KeyEvent.VK_K : KeyEvent.VK_L).putItem(FIND_KEY, KeyEvent.VK_F);
+    private Map<String, Integer> keyCodeMap = new LinkedHashMap<>(
+            Map.ofEntries(
+                    entry(COPY_KEY, KeyEvent.VK_C),
+                    entry(PASTE_KEY, KeyEvent.VK_V),
+                    entry(CLEAR_BUFFER, IS_MAC ? KeyEvent.VK_K : KeyEvent.VK_L),
+                    entry(FIND_KEY, KeyEvent.VK_F))
+    );
 
-    private Map<String, Integer> keyModifierMap = new CollectionHelper.Dict<String, Integer>()
-            .putItem(COPY_KEY,
-                     IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
-            .putItem(PASTE_KEY,
-                     IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)
-            .putItem(CLEAR_BUFFER, IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK)
-            .putItem(FIND_KEY, IS_MAC ? InputEvent.META_DOWN_MASK : InputEvent.CTRL_DOWN_MASK);
+    private Map<String, Integer> keyModifierMap = Map.ofEntries(
+            entry(COPY_KEY, IS_MAC
+                            ? InputEvent.META_DOWN_MASK
+                            : (InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)),
+            entry(PASTE_KEY, IS_MAC
+                             ? InputEvent.META_DOWN_MASK
+                             : (InputEvent.CTRL_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK)),
+            entry(CLEAR_BUFFER, IS_MAC
+                                ? InputEvent.META_DOWN_MASK
+                                : InputEvent.CTRL_DOWN_MASK),
+            entry(FIND_KEY, IS_MAC
+                            ? InputEvent.META_DOWN_MASK
+                            : InputEvent.CTRL_DOWN_MASK));
 
     private boolean dualPaneMode = true;
     private boolean listViewEnabled = false;

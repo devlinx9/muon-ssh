@@ -8,6 +8,7 @@ import muon.app.App;
 import muon.app.ui.components.session.SavedSessionTree;
 import muon.app.ui.components.session.SessionFolder;
 import muon.app.ui.components.session.SessionInfo;
+import muon.app.util.OptionPaneUtils;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -22,7 +23,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 
 
 @Slf4j
@@ -204,9 +204,8 @@ public final class PasswordStore {
         while (tries < 3) {
             try {
                 JPasswordField txtPass = new JPasswordField(30);
-                if (JOptionPane.showOptionDialog(App.getAppWindow(), new Object[]{App.getContext().getBundle().getString("master_password"), txtPass},
-                                                 App.getContext().getBundle().getString("master_password"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                                                 null) == JOptionPane.OK_OPTION) {
+                if (OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{App.getContext().getBundle().getString("master_password"), txtPass},
+                                                     App.getContext().getBundle().getString("master_password")) == JOptionPane.OK_OPTION) {
                     this.unlockStore(txtPass.getPassword());
                     return true;
                 } else {
@@ -215,7 +214,7 @@ public final class PasswordStore {
             } catch (IOException e) {
                 if (e.getCause() instanceof UnrecoverableKeyException) {
                     JOptionPane.showMessageDialog(App.getAppWindow(),
-                                                  App.getContext().getBundle().getString("incorrect_password"),App.getContext().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
+                                                  App.getContext().getBundle().getString("incorrect_password"), App.getContext().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
 
                 }
                 tries++;
@@ -223,7 +222,7 @@ public final class PasswordStore {
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 JOptionPane.showMessageDialog(App.getAppWindow(),
-                                              App.getContext().getBundle().getString("error_loading_password"),App.getContext().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
+                                              App.getContext().getBundle().getString("error_loading_password"), App.getContext().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
                 tries++;
             }
         }

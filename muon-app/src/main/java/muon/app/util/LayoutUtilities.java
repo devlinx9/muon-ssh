@@ -10,6 +10,10 @@ import java.awt.*;
  *
  */
 public final class LayoutUtilities {
+
+    protected LayoutUtilities() {
+
+    }
     public static void equalizeSize(Component... components) {
         int maxWidth = 0;
         int maxHeight = 0;

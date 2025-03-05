@@ -15,6 +15,7 @@ import muon.app.ui.components.session.files.view.DndTransferHandler;
 import muon.app.ui.components.session.files.view.FolderView;
 import muon.app.ui.components.settings.EditorEntry;
 import muon.app.ui.components.settings.SettingsPageName;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 import muon.app.util.enums.DndSourceType;
 import muon.app.util.enums.FileType;
@@ -38,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-
 
 import static muon.app.App.getAppWindow;
 import static muon.app.util.PlatformUtils.IS_WINDOWS;
@@ -313,8 +313,8 @@ public class SshMenuHandler {
 
         mExtractTo = new JMenuItem(App.getContext().getBundle().getString("extract_to"));
         mExtractTo.addActionListener(e -> {
-            String text = JOptionPane.showInputDialog(App.getContext().getBundle().getString("select_target"),
-                                                      fileBrowserView.getCurrentDirectory());
+            String text = OptionPaneUtils.showInputDialog(null, App.getContext().getBundle().getString("select_target"),
+                                                          fileBrowserView.getCurrentDirectory());
             if (text == null || text.isEmpty()) {
                 return;
             }
@@ -533,7 +533,7 @@ public class SshMenuHandler {
     }
 
     private void rename(FileInfo info, String baseFolder) {
-        String text = JOptionPane.showInputDialog(App.getAppWindow(), App.getContext().getBundle().getString("please_new_name"), info.getName());
+        String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getContext().getBundle().getString("please_new_name"), info.getName());
         if (text != null && !text.isEmpty()) {
             renameAsync(info.getPath(), PathUtils.combineUnix(PathUtils.getParent(info.getPath()), text), baseFolder);
         }
