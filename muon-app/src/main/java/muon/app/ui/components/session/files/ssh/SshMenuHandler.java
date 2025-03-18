@@ -533,8 +533,8 @@ public class SshMenuHandler {
     }
 
     private void rename(FileInfo info, String baseFolder) {
-        String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getContext().getBundle().getString("please_new_name"), info.getName());
-        if (text != null && !text.isEmpty()) {
+        String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getContext().getBundle().getString("enter_new_name"), info.getName(), info.getName());
+        if (text != null && !text.isEmpty() && !text.equals(info.getName())) {
             renameAsync(info.getPath(), PathUtils.combineUnix(PathUtils.getParent(info.getPath()), text), baseFolder);
         }
     }
