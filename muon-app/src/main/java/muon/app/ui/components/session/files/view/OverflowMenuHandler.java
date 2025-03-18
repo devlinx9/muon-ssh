@@ -1,25 +1,29 @@
 package muon.app.ui.components.session.files.view;
 
+import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.AbstractFileBrowserView;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.local.LocalFileBrowserView;
+import muon.app.ui.components.session.files.ssh.SshFileBrowserView;
 import muon.app.util.PathUtils;
+import muon.app.util.PlatformUtils;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.FileNotFoundException;
+
+import static muon.app.util.PlatformUtils.getStringForOpenInFileBrowser;
 
 
-
+@Slf4j
 public class OverflowMenuHandler {
     private final JRadioButtonMenuItem mSortAsc;
     private final JRadioButtonMenuItem mSortDesc;
     private final JCheckBoxMenuItem mShowHiddenFiles;
-    private final AtomicBoolean sortingChanging = new AtomicBoolean(false);
     private final KeyStroke ksHideShow;
     private final AbstractAction aHideShow;
     private final JPopupMenu popup;
@@ -35,6 +39,7 @@ public class OverflowMenuHandler {
 
         mShowHiddenFiles = new JCheckBoxMenuItem(App.getContext().getBundle().getString("show_hidden_files2"));
         mShowHiddenFiles.setSelected(App.getGlobalSettings().isShowHiddenFilesByDefault());
+
 
         aHideShow = new AbstractAction() {
             @Override
@@ -74,6 +79,7 @@ public class OverflowMenuHandler {
         mSortMenu.add(mSortDesc);
 
         popup.add(mShowHiddenFiles);
+        setOpenFileBrowserInLocalView(popup);
         popup.add(favouriteLocations);
 
         loadFavourites();
@@ -123,5 +129,25 @@ public class OverflowMenuHandler {
         this.folderView = folderView;
         map.put(ksHideShow, "ksHideShow");
         act.put("ksHideShow", aHideShow);
+    }
+
+
+    private void setOpenFileBrowserInLocalView(JPopupMenu popup) {
+        if (fileBrowserView instanceof SshFileBrowserView) {
+            return;
+        }
+        JMenuItem mOpenInFileBrowser;
+        mOpenInFileBrowser = new JMenuItem(getStringForOpenInFileBrowser());
+
+        mOpenInFileBrowser.addActionListener(e -> {
+            try {
+                String path = ((LocalFileBrowserView) folderView.getParent()).getPathText();
+                PlatformUtils.openFolderInFileBrowser(path);
+            } catch (FileNotFoundException e1) {
+                log.error(e1.getMessage(), e1);
+            }
+        });
+
+        popup.add(mOpenInFileBrowser);
     }
 }

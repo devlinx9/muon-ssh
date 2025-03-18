@@ -12,6 +12,7 @@ import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.win32.StdCallLibrary;
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ui.components.settings.EditorEntry;
 
 import java.io.File;
@@ -249,6 +250,14 @@ public class PlatformUtils {
     public interface Shell32 extends ShellAPI, StdCallLibrary {
         WinDef.HINSTANCE shellExecuteW(WinDef.HWND hwnd, WString lpOperation, WString lpFile, WString lpParameters,
                                        WString lpDirectory, int nShowCmd);
+    }
+
+    public static String getStringForOpenInFileBrowser() {
+        if (IS_WINDOWS) {
+            return App.getContext().getBundle().getString("open_in_file_browser_win");
+        } else {
+            return IS_MAC ? App.getContext().getBundle().getString("open_in_file_browser_mac") : App.getContext().getBundle().getString("open_in_file_browser_nix");
+        }
     }
 
 }

@@ -155,13 +155,33 @@ public class AppWindow extends JFrame {
         btnNew.setToolTipText(App.getContext().getBundle().getString("new_connection"));
 
         JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
-        btnToggle.setFont(App.getContext().getSkin().getIconFont().deriveFont(14.0f));
+        btnToggle.setFont(App.getContext().getSkin().getIconFont().deriveFont(16.0f));
+
+        // Calculate the maximum width and height between the two buttons
+        Dimension sizeNew = btnNew.getPreferredSize();
+        Dimension sizeToggle = btnToggle.getPreferredSize();
+
+        int maxWidth = Math.max(sizeNew.width, sizeToggle.width);
+        int maxHeight = Math.max(sizeNew.height, sizeToggle.height);
+
+        // Create a new Dimension with the maximum width and height
+        Dimension maxSize = new Dimension(maxWidth, maxHeight);
+
+        // Set the preferred, minimum, and maximum size for both buttons
+        btnNew.setPreferredSize(maxSize);
+        btnNew.setMinimumSize(maxSize);
+        btnNew.setMaximumSize(maxSize);
+
+        btnToggle.setPreferredSize(maxSize);
+        btnToggle.setMinimumSize(maxSize);
+        btnToggle.setMaximumSize(maxSize);
 
         JPanel topBox = new JPanel();
         topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
         topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
         topBox.add(btnToggle);
-        topBox.add(Box.createRigidArea(new Dimension(10, 10)));
+        var rigidArea = Box.createRigidArea(new Dimension(10, 10));
+        topBox.add(rigidArea);
         topBox.add(btnNew);
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new MatteBorder(0, 0, 0, 1, App.getContext().getSkin().getDefaultBorderColor()));
@@ -171,14 +191,15 @@ public class AppWindow extends JFrame {
         panel.add(sessionListPanel, BorderLayout.CENTER);
 
         btnToggle.addActionListener(e -> {
-            boolean isVisible = btnNew.isVisible();
+            boolean isVisible = sessionListPanel.isVisible();
+            topBox.setLayout(new BoxLayout(topBox, BoxLayout.Y_AXIS));
             sessionListPanel.setVisible(!isVisible);
-            btnNew.setVisible(!isVisible);
+            rigidArea.setVisible(!isVisible);
             topBox.setBorder(null);
 
             if (!isVisible) {
+                topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
                 topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
-
             }
 
             btnToggle.setText(isVisible ? FontAwesomeContants.FA_ANGLE_DOUBLE_RIGHT : FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
