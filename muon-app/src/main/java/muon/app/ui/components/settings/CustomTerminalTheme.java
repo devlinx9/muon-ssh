@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.settings;
 
 import com.jediterm.terminal.TerminalColor;

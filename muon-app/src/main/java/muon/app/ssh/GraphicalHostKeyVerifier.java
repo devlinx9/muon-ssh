@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ssh;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +18,7 @@ import java.security.PublicKey;
  */
 @Slf4j
 public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
-    /**
-     *
-     */
+    
     public GraphicalHostKeyVerifier(File knownHostFile) throws IOException {
         super(knownHostFile);
     }
@@ -31,9 +27,9 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
     protected boolean hostKeyUnverifiableAction(String hostname, PublicKey key) {
         final KeyType type = KeyType.fromKey(key);
 
-        int resp = JOptionPane.showConfirmDialog(null,
+        int resp = JOptionPane.showConfirmDialog(App.getAppWindow(),
                 String.format(
-                        App.getContext().getBundle().getString("unverifiable_action"),
+                        App.getCONTEXT().getBundle().getString("unverifiable_action"),
                         hostname, type, SecurityUtils.getFingerprint(key)));
 
         if (resp == JOptionPane.YES_OPTION) {
@@ -53,8 +49,8 @@ public class GraphicalHostKeyVerifier extends OpenSSHKnownHosts {
         final KeyType type = KeyType.fromKey(key);
         final String fp = SecurityUtils.getFingerprint(key);
         final String path = getFile().getAbsolutePath();
-        String msg = String.format(App.getContext().getBundle().getString("host_key_change_warning"), type, fp, path);
-        return JOptionPane.showConfirmDialog(null, msg) == JOptionPane.YES_OPTION;
+        String msg = String.format(App.getCONTEXT().getBundle().getString("host_key_change_warning"), type, fp, path);
+        return JOptionPane.showConfirmDialog(App.getAppWindow(), msg) == JOptionPane.YES_OPTION;
     }
 
     @Override

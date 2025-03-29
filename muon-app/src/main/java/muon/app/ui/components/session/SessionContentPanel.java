@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session;
 
 import lombok.Getter;
@@ -67,33 +65,20 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     private String cachedUser;
     private PortForwardingSession pfSession;
 
-    /**
-     *
-     */
+
     public SessionContentPanel(SessionInfo info) {
         super(new BorderLayout());
         this.info = info;
         this.disabledPanel = new DisabledPanel();
         this.remoteSessionInstance = new RemoteSessionInstance(info, this, this);
         Box contentTabs = Box.createHorizontalBox();
-        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.getContext().getSkin().getDefaultBorderColor()));
+        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         fileBrowser = new FileBrowser(info, this, null, this.hashCode());
         logViewer = new LogViewer(this);
         terminalHolder = new TerminalHolder(info, this);
-        DiskspaceAnalyzer diskspaceAnalyzer = new DiskspaceAnalyzer(this);
-        SearchPanel searchPanel = new SearchPanel(this);
-        ProcessViewer processViewer = new ProcessViewer(this);
-        UtilityPage utilityPage = new UtilityPage(this);
 
-        Page[] pageArr;
-        if (App.getGlobalSettings().isFirstFileBrowserView()) {
-            pageArr = new Page[]{fileBrowser, terminalHolder, logViewer, searchPanel, diskspaceAnalyzer,
-                                 processViewer, utilityPage};
-        } else {
-            pageArr = new Page[]{terminalHolder, fileBrowser, logViewer, searchPanel, diskspaceAnalyzer,
-                                 processViewer, utilityPage};
-        }
+        Page[] pageArr = getPages();
 
         this.cardLayout = new CardLayout();
         this.cardPanel = new JPanel(this.cardLayout);
@@ -129,6 +114,23 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             this.pfSession = new PortForwardingSession(info, this, this);
             this.pfSession.start();
         }
+    }
+
+    private Page[] getPages() {
+        DiskspaceAnalyzer diskspaceAnalyzer = new DiskspaceAnalyzer(this);
+        SearchPanel searchPanel = new SearchPanel(this);
+        ProcessViewer processViewer = new ProcessViewer(this);
+        UtilityPage utilityPage = new UtilityPage(this);
+
+        Page[] pageArr;
+        if (App.getGlobalSettings().isFirstFileBrowserView()) {
+            pageArr = new Page[]{fileBrowser, terminalHolder, logViewer, searchPanel, diskspaceAnalyzer,
+                                 processViewer, utilityPage};
+        } else {
+            pageArr = new Page[]{terminalHolder, fileBrowser, logViewer, searchPanel, diskspaceAnalyzer,
+                                 processViewer, utilityPage};
+        }
+        return pageArr;
     }
 
     public void reconnect() {

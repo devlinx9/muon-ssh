@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage.sysload;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,16 +26,12 @@ public class SysLoadPage extends UtilPageItemView {
     private LinuxMetrics metrics;
     private String OS;
 
-    /**
-     *
-     */
+    
     public SysLoadPage(SessionContentPanel holder) {
         super(holder);
     }
 
-    /**
-     *
-     */
+    
     private void fetchSystemLoad() {
         holder.EXECUTOR.submit(() -> {
             try {
@@ -128,7 +122,7 @@ public class SysLoadPage extends UtilPageItemView {
 
         topPanel.add(titleLabel);
         topPanel.add(Box.createHorizontalGlue());
-        topPanel.add(new JLabel(App.getContext().getBundle().getString("refresh_interval")));
+        topPanel.add(new JLabel(App.getCONTEXT().getBundle().getString("refresh_interval")));
         topPanel.add(Box.createHorizontalStrut(5));
         topPanel.add(spInterval);
         topPanel.add(Box.createHorizontalStrut(5));

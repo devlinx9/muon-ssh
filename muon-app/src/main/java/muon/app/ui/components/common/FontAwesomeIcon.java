@@ -22,7 +22,7 @@ public class FontAwesomeIcon implements Icon {
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setFont(App.getContext().getSkin().getIconFont().deriveFont((float) height));
+        g2.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont((float) height));
         int ypos = g2.getFontMetrics().getAscent();
         g2.drawString(faIcon, x, ypos);
     }

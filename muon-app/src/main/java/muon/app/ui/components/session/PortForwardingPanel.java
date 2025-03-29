@@ -33,11 +33,11 @@ public class PortForwardingPanel extends JPanel {
 
         Box b1 = Box.createVerticalBox();
         JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.getContext().getSkin().getIconFont());
+        btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont());
         JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.getContext().getSkin().getIconFont());
+        btnDel.setFont(App.getCONTEXT().getSkin().getIconFont());
         JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.getContext().getSkin().getIconFont());
+        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont());
 
         btnAdd.addActionListener(e -> {
             PortForwardingRule ent = addOrEditEntry(null);
@@ -90,7 +90,7 @@ public class PortForwardingPanel extends JPanel {
     }
 
     private PortForwardingRule addOrEditEntry(PortForwardingRule r) {
-        JComboBox<String> cmbPFType = new JComboBox<>(new String[]{App.getContext().getBundle().getString("local"), App.getContext().getBundle().getString("remote")});
+        JComboBox<String> cmbPFType = new JComboBox<>(new String[]{App.getCONTEXT().getBundle().getString("local"), App.getCONTEXT().getBundle().getString("remote")});
 
         JTextField txtHost = new SkinnedTextField(30);
 
@@ -119,7 +119,7 @@ public class PortForwardingPanel extends JPanel {
             String bindAddress = txtBindAddress.getText();
 
             if (host.isEmpty() || bindAddress.isEmpty() || port1 <= 0 || port2 <= 0) {
-                JOptionPane.showMessageDialog(this, App.getContext().getBundle().getString("invalid_input"));
+                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_input"));
                 continue;
             }
 
@@ -138,8 +138,8 @@ public class PortForwardingPanel extends JPanel {
 
     private static class PFTableModel extends AbstractTableModel {
 
-        private final String[] columns = {App.getContext().getBundle().getString("type"), App.getContext().getBundle().getString("host"), App.getContext().getBundle().getString("source_port"), App.getContext()
-                .getBundle().getString("target_port"), App.getContext().getBundle().getString("bind_host")};
+        private final String[] columns = {App.getCONTEXT().getBundle().getString("type"), App.getCONTEXT().getBundle().getString("host"), App.getCONTEXT().getBundle().getString("source_port"), App.getCONTEXT()
+                .getBundle().getString("target_port"), App.getCONTEXT().getBundle().getString("bind_host")};
         private final List<PortForwardingRule> list = new ArrayList<>();
 
         @Override

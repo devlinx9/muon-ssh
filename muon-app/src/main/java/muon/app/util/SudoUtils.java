@@ -43,9 +43,9 @@ public class SudoUtils {
                         log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (firstTime.get() || OptionPaneUtils.showOptionDialog(null,
-                                                                                    new Object[]{App.getContext().getBundle().getString("user_password"),
+                                                                                    new Object[]{App.getCONTEXT().getBundle().getString("user_password"),
                                                                                                  J_PASSWORD_FIELD},
-                                                                                    App.getContext().getBundle().getString("authentication")) == JOptionPane.OK_OPTION) {
+                                                                                    App.getCONTEXT().getBundle().getString("authentication")) == JOptionPane.OK_OPTION) {
                                 if (firstTime.get()) {
                                     firstTime.set(false);
                                     J_PASSWORD_FIELD.setText(password);
@@ -101,9 +101,9 @@ public class SudoUtils {
                         log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
                             if (OptionPaneUtils.showOptionDialog(null,
-                                                                 new Object[]{App.getContext().getBundle().getString("user_password"),
+                                                                 new Object[]{App.getCONTEXT().getBundle().getString("user_password"),
                                                                               J_PASSWORD_FIELD},
-                                                                 App.getContext().getBundle().getString("authentication")) == JOptionPane.OK_OPTION) {
+                                                                 App.getCONTEXT().getBundle().getString("authentication")) == JOptionPane.OK_OPTION) {
                                 sb = new StringBuilder();
                                 out.write(
                                         (new String(J_PASSWORD_FIELD.getPassword())

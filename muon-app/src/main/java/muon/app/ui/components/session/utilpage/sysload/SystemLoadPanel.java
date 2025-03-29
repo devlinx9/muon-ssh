@@ -36,7 +36,7 @@ public class SystemLoadPanel extends JPanel {
         setPreferredSize(new Dimension(300, 400));
         Box b1 = Box.createVerticalBox();
 
-        cpuLabel = new JLabel(App.getContext().getBundle().getString("cpu_usage"));
+        cpuLabel = new JLabel(App.getCONTEXT().getBundle().getString("cpu_usage"));
         cpuLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
         cpuLabel.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(cpuLabel);
@@ -46,7 +46,7 @@ public class SystemLoadPanel extends JPanel {
         cpuGraph.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(cpuGraph);
 
-        memoryLabel = new JLabel(App.getContext().getBundle().getString("memory_usage"));
+        memoryLabel = new JLabel(App.getCONTEXT().getBundle().getString("memory_usage"));
         memoryLabel.setBorder(new EmptyBorder(20, 0, 10, 0));
         memoryLabel.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(memoryLabel);
@@ -56,7 +56,7 @@ public class SystemLoadPanel extends JPanel {
         memGraph.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(memGraph);
 
-        swapLabel = new JLabel(App.getContext().getBundle().getString("swap_usage"));
+        swapLabel = new JLabel(App.getCONTEXT().getBundle().getString("swap_usage"));
         swapLabel.setBorder(new EmptyBorder(20, 0, 10, 0));
         swapLabel.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(swapLabel);
@@ -95,25 +95,25 @@ public class SystemLoadPanel extends JPanel {
 
     public void refreshUi() {
         this.cpuLabel
-                .setText(String.format(App.getContext().getBundle().getString("cpu_usage") + ": %.1f", cpuUsage) + "% ");
-        this.memoryLabel.setText(String.format(App.getContext().getBundle().getString("memory_usage") + ": %.1f",
+                .setText(String.format(App.getCONTEXT().getBundle().getString("cpu_usage") + ": %.1f", cpuUsage) + "% ");
+        this.memoryLabel.setText(String.format(App.getCONTEXT().getBundle().getString("memory_usage") + ": %.1f",
                                                memoryUsage)
                                  + "%"
                                  + (totalMemory != 0
                                     ? (", (Total: " + FormatUtils
                 .humanReadableByteCount(totalMemory, true)
-                                       + ", " + App.getContext().getBundle().getString("used") + ": "
+                                       + ", " + App.getCONTEXT().getBundle().getString("used") + ": "
                                        + FormatUtils.humanReadableByteCount(usedMemory,
                                                                             true)
                                        + ")")
                                     : ""));
-        this.swapLabel.setText(String.format(App.getContext().getBundle().getString("swap_usage") + ": %.1f", swapUsage)
+        this.swapLabel.setText(String.format(App.getCONTEXT().getBundle().getString("swap_usage") + ": %.1f", swapUsage)
                                + "% "
                                + (totalSwap != 0
                                   ? (", ( Total: "
                                      + FormatUtils.humanReadableByteCount(totalSwap,
                                                                           true)
-                                     + ", " + App.getContext().getBundle().getString("used") + ": " + FormatUtils
+                                     + ", " + App.getCONTEXT().getBundle().getString("used") + ": " + FormatUtils
                                              .humanReadableByteCount(usedSwap, true)
                                      + ")")
                                   : ""));

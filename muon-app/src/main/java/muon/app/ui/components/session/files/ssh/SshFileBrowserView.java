@@ -206,7 +206,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
     public boolean handleDrop(DndTransferData transferData) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-            && JOptionPane.showConfirmDialog(null, App.getContext().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(null, App.getCONTEXT().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
             return false;
         }
         try {
@@ -250,7 +250,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                         pwd += "/";
                     }
                     if (parent.equals(pwd)) {
-                        JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("same_directory"));
+                        JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("same_directory"));
                         return false;
                     }
                 }

@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.common;
 
 import javax.swing.*;

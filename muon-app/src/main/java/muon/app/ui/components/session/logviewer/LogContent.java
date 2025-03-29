@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.logviewer;
 
 import lombok.Getter;
@@ -58,9 +56,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
     private final TextGutter gutter;
     private final Consumer<String> callback;
 
-    /**
-     *
-     */
+    
     public LogContent(SessionContentPanel holder, String remoteLogFile,
                       StartPage startPage, Consumer<String> callback) {
         super(new BorderLayout(), true);
@@ -72,39 +68,39 @@ public class LogContent extends JPanel implements ClosableTabContent {
         lblTotalPage = new JLabel();
         lblTotalPage.setHorizontalAlignment(JLabel.CENTER);
 
-        UIDefaults skin = App.getContext().getSkin().createToolbarSkin();
+        UIDefaults skin = App.getCONTEXT().getSkin().createToolbarSkin();
 
         JButton btnFirstPage = new JButton();
         btnFirstPage.setToolTipText("First page");
         btnFirstPage.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnFirstPage.setFont(App.getContext().getSkin().getIconFont());
+        btnFirstPage.setFont(App.getCONTEXT().getSkin().getIconFont());
         btnFirstPage.setText(FontAwesomeContants.FA_FAST_BACKWARD);
         btnFirstPage.addActionListener(e -> firstPage());
 
         JButton btnNextPage = new JButton();
         btnNextPage.setToolTipText("Next page");
         btnNextPage.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnNextPage.setFont(App.getContext().getSkin().getIconFont());
+        btnNextPage.setFont(App.getCONTEXT().getSkin().getIconFont());
         btnNextPage.setText(FontAwesomeContants.FA_STEP_FORWARD);
         btnNextPage.addActionListener(e -> nextPage());
 
         JButton btnPrevPage = new JButton("");
         btnPrevPage.setToolTipText("Previous page");
         btnPrevPage.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnPrevPage.setFont(App.getContext().getSkin().getIconFont());
+        btnPrevPage.setFont(App.getCONTEXT().getSkin().getIconFont());
         btnPrevPage.setText(FontAwesomeContants.FA_STEP_BACKWARD);
         btnPrevPage.addActionListener(e -> previousPage());
 
         JButton btnLastPage = new JButton();
         btnLastPage.setToolTipText("Last page");
         btnLastPage.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnLastPage.setFont(App.getContext().getSkin().getIconFont());
+        btnLastPage.setFont(App.getCONTEXT().getSkin().getIconFont());
         btnLastPage.setText(FontAwesomeContants.FA_FAST_FORWARD);
         btnLastPage.addActionListener(e -> lastPage());
 
         textArea = new SkinnedTextArea();
         textArea.setEditable(false);
-        textArea.setBackground(App.getContext().getSkin().getSelectedTabColor());
+        textArea.setBackground(App.getCONTEXT().getSkin().getSelectedTabColor());
         textArea.setWrapStyleWord(true);
         textArea.setFont(textArea.getFont().deriveFont(
                 (float) App.getGlobalSettings().getLogViewerFont()));
@@ -122,7 +118,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
             this.textArea.setLineWrap(chkLineWrap.isSelected());
             App.getGlobalSettings()
                     .setLogViewerUseWordWrap(chkLineWrap.isSelected());
-            App.getContext().getSettingsManager().saveSettings();
+            App.getCONTEXT().getSettingsManager().saveSettings();
         });
 
         chkLineWrap
@@ -139,13 +135,13 @@ public class LogContent extends JPanel implements ClosableTabContent {
             gutter.revalidate();
             gutter.repaint();
             App.getGlobalSettings().setLogViewerFont(fontSize);
-            App.getContext().getSettingsManager().saveSettings();
+            App.getCONTEXT().getSettingsManager().saveSettings();
         });
 
         JButton btnReload = new JButton();
         btnReload.setToolTipText("Reload");
         btnReload.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnReload.setFont(App.getContext().getSkin().getIconFont());
+        btnReload.setFont(App.getCONTEXT().getSkin().getIconFont());
         btnReload.setText(FontAwesomeContants.FA_UNDO);
         btnReload.addActionListener(e -> {
             try {
@@ -165,13 +161,13 @@ public class LogContent extends JPanel implements ClosableTabContent {
         JButton btnBookMark = new JButton();
         btnBookMark.setToolTipText("Add to bookmark/pin");
         btnBookMark.putClientProperty(NIMBUS_OVERRIDES, skin);
-        btnBookMark.setFont(App.getContext().getSkin().getIconFont());
+        btnBookMark.setFont(App.getCONTEXT().getSkin().getIconFont());
         btnBookMark.setText(FontAwesomeContants.FA_BOOKMARK);
         btnBookMark.addActionListener(e -> startPage.pinLog(remoteLogFile));
 
         Box toolbar = Box.createHorizontalBox();
         toolbar.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 1, 0, App.getContext().getSkin().getDefaultBorderColor()),
+                new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
                 new EmptyBorder(5, 10, 5, 10)));
         toolbar.add(btnFirstPage);
         toolbar.add(btnPrevPage);
@@ -230,7 +226,7 @@ public class LogContent extends JPanel implements ClosableTabContent {
         this.add(logSearchPanel, BorderLayout.SOUTH);
 
         painter = new DefaultHighlighter.DefaultHighlightPainter(
-                App.getContext().getSkin().getAddressBarSelectionBackground());
+                App.getCONTEXT().getSkin().getAddressBarSelectionBackground());
 
         initPages();
     }

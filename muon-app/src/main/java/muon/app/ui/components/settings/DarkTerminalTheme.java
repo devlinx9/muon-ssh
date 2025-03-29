@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.settings;
 
 import com.jediterm.terminal.TerminalColor;
@@ -18,9 +16,7 @@ public class DarkTerminalTheme implements TerminalTheme {
             FIND_BG = 0x4d525e, HREF_FG = 0xf0f0f0, HREF_BG = 0x282c34;
     private String name;
 
-    /**
-     *
-     */
+    
     public static TerminalColor getTerminalColor(int rgb) {
         return TerminalColor.awt(new Color(rgb));
     }

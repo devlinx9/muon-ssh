@@ -38,7 +38,7 @@ import static muon.app.util.Constants.*;
 public class AppWindow extends JFrame {
 
     private final String updateUrl = BASE_UPDATE_URL + "/check-update.html?v="
-                                     + App.getContext().getVersion().getNumericValue();
+                                     + App.getCONTEXT().getVersion().getNumericValue();
     private final CardLayout sessionCard = new CardLayout();
     private final JPanel cardPanel = new JPanel(sessionCard, true);
     private final BackgroundTransferPanel uploadPanel;
@@ -150,12 +150,12 @@ public class AppWindow extends JFrame {
 
     private JPanel createSessionPanel() {
         JButton btnNew = new JButton(FontAwesomeContants.FA_TELEVISION);
-        btnNew.setFont(App.getContext().getSkin().getIconFont().deriveFont(14.0f));
+        btnNew.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
         btnNew.addActionListener(e -> this.createFirstSessionPanel());
-        btnNew.setToolTipText(App.getContext().getBundle().getString("new_connection"));
+        btnNew.setToolTipText(App.getCONTEXT().getBundle().getString("new_connection"));
 
         JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
-        btnToggle.setFont(App.getContext().getSkin().getIconFont().deriveFont(16.0f));
+        btnToggle.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
 
         // Calculate the maximum width and height between the two buttons
         Dimension sizeNew = btnNew.getPreferredSize();
@@ -184,7 +184,7 @@ public class AppWindow extends JFrame {
         topBox.add(rigidArea);
         topBox.add(btnNew);
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.getContext().getSkin().getDefaultBorderColor()));
+        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         sessionListPanel = new SessionListPanel(this);
         panel.add(topBox, BorderLayout.NORTH);
@@ -230,13 +230,13 @@ public class AppWindow extends JFrame {
 
     private Component createBottomPanel() {
         popup = new JPopupMenu();
-        popup.setBorder(new LineBorder(App.getContext().getSkin().getDefaultBorderColor(), 1));
+        popup.setBorder(new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor(), 1));
         popup.setPreferredSize(new Dimension(400, 500));
 
         Box b1 = Box.createHorizontalBox();
         b1.setOpaque(true);
-        b1.setBackground(App.getContext().getSkin().getTableBackgroundColor());
-        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.getContext().getSkin().getDefaultBorderColor()),
+        b1.setBackground(App.getCONTEXT().getSkin().getTableBackgroundColor());
+        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
                                         new EmptyBorder(5, 5, 5, 5)));
         b1.add(createSpacer(10, 10));
         b1.add(createBrandLabel());
@@ -296,7 +296,7 @@ public class AppWindow extends JFrame {
     }
 
     private void createUpdateTextLabel() {
-        lblUpdateText = new JLabel(App.getContext().getBundle().getString("chk_update"));
+        lblUpdateText = new JLabel(App.getCONTEXT().getBundle().getString("chk_update"));
         lblUpdateText.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblUpdateText.addMouseListener(new MouseAdapter() {
             @Override
@@ -385,7 +385,7 @@ public class AppWindow extends JFrame {
 
     private JLabel createIconLabel(String icon) {
         JLabel label = new JLabel(icon);
-        label.setFont(App.getContext().getSkin().getIconFont().deriveFont((float) 16.0));
+        label.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(MEDIUM_TEXT_SIZE));
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return label;
     }
@@ -404,7 +404,6 @@ public class AppWindow extends JFrame {
             }
         };
     }
-
 
     protected void openUpdateURL() {
         if (Desktop.isDesktopSupported()) {

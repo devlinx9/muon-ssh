@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.common;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +16,7 @@ import java.awt.event.MouseEvent;
  */
 @Slf4j
 public class SkinnedTextArea extends JTextArea {
-    /**
-     *
-     */
+    
     public SkinnedTextArea() {
         installPopUp();
     }
@@ -45,10 +41,10 @@ public class SkinnedTextArea extends JTextArea {
 
     private JPopupMenu createPopup() {
         JPopupMenu popup = new JPopupMenu();
-        JMenuItem mCut = new JMenuItem(App.getContext().getBundle().getString("cut"));
-        JMenuItem mCopy = new JMenuItem(App.getContext().getBundle().getString("copy"));
-        JMenuItem mPaste = new JMenuItem(App.getContext().getBundle().getString("paste"));
-        JMenuItem mSelect = new JMenuItem(App.getContext().getBundle().getString("select_all"));
+        JMenuItem mCut = new JMenuItem(App.getCONTEXT().getBundle().getString("cut"));
+        JMenuItem mCopy = new JMenuItem(App.getCONTEXT().getBundle().getString("copy"));
+        JMenuItem mPaste = new JMenuItem(App.getCONTEXT().getBundle().getString("paste"));
+        JMenuItem mSelect = new JMenuItem(App.getCONTEXT().getBundle().getString("select_all"));
 
         popup.add(mCut);
         popup.add(mCopy);

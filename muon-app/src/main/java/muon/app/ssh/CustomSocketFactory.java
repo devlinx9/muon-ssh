@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ssh;
 
 import javax.net.SocketFactory;

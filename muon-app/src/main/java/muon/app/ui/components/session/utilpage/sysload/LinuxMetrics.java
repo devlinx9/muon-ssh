@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage.sysload;
 
 import lombok.Getter;

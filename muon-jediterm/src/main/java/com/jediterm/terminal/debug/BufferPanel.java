@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package com.jediterm.terminal.debug;
 
 import com.jediterm.terminal.ui.TerminalSession;

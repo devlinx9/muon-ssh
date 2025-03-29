@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 
 @Slf4j
 public class PortForwardingSession {
-    private final SshClient2 ssh;
+    private final SSHHandler ssh;
     private final SessionInfo info;
     private final ExecutorService threadPool = Executors.newCachedThreadPool();
     private final List<ServerSocket> ssList = new ArrayList<>();
@@ -30,14 +30,14 @@ public class PortForwardingSession {
                                  CachedCredentialProvider cachedCredentialProvider,
                                  SessionContentPanel sessionContentPanel) {
         this.info = info;
-        this.ssh = new SshClient2(info, cachedCredentialProvider, sessionContentPanel);
+        this.ssh = new SSHHandler(info, cachedCredentialProvider, sessionContentPanel);
     }
 
     public void close() {
         this.threadPool.submit(() -> {
             try {
                 this.ssh.close();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 log.error("Failed to close ssh", e);
             }
             for (ServerSocket ss : ssList) {

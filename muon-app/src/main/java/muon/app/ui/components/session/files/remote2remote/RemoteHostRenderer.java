@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+
 public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
 
     private final JPanel panel;
@@ -14,17 +16,15 @@ public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
     private final JLabel lblText;
     private final JLabel lblHost;
 
-    /**
-     *
-     */
+    
     public RemoteHostRenderer() {
         lblIcon = new JLabel();
         lblText = new JLabel();
         lblHost = new JLabel();
 
-        lblIcon.setFont(App.getContext().getSkin().getIconFont().deriveFont(24.0f));
-        lblText.setFont(App.getContext().getSkin().getDefaultFont().deriveFont(14.0f));
-        lblHost.setFont(App.getContext().getSkin().getDefaultFont().deriveFont(12.0f));
+        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(24.0f));
+        lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(SMALL_TEXT_SIZE));
+        lblHost.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(12.0f));
 
         lblText.setText("Sample server");
         lblHost.setText("server host");
@@ -40,7 +40,7 @@ public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
         panel.add(textHolder);
 
         panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        panel.setBackground(App.getContext().getSkin().getDefaultBackground());
+        panel.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
         panel.setOpaque(true);
 
         Dimension d = panel.getPreferredSize();
@@ -57,15 +57,15 @@ public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
         lblIcon.setText(FontAwesomeContants.FA_CUBE);
 
         if (isSelected) {
-            panel.setBackground(App.getContext().getSkin().getDefaultSelectionBackground());
-            lblText.setForeground(App.getContext().getSkin().getDefaultSelectionForeground());
-            lblHost.setForeground(App.getContext().getSkin().getDefaultSelectionForeground());
-            lblIcon.setForeground(App.getContext().getSkin().getDefaultSelectionForeground());
+            panel.setBackground(App.getCONTEXT().getSkin().getDefaultSelectionBackground());
+            lblText.setForeground(App.getCONTEXT().getSkin().getDefaultSelectionForeground());
+            lblHost.setForeground(App.getCONTEXT().getSkin().getDefaultSelectionForeground());
+            lblIcon.setForeground(App.getCONTEXT().getSkin().getDefaultSelectionForeground());
         } else {
             panel.setBackground(list.getBackground());
-            lblText.setForeground(App.getContext().getSkin().getDefaultForeground());
-            lblHost.setForeground(App.getContext().getSkin().getInfoTextForeground());
-            lblIcon.setForeground(App.getContext().getSkin().getDefaultForeground());
+            lblText.setForeground(App.getCONTEXT().getSkin().getDefaultForeground());
+            lblHost.setForeground(App.getCONTEXT().getSkin().getInfoTextForeground());
+            lblIcon.setForeground(App.getCONTEXT().getSkin().getDefaultForeground());
         }
         return panel;
     }

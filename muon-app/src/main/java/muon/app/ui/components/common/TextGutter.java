@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.common;
 
 import lombok.Getter;
@@ -23,9 +21,7 @@ public class TextGutter extends JComponent {
     @Getter
     private long lineStart;
 
-    /**
-     *
-     */
+    
     public TextGutter(JTextArea textArea, int digitCount) {
         this.textArea = textArea;
         this.digitCount = digitCount;

@@ -9,7 +9,7 @@ import java.util.List;
 
 
 public class SocketTableModel extends AbstractTableModel {
-    private final String[] columns = {App.getContext().getBundle().getString("processes"), App.getContext().getBundle().getString("pid"), App.getContext().getBundle().getString("host"), App.getContext().getBundle().getString("port")};
+    private final String[] columns = {App.getCONTEXT().getBundle().getString("processes"), App.getCONTEXT().getBundle().getString("pid"), App.getCONTEXT().getBundle().getString("host"), App.getCONTEXT().getBundle().getString("port")};
     private final List<SocketEntry> list = new ArrayList<>();
 
     public void addEntry(SocketEntry e) {

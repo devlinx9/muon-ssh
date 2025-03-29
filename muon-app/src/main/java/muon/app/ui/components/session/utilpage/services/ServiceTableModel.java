@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage.services;
 
 import muon.app.App;
@@ -15,7 +13,7 @@ import java.util.List;
  * @author subhro
  */
 public class ServiceTableModel extends AbstractTableModel {
-    private final String[] columns = {App.getContext().getBundle().getString("name"), App.getContext().getBundle().getString("status"), App.getContext().getBundle().getString("status"), App.getContext().getBundle().getString("description")};
+    private final String[] columns = {App.getCONTEXT().getBundle().getString("name"), App.getCONTEXT().getBundle().getString("status"), App.getCONTEXT().getBundle().getString("status"), App.getCONTEXT().getBundle().getString("description")};
     private final List<ServiceEntry> list = new ArrayList<>();
 
     public void addEntry(ServiceEntry e) {

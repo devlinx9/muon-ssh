@@ -16,7 +16,7 @@ public final class BookmarkManager {
     public static synchronized Map<String, List<String>> getAll() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        File bookmarkFile = new File(App.getContext().getConfigDir(), Constants.BOOKMARKS_FILE);
+        File bookmarkFile = new File(App.getCONTEXT().getConfigDir(), Constants.BOOKMARKS_FILE);
         if (bookmarkFile.exists()) {
             try {
                 Map<String, List<String>> bookmarkMap = objectMapper.readValue(bookmarkFile,
@@ -32,7 +32,7 @@ public final class BookmarkManager {
 
     public static synchronized void save(Map<String, List<String>> bookmarks) {
         ObjectMapper objectMapper = new ObjectMapper();
-        File bookmarkFile = new File(App.getContext().getConfigDir(), Constants.BOOKMARKS_FILE);
+        File bookmarkFile = new File(App.getCONTEXT().getConfigDir(), Constants.BOOKMARKS_FILE);
         try {
             objectMapper.writeValue(bookmarkFile, bookmarks);
         } catch (IOException e) {
@@ -74,7 +74,7 @@ public final class BookmarkManager {
         }
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        File bookmarkFile = new File(App.getContext().getConfigDir(), Constants.BOOKMARKS_FILE);
+        File bookmarkFile = new File(App.getCONTEXT().getConfigDir(), Constants.BOOKMARKS_FILE);
         if (bookmarkFile.exists()) {
             try {
                 Map<String, List<String>> bookmarkMap = objectMapper.readValue(bookmarkFile,

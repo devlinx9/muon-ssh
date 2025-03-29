@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.common;
 
 import muon.app.App;
@@ -11,14 +9,14 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+
 /**
  * @author subhro
  *
  */
 public class TabCloseButton extends JComponent {
-    /**
-     *
-     */
+    
     private boolean hovering;
     private boolean selected;
     private final Font font;
@@ -27,7 +25,7 @@ public class TabCloseButton extends JComponent {
         setPreferredSize(new Dimension(20, 20));
         setMinimumSize(new Dimension(20, 20));
         setMaximumSize(new Dimension(20, 20));
-        font = App.getContext().getSkin().getIconFont().deriveFont(14.0f);
+        font = App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {

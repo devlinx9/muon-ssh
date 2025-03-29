@@ -46,7 +46,7 @@ public class FolderView extends JPanel {
         TableCellLabelRenderer r1 = new TableCellLabelRenderer();
 
         table = new JTable(folderViewModel);
-        table.setSelectionForeground(App.getContext().getSkin().getDefaultSelectionForeground());
+        table.setSelectionForeground(App.getCONTEXT().getSkin().getDefaultSelectionForeground());
         table.setDefaultRenderer(FileInfo.class, r1);
         table.setDefaultRenderer(Long.class, r1);
         table.setDefaultRenderer(LocalDateTime.class, r1);
@@ -252,7 +252,7 @@ public class FolderView extends JPanel {
         log.debug("Row height: {}", r1.getHeight());
 
         fileList = new JList<>(folderViewModel);
-        fileList.setBackground(App.getContext().getSkin().getTableBackgroundColor());
+        fileList.setBackground(App.getCONTEXT().getSkin().getTableBackgroundColor());
         fileList.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         fileList.setVisibleRowCount(-1);
         fileList.setCellRenderer(new FolderViewListCellRenderer());

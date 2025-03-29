@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage;
 
 import muon.app.ui.components.session.SessionContentPanel;
@@ -19,9 +17,7 @@ public abstract class UtilPageItemView extends JPanel {
     protected AtomicBoolean init = new AtomicBoolean(false);
     protected SessionContentPanel holder;
 
-    /**
-     *
-     */
+    
     protected UtilPageItemView(SessionContentPanel holder) {
         super(new BorderLayout());
         this.holder = holder;

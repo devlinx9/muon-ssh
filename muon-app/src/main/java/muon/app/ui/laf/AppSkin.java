@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.laf;
 
 import lombok.Getter;

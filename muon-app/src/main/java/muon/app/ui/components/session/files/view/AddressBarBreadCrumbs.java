@@ -118,18 +118,18 @@ public class AddressBarBreadCrumbs extends JPanel {
         Painter<JButton> toolBarButtonPainterNormal = (g, object, width, height) -> {
             if (object
                     .getClientProperty("path.index.last") == Boolean.TRUE) {
-                g.setColor(App.getContext().getSkin().getAddressBarSelectionBackground());
+                g.setColor(App.getCONTEXT().getSkin().getAddressBarSelectionBackground());
                 g.fillRect(0, 0, width - 1, height - 1);
             }
         };
 
         Painter<JButton> toolBarButtonPainterHot = (g, object, width, height) -> {
-            g.setColor(App.getContext().getSkin().getAddressBarRolloverBackground());
+            g.setColor(App.getCONTEXT().getSkin().getAddressBarRolloverBackground());
             g.fillRect(0, 0, width - 1, height - 1);
         };
 
         Painter<JButton> toolBarButtonPainterPressed = (g, object, width, height) -> {
-            g.setColor(App.getContext().getSkin().getAddressBarSelectionBackground());
+            g.setColor(App.getCONTEXT().getSkin().getAddressBarSelectionBackground());
             g.fillRect(0, 0, width - 1, height - 1);
         };
 

@@ -10,7 +10,7 @@ import java.util.List;
 
 public class EditorTableModel extends AbstractTableModel {
     private final List<EditorEntry> list = new ArrayList<>();
-    private final String[] cols = {App.getContext().getBundle().getString("editor_name"), App.getContext().getBundle().getString("path_executable")};
+    private final String[] cols = {App.getCONTEXT().getBundle().getString("editor_name"), App.getCONTEXT().getBundle().getString("path_executable")};
 
     @Override
     public int getRowCount() {

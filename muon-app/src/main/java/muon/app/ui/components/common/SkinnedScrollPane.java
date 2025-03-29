@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.common;
 
 import javax.swing.*;
@@ -12,9 +10,7 @@ import java.awt.*;
  */
 public class SkinnedScrollPane extends JScrollPane {
 
-    /**
-     *
-     */
+    
     public SkinnedScrollPane() {
     }
 

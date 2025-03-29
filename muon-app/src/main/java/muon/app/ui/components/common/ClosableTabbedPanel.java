@@ -15,10 +15,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+
 @Slf4j
 public class ClosableTabbedPanel extends JPanel {
-    private final Color unselectedBg = App.getContext().getSkin().getSelectedTabColor();
-    private final Color selectedBg = App.getContext().getSkin().getDefaultBackground();
+    private final Color unselectedBg = App.getCONTEXT().getSkin().getSelectedTabColor();
+    private final Color selectedBg = App.getCONTEXT().getSkin().getDefaultBackground();
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
     private final JPanel tabHolder;
@@ -47,18 +49,18 @@ public class ClosableTabbedPanel extends JPanel {
 
         JButton btn = new JButton();
         btn.setToolTipText("New tab");
-        btn.setFont(App.getContext().getSkin().getIconFont().deriveFont(16.0f));
+        btn.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(MEDIUM_TEXT_SIZE));
         btn.setText(FontAwesomeContants.FA_PLUS_SQUARE);
         btn.putClientProperty("Nimbus.Overrides",
-                App.getContext().getSkin().createTabButtonSkin());
-        btn.setForeground(App.getContext().getSkin().getInfoTextForeground());
+                              App.getCONTEXT().getSkin().createTabButtonSkin());
+        btn.setForeground(App.getCONTEXT().getSkin().getInfoTextForeground());
         btn.addActionListener(e -> {
             log.debug("Callback called");
             newTabCallback.accept(btn);
         });
         buttonsBox = new JPanel(new GridLayout(1, 0));
         buttonsBox.setOpaque(true);
-        buttonsBox.setBackground(App.getContext().getSkin().getDefaultBackground());
+        buttonsBox.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
         buttonsBox.setBorder(new EmptyBorder(0, 0, 0, 0));
         buttonsBox.add(btn);
         tabTop.add(buttonsBox, BorderLayout.EAST);
@@ -79,44 +81,31 @@ public class ClosableTabbedPanel extends JPanel {
 
         tabHolder.add(titleComponent);
 
-        MouseAdapter mouseAdapter = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                for (int i = 0; i < tabHolder.getComponentCount(); i++) {
-                    JComponent c = (JComponent) tabHolder.getComponent(i);
-                    if (c == titleComponent) {
-                        setSelectedIndex(i);
-                        break;
-                    }
-                }
-            }
+        MouseAdapter mouseAdapter = getMouseAdapter(titleComponent);
 
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                if (titleComponent.tabCloseButton != null)
-                    titleComponent.tabCloseButton.setHovering(true);
-            }
+        MouseAdapter mouseAdapter2 = getMouseAdapter2(body, titleComponent);
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-                if (titleComponent.tabCloseButton != null)
-                    titleComponent.tabCloseButton.setHovering(false);
-            }
-        };
+        titleComponent.addMouseListener(mouseAdapter);
+        titleComponent.titleLabel.addMouseListener(mouseAdapter);
+        if (titleComponent.tabCloseButton != null) {
+            titleComponent.tabCloseButton.addMouseListener(mouseAdapter2);
+        }
 
-        MouseAdapter mouseAdapter2 = new MouseAdapter() {
+        setSelectedIndex(index);
+    }
+
+    private MouseAdapter getMouseAdapter2(Component body, TabTitleComponent titleComponent) {
+        return new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (body instanceof ClosableTabContent) {
                     ClosableTabContent closableTabContent = (ClosableTabContent) body;
                     if (closableTabContent.close()) {
                         log.debug("Closing...");
-                        for (int i = 0; i < tabHolder
-                                .getComponentCount(); i++) {
-                            JComponent c = (JComponent) tabHolder
-                                    .getComponent(i);
+                        for (int i = 0; i < tabHolder.getComponentCount(); i++) {
+                            JComponent c = (JComponent) tabHolder.getComponent(i);
                             if (c == titleComponent) {
-                                removeTabAt(i, c.getName(), titleComponent);
+                                removeTabAt(i, titleComponent);
                                 break;
                             }
                         }
@@ -124,13 +113,63 @@ public class ClosableTabbedPanel extends JPanel {
                 }
             }
         };
+    }
 
-        titleComponent.addMouseListener(mouseAdapter);
-        titleComponent.titleLabel.addMouseListener(mouseAdapter);
-        if (titleComponent.tabCloseButton != null)
-            titleComponent.tabCloseButton.addMouseListener(mouseAdapter2);
+    private MouseAdapter getMouseAdapter(TabTitleComponent titleComponent) {
+        return new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                setMouseEventForPrincipalButton(e, titleComponent);
+                setMouseEventForSecondaryButton(e, titleComponent);
+            }
 
-        setSelectedIndex(index);
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (titleComponent.tabCloseButton != null) {
+                    titleComponent.tabCloseButton.setHovering(true);
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (titleComponent.tabCloseButton != null) {
+                    titleComponent.tabCloseButton.setHovering(false);
+                }
+            }
+        };
+    }
+
+    private void setMouseEventForPrincipalButton(MouseEvent e, TabTitleComponent titleComponent) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            for (int i = 0; i < tabHolder.getComponentCount(); i++) {
+                JComponent c = (JComponent) tabHolder.getComponent(i);
+                if (c == titleComponent) {
+                    setSelectedIndex(i);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void setMouseEventForSecondaryButton(MouseEvent e, TabTitleComponent titleComponent) {
+        // Check for the secondary (context) mouse button
+        if (e.getButton() == MouseEvent.BUTTON3) {
+            JPopupMenu contextMenu = new JPopupMenu();
+            JMenuItem changeNameItem = new JMenuItem("Change Name");
+
+            changeNameItem.addActionListener(event -> {
+                String newName = JOptionPane.showInputDialog(App.getAppWindow(), "Enter new name:");
+                if (newName != null && !newName.trim().isEmpty()) {
+                    titleComponent.titleLabel.setText(newName);
+                    titleComponent.revalidate();
+                    titleComponent.repaint();
+                    log.debug("Changing the tab name to {}: ", newName);
+                }
+            });
+
+            contextMenu.add(changeNameItem);
+            contextMenu.show(e.getComponent(), e.getX(), e.getY());
+        }
     }
 
     public int getSelectedIndex() {
@@ -168,21 +207,23 @@ public class ClosableTabbedPanel extends JPanel {
 
     private void selectTabTitle(TabTitleComponent c) {
         c.setBackground(selectedBg);
-        if (c.tabCloseButton != null)
+        if (c.tabCloseButton != null) {
             c.tabCloseButton.setSelected(true);
+        }
         c.revalidate();
         c.repaint();
     }
 
     private void unselectTabTitle(TabTitleComponent c) {
         c.setBackground(unselectedBg);
-        if (c.tabCloseButton != null)
+        if (c.tabCloseButton != null) {
             c.tabCloseButton.setSelected(false);
+        }
         c.revalidate();
         c.repaint();
     }
 
-    private void removeTabAt(int index, String name, TabTitleComponent title) {
+    private void removeTabAt(int index, TabTitleComponent title) {
         tabHolder.remove(title);
         cardPanel.remove(title.component);
         if (index > 0) {
@@ -212,7 +253,6 @@ public class ClosableTabbedPanel extends JPanel {
     }
 
 
-
     @Setter
     @Getter
     public static class TabTitle {
@@ -232,7 +272,7 @@ public class ClosableTabbedPanel extends JPanel {
             super(new BorderLayout());
             setBorder(
                     new CompoundBorder(new MatteBorder(0, 0, 0, 1, selectedBg),
-                            new EmptyBorder(5, 10, 5, 5)));
+                                       new EmptyBorder(5, 10, 5, 5)));
             setBackground(unselectedBg);
             setOpaque(true);
             titleLabel = new JLabel();
@@ -241,7 +281,7 @@ public class ClosableTabbedPanel extends JPanel {
 
             if (closable) {
                 tabCloseButton = new TabCloseButton();
-                tabCloseButton.setForeground(App.getContext().getSkin().getInfoTextForeground());
+                tabCloseButton.setForeground(App.getCONTEXT().getSkin().getInfoTextForeground());
                 this.add(tabCloseButton, BorderLayout.EAST);
             }
         }

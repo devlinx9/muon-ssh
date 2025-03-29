@@ -56,10 +56,10 @@ public class Remote2RemoteTransferDialog extends JDialog {
         remoteHostList = new JList<>(remoteHostModel);
         remoteHostList.setCellRenderer(new RemoteHostRenderer());
 
-        remoteHostList.setBackground(App.getContext().getSkin().getTextFieldBackground());
+        remoteHostList.setBackground(App.getCONTEXT().getSkin().getTextFieldBackground());
 
         SkinnedScrollPane scrollPane = new SkinnedScrollPane(remoteHostList);
-        scrollPane.setBorder(new MatteBorder(0, 0, 1, 0, App.getContext().getSkin().getDefaultBorderColor()));
+        scrollPane.setBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         this.add(scrollPane);
         if (!remoteHostModel.isEmpty()) {
@@ -67,11 +67,11 @@ public class Remote2RemoteTransferDialog extends JDialog {
         }
 
         Box bottom = Box.createHorizontalBox();
-        JButton btnAddKnown = new JButton(App.getContext().getBundle().getString("add_from_manager"));
-        JButton btnAdd = new JButton(App.getContext().getBundle().getString("add"));
-        JButton btnRemove = new JButton(App.getContext().getBundle().getString("delete"));
-        JButton btnEdit = new JButton(App.getContext().getBundle().getString("edit"));
-        JButton btnSend = new JButton(App.getContext().getBundle().getString("send_files"));
+        JButton btnAddKnown = new JButton(App.getCONTEXT().getBundle().getString("add_from_manager"));
+        JButton btnAdd = new JButton(App.getCONTEXT().getBundle().getString("add"));
+        JButton btnRemove = new JButton(App.getCONTEXT().getBundle().getString("delete"));
+        JButton btnEdit = new JButton(App.getCONTEXT().getBundle().getString("edit"));
+        JButton btnSend = new JButton(App.getCONTEXT().getBundle().getString("send_files"));
 
         btnAddKnown.addActionListener(e -> {
             SessionInfo info = new NewSessionDlg(this).newSession();
@@ -141,14 +141,14 @@ public class Remote2RemoteTransferDialog extends JDialog {
 
         Box top = Box.createHorizontalBox();
         JLabel lblSearch = new JLabel(FontAwesomeContants.FA_SEARCH);
-        lblSearch.setFont(App.getContext().getSkin().getIconFont());
+        lblSearch.setFont(App.getCONTEXT().getSkin().getIconFont());
         JTextField txtSearch = new SkinnedTextField(30);
-        txtSearch.setBackground(App.getContext().getSkin().getDefaultBackground());
+        txtSearch.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
         txtSearch.setBorder(new EmptyBorder(10, 10, 10, 10));
         top.add(lblSearch);
         top.add(txtSearch);
         top.setBorder(new CompoundBorder(new EmptyBorder(0, 10, 10, 10),
-                                         new MatteBorder(0, 0, 1, 0, App.getContext().getSkin().getDefaultSelectionBackground())));
+                                         new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultSelectionBackground())));
 
         this.add(top, BorderLayout.NORTH);
 
@@ -208,7 +208,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             path = txtPath.getText();
             port = (Integer) spPort.getValue();
             if (host.isEmpty() || user.isEmpty() || path.isEmpty() || port <= 0) {
-                JOptionPane.showMessageDialog(this, App.getContext().getBundle().getString("invalid_input"));
+                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_input"));
                 continue;
             }
             return new RemoteServerEntry(host, port, user, path);
@@ -244,7 +244,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
         for (int i = 0; i < remoteHostModel.size(); i++) {
             list.add(remoteHostModel.get(i));
         }
-        File file = new File(App.getContext().getConfigDir(), Constants.TRANSFER_HOSTS);
+        File file = new File(App.getCONTEXT().getConfigDir(), Constants.TRANSFER_HOSTS);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(file, list);
@@ -256,7 +256,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
     }
 
     private List<RemoteServerEntry> load() {
-        File file = new File(App.getContext().getConfigDir(), Constants.TRANSFER_HOSTS);
+        File file = new File(App.getCONTEXT().getConfigDir(), Constants.TRANSFER_HOSTS);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {

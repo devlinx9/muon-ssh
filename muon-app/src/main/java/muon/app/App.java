@@ -19,14 +19,16 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
 import static muon.app.util.Constants.DEFAULT_CONFIG_DIR;
 
 @Slf4j
-public class App {
-    private static final AppContext context = new AppContext();
+public final class App {
+
+    private static final AppContext CONTEXT = new AppContext();
 
     @Getter
     private static ExternalEditorHandler externalEditorHandler;
@@ -47,7 +49,7 @@ public class App {
 
         boolean firstRun = false;
 
-        //Checks if the parameter muonPath is set in the startup
+        // Checks if the parameter muonPath is set in the startup
         String muonPath = System.getProperty("muonPath");
         boolean isMuonPath = false;
         if (muonPath != null && !muonPath.isEmpty()) {
@@ -59,7 +61,7 @@ public class App {
 
         File appDir = new File(muonPath);
         if (!appDir.exists()) {
-            //Validate if the config directory can be created
+            // Validate if the config directory can be created
             if (!appDir.mkdirs()) {
                 log.error("The config directory for moun cannot be created: {}", muonPath);
                 System.exit(1);
@@ -67,49 +69,35 @@ public class App {
             firstRun = true;
         }
 
-        context.setConfigDir(appDir);
-        context.setSettingsManager(new SettingsManager(appDir));
-        context.setSettings(context.getSettingsManager().loadSettings());
+        CONTEXT.setConfigDir(appDir);
+        CONTEXT.setSettingsManager(new SettingsManager(appDir));
+        CONTEXT.setSettings(CONTEXT.getSettingsManager().loadSettings());
 
         if (firstRun && !isMuonPath) {
             SessionExportImport.importOnFirstRun();
         }
 
-        if (context.getSettings().isManualScaling()) {
+        if (CONTEXT.getSettings().isManualScaling()) {
             System.setProperty("sun.java2d.uiScale.enabled", "true");
-            System.setProperty("sun.java2d.uiScale", String.format("%.2f", context.getSettings().getUiScaling()));
+            System.setProperty("sun.java2d.uiScale", String.format("%.2f", CONTEXT.getSettings().getUiScaling()));
         }
 
-        if (context.getSettings().getEditors().isEmpty()) {
+        if (CONTEXT.getSettings().getEditors().isEmpty()) {
             log.info("Searching for known editors...");
-            context.getSettings().setEditors(PlatformUtils.getKnownEditors());
-            context.getSettingsManager().saveSettings();
+            CONTEXT.getSettings().setEditors(PlatformUtils.getKnownEditors());
+            CONTEXT.getSettingsManager().saveSettings();
             log.info("Searching for known editors...done");
         }
 
-        try {
-            File knownHostFile = new File(App.getContext().getConfigDir(), "known_hosts");
-            context.setHostKeyVerifier(new GraphicalHostKeyVerifier(knownHostFile));
-        } catch (Exception e2) {
-            log.error(e2.getMessage(), e2);
-        }
+        setKnownHostFile();
 
-        context.setBundleLanguage();
+        CONTEXT.setBundleLanguage();
         TransferMode.update();
         ConflictAction.update();
 
-        UIManager.setLookAndFeel(context.updateSkin().getLaf());
+        UIManager.setLookAndFeel(CONTEXT.updateSkin().getLaf());
 
-        try {
-            int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
-            log.info("maxKeySize: {}", maxKeySize);
-            if (maxKeySize < Integer.MAX_VALUE) {
-                JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("unlimited_cryptography"));
-            }
-        } catch (NoSuchAlgorithmException e1) {
-            log.error(e1.getMessage(), e1);
-        }
-
+        validateMaxKeySize();
 
         mw = new AppWindow();
         externalEditorHandler = new ExternalEditorHandler(mw);
@@ -117,8 +105,29 @@ public class App {
         mw.createFirstSessionPanel();
     }
 
+    private static void setKnownHostFile() {
+        try {
+            File knownHostFile = new File(App.getCONTEXT().getConfigDir(), "known_hosts");
+            CONTEXT.setHostKeyVerifier(new GraphicalHostKeyVerifier(knownHostFile));
+        } catch (IOException e2) {
+            log.error(e2.getMessage(), e2);
+        }
+    }
+
+    private static void validateMaxKeySize() {
+        try {
+            int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
+            log.info("maxKeySize: {}", maxKeySize);
+            if (maxKeySize < Integer.MAX_VALUE) {
+                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("unlimited_cryptography"));
+            }
+        } catch (NoSuchAlgorithmException e1) {
+            log.error(e1.getMessage(), e1);
+        }
+    }
+
     public static synchronized Settings getGlobalSettings() {
-        return context.getSettings();
+        return CONTEXT.getSettings();
     }
 
     public static SessionContentPanel getSessionContainer(int activeSessionId) {
@@ -129,8 +138,8 @@ public class App {
         mw.addUpload(transfer);
     }
 
-    public static synchronized AppContext getContext() {
-        return context;
+    public static synchronized AppContext getCONTEXT() {
+        return CONTEXT;
     }
 
     public static synchronized void addDownload(BackgroundFileTransfer transfer) {

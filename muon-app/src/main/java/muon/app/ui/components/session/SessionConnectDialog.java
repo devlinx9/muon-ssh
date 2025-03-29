@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session;
 
 import muon.app.ui.AppWindow;
@@ -12,9 +10,7 @@ import javax.swing.*;
  *
  */
 public class SessionConnectDialog extends JDialog implements GUIBlocker {
-    /**
-     *
-     */
+    
     private final AppWindow appWindow;
 
     public SessionConnectDialog(AppWindow appWindow) {

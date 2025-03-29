@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.common;
 
 import lombok.Getter;
@@ -200,7 +198,7 @@ public class TextLineNumber extends JPanel
         Graphics2D g = (Graphics2D) gr;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                            RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(App.getContext().getSkin().getDefaultBackground());
+        g.setColor(App.getCONTEXT().getSkin().getDefaultBackground());
         g.fillRect(0, 0, getWidth(), getHeight());
 
         // Determine the width of the space available to draw the line number

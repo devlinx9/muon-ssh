@@ -135,13 +135,13 @@ public class FileTransfer implements Runnable, AutoCloseable {
                         JTextArea tmpFilePath = new JTextArea(5, 20);
                         tmpFilePath.setText("Files copied in " + tmpDir + " due to permission issues");
                         tmpFilePath.setEnabled(true);
-                        JOptionPane.showMessageDialog(null, tmpFilePath, App.getContext().getBundle().getString("copied_temp_directory"), JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, tmpFilePath, App.getCONTEXT().getBundle().getString("copied_temp_directory"), JOptionPane.WARNING_MESSAGE);
                     }
 
                     if (!App.getGlobalSettings().isPromptForSudo() ||
                         JOptionPane.showConfirmDialog(null,
-                                                      App.getContext().getBundle().getString("permission_denied_file"),
-                                                      App.getContext().getBundle().getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                                      App.getCONTEXT().getBundle().getString("permission_denied_file"),
+                                                      App.getCONTEXT().getBundle().getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
                         if (!App.getGlobalSettings().isTransferTemporaryDirectory()) {
                             targetFs.mkdir(tmpDir);
@@ -258,8 +258,8 @@ public class FileTransfer implements Runnable, AutoCloseable {
             JComboBox<ConflictAction> cmbs = SessionExportImport.getUserConflictAction();
 
             if (OptionPaneUtils.showOptionDialog(null,
-                                                 new Object[]{App.getContext().getBundle().getString("some_file_exists_action_required"), cmbs},
-                                                 App.getContext().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
+                                                 new Object[]{App.getCONTEXT().getBundle().getString("some_file_exists_action_required"), cmbs},
+                                                 App.getCONTEXT().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
                 action = (ConflictAction) cmbs.getSelectedItem();
             }
         }

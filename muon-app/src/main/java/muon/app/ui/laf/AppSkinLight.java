@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.laf;
 
 import java.awt.*;
@@ -10,9 +8,7 @@ import java.awt.*;
  *
  */
 public class AppSkinLight extends AppSkin {
-    /**
-     *
-     */
+    
     public AppSkinLight() {
         initDefaultsLight();
     }

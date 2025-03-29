@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ssh;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,14 +38,14 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
         log.info("prompt: {} echo: {}", prompt, echo);
 
         if (echo) {
-            String str = OptionPaneUtils.showInputDialog(null, prompt, App.getContext().getBundle().getString("input"));
+            String str = OptionPaneUtils.showInputDialog(null, prompt, App.getCONTEXT().getBundle().getString("input"));
             if (str != null) {
                 return str.toCharArray();
             }
         } else {
             JPasswordField passwordField = new JPasswordField(30);
             int ret = OptionPaneUtils.showOptionDialog(null,
-                                                       new Object[]{prompt, passwordField}, App.getContext().getBundle().getString("Input"));
+                                                       new Object[]{prompt, passwordField}, App.getCONTEXT().getBundle().getString("Input"));
             if (ret == JOptionPane.OK_OPTION) {
                 return passwordField.getPassword();
             }

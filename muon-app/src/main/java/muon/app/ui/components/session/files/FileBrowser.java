@@ -201,7 +201,7 @@ public class FileBrowser extends Page {
                                                             SwingUtilities.invokeLater(() -> {
                                                                 holder.endFileTransfer();
                                                                 if (!holder.isSessionClosed()) {
-                                                                    JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("operation_failed"));
+                                                                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
                                                                 }
                                                             });
                                                         }
@@ -262,7 +262,7 @@ public class FileBrowser extends Page {
 
     @Override
     public String getText() {
-        return App.getContext().getBundle().getString("file_browser");
+        return App.getCONTEXT().getBundle().getString("file_browser");
     }
 
     public void openPath(String path) {
@@ -282,7 +282,7 @@ public class FileBrowser extends Page {
     public boolean handleLocalDrop(DndTransferData transferData, SessionInfo info, FileSystem currentFileSystem,
                                    String currentPath) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-            && JOptionPane.showConfirmDialog(null, App.getContext().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(null, App.getCONTEXT().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
             return false;
         }
 

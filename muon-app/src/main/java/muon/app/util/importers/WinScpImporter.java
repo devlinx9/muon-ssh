@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.util.importers;
 
 import com.sun.jna.platform.win32.Advapi32Util;

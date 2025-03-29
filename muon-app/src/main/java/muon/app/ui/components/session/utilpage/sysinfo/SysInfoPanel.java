@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage.sysinfo;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,9 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Slf4j
 public class SysInfoPanel extends UtilPageItemView {
-    /**
-     *
-     */
+    
 
     private JTextArea textArea;
 

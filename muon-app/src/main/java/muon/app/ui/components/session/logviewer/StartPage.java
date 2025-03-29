@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.logviewer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -45,9 +43,7 @@ public class StartPage extends JPanel {
     private static Map<String, List<String>> pinnedLogs = new HashMap<>();
 
 
-    /**
-     *
-     */
+    
     public StartPage(Consumer<String> callback, String sessionId) {
         super(new BorderLayout());
         this.sessionId = sessionId;
@@ -63,12 +59,12 @@ public class StartPage extends JPanel {
         pinnedLogsModel.addAll(finalPinnedLogs);
         pinnedLogList = new JList<>(pinnedLogsModel);
         pinnedLogList.setCellRenderer(new PinnedLogsRenderer());
-        pinnedLogList.setBackground(App.getContext().getSkin().getSelectedTabColor());
+        pinnedLogList.setBackground(App.getCONTEXT().getSkin().getSelectedTabColor());
         JScrollPane jsp = new SkinnedScrollPane(pinnedLogList);
         jsp.setBorder(new EmptyBorder(0, 10, 0, 10));
         this.add(jsp);
-        JButton btnAddLog = new JButton(App.getContext().getBundle().getString("add_log"));
-        JButton btnDelLog = new JButton(App.getContext().getBundle().getString("delete"));
+        JButton btnAddLog = new JButton(App.getCONTEXT().getBundle().getString("add_log"));
+        JButton btnDelLog = new JButton(App.getCONTEXT().getBundle().getString("delete"));
         btnAddLog.addActionListener(e -> {
             String logPath = promptLogPath();
             if (logPath != null) {
@@ -139,7 +135,7 @@ public class StartPage extends JPanel {
     private String promptLogPath() {
         JTextField txt = new SkinnedTextField(30);
         if (OptionPaneUtils.showOptionDialog(this,
-                                             new Object[]{App.getContext().getBundle().getString("provide_log_file_path"),
+                                             new Object[]{App.getCONTEXT().getBundle().getString("provide_log_file_path"),
                                                           txt},
                                              "Input") == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
             return txt.getText();
@@ -163,7 +159,7 @@ public class StartPage extends JPanel {
             setOpaque(true);
             setBorder(new CompoundBorder(
                     new MatteBorder(0, 0, 2, 0,
-                                    App.getContext().getSkin().getDefaultBackground()),
+                                    App.getCONTEXT().getSkin().getDefaultBackground()),
                     new EmptyBorder(10, 10, 10, 10)));
         }
 
@@ -171,9 +167,9 @@ public class StartPage extends JPanel {
         public Component getListCellRendererComponent(
                 JList<? extends String> list, String value, int index,
                 boolean isSelected, boolean cellHasFocus) {
-            setBackground(isSelected ? App.getContext().getSkin().getDefaultSelectionBackground()
+            setBackground(isSelected ? App.getCONTEXT().getSkin().getDefaultSelectionBackground()
                                      : list.getBackground());
-            setForeground(isSelected ? App.getContext().getSkin().getDefaultSelectionForeground()
+            setForeground(isSelected ? App.getCONTEXT().getSkin().getDefaultSelectionForeground()
                                      : list.getForeground());
             setText(value);
             return this;
@@ -181,7 +177,7 @@ public class StartPage extends JPanel {
     }
 
     private static synchronized void loadPinnedLogs() {
-        File file = new File(App.getContext().getConfigDir(), Constants.PINNED_LOGS);
+        File file = new File(App.getCONTEXT().getConfigDir(), Constants.PINNED_LOGS);
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         if (file.exists()) {
@@ -197,7 +193,7 @@ public class StartPage extends JPanel {
     }
 
     private static synchronized void savePinnedLogs() {
-        File file = new File(App.getContext().getConfigDir(), Constants.PINNED_LOGS);
+        File file = new File(App.getCONTEXT().getConfigDir(), Constants.PINNED_LOGS);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             objectMapper.writeValue(file, pinnedLogs);

@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.terminal;
 
 import com.jediterm.terminal.TerminalColor;
@@ -24,9 +22,7 @@ import java.util.Objects;
 public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     private final ColorPalette palette;
 
-    /**
-     *
-     */
+    
     public CustomizedSettingsProvider() {
 
         Color[] colors = new Color[16];

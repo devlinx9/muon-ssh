@@ -23,7 +23,7 @@ public class SearchTableRenderer implements TableCellRenderer {
         this.textLabel = new JLabel();
         this.iconLabel = new JLabel();
         this.iconLabel
-                .setFont(App.getContext().getSkin().getIconFont().deriveFont(Font.PLAIN, 20));
+                .setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(Font.PLAIN, 20));
         panel.add(iconLabel, BorderLayout.WEST);
         panel.add(textLabel);
     }

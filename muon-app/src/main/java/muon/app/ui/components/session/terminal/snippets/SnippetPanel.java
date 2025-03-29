@@ -29,13 +29,13 @@ public class SnippetPanel extends JPanel {
 
     public SnippetPanel(Consumer<String> callback, Consumer<String> callback2) {
         super(new BorderLayout());
-        setBorder(new LineBorder(App.getContext().getSkin().getDefaultBorderColor(), 1));
+        setBorder(new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor(), 1));
         Box topBox = Box.createHorizontalBox();
         topBox.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 1, 0, App.getContext().getSkin().getDefaultBorderColor()),
+                new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
                 new EmptyBorder(10, 10, 10, 10)));
         JLabel lblSearch = new JLabel();
-        lblSearch.setFont(App.getContext().getSkin().getIconFont());
+        lblSearch.setFont(App.getCONTEXT().getSkin().getIconFont());
         lblSearch.setText(FontAwesomeContants.FA_SEARCH);
         topBox.add(lblSearch);
         topBox.add(Box.createHorizontalStrut(10));
@@ -61,13 +61,13 @@ public class SnippetPanel extends JPanel {
         topBox.add(searchTextField);
 
         listView.setCellRenderer(new SnippetListRenderer());
-        listView.setBackground(App.getContext().getSkin().getTableBackgroundColor());
+        listView.setBackground(App.getCONTEXT().getSkin().getTableBackgroundColor());
 
-        JButton btnAdd = new JButton(App.getContext().getBundle().getString("add"));
-        JButton btnEdit = new JButton(App.getContext().getBundle().getString("edit"));
-        JButton btnDel = new JButton(App.getContext().getBundle().getString("delete"));
-        JButton btnInsert = new JButton(App.getContext().getBundle().getString("insert"));
-        JButton btnCopy = new JButton(App.getContext().getBundle().getString("copy"));
+        JButton btnAdd = new JButton(App.getCONTEXT().getBundle().getString("add"));
+        JButton btnEdit = new JButton(App.getCONTEXT().getBundle().getString("edit"));
+        JButton btnDel = new JButton(App.getCONTEXT().getBundle().getString("delete"));
+        JButton btnInsert = new JButton(App.getCONTEXT().getBundle().getString("insert"));
+        JButton btnCopy = new JButton(App.getCONTEXT().getBundle().getString("copy"));
 
         btnAdd.addActionListener(e -> {
             JTextField txtName = new SkinnedTextField(30);
@@ -79,13 +79,13 @@ public class SnippetPanel extends JPanel {
                                                  "New snippet") == JOptionPane.OK_OPTION) {
                 if (txtCommand.getText().isEmpty()
                     || txtName.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("enter_name_command")
+                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("enter_name_command")
                                                  );
                     return;
                 }
-                App.getContext().getSnippetManager().getSnippetItems().add(new SnippetItem(
+                App.getCONTEXT().getSnippetManager().getSnippetItems().add(new SnippetItem(
                         txtName.getText(), txtCommand.getText()));
-                App.getContext().getSnippetManager().saveSnippets();
+                App.getCONTEXT().getSnippetManager().saveSnippets();
             }
             callback2.accept(null);
         });
@@ -94,7 +94,7 @@ public class SnippetPanel extends JPanel {
             int index = listView.getSelectedIndex();
             if (index < 0) {
                 JOptionPane.showMessageDialog(null,
-                                              App.getContext().getBundle().getString("select_item_edit"));
+                                              App.getCONTEXT().getBundle().getString("select_item_edit"));
                 return;
             }
 
@@ -112,13 +112,13 @@ public class SnippetPanel extends JPanel {
                                                  "New snippet") == JOptionPane.OK_OPTION) {
                 if (txtCommand.getText().isEmpty()
                     || txtName.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("enter_name_command")
+                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("enter_name_command")
                                                  );
                     return;
                 }
                 snippetItem.setCommand(txtCommand.getText());
                 snippetItem.setName(txtName.getText());
-                App.getContext().getSnippetManager().saveSnippets();
+                App.getCONTEXT().getSnippetManager().saveSnippets();
             }
             callback2.accept(null);
         });
@@ -126,13 +126,13 @@ public class SnippetPanel extends JPanel {
         btnDel.addActionListener(e -> {
             int index = listView.getSelectedIndex();
             if (index < 0) {
-                JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("select_item"));
+                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("select_item"));
                 return;
             }
 
             SnippetItem snippetItem = listModel.get(index);
-            App.getContext().getSnippetManager().getSnippetItems().remove(snippetItem);
-            App.getContext().getSnippetManager().saveSnippets();
+            App.getCONTEXT().getSnippetManager().getSnippetItems().remove(snippetItem);
+            App.getCONTEXT().getSnippetManager().saveSnippets();
             loadSnippets();
             callback2.accept(null);
         });
@@ -140,7 +140,7 @@ public class SnippetPanel extends JPanel {
         btnCopy.addActionListener(e -> {
             int index = listView.getSelectedIndex();
             if (index < 0) {
-                JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("select_item"));
+                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("select_item"));
                 return;
             }
 
@@ -154,7 +154,7 @@ public class SnippetPanel extends JPanel {
         btnInsert.addActionListener(e -> {
             int index = listView.getSelectedIndex();
             if (index < 0) {
-                JOptionPane.showMessageDialog(null, App.getContext().getBundle().getString("select_item"));
+                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("select_item"));
                 return;
             }
 
@@ -165,7 +165,7 @@ public class SnippetPanel extends JPanel {
 
         Box bottomBox = Box.createHorizontalBox();
         bottomBox.setBorder(new CompoundBorder(
-                new MatteBorder(1, 0, 0, 0, App.getContext().getSkin().getDefaultBorderColor()),
+                new MatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
                 new EmptyBorder(10, 10, 10, 10)));
         bottomBox.add(btnInsert);
         bottomBox.add(Box.createHorizontalStrut(5));
@@ -188,7 +188,7 @@ public class SnippetPanel extends JPanel {
 
     public void loadSnippets() {
         this.snippetList.clear();
-        this.snippetList.addAll(App.getContext().getSnippetManager().getSnippetItems());
+        this.snippetList.addAll(App.getCONTEXT().getSnippetManager().getSnippetItems());
         log.info("Snippet size: {}", snippetList.size());
         filter();
     }

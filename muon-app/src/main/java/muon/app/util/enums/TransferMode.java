@@ -8,7 +8,7 @@ import muon.app.App;
 @Getter
 public enum TransferMode {
 
-    @JsonEnumDefaultValue NORMAL(0, App.getContext().getBundle().getString("transfer_normally")), BACKGROUND(1, App.getContext().getBundle().getString("transfer_background"));
+    @JsonEnumDefaultValue NORMAL(0, App.getCONTEXT().getBundle().getString("transfer_normally")), BACKGROUND(1, App.getCONTEXT().getBundle().getString("transfer_background"));
 
     private int key;
     private String value;
@@ -19,8 +19,8 @@ public enum TransferMode {
     }
 
     public static void update() {
-        NORMAL.setValue(App.getContext().getBundle().getString("transfer_normally"));
-        BACKGROUND.setValue(App.getContext().getBundle().getString("transfer_background"));
+        NORMAL.setValue(App.getCONTEXT().getBundle().getString("transfer_normally"));
+        BACKGROUND.setValue(App.getCONTEXT().getBundle().getString("transfer_background"));
     }
 
     public void setKey(int key) {

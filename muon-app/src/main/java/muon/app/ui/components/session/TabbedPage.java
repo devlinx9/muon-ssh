@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session;
 
 import lombok.Getter;
@@ -26,10 +24,10 @@ public class TabbedPage extends JPanel {
     private final JLabel lblText;
     private final Border selectedBorder = new CompoundBorder(
             new MatteBorder(0, 0, 2, 0,
-                            App.getContext().getSkin().getDefaultSelectionBackground()),
+                            App.getCONTEXT().getSkin().getDefaultSelectionBackground()),
             new EmptyBorder(10, 0, 10, 0));
     private final Border normalBorder = new CompoundBorder(
-            new MatteBorder(0, 0, 2, 0, App.getContext().getSkin().getDefaultBackground()),
+            new MatteBorder(0, 0, 2, 0, App.getCONTEXT().getSkin().getDefaultBackground()),
             new EmptyBorder(10, 0, 10, 0));
 
     public TabbedPage(Page page, PageHolder holder) {
@@ -59,16 +57,16 @@ public class TabbedPage extends JPanel {
             }
         });
 
-        lblIcon.setForeground(App.getContext().getSkin().getInfoTextForeground());
-        lblText.setForeground(App.getContext().getSkin().getInfoTextForeground());
+        lblIcon.setForeground(App.getCONTEXT().getSkin().getInfoTextForeground());
+        lblText.setForeground(App.getCONTEXT().getSkin().getInfoTextForeground());
 
         int prefW = lblText.getPreferredSize().width + 20;
 
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         lblText.setHorizontalAlignment(JLabel.CENTER);
 
-        lblIcon.setFont(App.getContext().getSkin().getIconFont().deriveFont(24.0f));
-        lblText.setFont(App.getContext().getSkin().getDefaultFont().deriveFont(12.0f));
+        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(24.0f));
+        lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(12.0f));
 
         this.add(lblIcon);
         this.add(lblText, BorderLayout.SOUTH);
@@ -83,17 +81,15 @@ public class TabbedPage extends JPanel {
 
     public void setSelected(boolean selected) {
         this.setBorder(selected ? selectedBorder : normalBorder);
-        this.lblIcon.setForeground(selected ? App.getContext().getSkin().getDefaultForeground()
-                                            : App.getContext().getSkin().getInfoTextForeground());
-        this.lblText.setForeground(selected ? App.getContext().getSkin().getDefaultForeground()
-                                            : App.getContext().getSkin().getInfoTextForeground());
+        this.lblIcon.setForeground(selected ? App.getCONTEXT().getSkin().getDefaultForeground()
+                                            : App.getCONTEXT().getSkin().getInfoTextForeground());
+        this.lblText.setForeground(selected ? App.getCONTEXT().getSkin().getDefaultForeground()
+                                            : App.getCONTEXT().getSkin().getInfoTextForeground());
         this.revalidate();
         this.repaint();
     }
 
-    /**
-     *
-     */
+    
     public String getText() {
         return lblText.getText();
     }

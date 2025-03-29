@@ -27,7 +27,7 @@ public class DisabledPanel extends JPanel {
         setLayout(layout);
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
-        btn.setFont(App.getContext().getSkin().getIconFont().deriveFont(20.0f));
+        btn.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(20.0f));
         btn.setForeground(Color.WHITE);
         btn.setText("\uf00d");
         btn.setAlignmentX(Box.CENTER_ALIGNMENT);

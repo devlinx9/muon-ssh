@@ -35,16 +35,6 @@ public class AddressBarLayout implements LayoutManager {
         return new Dimension(0, 0);
     }
 
-    private int getTotalLength(Container c) {
-        int total = 0;
-        for (int i = 0; i < c.getComponentCount(); i++) {
-            Component comp = c.getComponent(i);
-            Dimension pref = comp.getPreferredSize();
-            total += (int) pref.getWidth();
-        }
-        return total;
-    }
-
     @Override
     public void layoutContainer(Container c) {
         Insets border = c.getInsets();

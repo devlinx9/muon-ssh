@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage.nettools;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,9 +28,7 @@ public class NetworkToolsPage extends UtilPageItemView {
     private JComboBox<String> cmbPort;
     private JComboBox<String> cmbDNSTool;
 
-    /**
-     *
-     */
+    
     public NetworkToolsPage(SessionContentPanel holder) {
         super(holder);
     }
@@ -60,14 +56,14 @@ public class NetworkToolsPage extends UtilPageItemView {
 
         btn1.addActionListener(e -> {
             if (OptionPaneUtils.showOptionDialog(this,
-                                                 new Object[]{App.getContext().getBundle().getString("host_ping"), cmbHost}, "Ping") == JOptionPane.OK_OPTION) {
+                                                 new Object[]{App.getCONTEXT().getBundle().getString("host_ping"), cmbHost}, "Ping") == JOptionPane.OK_OPTION) {
                 executeAsync("ping -c 4 " + cmbHost.getSelectedItem());
             }
         });
 
         btn2.addActionListener(e -> {
             if (OptionPaneUtils.showOptionDialog(this,
-                                                 new Object[]{App.getContext().getBundle().getString("host_name"), cmbHost, App.getContext().getBundle().getString("port_number"),
+                                                 new Object[]{App.getCONTEXT().getBundle().getString("host_name"), cmbHost, App.getCONTEXT().getBundle().getString("port_number"),
                                                               cmbPort},
                                                  "Port check") == JOptionPane.OK_OPTION) {
                 executeAsync("bash -c 'test cat</dev/tcp/"
@@ -79,14 +75,14 @@ public class NetworkToolsPage extends UtilPageItemView {
 
         btn3.addActionListener(e -> {
             if (OptionPaneUtils.showOptionDialog(this,
-                                                 new Object[]{App.getContext().getBundle().getString("host_name"), cmbHost}, "Traceroute") == JOptionPane.OK_OPTION) {
+                                                 new Object[]{App.getCONTEXT().getBundle().getString("host_name"), cmbHost}, "Traceroute") == JOptionPane.OK_OPTION) {
                 executeAsync("traceroute " + cmbHost.getSelectedItem());
             }
         });
 
         btn4.addActionListener(e -> {
             if (OptionPaneUtils.showOptionDialog(this,
-                                                 new Object[]{App.getContext().getBundle().getString("host_name"), cmbHost, App.getContext().getBundle().getString("tool_use"),
+                                                 new Object[]{App.getCONTEXT().getBundle().getString("host_name"), cmbHost, App.getCONTEXT().getBundle().getString("tool_use"),
                                                               cmbDNSTool},
                                                  "DNS lookup") == JOptionPane.OK_OPTION) {
                 executeAsync(cmbDNSTool.getSelectedItem() + " "
@@ -105,7 +101,7 @@ public class NetworkToolsPage extends UtilPageItemView {
         txtOutput = new SkinnedTextArea();
         txtOutput.setEditable(false);
         JScrollPane jsp = new SkinnedScrollPane(txtOutput);
-        jsp.setBorder(new LineBorder(App.getContext().getSkin().getDefaultBorderColor()));
+        jsp.setBorder(new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor()));
         this.add(jsp);
     }
 
@@ -122,7 +118,7 @@ public class NetworkToolsPage extends UtilPageItemView {
                     log.info("Command stdout: {}", outText);
                 } else {
                     JOptionPane.showMessageDialog(this,
-                                                  App.getContext().getBundle().getString("executed_errors"));
+                                                  App.getCONTEXT().getBundle().getString("executed_errors"));
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);

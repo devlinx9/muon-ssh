@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.logviewer;
 
 import muon.app.App;
@@ -28,9 +26,7 @@ public class LogViewer extends Page {
     private final SessionContentPanel sessionContent;
     private final Set<String> openLogs = new LinkedHashSet<>();
 
-    /**
-     *
-     */
+    
     public LogViewer(SessionContentPanel sessionContent) {
         this.sessionContent = sessionContent;
         startPage = new StartPage(this::openLog, sessionContent.getInfo().getId());
@@ -59,7 +55,7 @@ public class LogViewer extends Page {
 
     @Override
     public String getText() {
-        return App.getContext().getBundle().getString("server_logs");
+        return App.getCONTEXT().getBundle().getString("server_logs");
     }
 
     public void openLog(FileInfo remotePath) {
@@ -88,7 +84,7 @@ public class LogViewer extends Page {
     private String promptLogPath() {
         JTextField txt = new SkinnedTextField(30);
         if (OptionPaneUtils.showOptionDialog(this,
-                                             new Object[]{App.getContext().getBundle().getString("provide_log_file_path"),
+                                             new Object[]{App.getCONTEXT().getBundle().getString("provide_log_file_path"),
                                                           txt},
                                              "Input") == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
             return txt.getText();

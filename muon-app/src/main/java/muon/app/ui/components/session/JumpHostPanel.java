@@ -22,21 +22,21 @@ public class JumpHostPanel extends JPanel {
     public JumpHostPanel() {
         super(new BorderLayout(5, 5));
         JLabel lblTitle = new JLabel("Intermediate hops");
-        hopList.setBackground(App.getContext().getSkin().getTableBackgroundColor());
+        hopList.setBackground(App.getCONTEXT().getSkin().getTableBackgroundColor());
 
         JScrollPane scrollPane = new SkinnedScrollPane(hopList);
 
         Box b1 = Box.createVerticalBox();
         JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.getContext().getSkin().getIconFont());
+        btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont());
         JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.getContext().getSkin().getIconFont());
+        btnDel.setFont(App.getCONTEXT().getSkin().getIconFont());
         JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.getContext().getSkin().getIconFont());
+        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont());
         JButton btnUp = new JButton(FontAwesomeContants.FA_ARROW_UP);
-        btnUp.setFont(App.getContext().getSkin().getIconFont());
+        btnUp.setFont(App.getCONTEXT().getSkin().getIconFont());
         JButton btnDown = new JButton(FontAwesomeContants.FA_ARROW_DOWN);
-        btnDown.setFont(App.getContext().getSkin().getIconFont());
+        btnDown.setFont(App.getCONTEXT().getSkin().getIconFont());
 
         btnAdd.addActionListener(e -> {
             HopEntry ent = addOrEditEntry(null);
@@ -168,8 +168,8 @@ public class JumpHostPanel extends JPanel {
         });
 
         while (OptionPaneUtils.showOptionDialog(this,
-                                                new Object[]{App.getContext().getBundle().getString("host"), txtHost, App.getContext().getBundle().getString("port"), spPort, App.getContext()
-                                                        .getBundle().getString("user"), txtUser, App.getContext().getBundle().getString("password"), txtPassword, App.getContext()
+                                                new Object[]{App.getCONTEXT().getBundle().getString("host"), txtHost, App.getCONTEXT().getBundle().getString("port"), spPort, App.getCONTEXT()
+                                                        .getBundle().getString("user"), txtUser, App.getCONTEXT().getBundle().getString("password"), txtPassword, App.getCONTEXT()
                                                                      .getBundle().getString("private_key_file"),
                                                              txtKeyFile},
                                                 "Hop entry") == JOptionPane.OK_OPTION) {
@@ -179,7 +179,7 @@ public class JumpHostPanel extends JPanel {
             String path = txtKeyFile.getText();
             int port = (Integer) spPort.getValue();
             if (host.isEmpty() || user.isEmpty() || port <= 0) {
-                JOptionPane.showMessageDialog(this, App.getContext().getBundle().getString("invalid_input"));
+                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_input"));
                 continue;
             }
 

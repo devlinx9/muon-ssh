@@ -92,13 +92,13 @@ public class SshKeyManager {
             throws Exception {
         if (holder.getLocalPublicKey() != null) {
             if (JOptionPane.showConfirmDialog(null,
-                                              App.getContext().getBundle().getString("overwrite_ssh_key"),
+                                              App.getCONTEXT().getBundle().getString("overwrite_ssh_key"),
                                               "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
                 return;
             }
         }
 
-        JCheckBox chkGenPassPhrase = new JCheckBox(App.getContext().getBundle().getString("protected_key_optional"));
+        JCheckBox chkGenPassPhrase = new JCheckBox(App.getCONTEXT().getBundle().getString("protected_key_optional"));
         JPasswordField txtPassPhrase = new JPasswordField(30);
         txtPassPhrase.setEditable(false);
         chkGenPassPhrase.addActionListener(e -> txtPassPhrase.setEditable(chkGenPassPhrase.isSelected()));

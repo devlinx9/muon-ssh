@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.files.remote2remote;
 
 import lombok.Getter;

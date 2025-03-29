@@ -34,11 +34,11 @@ public class AddressBar extends JPanel {
         addrPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
         this.separator = separator;
 
-        UIDefaults toolbarSkin = App.getContext().getSkin().createToolbarSkin();
+        UIDefaults toolbarSkin = App.getCONTEXT().getSkin().createToolbarSkin();
 
         JButton btnRoot = new JButton();
         btnRoot.putClientProperty("Nimbus.Overrides", toolbarSkin);
-        btnRoot.setFont(App.getContext().getSkin().getIconFont());
+        btnRoot.setFont(App.getCONTEXT().getSkin().getIconFont());
         btnRoot.setText("\uf0a0");
         btnRoot.addActionListener(e -> createAndShowPopup());
 
@@ -96,7 +96,7 @@ public class AddressBar extends JPanel {
 
         btnEdit = new JButton();
         btnEdit.putClientProperty("Nimbus.Overrides", toolbarSkin);
-        btnEdit.setFont(App.getContext().getSkin().getIconFont());
+        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont());
         btnEdit.setText("\uf023");
         btnEdit.addActionListener(e -> {
             if (!isSelected()) {

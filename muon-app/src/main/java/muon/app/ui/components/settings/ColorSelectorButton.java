@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.settings;
 
 import lombok.Getter;
@@ -24,11 +22,11 @@ public class ColorSelectorButton extends JLabel {
 
     public ColorSelectorButton() {
         setBorder(new CompoundBorder(
-                new LineBorder(App.getContext().getSkin().getDefaultBorderColor()),
+                new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor()),
                 new CompoundBorder(
                         new MatteBorder(5, 5, 5, 5,
-                                        App.getContext().getSkin().getSelectedTabColor()),
-                        new LineBorder(App.getContext().getSkin().getDefaultBorderColor()))));
+                                        App.getCONTEXT().getSkin().getSelectedTabColor()),
+                        new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor()))));
         setOpaque(true);
         addMouseListener(new MouseAdapter() {
             @Override

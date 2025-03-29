@@ -126,7 +126,7 @@ public class TreeManager {
 
     public static DefaultMutableTreeNode getNode(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode rootNode, DefaultTreeModel treeModel) {
         SessionInfo sessionInfo = new SessionInfo();
-        sessionInfo.setName(App.getContext().getBundle().getString("new_site"));
+        sessionInfo.setName(App.getCONTEXT().getBundle().getString("new_site"));
         sessionInfo.setId(getNewUuid(rootNode));
         DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(sessionInfo);
         childNode.setUserObject(sessionInfo);

@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.util;
 
 import com.sun.jna.Native;
@@ -254,9 +252,9 @@ public class PlatformUtils {
 
     public static String getStringForOpenInFileBrowser() {
         if (IS_WINDOWS) {
-            return App.getContext().getBundle().getString("open_in_file_browser_win");
+            return App.getCONTEXT().getBundle().getString("open_in_file_browser_win");
         } else {
-            return IS_MAC ? App.getContext().getBundle().getString("open_in_file_browser_mac") : App.getContext().getBundle().getString("open_in_file_browser_nix");
+            return IS_MAC ? App.getCONTEXT().getBundle().getString("open_in_file_browser_mac") : App.getCONTEXT().getBundle().getString("open_in_file_browser_nix");
         }
     }
 

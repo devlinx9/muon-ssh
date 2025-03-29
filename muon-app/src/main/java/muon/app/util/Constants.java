@@ -28,4 +28,7 @@ public class Constants {
 
     public static final String PATH_MESSAGES_FILE = "i18n/messages";
 
+    public static final float SMALL_TEXT_SIZE = 14.0f;
+    public static final float MEDIUM_TEXT_SIZE = 16.0f;
+
 }

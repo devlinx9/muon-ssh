@@ -52,7 +52,7 @@ public final class PasswordStore {
 
     public synchronized void unlockStore(char[] password) throws Exception {
         protParam = new KeyStore.PasswordProtection(password, "PBEWithHmacSHA256AndAES_256", null);
-        File filePasswordStore = new File(App.getContext().getConfigDir(), "passwords.pfx");
+        File filePasswordStore = new File(App.getCONTEXT().getConfigDir(), "passwords.pfx");
         if (!filePasswordStore.exists()) {
             keyStore.load(null, protParam.getPassword());
             unlocked.set(true);
@@ -108,7 +108,7 @@ public final class PasswordStore {
 
         log.info("Password protection: {}", protParam.getProtectionAlgorithm());
 
-        try (OutputStream out = new FileOutputStream(new File(App.getContext().getConfigDir(), "passwords.pfx"))) {
+        try (OutputStream out = new FileOutputStream(new File(App.getCONTEXT().getConfigDir(), "passwords.pfx"))) {
             keyStore.store(out, protParam.getPassword());
         }
     }
@@ -204,8 +204,8 @@ public final class PasswordStore {
         while (tries < 3) {
             try {
                 JPasswordField txtPass = new JPasswordField(30);
-                if (OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{App.getContext().getBundle().getString("master_password"), txtPass},
-                                                     App.getContext().getBundle().getString("master_password")) == JOptionPane.OK_OPTION) {
+                if (OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{App.getCONTEXT().getBundle().getString("master_password"), txtPass},
+                                                     App.getCONTEXT().getBundle().getString("master_password")) == JOptionPane.OK_OPTION) {
                     this.unlockStore(txtPass.getPassword());
                     return true;
                 } else {
@@ -214,7 +214,7 @@ public final class PasswordStore {
             } catch (IOException e) {
                 if (e.getCause() instanceof UnrecoverableKeyException) {
                     JOptionPane.showMessageDialog(App.getAppWindow(),
-                                                  App.getContext().getBundle().getString("incorrect_password"), App.getContext().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
+                                                  App.getCONTEXT().getBundle().getString("incorrect_password"), App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
 
                 }
                 tries++;
@@ -222,7 +222,7 @@ public final class PasswordStore {
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 JOptionPane.showMessageDialog(App.getAppWindow(),
-                                              App.getContext().getBundle().getString("error_loading_password"), App.getContext().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
+                                              App.getCONTEXT().getBundle().getString("error_loading_password"), App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
                 tries++;
             }
         }

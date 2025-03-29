@@ -46,7 +46,7 @@ public class SessionExportImport {
             }
 
             try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(file))) {
-                for (File f : Objects.requireNonNull(App.getContext().getConfigDir().listFiles())) {
+                for (File f : Objects.requireNonNull(App.getCONTEXT().getConfigDir().listFiles())) {
                     ZipEntry ent = new ZipEntry(f.getName());
                     out.putNextEntry(ent);
                     out.write(Files.readAllBytes(f.toPath()));
@@ -54,12 +54,12 @@ public class SessionExportImport {
                 }
 
                 JOptionPane.showMessageDialog(App.getAppWindow(),
-                                              App.getContext().getBundle().getString("export_sessions_successful"), App.getContext().getBundle().getString("success"), JOptionPane.INFORMATION_MESSAGE);
+                                              App.getCONTEXT().getBundle().getString("export_sessions_successful"), App.getCONTEXT().getBundle().getString("success"), JOptionPane.INFORMATION_MESSAGE);
 
             } catch (IOException e) {
                 log.error(e.getMessage(), e);
                 JOptionPane.showMessageDialog(App.getAppWindow(),
-                                              String.format(App.getContext().getBundle().getString("error_occurred"), e.getMessage()), App.getContext().getBundle().getString(ERROR), JOptionPane.ERROR_MESSAGE);
+                                              String.format(App.getCONTEXT().getBundle().getString("error_occurred"), e.getMessage()), App.getCONTEXT().getBundle().getString(ERROR), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -78,21 +78,21 @@ public class SessionExportImport {
 
         if (!f.getName().toLowerCase().endsWith(".zip")) {
             JOptionPane.showMessageDialog(App.getAppWindow(),
-                                          App.getContext().getBundle().getString("invalid_file_type"),
-                                          App.getContext().getBundle().getString(ERROR), JOptionPane.ERROR_MESSAGE);
+                                          App.getCONTEXT().getBundle().getString("invalid_file_type"),
+                                          App.getCONTEXT().getBundle().getString(ERROR), JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         // Check if the file exists and is not empty
         if (!f.exists() || f.length() == 0) {
             JOptionPane.showMessageDialog(App.getAppWindow(),
-                                          App.getContext().getBundle().getString("invalid_zip_file"),
-                                          App.getContext().getBundle().getString(ERROR), JOptionPane.ERROR_MESSAGE);
+                                          App.getCONTEXT().getBundle().getString("invalid_zip_file"),
+                                          App.getCONTEXT().getBundle().getString(ERROR), JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
         if (JOptionPane.showConfirmDialog(App.getAppWindow(),
-                                          App.getContext().getBundle().getString("replace_data_warning")) != JOptionPane.YES_OPTION) {
+                                          App.getCONTEXT().getBundle().getString("replace_data_warning")) != JOptionPane.YES_OPTION) {
             return false;
         }
 
@@ -102,10 +102,10 @@ public class SessionExportImport {
             ZipEntry ent;
 
             while ((ent = in.getNextEntry()) != null) { // Read all entries in the ZIP file
-                File file = new File(App.getContext().getConfigDir(), ent.getName());
+                File file = new File(App.getCONTEXT().getConfigDir(), ent.getName());
 
                 // Prevent directory traversal attack
-                if (!file.getCanonicalPath().startsWith(App.getContext().getConfigDir().getCanonicalPath())) {
+                if (!file.getCanonicalPath().startsWith(App.getCONTEXT().getConfigDir().getCanonicalPath())) {
                     log.error("ZIP entry is outside target directory: {}", ent.getName());
                     continue;
                 }
@@ -122,8 +122,8 @@ public class SessionExportImport {
         } catch (IOException e) {
             log.error("Error processing ZIP file: {}", e.getMessage(), e);
             JOptionPane.showMessageDialog(App.getAppWindow(),
-                                          App.getContext().getBundle().getString("error_processing_zip"),
-                                          App.getContext().getBundle().getString(ERROR), JOptionPane.ERROR_MESSAGE);
+                                          App.getCONTEXT().getBundle().getString("error_processing_zip"),
+                                          App.getCONTEXT().getBundle().getString(ERROR), JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
@@ -140,7 +140,7 @@ public class SessionExportImport {
 
         JComboBox<ConflictAction> cmbOptionsExistingInfo = getUserConflictAction();
 
-        if (OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{App.getContext().getBundle().getString("repeated_sessions"), cmbOptionsExistingInfo}, App.getContext()
+        if (OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{App.getCONTEXT().getBundle().getString("repeated_sessions"), cmbOptionsExistingInfo}, App.getCONTEXT()
                 .getBundle()
                 .getString("import_sessions")) != JOptionPane.OK_OPTION) {
             return false;
@@ -193,8 +193,8 @@ public class SessionExportImport {
         folder.setFolders(folders);
         save(folder, tree.getLastSelection());
 
-        JOptionPane.showMessageDialog(App.getAppWindow(), String.format(App.getContext().getBundle().getString("imported_totals"), total, imported, skiped, overwrited)
-                , App.getContext().getBundle().getString("session_info"), JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(App.getAppWindow(), String.format(App.getCONTEXT().getBundle().getString("imported_totals"), total, imported, skiped, overwrited)
+                , App.getCONTEXT().getBundle().getString("session_info"), JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static JComboBox<ConflictAction> getUserConflictAction() {
@@ -217,9 +217,9 @@ public class SessionExportImport {
                                                                        new TypeReference<>() {
                                                                        });
             save(savedSessionTree.getFolder(), savedSessionTree.getLastSelection(),
-                 new File(App.getContext().getConfigDir(), Constants.SESSION_DB_FILE));
+                 new File(App.getCONTEXT().getConfigDir(), Constants.SESSION_DB_FILE));
             Files.copy(Paths.get(System.getProperty("user.home"), "muon-ssh", "snippets.json"),
-                       Paths.get(App.getContext().getConfigDir().getAbsolutePath(), Constants.SNIPPETS_FILE));
+                       Paths.get(App.getCONTEXT().getConfigDir().getAbsolutePath(), Constants.SNIPPETS_FILE));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -243,7 +243,7 @@ public class SessionExportImport {
                                                                        new TypeReference<>() {
                                                                        });
             save(savedSessionTree.getFolder(), savedSessionTree.getLastSelection(),
-                 new File(App.getContext().getConfigDir(), Constants.SESSION_DB_FILE));
+                 new File(App.getCONTEXT().getConfigDir(), Constants.SESSION_DB_FILE));
         } catch (IOException e) {
             log.error(e.getMessage(), e);
             return false;

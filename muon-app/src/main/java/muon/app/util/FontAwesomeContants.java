@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.util;
 
 /**
@@ -12,6 +10,7 @@ public class FontAwesomeContants {
     }
 
     public static final String FA_CUBE = "\uf1b2";
+    public static final String FA_CUBES = "\uf1b3";
     public static final String FA_FOLDER = "\uf07b";
     public static final String FA_PENCIL_SQUARE_O = "\uf044";
     public static final String FA_BARS = "\uf0c9";

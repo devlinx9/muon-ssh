@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage.keys;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +21,7 @@ public class KeyPage extends UtilPageItemView {
     private LocalKeyPanel localKeyPanel;
     private SshKeyHolder keyHolder;
 
-    /**
-     *
-     */
+    
     public KeyPage(SessionContentPanel content) {
         super(content);
     }
@@ -107,8 +103,8 @@ public class KeyPage extends UtilPageItemView {
                 }
             });
         });
-        tabs.addTab(App.getContext().getBundle().getString("server"), remoteKeyPanel);
-        tabs.addTab(App.getContext().getBundle().getString("local_computer"), localKeyPanel);
+        tabs.addTab(App.getCONTEXT().getBundle().getString("server"), remoteKeyPanel);
+        tabs.addTab(App.getCONTEXT().getBundle().getString("local_computer"), localKeyPanel);
         this.add(tabs);
 
         holder.EXECUTOR.submit(() -> {

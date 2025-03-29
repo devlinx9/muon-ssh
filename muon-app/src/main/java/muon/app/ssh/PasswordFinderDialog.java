@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ssh;
 
 import muon.app.App;
@@ -33,7 +31,7 @@ public class PasswordFinderDialog implements PasswordFinder {
         }
         firstAttempt.set(false);
         JPasswordField txtPass = new JPasswordField();
-        JCheckBox chkUseCache = new JCheckBox(App.getContext().getBundle().getString("remember_session"));
+        JCheckBox chkUseCache = new JCheckBox(App.getCONTEXT().getBundle().getString("remember_session"));
 
         int ret = OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                    new Object[]{resource != null ? resource.toString() : "Private key passphrase:", txtPass, chkUseCache},

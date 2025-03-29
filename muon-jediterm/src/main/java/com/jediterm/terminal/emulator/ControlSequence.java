@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package com.jediterm.terminal.emulator;
 
 import com.jediterm.terminal.util.CharUtils;

@@ -21,11 +21,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class SshFileSystem implements FileSystem {
     public static final String PROTO_SFTP = "sftp";
     private SFTPClient sftp;
-    private final SshClient2 ssh;
+    private final SSHHandler ssh;
     private String home;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    public SshFileSystem(SshClient2 ssh) {
+    public SshFileSystem(SSHHandler ssh) {
         this.ssh = ssh;
     }
 

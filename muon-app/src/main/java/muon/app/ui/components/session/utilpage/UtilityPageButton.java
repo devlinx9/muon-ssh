@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage;
 
 import muon.app.App;
@@ -17,13 +15,11 @@ public class UtilityPageButton extends JToggleButton {
     private final String iconText;
     private final Font iconFont;
 
-    /**
-     *
-     */
+    
     public UtilityPageButton(String text, String iconText) {
         this.text = text;
         this.iconText = iconText;
-        this.iconFont = App.getContext().getSkin().getIconFont().deriveFont(24.0f);
+        this.iconFont = App.getCONTEXT().getSkin().getIconFont().deriveFont(24.0f);
     }
 
     @Override
@@ -32,11 +28,11 @@ public class UtilityPageButton extends JToggleButton {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(
-                super.isSelected() ? App.getContext().getSkin().getDefaultSelectionBackground()
+                super.isSelected() ? App.getCONTEXT().getSkin().getDefaultSelectionBackground()
                         : getBackground());
         g2.fillRect(0, 0, getWidth(), getHeight());
         g2.setColor(
-                super.isSelected() ? App.getContext().getSkin().getDefaultSelectionForeground()
+                super.isSelected() ? App.getCONTEXT().getSkin().getDefaultSelectionForeground()
                         : getForeground());
         FontMetrics fm1 = g2.getFontMetrics(iconFont);
         FontMetrics fm2 = g2.getFontMetrics(getFont());

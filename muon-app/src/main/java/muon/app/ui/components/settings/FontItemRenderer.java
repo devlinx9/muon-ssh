@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.settings;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +16,7 @@ import java.util.Objects;
 @Slf4j
 public class FontItemRenderer extends JLabel implements ListCellRenderer<String> {
 
-    /**
-     *
-     */
+    
     public FontItemRenderer() {
         setOpaque(true);
     }
@@ -32,8 +28,8 @@ public class FontItemRenderer extends JLabel implements ListCellRenderer<String>
         Font font = Objects.requireNonNull(FontUtils.loadTerminalFont(value)).deriveFont(Font.PLAIN, 14);
         setFont(font);
         setText(FontUtils.TERMINAL_FONTS.get(value));
-        setBackground(isSelected ? App.getContext().getSkin().getAddressBarSelectionBackground() : App.getContext().getSkin().getSelectedTabColor());
-        setForeground(isSelected ? App.getContext().getSkin().getDefaultSelectionForeground() : App.getContext().getSkin().getDefaultForeground());
+        setBackground(isSelected ? App.getCONTEXT().getSkin().getAddressBarSelectionBackground() : App.getCONTEXT().getSkin().getSelectedTabColor());
+        setForeground(isSelected ? App.getCONTEXT().getSkin().getDefaultSelectionForeground() : App.getCONTEXT().getSkin().getDefaultForeground());
         return this;
     }
 

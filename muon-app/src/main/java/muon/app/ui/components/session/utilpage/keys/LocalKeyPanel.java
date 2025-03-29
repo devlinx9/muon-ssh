@@ -19,9 +19,9 @@ public class LocalKeyPanel extends JPanel {
     public LocalKeyPanel(SessionInfo info, Consumer<?> callback1,
                          Consumer<?> callback2) {
         super(new BorderLayout());
-        JLabel lblTitle = new JLabel(App.getContext().getBundle().getString("public_key_file"));
+        JLabel lblTitle = new JLabel(App.getCONTEXT().getBundle().getString("public_key_file"));
         txtKeyFile = new SkinnedTextField(20);
-        txtKeyFile.setBackground(App.getContext().getSkin().getDefaultBackground());
+        txtKeyFile.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
         txtKeyFile.setBorder(null);
         txtKeyFile.setEditable(false);
         Box hbox = Box.createHorizontalBox();
@@ -37,8 +37,8 @@ public class LocalKeyPanel extends JPanel {
         JScrollPane jScrollPane = new JScrollPane(txtPubKey);
         add(jScrollPane);
 
-        JButton btnGenNewKey = new JButton(App.getContext().getBundle().getString("generate_new_key"));
-        JButton btnRefresh = new JButton(App.getContext().getBundle().getString("refresh"));
+        JButton btnGenNewKey = new JButton(App.getCONTEXT().getBundle().getString("generate_new_key"));
+        JButton btnRefresh = new JButton(App.getCONTEXT().getBundle().getString("refresh"));
 
         btnGenNewKey.addActionListener(e -> callback1.accept(null));
 

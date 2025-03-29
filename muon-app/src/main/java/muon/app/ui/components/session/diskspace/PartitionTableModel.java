@@ -9,7 +9,7 @@ import java.util.List;
 
 
 public class PartitionTableModel extends AbstractTableModel {
-    private final String[] columns = {App.getContext().getBundle().getString("filesystem"), App.getContext().getBundle().getString("total_size"), App.getContext().getBundle().getString("used"), App.getContext().getBundle().getString("available"), App.getContext().getBundle().getString("percentage_use"), App.getContext().getBundle().getString("mount_point")};
+    private final String[] columns = {App.getCONTEXT().getBundle().getString("filesystem"), App.getCONTEXT().getBundle().getString("total_size"), App.getCONTEXT().getBundle().getString("used"), App.getCONTEXT().getBundle().getString("available"), App.getCONTEXT().getBundle().getString("percentage_use"), App.getCONTEXT().getBundle().getString("mount_point")};
 
     private final List<PartitionEntry> list = new ArrayList<>();
 

@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.util;
 
 import java.awt.*;

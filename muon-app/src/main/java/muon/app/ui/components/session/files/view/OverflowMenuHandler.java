@@ -37,7 +37,7 @@ public class OverflowMenuHandler {
         this.fileBrowser = fileBrowser;
         ksHideShow = KeyStroke.getKeyStroke(KeyEvent.VK_H, InputEvent.CTRL_DOWN_MASK);
 
-        mShowHiddenFiles = new JCheckBoxMenuItem(App.getContext().getBundle().getString("show_hidden_files2"));
+        mShowHiddenFiles = new JCheckBoxMenuItem(App.getCONTEXT().getBundle().getString("show_hidden_files2"));
         mShowHiddenFiles.setSelected(App.getGlobalSettings().isShowHiddenFilesByDefault());
 
 
@@ -66,7 +66,7 @@ public class OverflowMenuHandler {
 
         mSortDesc = createSortMenuItem("Sort descending", 1, bg2);
 
-        this.favouriteLocations = new JMenu(App.getContext().getBundle().getString("bookmarks"));
+        this.favouriteLocations = new JMenu(App.getCONTEXT().getBundle().getString("bookmarks"));
 
         popup = new JPopupMenu();
         JMenu mSortMenu = new JMenu("Sort");

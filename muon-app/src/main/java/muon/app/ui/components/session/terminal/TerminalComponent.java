@@ -75,7 +75,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         reconnectionBox.add(Box.createHorizontalGlue());
         reconnectionBox.add(btnReconnect);
         reconnectionBox.setBorder(new EmptyBorder(10, 10, 10, 10));
-        term.addListener((e) -> {
+        term.addListener(e -> {
             log.info("Disconnected");
             SwingUtilities.invokeLater(() -> {
                 contentPane.add(reconnectionBox, BorderLayout.NORTH);
@@ -100,6 +100,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
 
             @Override
             public void onPanelResize(Dimension pixelDimension, RequestOrigin origin) {
+                log.debug("resize: {}", pixelDimension);
             }
         });
         contentPane.add(term);

@@ -3,7 +3,7 @@ package muon.app.ui.components.session.terminal.ssh;
 import com.jediterm.terminal.Questioner;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ssh.SshClient2;
+import muon.app.ssh.SSHHandler;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.connection.ConnectionException;
@@ -32,7 +32,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
     private final AtomicBoolean stopFlag = new AtomicBoolean(false);
     private Dimension myPendingTermSize;
     private Dimension myPendingPixelSize;
-    private SshClient2 wr;
+    private SSHHandler wr;
     private final String initialCommand;
     private final SessionInfo info;
     private final SessionContentPanel sessionContentPanel;
@@ -43,14 +43,10 @@ public class SshTtyConnector implements DisposableTtyConnector {
         this.sessionContentPanel = sessionContentPanel;
     }
 
-    public SshTtyConnector(SessionInfo info, SessionContentPanel sessionContentPanel) {
-        this(info, null, sessionContentPanel);
-    }
-
     @Override
     public boolean init(Questioner q) {
         try {
-            this.wr = new SshClient2(this.info, sessionContentPanel, sessionContentPanel);
+            this.wr = new SSHHandler(this.info, sessionContentPanel, sessionContentPanel);
             this.wr.connect();
             this.channel = wr.openSession();
             this.channel.setAutoExpand(true);
@@ -58,12 +54,7 @@ public class SshTtyConnector implements DisposableTtyConnector {
             this.channel.allocatePTY(App.getGlobalSettings().getTerminalType(), App.getGlobalSettings().getTermWidth(),
                                      App.getGlobalSettings().getTermHeight(), 0, 0, Collections.emptyMap());
 
-            try {
-                this.channel.setEnvVar("LANG", "en_US.UTF-8");
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                log.error("Cannot set environment variable Lang: {}", e.getMessage());
-            }
+            setEnvVar();
 
 
             this.shell = (SessionChannel) this.channel.startShell();
@@ -87,6 +78,15 @@ public class SshTtyConnector implements DisposableTtyConnector {
             isInitiated.set(false);
             isCancelled.set(true);
             return false;
+        }
+    }
+
+    private void setEnvVar() {
+        try {
+            this.channel.setEnvVar("LANG", "en_US.UTF-8");
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            log.error("Cannot set environment variable Lang: {}", e.getMessage());
         }
     }
 
@@ -154,23 +154,28 @@ public class SshTtyConnector implements DisposableTtyConnector {
         return shell.getExitStatus();
     }
 
+    @Override
     public boolean isRunning() {
         return shell != null && shell.isOpen();
     }
 
+    @Override
     public boolean isBusy() {
         return channel.isOpen();
     }
 
+    @Override
     public boolean isCancelled() {
         return isCancelled.get();
     }
 
+    @Override
     public void stop() {
         stopFlag.set(true);
         close();
     }
 
+    @Override
     public int getExitStatus() {
         if (shell != null) {
             Integer exit = shell.getExitStatus();
