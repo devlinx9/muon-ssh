@@ -39,7 +39,7 @@ import java.util.function.Consumer;
  * @author subhro
  */
 @Slf4j
-public class SessionContentPanel extends JPanel implements PageHolder, CachedCredentialProvider {
+public class SessionContentPanel extends JPanel implements PageHolder, CachedCredentialProvider, ISessionContentPanel {
     public static final String PAGE_ID = "pageId";
     public final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 

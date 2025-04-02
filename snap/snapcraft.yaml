@@ -11,7 +11,7 @@ issues: https://github.com/devlinx9/muon-ssh/issues
 grade: stable
 base: core22
 icon: snap/gui/muonssh.png
-confinement: strict
+confinement: classic
 
 compression: lzo
 

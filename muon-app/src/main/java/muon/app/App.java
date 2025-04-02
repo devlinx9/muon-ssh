@@ -8,6 +8,7 @@ import muon.app.common.settings.SettingsManager;
 import muon.app.ssh.GraphicalHostKeyVerifier;
 import muon.app.ui.AppWindow;
 import muon.app.ui.components.session.ExternalEditorHandler;
+import muon.app.ui.components.session.ISessionContentPanel;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionExportImport;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
@@ -130,7 +131,7 @@ public final class App {
         return CONTEXT.getSettings();
     }
 
-    public static SessionContentPanel getSessionContainer(int activeSessionId) {
+    public static ISessionContentPanel getSessionContainer(int activeSessionId) {
         return mw.getSessionListPanel().getSessionContainer(activeSessionId);
     }
 

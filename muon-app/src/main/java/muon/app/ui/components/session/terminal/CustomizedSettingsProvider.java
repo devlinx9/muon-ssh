@@ -1,6 +1,6 @@
-
 package muon.app.ui.components.session.terminal;
 
+import com.jediterm.core.Color;
 import com.jediterm.terminal.TerminalColor;
 import com.jediterm.terminal.TextStyle;
 import com.jediterm.terminal.emulator.ColorPalette;
@@ -9,20 +9,21 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.settings.Settings;
 import muon.app.util.FontUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
 
 /**
  * @author subhro
- *
  */
 @Slf4j
 public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     private final ColorPalette palette;
 
-    
+    /**
+     *
+     */
     public CustomizedSettingsProvider() {
 
         Color[] colors = new Color[16];
@@ -30,11 +31,17 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
         for (int i = 0; i < 16; i++) {
             colors[i] = new Color(colorArr[i]);
         }
+
         palette = new ColorPalette() {
 
             @Override
-            public Color[] getIndexColors() {
-                return colors;
+            protected @NotNull Color getBackgroundByColorIndex(int colorIndex) {
+                return colors[colorIndex];
+            }
+
+            @Override
+            public @NotNull Color getForegroundByColorIndex(int colorIndex) {
+                return colors[colorIndex];
             }
         };
     }
@@ -62,28 +69,28 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     }
 
     @Override
-    public TextStyle getDefaultStyle() {
+    public @NotNull TextStyle getDefaultStyle() {
         return new TextStyle(getTerminalColor(App.getGlobalSettings().getDefaultColorFg()),
-                getTerminalColor(App.getGlobalSettings().getDefaultColorBg()));
+                             getTerminalColor(App.getGlobalSettings().getDefaultColorBg()));
     }
 
     @Override
-    public TextStyle getFoundPatternColor() {
+    public @NotNull TextStyle getFoundPatternColor() {
         return new TextStyle(getTerminalColor(App.getGlobalSettings().getDefaultFoundFg()),
-                getTerminalColor(App.getGlobalSettings().getDefaultFoundBg()));
+                             getTerminalColor(App.getGlobalSettings().getDefaultFoundBg()));
     }
 
     @Override
-    public TextStyle getSelectionColor() {
+    public @NotNull TextStyle getSelectionColor() {
         return new TextStyle(getTerminalColor(App.getGlobalSettings().getDefaultSelectionFg()),
-                getTerminalColor(App.getGlobalSettings().getDefaultSelectionBg()));
+                             getTerminalColor(App.getGlobalSettings().getDefaultSelectionBg()));
         //
     }
 
     @Override
     public TextStyle getHyperlinkColor() {
         return new TextStyle(getTerminalColor(App.getGlobalSettings().getDefaultHrefFg()),
-                getTerminalColor(App.getGlobalSettings().getDefaultHrefBg()));
+                             getTerminalColor(App.getGlobalSettings().getDefaultHrefBg()));
 
     }
 
@@ -105,8 +112,8 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     @Override
     public Font getTerminalFont() {
         log.debug("Called terminal font: {}", App.getGlobalSettings().getTerminalFontName());
-        return Objects.requireNonNull(FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalFontName())).deriveFont(Font.PLAIN,
-                                                                                                                            App.getGlobalSettings().getTerminalFontSize());
+        return FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalFontName()).deriveFont(Font.PLAIN,
+                                                                                                    App.getGlobalSettings().getTerminalFontSize());
     }
 
     @Override
@@ -120,32 +127,32 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     }
 
     public final TerminalColor getTerminalColor(int rgb) {
-        return TerminalColor.awt(new Color(rgb));
+        return TerminalColor.fromColor(new Color(rgb));
     }
 
-    @Override
+
     public KeyStroke[] getCopyKeyStrokes() {
         return new KeyStroke[]{getKeyStroke(Settings.COPY_KEY)};
     }
 
-    @Override
+
     public KeyStroke[] getPasteKeyStrokes() {
         return new KeyStroke[]{getKeyStroke(Settings.PASTE_KEY)};
     }
 
-    @Override
+
     public KeyStroke[] getClearBufferKeyStrokes() {
         return new KeyStroke[]{getKeyStroke(Settings.CLEAR_BUFFER)};
     }
 
-    @Override
+
     public KeyStroke[] getFindKeyStrokes() {
         return new KeyStroke[]{getKeyStroke(Settings.FIND_KEY)};
     }
 
     private KeyStroke getKeyStroke(String key) {
         return KeyStroke.getKeyStroke(App.getGlobalSettings().getKeyCodeMap().get(key),
-                App.getGlobalSettings().getKeyModifierMap().get(key));
+                                      App.getGlobalSettings().getKeyModifierMap().get(key));
     }
 
 }

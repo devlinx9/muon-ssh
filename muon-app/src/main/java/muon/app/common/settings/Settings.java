@@ -51,12 +51,12 @@ public class Settings {
     private int logViewerLinesPerPage = 50;
     private int sysloadRefreshInterval = 3;
     private boolean puttyLikeCopyPaste = false;
-    private String terminalType = "ansi";
+    private String terminalType = "xterm-256color";
     private boolean confirmBeforeTerminalClosing = true;
     private int termWidth = 80;
     private int termHeight = 24;
     private boolean terminalBell = false;
-    private String terminalFontName = "NotoMono-Regular";
+    private String terminalFontName = "FiraCode-Regular";
     private int terminalFontSize = 14;
     private Language language = Language.ENGLISH;
     private String terminalTheme = "Dark";

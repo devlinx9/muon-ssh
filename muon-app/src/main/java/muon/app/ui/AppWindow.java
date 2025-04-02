@@ -3,10 +3,11 @@ package muon.app.ui;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.session.SessionContentPanel;
+import muon.app.ui.components.session.ISessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.SessionListPanel;
 import muon.app.ui.components.session.dialog.NewSessionDlg;
+import muon.app.ui.components.session.files.ssh.KubeContextSelectorPanel;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
 import muon.app.ui.components.session.files.transfer.BackgroundTransferPanel;
 import muon.app.ui.components.settings.SettingsDialog;
@@ -43,6 +44,7 @@ public class AppWindow extends JFrame {
     private final JPanel cardPanel = new JPanel(sessionCard, true);
     private final BackgroundTransferPanel uploadPanel;
     private final BackgroundTransferPanel downloadPanel;
+    private final KubeContextSelectorPanel kubeContextSelectorPanel;
     private final Component bottomPanel;
 
     @Getter
@@ -50,6 +52,8 @@ public class AppWindow extends JFrame {
 
     private JLabel lblUploadCount;
     private JLabel lblDownloadCount;
+    @Getter
+    private JLabel lblK8sContext;
     private JPopupMenu popup;
     private JLabel lblUpdate;
     private JLabel lblUpdateText;
@@ -68,6 +72,7 @@ public class AppWindow extends JFrame {
 
         this.uploadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblUploadCount.setText(count + "")));
         this.downloadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblDownloadCount.setText(count + "")));
+        this.kubeContextSelectorPanel = new KubeContextSelectorPanel();
 
         checkForUpdates();
     }
@@ -148,6 +153,11 @@ public class AppWindow extends JFrame {
         }
     }
 
+    private void createLocalSessionPanel() {
+        sessionListPanel.createLocalSession();
+    }
+
+
     private JPanel createSessionPanel() {
         JButton btnNew = new JButton(FontAwesomeContants.FA_TELEVISION);
         btnNew.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
@@ -156,6 +166,10 @@ public class AppWindow extends JFrame {
 
         JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
         btnToggle.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+
+        JButton btnLocalTerm = new JButton(FontAwesomeContants.FA_TERMINAL);
+        btnLocalTerm.addActionListener(e -> this.createLocalSessionPanel());
+        btnLocalTerm.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
 
         // Calculate the maximum width and height between the two buttons
         Dimension sizeNew = btnNew.getPreferredSize();
@@ -176,13 +190,19 @@ public class AppWindow extends JFrame {
         btnToggle.setMinimumSize(maxSize);
         btnToggle.setMaximumSize(maxSize);
 
+        btnLocalTerm.setPreferredSize(maxSize);
+        btnLocalTerm.setMinimumSize(maxSize);
+        btnLocalTerm.setMaximumSize(maxSize);
+
         JPanel topBox = new JPanel();
         topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
         topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
+        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
         topBox.add(btnToggle);
-        var rigidArea = Box.createRigidArea(new Dimension(10, 10));
-        topBox.add(rigidArea);
+        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
         topBox.add(btnNew);
+        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        topBox.add(btnLocalTerm);
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new MatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
@@ -194,7 +214,6 @@ public class AppWindow extends JFrame {
             boolean isVisible = sessionListPanel.isVisible();
             topBox.setLayout(new BoxLayout(topBox, BoxLayout.Y_AXIS));
             sessionListPanel.setVisible(!isVisible);
-            rigidArea.setVisible(!isVisible);
             topBox.setBorder(null);
 
             if (!isVisible) {
@@ -214,16 +233,16 @@ public class AppWindow extends JFrame {
     }
 
 
-    public void showSession(SessionContentPanel sessionContentPanel) {
-        cardPanel.add(sessionContentPanel, sessionContentPanel.hashCode() + "");
+    public void showSession(ISessionContentPanel sessionContentPanel) {
+        cardPanel.add((Component) sessionContentPanel, sessionContentPanel.hashCode() + "");
         sessionCard.show(cardPanel, sessionContentPanel.hashCode() + "");
         revalidate();
         repaint();
     }
 
 
-    public void removeSession(SessionContentPanel sessionContentPanel) {
-        cardPanel.remove(sessionContentPanel);
+    public void removeSession(ISessionContentPanel sessionContentPanel) {
+        cardPanel.remove((Component) sessionContentPanel);
         revalidate();
         repaint();
     }
@@ -244,6 +263,10 @@ public class AppWindow extends JFrame {
 
         b1.add(createRepositoryLabel());
         b1.add(Box.createHorizontalGlue());
+
+        createK8sLabel();
+        b1.add(lblK8sContext);
+        b1.add(createSpacer(5, 15));
 
         JLabel lblUpload = createUploadLabel();
         b1.add(lblUpload);
@@ -428,8 +451,15 @@ public class AppWindow extends JFrame {
         popup.add(panel);
         popup.setInvoker(bottomPanel);
 
-        popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
-                   -popup.getPreferredSize().height);
+        if (panel instanceof KubeContextSelectorPanel) {
+            popup.setPreferredSize(new Dimension(150, 200));
+            popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
+                       -popup.getPreferredSize().height);
+        } else {
+            popup.setPreferredSize(new Dimension(400, 500));
+            popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
+                       -popup.getPreferredSize().height);
+        }
     }
 
     public void removePendingTransfers(int sessionId) {
@@ -441,4 +471,23 @@ public class AppWindow extends JFrame {
         SettingsDialog settingsDialog = new SettingsDialog(this);
         settingsDialog.showDialog(this, page);
     }
+
+    private void createK8sLabel() {
+        lblK8sContext = new JLabel("none");
+        lblK8sContext.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblK8sContext.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        kubeContextSelectorPanel.getContext();
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage(), ex);
+                    }
+                    showPopup(kubeContextSelectorPanel);
+                });
+            }
+        });
+    }
+
 }

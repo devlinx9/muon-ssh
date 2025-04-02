@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.terminal.ssh;
 
+import com.jediterm.core.util.TermSize;
 import com.jediterm.terminal.Questioner;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
@@ -11,6 +12,7 @@ import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Shell;
 import net.schmizz.sshj.connection.channel.direct.SessionChannel;
 import net.schmizz.sshj.transport.TransportException;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.IOException;
@@ -133,6 +135,11 @@ public class SshTtyConnector implements DisposableTtyConnector {
     }
 
     @Override
+    public void resize(@NotNull TermSize termSize) {
+        DisposableTtyConnector.super.resize(termSize);
+    }
+
+    @Override
     public void write(String string) throws IOException {
         write(string.getBytes(StandardCharsets.UTF_8));
     }
@@ -153,6 +160,12 @@ public class SshTtyConnector implements DisposableTtyConnector {
         }
         return shell.getExitStatus();
     }
+
+    @Override
+    public boolean ready() throws IOException {
+        return myInputStreamReader.ready();
+    }
+
 
     @Override
     public boolean isRunning() {

@@ -114,7 +114,7 @@ public class ExternalEditorHandler extends JDialog {
      */
     private long saveRemoteFile(FileModificationInfo info, long total, long totalBytes) {
         log.info("Init transfer...1");
-        SessionContentPanel scp = App.getSessionContainer(info.activeSessionId);
+        ISessionContentPanel scp = App.getSessionContainer(info.activeSessionId);
         if (scp == null) {
             log.info("No session found");
             return info.remoteFile.getSize();

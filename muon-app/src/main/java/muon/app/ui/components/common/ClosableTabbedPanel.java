@@ -13,6 +13,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.util.function.Consumer;
 
 import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
@@ -255,7 +256,7 @@ public class ClosableTabbedPanel extends JPanel {
 
     @Setter
     @Getter
-    public static class TabTitle {
+    public static class TabTitle implements Serializable {
         private Consumer<String> callback;
     }
 

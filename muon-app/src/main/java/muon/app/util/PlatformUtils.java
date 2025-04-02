@@ -13,9 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.settings.EditorEntry;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 import static java.util.Map.entry;
@@ -256,6 +254,29 @@ public class PlatformUtils {
         } else {
             return IS_MAC ? App.getCONTEXT().getBundle().getString("open_in_file_browser_mac") : App.getCONTEXT().getBundle().getString("open_in_file_browser_nix");
         }
+    }
+
+    public static int executeLocalCommand(String command, StringBuilder output) throws IOException, InterruptedException {
+
+        ProcessBuilder pb = new ProcessBuilder("bash", "-c", command);
+
+        if (IS_WINDOWS) {
+            pb = new ProcessBuilder("cmd", "/c", command);
+        }
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+        }
+
+        // Wait for the command to complete and get the exit code
+        int exitCode = process.waitFor();
+        log.debug("Executed [{}] with exit code: {}", command, exitCode);
+        return exitCode;
     }
 
 }
