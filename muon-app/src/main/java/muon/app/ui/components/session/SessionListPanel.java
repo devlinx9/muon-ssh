@@ -126,7 +126,8 @@ public class SessionListPanel extends JPanel {
     }
 
     public void removeSession(int index) {
-        if (JOptionPane.showConfirmDialog(window, App.getCONTEXT().getBundle().getString("disconnect_session")) == JOptionPane.YES_OPTION) {
+        if (!App.getGlobalSettings().isConfirmBeforeTerminalClosing() ||
+            JOptionPane.showConfirmDialog(window, App.getCONTEXT().getBundle().getString("disconnect_session")) == JOptionPane.YES_OPTION) {
             ISessionContentPanel sessionContentPanel = sessionListModel.get(index);
             sessionContentPanel.close();
             window.removeSession(sessionContentPanel);
@@ -162,9 +163,7 @@ public class SessionListPanel extends JPanel {
         private final JLabel lblHost;
         private final JLabel lblClose;
 
-        /**
-         *
-         */
+
         public SessionListRenderer() {
             lblIcon = new JLabel();
             lblText = new JLabel();

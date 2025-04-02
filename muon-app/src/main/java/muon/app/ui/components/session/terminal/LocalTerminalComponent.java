@@ -83,22 +83,18 @@ public class LocalTerminalComponent extends JPanel implements ClosableTabContent
                     .setCommand(command2)
                     .setDirectory(System.getProperty("user.home"))
                     .setEnvironment(env)
-                    .setInitialColumns(termWidth)  // Set terminal width
-                    .setInitialRows(termHeight)    // Set terminal height
+                    .setInitialColumns(termWidth)
+                    .setInitialRows(termHeight)
                     .start();
 
-            // Create TtyConnector using the new API
             TtyConnector connector = new ProcessTtyConnector(process, StandardCharsets.UTF_8) {
                 @Override
                 public String getName() {
                     return "Local terminal";
                 }
 
-                // *** The important part! ***
                 @Override
                 public void resize(@NotNull TermSize termSize) {
-                    // pty4j's "WinSize" wants (rows, cols).
-                    // But JediTerm’s TermSize is (cols, rows).
                     int columns = termSize.getColumns();
                     int rows = termSize.getRows();
 

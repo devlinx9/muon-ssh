@@ -489,6 +489,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
     @Override
     public void treeNodesInserted(TreeModelEvent e) {
+        log.debug("treeNodesInserted");
     }
 
     @Override
@@ -498,6 +499,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
     @Override
     public void treeStructureChanged(TreeModelEvent e) {
+        log.debug("treeStructureChanged");
     }
 
     private void normalizeButtonSize() {

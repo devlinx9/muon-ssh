@@ -9,13 +9,11 @@ import muon.app.ssh.GraphicalHostKeyVerifier;
 import muon.app.ui.AppWindow;
 import muon.app.ui.components.session.ExternalEditorHandler;
 import muon.app.ui.components.session.ISessionContentPanel;
-import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionExportImport;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
 import muon.app.ui.components.settings.SettingsPageName;
 import muon.app.util.PlatformUtils;
 import muon.app.util.enums.ConflictAction;
-import muon.app.util.enums.TransferMode;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.swing.*;
@@ -93,7 +91,6 @@ public final class App {
         setKnownHostFile();
 
         CONTEXT.setBundleLanguage();
-        TransferMode.update();
         ConflictAction.update();
 
         UIManager.setLookAndFeel(CONTEXT.updateSkin().getLaf());

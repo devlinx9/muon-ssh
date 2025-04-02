@@ -84,7 +84,6 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     public @NotNull TextStyle getSelectionColor() {
         return new TextStyle(getTerminalColor(App.getGlobalSettings().getDefaultSelectionFg()),
                              getTerminalColor(App.getGlobalSettings().getDefaultSelectionBg()));
-        //
     }
 
     @Override

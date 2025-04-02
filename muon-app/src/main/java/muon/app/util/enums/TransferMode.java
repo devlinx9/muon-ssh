@@ -5,6 +5,7 @@ import lombok.Getter;
 import muon.app.App;
 
 
+@Deprecated(forRemoval = true)
 @Getter
 public enum TransferMode {
 

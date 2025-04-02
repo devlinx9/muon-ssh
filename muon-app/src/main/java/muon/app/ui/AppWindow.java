@@ -264,9 +264,11 @@ public class AppWindow extends JFrame {
         b1.add(createRepositoryLabel());
         b1.add(Box.createHorizontalGlue());
 
-        createK8sLabel();
-        b1.add(lblK8sContext);
-        b1.add(createSpacer(5, 15));
+        if (App.getGlobalSettings().isEnabledK8sContextPlugin()) {
+            createK8sLabel();
+            b1.add(lblK8sContext);
+            b1.add(createSpacer(5, 15));
+        }
 
         JLabel lblUpload = createUploadLabel();
         b1.add(lblUpload);

@@ -3,7 +3,6 @@ package muon.app.ui.components.session.files.ssh;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.common.FileSystem;
 import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.FileBrowser;
@@ -20,7 +19,7 @@ import muon.app.util.PathUtils;
 import muon.app.util.enums.DndSourceType;
 import muon.app.util.enums.FileType;
 import muon.app.util.enums.TransferAction;
-import muon.app.util.enums.TransferMode;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,7 +35,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -49,19 +47,33 @@ public class SshMenuHandler {
     private final SshFileOperations fileOperations;
     private final SshFileBrowserView fileBrowserView;
     private final ArchiveOperation archiveOperation;
-    private AbstractAction aSendFiles;
-    private AbstractAction aUpload;
-    private AbstractAction aDownload;
-    private KeyStroke ksSendFiles;
-    private KeyStroke ksUpload;
-    private KeyStroke ksDownload;
-    private JMenuItem mOpenInTab, mOpen, mRename, mDelete, mNewFile, mNewFolder, mCopy, mPaste, mCut, mAddToFav,
-            mChangePerm, mSendFiles, mUpload, mOpenWithDefApp, mOpenWthInternalEdit, mEditorConfig, mOpenWithLogView,
-            mDownload, mCreateLink, mCopyPath, mOpenFolderInTerminal, mOpenTerminalHere, mRunScriptInTerminal,
-            mRunScriptInBackground, mExtractHere, mExtractTo, mCreateArchive, mOpenWithMenu;
+    private JMenuItem mOpenInTab;
+    private JMenuItem mOpen;
+    private JMenuItem mRename;
+    private JMenuItem mDelete;
+    private JMenuItem mNewFile;
+    private JMenuItem mNewFolder;
+    private JMenuItem mCopy;
+    private JMenuItem mPaste;
+    private JMenuItem mCut;
+    private JMenuItem mAddToFav;
+    private JMenuItem mChangePerm;
+    private JMenuItem mUpload;
+    private JMenuItem mEditorConfig;
+    private JMenuItem mOpenWithLogView;
+    private JMenuItem mDownload;
+    private JMenuItem mCreateLink;
+    private JMenuItem mCopyPath;
+    private JMenuItem mOpenFolderInTerminal;
+    private JMenuItem mOpenTerminalHere;
+    private JMenuItem mRunScriptInTerminal;
+    private JMenuItem mRunScriptInBackground;
+    private JMenuItem mExtractHere;
+    private JMenuItem mExtractTo;
+    private JMenuItem mCreateArchive;
+    private JMenuItem mOpenWithMenu;
     private JMenu mEditWith;
     private JMenu mSendTo;
-    private Map<String, String> extractCommands;
     private FolderView folderView;
 
     public SshMenuHandler(FileBrowser fileBrowser, SshFileBrowserView fileBrowserView) {
@@ -375,7 +387,7 @@ public class SshMenuHandler {
             }
 
             @Override
-            public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+            public @NotNull Object getTransferData(DataFlavor flavor) {
                 return transferData;
             }
         }, (a, b) -> {
@@ -715,11 +727,11 @@ public class SshMenuHandler {
     public JPopupMenu createAddressPopup() {
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem mOpenInNewTab = new JMenuItem(App.getCONTEXT().getBundle().getString("open_new_tab"));
-        JMenuItem mCopyPath = new JMenuItem(App.getCONTEXT().getBundle().getString("copy_path"));
+        JMenuItem mCopyPathAddressPopup = new JMenuItem(App.getCONTEXT().getBundle().getString("copy_path"));
         JMenuItem mOpenInTerminal = new JMenuItem(App.getCONTEXT().getBundle().getString("open_in_terminal"));
         JMenuItem mBookmark = new JMenuItem(App.getCONTEXT().getBundle().getString("bookmark"));
         popupMenu.add(mOpenInNewTab);
-        popupMenu.add(mCopyPath);
+        popupMenu.add(mCopyPathAddressPopup);
         popupMenu.add(mOpenInTerminal);
         popupMenu.add(mBookmark);
 
@@ -733,7 +745,7 @@ public class SshMenuHandler {
             this.openFolderInTerminal(path);
         });
 
-        mCopyPath.addActionListener(e -> {
+        mCopyPathAddressPopup.addActionListener(e -> {
             String path = popupMenu.getName();
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(path), null);
         });
@@ -769,11 +781,11 @@ public class SshMenuHandler {
             AtomicBoolean stopFlag = new AtomicBoolean(false);
             fileBrowser.disableUi(stopFlag);
             try {
-                if (!archiveOperation.extractArchive(fileBrowserView.getSshClient(), archive, folder, stopFlag)) {
-                    if (!fileBrowser.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
-                    }
+                if (!archiveOperation.extractArchive(fileBrowserView.getSshClient(), archive, folder, stopFlag)
+                    && !fileBrowser.isSessionClosed()) {
+                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
                 }
+
                 fileBrowserView.render(currentFolder);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -786,10 +798,8 @@ public class SshMenuHandler {
             AtomicBoolean stopFlag = new AtomicBoolean(false);
             fileBrowser.disableUi(stopFlag);
             try {
-                if (!archiveOperation.createArchive(fileBrowserView.getSshClient(), files, folder, stopFlag)) {
-                    if (!fileBrowser.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
-                    }
+                if (!archiveOperation.createArchive(fileBrowserView.getSshClient(), files, folder, stopFlag) && !fileBrowser.isSessionClosed()) {
+                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
                 }
                 fileBrowserView.render(currentFolder);
             } catch (Exception e) {
@@ -799,27 +809,19 @@ public class SshMenuHandler {
     }
 
     private void downloadFiles(FileInfo[] files, String currentDirectory) {
-        FileSystem localFileSystem = null;
         String currentPath;
         if (fileBrowser.getLeftTabs().getSelectedContent() instanceof LocalFileBrowserView) {
             var localFileBrowserView = ((LocalFileBrowserView) fileBrowser.getLeftTabs().getSelectedContent());
             currentPath = localFileBrowserView.getPathText();
-            localFileSystem = localFileBrowserView.getFileSystem();
         } else if (fileBrowser.getRightTabs().getSelectedContent() instanceof LocalFileBrowserView) {
             var localFileBrowserView = ((LocalFileBrowserView) fileBrowser.getRightTabs().getSelectedContent());
             currentPath = localFileBrowserView.getPathText();
-            localFileSystem = localFileBrowserView.getFileSystem();
         } else {
             throw new IllegalStateException("Can't Download Files");
         }
 
         try {
-            if (App.getGlobalSettings().getFileTransferMode() == TransferMode.BACKGROUND) {
-                fileBrowser.getHolder().downloadInBackground(files, currentPath, App.getGlobalSettings().getConflictAction());
-                return;
-            }
-            fileBrowser.newFileTransfer(this.fileBrowser.getSSHFileSystem(), localFileSystem, files, currentPath, localFileSystem.hashCode(),
-                                        App.getGlobalSettings().getConflictAction(), this.fileBrowser.getSessionInstance());
+            fileBrowser.getHolder().downloadInBackground(files, currentPath, App.getGlobalSettings().getConflictAction());
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

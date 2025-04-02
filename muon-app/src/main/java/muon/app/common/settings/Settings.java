@@ -27,9 +27,10 @@ public class Settings {
     public static final String CLEAR_BUFFER = "Clear buffer";
     public static final String FIND_KEY = "Find";
     private boolean usingMasterPassword = false;
-    private TransferMode fileTransferMode = TransferMode.NORMAL;
+    private TransferMode fileTransferMode = TransferMode.BACKGROUND;
     private ConflictAction conflictAction = ConflictAction.AUTORENAME;
     private boolean confirmBeforeDelete = true;
+    private boolean enabledK8sContextPlugin = false;
     private boolean startMaximized = true;
     private boolean confirmBeforeMoveOrCopy = false;
     private boolean showHiddenFilesByDefault = false;
@@ -113,13 +114,7 @@ public class Settings {
 
     @JsonSetter("fileTransferMode")
     public void setOldFileTransferMode(String s) {
-        if (s == null || s.equalsIgnoreCase("normal")) {
-            fileTransferMode = TransferMode.NORMAL;
-        } else if (s.equalsIgnoreCase("prompt")) {
-            fileTransferMode = TransferMode.NORMAL;
-        } else {
-            fileTransferMode = TransferMode.BACKGROUND;
-        }
+        fileTransferMode = TransferMode.BACKGROUND;
     }
 
     @JsonSetter("conflictAction")

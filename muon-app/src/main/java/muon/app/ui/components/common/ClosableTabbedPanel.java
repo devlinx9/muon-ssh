@@ -101,13 +101,18 @@ public class ClosableTabbedPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (body instanceof ClosableTabContent) {
                     ClosableTabContent closableTabContent = (ClosableTabContent) body;
-                    if (closableTabContent.close()) {
-                        log.debug("Closing...");
-                        for (int i = 0; i < tabHolder.getComponentCount(); i++) {
-                            JComponent c = (JComponent) tabHolder.getComponent(i);
-                            if (c == titleComponent) {
-                                removeTabAt(i, titleComponent);
-                                break;
+                    if (!App.getGlobalSettings().isConfirmBeforeTerminalClosing()
+                        || JOptionPane.showConfirmDialog(App.getAppWindow(), App.getCONTEXT()
+                            .getBundle()
+                            .getString("disconnect_session")) == JOptionPane.YES_OPTION) {
+                        if (closableTabContent.close()) {
+                            log.debug("Closing...");
+                            for (int i = 0; i < tabHolder.getComponentCount(); i++) {
+                                JComponent c = (JComponent) tabHolder.getComponent(i);
+                                if (c == titleComponent) {
+                                    removeTabAt(i, titleComponent);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -266,9 +271,7 @@ public class ClosableTabbedPanel extends JPanel {
         boolean selected;
         Component component;
 
-        /**
-         *
-         */
+
         public TabTitleComponent(boolean closable) {
             super(new BorderLayout());
             setBorder(
