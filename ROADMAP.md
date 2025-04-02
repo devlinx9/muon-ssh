@@ -5,9 +5,16 @@ Welcome to the project **MuonSSH** roadmap!
 This document outlines the current status, upcoming releases, and future plans for the project. We encourage everyone to participate, share ideas, and contribute to the development process.
 
 ---
+## Current tasks: **v3.0.0**
 
+### Known Issues:
+- [x] [#84](https://github.com/devlinx9/muon-ssh/issues/84): Scroll in vi or nano not work (jediterm support)
 
-## Current tasks: **v2.4.0**
+### Features:
+- [x] K8s current context plugin
+- [ ] Local term
+
+## Tasks: **v2.4.0**
 
 ### Known Issues:
 - [x] [#73](https://github.com/devlinx9/muon-ssh/issues/73): Create new Top level folder
@@ -28,12 +35,9 @@ This document outlines the current status, upcoming releases, and future plans f
 ---
 
 ## Future tasks
-
 - Rewrite core modules for better maintainability.
 - Fixes in UI management
-- Local terminal
-- Jediterm xterm support
-- K8s support
+- Disable UpdateChecker when muon is installed with snap 
 - Java 21
 
 ---

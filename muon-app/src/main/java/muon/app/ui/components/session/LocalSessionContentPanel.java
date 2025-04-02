@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.common.DisabledPanel;
-import muon.app.ui.components.session.files.transfer.TransferProgressPanel;
 import muon.app.ui.components.session.terminal.LocalTerminalHolder;
 import muon.app.util.LayoutUtilities;
 
@@ -13,8 +12,6 @@ import javax.swing.*;
 import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -23,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j
 public class LocalSessionContentPanel extends JPanel implements PageHolder, ISessionContentPanel {
     public static final String PAGE_ID = "pageId";
-    public final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
     @Getter
     private final SessionInfo info;
@@ -31,10 +27,7 @@ public class LocalSessionContentPanel extends JPanel implements PageHolder, ISes
     private final JPanel cardPanel;
     private final JRootPane rootPane;
     private final DisabledPanel disabledPanel;
-    private final TransferProgressPanel progressPanel = new TransferProgressPanel();
     private final TabbedPage[] pages;
-    //    public final FileBrowser fileBrowser;
-//    private final LogViewer logViewer;
     private final LocalTerminalHolder terminalHolder;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
@@ -44,12 +37,9 @@ public class LocalSessionContentPanel extends JPanel implements PageHolder, ISes
         this.disabledPanel = new DisabledPanel();
         Box contentTabs = Box.createHorizontalBox();
         contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
-
-//        fileBrowser = new FileBrowser(info, this, null, this.hashCode());
-//        logViewer = new LogViewer(this);
         terminalHolder = new LocalTerminalHolder();
 
-        Page[] pageArr = getPages();
+        Page[] pageArr = new Page[]{terminalHolder};
 
         this.cardLayout = new CardLayout();
         this.cardPanel = new JPanel(this.cardLayout);
@@ -80,25 +70,6 @@ public class LocalSessionContentPanel extends JPanel implements PageHolder, ISes
         this.add(this.rootPane);
 
         showPage(this.pages[0].getId());
-    }
-
-    private Page[] getPages() {
-//        DiskspaceAnalyzer diskspaceAnalyzer = new DiskspaceAnalyzer(this);
-//        SearchPanel searchPanel = new SearchPanel(this);
-//        ProcessViewer processViewer = new ProcessViewer(this);
-//        UtilityPage utilityPage = new UtilityPage(this);
-
-//        Page[] pageArr;
-//        if (App.getGlobalSettings().isFirstFileBrowserView()) {
-//            pageArr = new Page[]{fileBrowser, terminalHolder, logViewer, searchPanel, diskspaceAnalyzer,
-//                                 processViewer, utilityPage};
-//        } else {
-//            pageArr = new Page[]{terminalHolder, fileBrowser, logViewer, searchPanel, diskspaceAnalyzer,
-//                                 processViewer, utilityPage};
-//        }
-
-        Page[] pageArr = new Page[]{terminalHolder};
-        return pageArr;
     }
 
     @Override
