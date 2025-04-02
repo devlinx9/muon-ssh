@@ -88,14 +88,14 @@ public class KubeContextSelectorPanel extends JPanel {
         Font labelFont = baseFont.deriveFont(isCurrent ? Font.BOLD : Font.PLAIN, 14f);
         label.setFont(labelFont);
 
-        label.setForeground(isCurrent ? new Color(0, 102, 204) : Color.DARK_GRAY);
+        label.setForeground(isCurrent ? App.getCONTEXT().getSkin().getDefaultSelectionForeground() : App.getCONTEXT().getSkin().getDefaultForeground());
 
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         label.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
 
         label.setOpaque(true);
-        label.setBackground(isCurrent ? new Color(235, 245, 255) : Color.WHITE);
+        label.setBackground(isCurrent ? App.getCONTEXT().getSkin().getDefaultSelectionBackground() : App.getCONTEXT().getSkin().getDefaultBackground());
 
 
         // Add a click handler to switch context
