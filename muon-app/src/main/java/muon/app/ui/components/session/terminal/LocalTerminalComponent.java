@@ -117,7 +117,7 @@ public class LocalTerminalComponent extends JPanel implements ClosableTabContent
 
     @Override
     public String toString() {
-        return "Terminal " + this.name;
+        return "(Local) Terminal " + this.name;
     }
 
     @Override
