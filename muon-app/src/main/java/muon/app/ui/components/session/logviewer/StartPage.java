@@ -152,9 +152,7 @@ public class StartPage extends JPanel {
 
     static class PinnedLogsRenderer extends JLabel
             implements ListCellRenderer<String> {
-        /**
-         *
-         */
+        
         public PinnedLogsRenderer() {
             setOpaque(true);
             setBorder(new CompoundBorder(

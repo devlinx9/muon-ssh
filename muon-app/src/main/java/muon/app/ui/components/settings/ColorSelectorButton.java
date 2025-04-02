@@ -1,6 +1,7 @@
 
 package muon.app.ui.components.settings;
 
+import com.jediterm.core.Color;
 import lombok.Getter;
 import muon.app.App;
 
@@ -18,7 +19,7 @@ import java.awt.event.MouseEvent;
 @Getter
 public class ColorSelectorButton extends JLabel {
 
-    private Color color;
+    private java.awt.Color color;
 
     public ColorSelectorButton() {
         setBorder(new CompoundBorder(
@@ -31,10 +32,11 @@ public class ColorSelectorButton extends JLabel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Color pColor = JColorChooser.showDialog(null, "Select color",
-                                                        getColor());
+                java.awt.Color pColor = JColorChooser.showDialog(null, "Select color",
+                                                                 getColor());
                 if (color != null) {
-                    setColor(pColor);
+                    Color jeditermColor = new Color(pColor.getRGB());
+                    setColor(jeditermColor);
                 }
             }
         });
@@ -59,8 +61,9 @@ public class ColorSelectorButton extends JLabel {
      * @param color the color to set
      */
     public void setColor(Color color) {
-        this.setBackground(color);
-        this.color = color;
+        java.awt.Color awtColor = new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+        this.setBackground(awtColor);
+        this.color = awtColor;
     }
 
 }

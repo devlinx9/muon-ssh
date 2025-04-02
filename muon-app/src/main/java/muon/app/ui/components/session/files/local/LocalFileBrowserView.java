@@ -66,6 +66,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
         });
     }
 
+    @Override
     public void createAddressBar() {
         addressBar = new AddressBar(File.separatorChar, e -> {
             String selectedPath = e.getActionCommand();
@@ -86,10 +87,12 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
         return "Local files [" + this.path + "]";
     }
 
+    @Override
     public String getHostText() {
         return "Local files";
     }
 
+    @Override
     public String getPathText() {
         return (this.path == null || this.path.isEmpty() ? "" : this.path);
     }
@@ -126,6 +129,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
 
     @Override
     public void openApp(FileInfo file) {
+        log.debug("openApp {}", file);
     }
 
     @Override
@@ -134,6 +138,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
         return true;
     }
 
+    @Override
     protected void up() {
         String s = new File(path).getParent();
         if (s != null) {
@@ -142,6 +147,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
         }
     }
 
+    @Override
     protected void home() {
         addBack(path);
         render(null);
@@ -149,9 +155,10 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
 
     @Override
     public void install(JComponent c) {
-
+        log.debug("install {}", c);
     }
 
+    @Override
     public boolean handleDrop(DndTransferData transferData) {
         log.info("### {} {}", transferData.getSource(), this.hashCode());
         if (transferData.getSource() == this.hashCode()) {
@@ -160,6 +167,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
         return this.fileBrowser.handleLocalDrop(transferData, fileBrowser.getInfo(), this.fs, this.path);
     }
 
+    @Override
     public FileSystem getFileSystem() {
         return new LocalFileSystem();
     }

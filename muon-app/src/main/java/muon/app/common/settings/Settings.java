@@ -27,9 +27,10 @@ public class Settings {
     public static final String CLEAR_BUFFER = "Clear buffer";
     public static final String FIND_KEY = "Find";
     private boolean usingMasterPassword = false;
-    private TransferMode fileTransferMode = TransferMode.NORMAL;
+    private TransferMode fileTransferMode = TransferMode.BACKGROUND;
     private ConflictAction conflictAction = ConflictAction.AUTORENAME;
     private boolean confirmBeforeDelete = true;
+    private boolean enabledK8sContextPlugin = false;
     private boolean startMaximized = true;
     private boolean confirmBeforeMoveOrCopy = false;
     private boolean showHiddenFilesByDefault = false;
@@ -51,12 +52,12 @@ public class Settings {
     private int logViewerLinesPerPage = 50;
     private int sysloadRefreshInterval = 3;
     private boolean puttyLikeCopyPaste = false;
-    private String terminalType = "ansi";
+    private String terminalType = "xterm-256color";
     private boolean confirmBeforeTerminalClosing = true;
     private int termWidth = 80;
     private int termHeight = 24;
     private boolean terminalBell = false;
-    private String terminalFontName = "NotoMono-Regular";
+    private String terminalFontName = "FiraCode-Regular";
     private int terminalFontSize = 14;
     private Language language = Language.ENGLISH;
     private String terminalTheme = "Dark";
@@ -113,13 +114,7 @@ public class Settings {
 
     @JsonSetter("fileTransferMode")
     public void setOldFileTransferMode(String s) {
-        if (s == null || s.equalsIgnoreCase("normal")) {
-            fileTransferMode = TransferMode.NORMAL;
-        } else if (s.equalsIgnoreCase("prompt")) {
-            fileTransferMode = TransferMode.NORMAL;
-        } else {
-            fileTransferMode = TransferMode.BACKGROUND;
-        }
+        fileTransferMode = TransferMode.BACKGROUND;
     }
 
     @JsonSetter("conflictAction")

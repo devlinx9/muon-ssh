@@ -1,7 +1,6 @@
 
 package muon.app.ui.components.session;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.AppWindow;
@@ -23,12 +22,9 @@ import static muon.app.util.Constants.SMALL_TEXT_SIZE;
 public class SessionListPanel extends JPanel {
     private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
     private static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
-    private final DefaultListModel<SessionContentPanel> sessionListModel;
-    private final JList<SessionContentPanel> sessionList;
+    private final DefaultListModel<ISessionContentPanel> sessionListModel;
+    private final JList<ISessionContentPanel> sessionList;
     private final AppWindow window;
-    @Getter
-    private SessionContentPanel selected;
-
 
     public SessionListPanel(AppWindow window) {
         super(new BorderLayout());
@@ -116,16 +112,23 @@ public class SessionListPanel extends JPanel {
         sessionList.setSelectedIndex(0);
     }
 
+
+    public void createLocalSession() {
+        LocalSessionContentPanel panel = new LocalSessionContentPanel(null);
+        sessionListModel.insertElementAt(panel, 0);
+        sessionList.setSelectedIndex(0);
+    }
+
     public void selectSession(int index) {
-        selected = sessionListModel.get(index);
-        window.showSession(selected);
+        window.showSession(sessionListModel.get(index));
         window.revalidate();
         window.repaint();
     }
 
     public void removeSession(int index) {
-        if (JOptionPane.showConfirmDialog(window, App.getCONTEXT().getBundle().getString("disconnect_session")) == JOptionPane.YES_OPTION) {
-            SessionContentPanel sessionContentPanel = sessionListModel.get(index);
+        if (!App.getGlobalSettings().isConfirmBeforeTerminalClosing() ||
+            JOptionPane.showConfirmDialog(window, App.getCONTEXT().getBundle().getString("disconnect_session")) == JOptionPane.YES_OPTION) {
+            ISessionContentPanel sessionContentPanel = sessionListModel.get(index);
             sessionContentPanel.close();
             window.removeSession(sessionContentPanel);
             window.revalidate();
@@ -142,9 +145,9 @@ public class SessionListPanel extends JPanel {
         }
     }
 
-    public SessionContentPanel getSessionContainer(int activeSessionId) {
+    public ISessionContentPanel getSessionContainer(int activeSessionId) {
         for (int i = 0; i < sessionListModel.size(); i++) {
-            SessionContentPanel scp = sessionListModel.get(i);
+            ISessionContentPanel scp = sessionListModel.get(i);
             if (scp.getActiveSessionId() == activeSessionId) {
                 return scp;
             }
@@ -152,7 +155,7 @@ public class SessionListPanel extends JPanel {
         return null;
     }
 
-    public static final class SessionListRenderer implements ListCellRenderer<SessionContentPanel> {
+    public static final class SessionListRenderer implements ListCellRenderer<ISessionContentPanel> {
 
         private final JPanel panel;
         private final JLabel lblIcon;
@@ -160,9 +163,7 @@ public class SessionListPanel extends JPanel {
         private final JLabel lblHost;
         private final JLabel lblClose;
 
-        /**
-         *
-         */
+
         public SessionListRenderer() {
             lblIcon = new JLabel();
             lblText = new JLabel();
@@ -199,10 +200,16 @@ public class SessionListPanel extends JPanel {
         }
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends SessionContentPanel> list,
-                                                      SessionContentPanel value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends ISessionContentPanel> list,
+                                                      ISessionContentPanel value, int index, boolean isSelected, boolean cellHasFocus) {
 
             SessionInfo info = value.getInfo();
+
+            if (value instanceof LocalSessionContentPanel) {
+                info = new SessionInfo();
+                info.setHost("Localhost");
+                info.setName("Local Terminal");
+            }
 
             lblText.setText(info.getName());
             lblHost.setText(info.getHost());

@@ -20,7 +20,6 @@ import muon.app.ui.components.session.files.view.DndTransferData;
 import muon.app.util.FontAwesomeContants;
 import muon.app.util.enums.ConflictAction;
 import muon.app.util.enums.PanelOrientation;
-import muon.app.util.enums.TransferMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 
 
 @Slf4j
@@ -53,8 +51,6 @@ public class FileBrowser extends Page {
     private final List<AbstractFileBrowserView> viewList = new ArrayList<>();
     private FileTransfer ongoingFileTransfer;
     private boolean leftPopup = false;
-    private JLabel lblStat1;
-    private Box statusBox;
 
     public FileBrowser(SessionInfo info, SessionContentPanel holder, JRootPane rootPane, int activeSessionId) {
         this.activeSessionId = activeSessionId;
@@ -274,7 +270,6 @@ public class FileBrowser extends Page {
     }
 
     public boolean selectTransferModeAndConflictAction(ResponseHolder holder) {
-        holder.transferMode = App.getGlobalSettings().getFileTransferMode();
         holder.conflictAction = App.getGlobalSettings().getConflictAction();
         return true;
     }
@@ -302,16 +297,8 @@ public class FileBrowser extends Page {
             }
 
             if (info != null && info.hashCode() == sessionHashCode) {
-                if (holder.transferMode == TransferMode.BACKGROUND) {
-                    this.getHolder().downloadInBackground(transferData.getFiles(), currentPath, holder.conflictAction);
-                    return true;
-                }
-                FileSystem sourceFs = this.getSSHFileSystem();
-                if (sourceFs == null) {
-                    return false;
-                }
-                this.newFileTransfer(sourceFs, currentFileSystem, transferData.getFiles(), currentPath, this.hashCode(),
-                                     holder.conflictAction, this.getSessionInstance());
+                this.getHolder().downloadInBackground(transferData.getFiles(), currentPath, holder.conflictAction);
+                return true;
             }
             return true;
         } catch (Exception e) {
@@ -340,7 +327,6 @@ public class FileBrowser extends Page {
     }
 
     public static class ResponseHolder {
-        public TransferMode transferMode;
         public ConflictAction conflictAction;
     }
 }

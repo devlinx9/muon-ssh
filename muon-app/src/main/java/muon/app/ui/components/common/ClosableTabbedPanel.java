@@ -13,6 +13,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.util.function.Consumer;
 
 import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
@@ -100,13 +101,18 @@ public class ClosableTabbedPanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 if (body instanceof ClosableTabContent) {
                     ClosableTabContent closableTabContent = (ClosableTabContent) body;
-                    if (closableTabContent.close()) {
-                        log.debug("Closing...");
-                        for (int i = 0; i < tabHolder.getComponentCount(); i++) {
-                            JComponent c = (JComponent) tabHolder.getComponent(i);
-                            if (c == titleComponent) {
-                                removeTabAt(i, titleComponent);
-                                break;
+                    if (!App.getGlobalSettings().isConfirmBeforeTerminalClosing()
+                        || JOptionPane.showConfirmDialog(App.getAppWindow(), App.getCONTEXT()
+                            .getBundle()
+                            .getString("disconnect_session")) == JOptionPane.YES_OPTION) {
+                        if (closableTabContent.close()) {
+                            log.debug("Closing...");
+                            for (int i = 0; i < tabHolder.getComponentCount(); i++) {
+                                JComponent c = (JComponent) tabHolder.getComponent(i);
+                                if (c == titleComponent) {
+                                    removeTabAt(i, titleComponent);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -255,7 +261,7 @@ public class ClosableTabbedPanel extends JPanel {
 
     @Setter
     @Getter
-    public static class TabTitle {
+    public static class TabTitle implements Serializable {
         private Consumer<String> callback;
     }
 
@@ -265,9 +271,7 @@ public class ClosableTabbedPanel extends JPanel {
         boolean selected;
         Component component;
 
-        /**
-         *
-         */
+
         public TabTitleComponent(boolean closable) {
             super(new BorderLayout());
             setBorder(
