@@ -26,7 +26,6 @@ apps:
       FONTCONFIG_FILE: ${SNAP}/etc/fonts/fonts.conf
       JAVA_HOME: ${SNAP}/usr/lib/jvm/java-17-openjdk-amd64
       PATH: ${SNAP}/usr/bin:${JAVA_HOME}/bin:$PATH
-    plugs: [x11, ssh-keys, network, desktop, home, network-bind]
 
 parts:
   muon-ssh:
