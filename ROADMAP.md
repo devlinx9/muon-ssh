@@ -14,6 +14,7 @@ This document outlines the current status, upcoming releases, and future plans f
 - [x] K8s current context plugin
 - [x] Change terminal tab name
 - [x] Local term
+- [x] Disabling normal transfer files
 
 ## Tasks: **v2.4.0**
 

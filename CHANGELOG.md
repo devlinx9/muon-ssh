@@ -1,5 +1,26 @@
 # Changelog
 
+## [v3.0.0] - 2025-04-03
+
+### Added
+- Local Terminal
+- Change name in terminal tab
+- Kubernetes context selector plugin
+
+### Fixed
+- Open in local file browser view
+- Freeze muon window when open a new connection
+- Russian language fixes (@K-Faktor)
+- Retrieve the name when renaming option is selected in filebrowser
+
+### Removed
+- Normal transfer file option
+
+### Developer Changes
+- Updated libraries.
+- Package reorganization and some code cleanup and optimization.
+- Jediterm repo creation
+
 ## [v2.4.0] - 2025-02-26
 
 ### Added
