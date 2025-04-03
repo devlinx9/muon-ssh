@@ -13,6 +13,7 @@ import muon.app.ssh.SSHRemoteFileInputStream;
 import muon.app.ssh.SSHRemoteFileOutputStream;
 import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.session.SessionExportImport;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 import muon.app.util.SudoUtils;
 import muon.app.util.enums.ConflictAction;
@@ -134,13 +135,13 @@ public class FileTransfer implements Runnable, AutoCloseable {
                         JTextArea tmpFilePath = new JTextArea(5, 20);
                         tmpFilePath.setText("Files copied in " + tmpDir + " due to permission issues");
                         tmpFilePath.setEnabled(true);
-                        JOptionPane.showMessageDialog(null, tmpFilePath, App.bundle.getString("copied_temp_directory"), JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(null, tmpFilePath, App.getCONTEXT().getBundle().getString("copied_temp_directory"), JOptionPane.WARNING_MESSAGE);
                     }
 
                     if (!App.getGlobalSettings().isPromptForSudo() ||
                         JOptionPane.showConfirmDialog(null,
-                                                      App.bundle.getString("permission_denied_file"),
-                                                      App.bundle.getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                                      App.getCONTEXT().getBundle().getString("permission_denied_file"),
+                                                      App.getCONTEXT().getBundle().getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
                         if (!App.getGlobalSettings().isTransferTemporaryDirectory()) {
                             targetFs.mkdir(tmpDir);
@@ -256,10 +257,9 @@ public class FileTransfer implements Runnable, AutoCloseable {
 
             JComboBox<ConflictAction> cmbs = SessionExportImport.getUserConflictAction();
 
-            if (JOptionPane.showOptionDialog(null,
-                                             new Object[]{App.bundle.getString("some_file_exists_action_required"), cmbs},
-                                             App.bundle.getString("action_required"), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                                             null) == JOptionPane.YES_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(null,
+                                                 new Object[]{App.getCONTEXT().getBundle().getString("some_file_exists_action_required"), cmbs},
+                                                 App.getCONTEXT().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
                 action = (ConflictAction) cmbs.getSelectedItem();
             }
         }

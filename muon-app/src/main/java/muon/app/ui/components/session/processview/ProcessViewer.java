@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.processview;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -31,9 +29,7 @@ public class ProcessViewer extends Page {
     private final AtomicBoolean processListLoaded = new AtomicBoolean(false);
     private ProcessListPanel processListPanel;
 
-    /**
-     *
-     */
+    
     public ProcessViewer(SessionContentPanel holder) {
         super(new BorderLayout());
         this.holder = holder;
@@ -51,9 +47,7 @@ public class ProcessViewer extends Page {
         }
     }
 
-    /**
-     *
-     */
+    
     private void createUI() {
         processListPanel = new ProcessListPanel(this::runCommand);
         processListPanel.setMinimumSize(new Dimension(10, 10));
@@ -67,7 +61,7 @@ public class ProcessViewer extends Page {
 
     @Override
     public String getText() {
-        return bundle.getString("processes");
+        return App.getCONTEXT().getBundle().getString("processes");
     }
 
     private void updateProcessList(AtomicBoolean stopFlag) {
@@ -92,7 +86,7 @@ public class ProcessViewer extends Page {
                         if (holder.getRemoteSessionInstance().exec(cmd, stopFlag, new StringBuilder(),
                                                                    new StringBuilder()) != 0) {
                             if (!holder.isSessionClosed()) {
-                                JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
                             }
                         } else {
                             updateProcessList(stopFlag);
@@ -109,7 +103,7 @@ public class ProcessViewer extends Page {
                 holder.EXECUTOR.execute(() -> {
                     if (SudoUtils.runSudo(cmd, holder.getRemoteSessionInstance(), holder.getInfo().getPassword()) != 0) {
                         if (!holder.isSessionClosed()) {
-                            JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                            JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
                         }
                     } else {
                         updateProcessList(stopFlag);

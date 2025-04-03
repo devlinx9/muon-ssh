@@ -17,7 +17,6 @@ import muon.app.util.PathUtils;
 import muon.app.util.enums.DndSourceType;
 import muon.app.util.enums.PanelOrientation;
 import muon.app.util.enums.TransferAction;
-import muon.app.util.enums.TransferMode;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -26,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static muon.app.App.bundle;
 
 @Slf4j
 public class SshFileBrowserView extends AbstractFileBrowserView {
@@ -206,7 +204,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
     public boolean handleDrop(DndTransferData transferData) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-            && JOptionPane.showConfirmDialog(null, bundle.getString("move_copy_files")) != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(null, App.getCONTEXT().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
             return false;
         }
         try {
@@ -228,14 +226,9 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                 if (!this.fileBrowser.selectTransferModeAndConflictAction(holder)) {
                     return false;
                 }
-                if (holder.transferMode == TransferMode.BACKGROUND) {
-                    this.fileBrowser.getHolder().uploadInBackground(transferData.getFiles(), this.path,
-                                                                    holder.conflictAction);
-                    return true;
-                }
-                FileSystem targetFs = this.fileBrowser.getSSHFileSystem();
-                this.fileBrowser.newFileTransfer(sourceFs, targetFs, transferData.getFiles(), this.path,
-                                                 this.hashCode(), holder.conflictAction, null);
+                this.fileBrowser.getHolder().uploadInBackground(transferData.getFiles(), this.path,
+                                                                holder.conflictAction);
+                return true;
             } else if (sourceFs instanceof SshFileSystem && (sourceFs == this.fileBrowser.getSSHFileSystem())) {
                 log.info("SshFs is of same instance: {}", sourceFs == this.fileBrowser.getSSHFileSystem());
                 if (transferData.getFiles().length > 0) {
@@ -250,7 +243,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                         pwd += "/";
                     }
                     if (parent.equals(pwd)) {
-                        JOptionPane.showMessageDialog(null, bundle.getString("same_directory"));
+                        JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("same_directory"));
                         return false;
                     }
                 }

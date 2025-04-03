@@ -3,10 +3,11 @@ package muon.app.ui;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.session.SessionContentPanel;
+import muon.app.ui.components.session.ISessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.SessionListPanel;
 import muon.app.ui.components.session.dialog.NewSessionDlg;
+import muon.app.ui.components.session.files.ssh.KubeContextSelectorPanel;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
 import muon.app.ui.components.session.files.transfer.BackgroundTransferPanel;
 import muon.app.ui.components.settings.SettingsDialog;
@@ -29,7 +30,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
-import static muon.app.App.bundle;
 import static muon.app.util.Constants.*;
 
 /**
@@ -37,10 +37,14 @@ import static muon.app.util.Constants.*;
  */
 @Slf4j
 public class AppWindow extends JFrame {
+
+    private final String updateUrl = BASE_UPDATE_URL + "/check-update.html?v="
+                                     + App.getCONTEXT().getVersion().getNumericValue();
     private final CardLayout sessionCard = new CardLayout();
     private final JPanel cardPanel = new JPanel(sessionCard, true);
     private final BackgroundTransferPanel uploadPanel;
     private final BackgroundTransferPanel downloadPanel;
+    private final KubeContextSelectorPanel kubeContextSelectorPanel;
     private final Component bottomPanel;
 
     @Getter
@@ -48,6 +52,8 @@ public class AppWindow extends JFrame {
 
     private JLabel lblUploadCount;
     private JLabel lblDownloadCount;
+    @Getter
+    private JLabel lblK8sContext;
     private JPopupMenu popup;
     private JLabel lblUpdate;
     private JLabel lblUpdateText;
@@ -61,6 +67,7 @@ public class AppWindow extends JFrame {
         this.add(createSessionPanel(), BorderLayout.WEST);
         this.add(this.cardPanel);
 
+        this.kubeContextSelectorPanel = new KubeContextSelectorPanel();
         this.bottomPanel = createBottomPanel();
         this.add(this.bottomPanel, BorderLayout.SOUTH);
 
@@ -146,37 +153,72 @@ public class AppWindow extends JFrame {
         }
     }
 
+    private void createLocalSessionPanel() {
+        sessionListPanel.createLocalSession();
+    }
+
+
     private JPanel createSessionPanel() {
         JButton btnNew = new JButton(FontAwesomeContants.FA_TELEVISION);
-        btnNew.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
+        btnNew.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
         btnNew.addActionListener(e -> this.createFirstSessionPanel());
-        btnNew.setToolTipText(bundle.getString("new_connection"));
+        btnNew.setToolTipText(App.getCONTEXT().getBundle().getString("new_connection"));
 
         JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
-        btnToggle.setFont(App.SKIN.getIconFont().deriveFont(14.0f));
+        btnToggle.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+
+        JButton btnLocalTerm = new JButton(FontAwesomeContants.FA_TERMINAL);
+        btnLocalTerm.addActionListener(e -> this.createLocalSessionPanel());
+        btnLocalTerm.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+
+        // Calculate the maximum width and height between the two buttons
+        Dimension sizeNew = btnNew.getPreferredSize();
+        Dimension sizeToggle = btnToggle.getPreferredSize();
+
+        int maxWidth = Math.max(sizeNew.width, sizeToggle.width);
+        int maxHeight = Math.max(sizeNew.height, sizeToggle.height);
+
+        // Create a new Dimension with the maximum width and height
+        Dimension maxSize = new Dimension(maxWidth, maxHeight);
+
+        // Set the preferred, minimum, and maximum size for both buttons
+        btnNew.setPreferredSize(maxSize);
+        btnNew.setMinimumSize(maxSize);
+        btnNew.setMaximumSize(maxSize);
+
+        btnToggle.setPreferredSize(maxSize);
+        btnToggle.setMinimumSize(maxSize);
+        btnToggle.setMaximumSize(maxSize);
+
+        btnLocalTerm.setPreferredSize(maxSize);
+        btnLocalTerm.setMinimumSize(maxSize);
+        btnLocalTerm.setMaximumSize(maxSize);
 
         JPanel topBox = new JPanel();
         topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
         topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
+        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
         topBox.add(btnToggle);
-        topBox.add(Box.createRigidArea(new Dimension(10, 10)));
+        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
         topBox.add(btnNew);
+        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        topBox.add(btnLocalTerm);
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.SKIN.getDefaultBorderColor()));
+        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         sessionListPanel = new SessionListPanel(this);
         panel.add(topBox, BorderLayout.NORTH);
         panel.add(sessionListPanel, BorderLayout.CENTER);
 
         btnToggle.addActionListener(e -> {
-            boolean isVisible = btnNew.isVisible();
+            boolean isVisible = sessionListPanel.isVisible();
+            topBox.setLayout(new BoxLayout(topBox, BoxLayout.Y_AXIS));
             sessionListPanel.setVisible(!isVisible);
-            btnNew.setVisible(!isVisible);
             topBox.setBorder(null);
 
             if (!isVisible) {
+                topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
                 topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
-
             }
 
             btnToggle.setText(isVisible ? FontAwesomeContants.FA_ANGLE_DOUBLE_RIGHT : FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
@@ -191,34 +233,29 @@ public class AppWindow extends JFrame {
     }
 
 
-    /**
-     *
-     */
-    public void showSession(SessionContentPanel sessionContentPanel) {
-        cardPanel.add(sessionContentPanel, sessionContentPanel.hashCode() + "");
+    public void showSession(ISessionContentPanel sessionContentPanel) {
+        cardPanel.add((Component) sessionContentPanel, sessionContentPanel.hashCode() + "");
         sessionCard.show(cardPanel, sessionContentPanel.hashCode() + "");
         revalidate();
         repaint();
     }
 
-    /**
-     *
-     */
-    public void removeSession(SessionContentPanel sessionContentPanel) {
-        cardPanel.remove(sessionContentPanel);
+
+    public void removeSession(ISessionContentPanel sessionContentPanel) {
+        cardPanel.remove((Component) sessionContentPanel);
         revalidate();
         repaint();
     }
 
     private Component createBottomPanel() {
         popup = new JPopupMenu();
-        popup.setBorder(new LineBorder(App.SKIN.getDefaultBorderColor(), 1));
+        popup.setBorder(new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor(), 1));
         popup.setPreferredSize(new Dimension(400, 500));
 
         Box b1 = Box.createHorizontalBox();
         b1.setOpaque(true);
-        b1.setBackground(App.SKIN.getTableBackgroundColor());
-        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.SKIN.getDefaultBorderColor()),
+        b1.setBackground(App.getCONTEXT().getSkin().getTableBackgroundColor());
+        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
                                         new EmptyBorder(5, 5, 5, 5)));
         b1.add(createSpacer(10, 10));
         b1.add(createBrandLabel());
@@ -227,10 +264,16 @@ public class AppWindow extends JFrame {
         b1.add(createRepositoryLabel());
         b1.add(Box.createHorizontalGlue());
 
+        if (App.getGlobalSettings().isEnabledK8sContextPlugin() && kubeContextSelectorPanel.isCommandWorking()) {
+            createK8sLabel(kubeContextSelectorPanel.getCurrentContext());
+            b1.add(lblK8sContext);
+            b1.add(createSpacer(5, 15));
+        }
+
         JLabel lblUpload = createUploadLabel();
         b1.add(lblUpload);
         b1.add(createSpacer(5, 10));
-        createUploadLabelCount(lblUpload);
+        createUploadLabelCount();
 
         b1.add(lblUploadCount);
         b1.add(createSpacer(10, 10));
@@ -238,7 +281,7 @@ public class AppWindow extends JFrame {
         JLabel lblDownload = createDownloadLabel();
         b1.add(lblDownload);
         b1.add(createSpacer(5, 10));
-        createDownloadCountLabel(lblDownload);
+        createDownloadCountLabel();
         b1.add(lblDownloadCount);
 
         b1.add(createSpacer(10, 10));
@@ -278,7 +321,7 @@ public class AppWindow extends JFrame {
     }
 
     private void createUpdateTextLabel() {
-        lblUpdateText = new JLabel(bundle.getString("chk_update"));
+        lblUpdateText = new JLabel(App.getCONTEXT().getBundle().getString("chk_update"));
         lblUpdateText.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblUpdateText.addMouseListener(new MouseAdapter() {
             @Override
@@ -302,13 +345,13 @@ public class AppWindow extends JFrame {
         lblUpdate.setVisible(false);
     }
 
-    private void createDownloadCountLabel(JLabel lblDownload) {
+    private void createDownloadCountLabel() {
         lblDownloadCount = new JLabel("0");
         lblDownloadCount.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblDownloadCount.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showPopup(downloadPanel, lblDownload);
+                showPopup(downloadPanel);
             }
         });
     }
@@ -318,7 +361,7 @@ public class AppWindow extends JFrame {
         lblUpload.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showPopup(uploadPanel, lblUpload);
+                showPopup(uploadPanel);
             }
         });
         return lblUpload;
@@ -329,19 +372,19 @@ public class AppWindow extends JFrame {
         lblDownload.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showPopup(downloadPanel, lblDownload);
+                showPopup(downloadPanel);
             }
         });
         return lblDownload;
     }
 
-    private void createUploadLabelCount(JLabel lblUpload) {
+    private void createUploadLabelCount() {
         lblUploadCount = new JLabel("0");
         lblUploadCount.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblUploadCount.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                showPopup(uploadPanel, lblUpload);
+                showPopup(uploadPanel);
             }
         });
     }
@@ -367,7 +410,7 @@ public class AppWindow extends JFrame {
 
     private JLabel createIconLabel(String icon) {
         JLabel label = new JLabel(icon);
-        label.setFont(App.SKIN.getIconFont().deriveFont((float) 16.0));
+        label.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(MEDIUM_TEXT_SIZE));
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return label;
     }
@@ -387,11 +430,10 @@ public class AppWindow extends JFrame {
         };
     }
 
-
     protected void openUpdateURL() {
         if (Desktop.isDesktopSupported()) {
             try {
-                Desktop.getDesktop().browse(new URI(App.UPDATE_URL2));
+                Desktop.getDesktop().browse(new URI(updateUrl));
             } catch (IOException | URISyntaxException ex) {
                 log.error(ex.getMessage(), ex);
             }
@@ -406,13 +448,20 @@ public class AppWindow extends JFrame {
         this.downloadPanel.addNewBackgroundTransfer(transfer);
     }
 
-    private void showPopup(Component panel, Component invoker) {
+    private void showPopup(Component panel) {
         popup.removeAll();
         popup.add(panel);
         popup.setInvoker(bottomPanel);
 
-        popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
-                   -popup.getPreferredSize().height);
+        if (panel instanceof KubeContextSelectorPanel) {
+            popup.setPreferredSize(new Dimension(150, 200));
+            popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
+                       -popup.getPreferredSize().height);
+        } else {
+            popup.setPreferredSize(new Dimension(400, 500));
+            popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
+                       -popup.getPreferredSize().height);
+        }
     }
 
     public void removePendingTransfers(int sessionId) {
@@ -424,4 +473,24 @@ public class AppWindow extends JFrame {
         SettingsDialog settingsDialog = new SettingsDialog(this);
         settingsDialog.showDialog(this, page);
     }
+
+    private void createK8sLabel(String currentContext) {
+        lblK8sContext = new JLabel(currentContext);
+        lblK8sContext.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        lblK8sContext.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    try {
+                        kubeContextSelectorPanel.showContexts();
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage(), ex);
+                    }
+                    showPopup(kubeContextSelectorPanel);
+                });
+            }
+        });
+
+    }
+
 }

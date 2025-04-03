@@ -1,16 +1,13 @@
-/**
- *
- */
+
 package muon.app.ui.components.settings;
 
+import com.jediterm.core.Color;
 import com.jediterm.terminal.TerminalColor;
 import com.jediterm.terminal.TextStyle;
 
-import java.awt.*;
 
 /**
  * @author subhro
- *
  */
 public class DarkTerminalTheme implements TerminalTheme {
     public static final int DEF_FG = 0xc8c8c8, DEF_BG = 0x282c34,
@@ -18,11 +15,9 @@ public class DarkTerminalTheme implements TerminalTheme {
             FIND_BG = 0x4d525e, HREF_FG = 0xf0f0f0, HREF_BG = 0x282c34;
     private String name;
 
-    /**
-     *
-     */
+
     public static TerminalColor getTerminalColor(int rgb) {
-        return TerminalColor.awt(new Color(rgb));
+        return TerminalColor.fromColor(new Color(rgb));
     }
 
     @Override
@@ -33,25 +28,25 @@ public class DarkTerminalTheme implements TerminalTheme {
     @Override
     public TextStyle getDefaultStyle() {
         return new TextStyle(getTerminalColor(DEF_FG),
-                getTerminalColor(DEF_BG));
+                             getTerminalColor(DEF_BG));
     }
 
     @Override
     public TextStyle getSelectionColor() {
         return new TextStyle(getTerminalColor(SEL_FG),
-                getTerminalColor(SEL_BG));
+                             getTerminalColor(SEL_BG));
     }
 
     @Override
     public TextStyle getFoundPatternColor() {
         return new TextStyle(getTerminalColor(FIND_FG),
-                getTerminalColor(FIND_BG));
+                             getTerminalColor(FIND_BG));
     }
 
     @Override
     public TextStyle getHyperlinkColor() {
         return new TextStyle(getTerminalColor(HREF_FG),
-                getTerminalColor(HREF_BG));
+                             getTerminalColor(HREF_BG));
     }
 
     @Override

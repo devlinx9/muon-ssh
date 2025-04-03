@@ -7,6 +7,7 @@ import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.files.AbstractFileBrowserView;
 import muon.app.ui.components.session.files.FileBrowser;
+import muon.app.util.Constants;
 import muon.app.util.Win32DragHandler;
 import muon.app.util.enums.DndSourceType;
 import muon.app.util.enums.FileType;
@@ -53,7 +54,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
         if (info != null) {
             if (IS_WINDOWS) {
                 try {
-                    this.tempDir = Files.createTempDirectory(App.APP_INSTANCE_ID).toFile();
+                    this.tempDir = Files.createTempDirectory(Constants.APP_INSTANCE_ID).toFile();
                     log.info("New monitor");
                     this.win32DragHandler = new Win32DragHandler();
                     this.win32DragHandler.listenForDrop(tempDir.getName(), file -> {
@@ -155,7 +156,7 @@ public class DndTransferHandler extends TransferHandler implements Transferable 
                 int c = 0;
                 for (File file : fileList) {
 
-                    if (file.getName().startsWith(App.APP_INSTANCE_ID)) {
+                    if (file.getName().startsWith(Constants.APP_INSTANCE_ID)) {
                         log.info("Internal fake folder dropped");
                         return false;
                     }

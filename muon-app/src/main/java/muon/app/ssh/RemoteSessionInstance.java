@@ -1,10 +1,9 @@
-/**
- *
- */
+
 package muon.app.ssh;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.connection.channel.direct.Session.Command;
@@ -16,25 +15,26 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 /**
  * @author subhro
  */
 @Slf4j
 public class RemoteSessionInstance {
-    private final SshClient2 ssh;
+    private final SSHHandler ssh;
     @Getter
     private final SshFileSystem sshFs;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
-    public RemoteSessionInstance(SessionInfo info, InputBlocker inputBlocker,
-                                 CachedCredentialProvider cachedCredentialProvider) {
-        this.ssh = new SshClient2(info, inputBlocker, cachedCredentialProvider);
+    public RemoteSessionInstance(SessionInfo info,
+                                 CachedCredentialProvider cachedCredentialProvider,
+                                 SessionContentPanel sessionContentPanel) {
+        this.ssh = new SSHHandler(info, cachedCredentialProvider, sessionContentPanel);
         this.sshFs = new SshFileSystem(this.ssh);
     }
 
-    public int exec(String command, Function<Command, Integer> callback, boolean pty) throws Exception {
+    public int exec(String command, ToIntFunction<Command> callback, boolean pty) throws Exception {
         synchronized (this.ssh) {
             if (this.closed.get()) {
                 throw new OperationCancelledException();
@@ -49,7 +49,7 @@ public class RemoteSessionInstance {
                         session.allocatePTY("vt100", 80, 24, 0, 0, Collections.emptyMap());
                     }
                     try (final Command cmd = session.exec(command)) {
-                        return callback.apply(cmd);
+                        return callback.applyAsInt(cmd);
                     }
                 }
 
@@ -112,35 +112,9 @@ public class RemoteSessionInstance {
                                 break;
                             }
 
-                            if (in.available() > 0) {
-                                int m = in.available();
-                                while (m > 0) {
-                                    int x = in.read(b, 0, Math.min(m, b.length));
-                                    if (x == -1) {
-                                        break;
-                                    }
-                                    m -= x;
-                                    if (bout != null) {
-                                        bout.write(b, 0, x);
-                                    }
+                            readInputData(bout, in, b);
 
-                                }
-                            }
-
-                            if (err.available() > 0) {
-                                int m = err.available();
-                                while (m > 0) {
-                                    int x = err.read(b, 0, Math.min(m, b.length));
-                                    if (x == -1) {
-                                        break;
-                                    }
-                                    m -= x;
-                                    if (berr != null) {
-                                        berr.write(b, 0, x);
-                                    }
-
-                                }
-                            }
+                            readInputData(berr, err, b);
 
                         }
                         while (cmd.isOpen());
@@ -159,9 +133,23 @@ public class RemoteSessionInstance {
         }
     }
 
-    /**
-     *
-     */
+    private void readInputData(OutputStream bout, InputStream in, byte[] b) throws IOException {
+        if (in.available() > 0) {
+            int m = in.available();
+            while (m > 0) {
+                int x = in.read(b, 0, Math.min(m, b.length));
+                if (x == -1) {
+                    break;
+                }
+                m -= x;
+                if (bout != null) {
+                    bout.write(b, 0, x);
+                }
+
+            }
+        }
+    }
+
     public void close() {
         try {
             this.closed.set(true);
@@ -171,7 +159,7 @@ public class RemoteSessionInstance {
                 log.error(e.getMessage(), e);
             }
             this.ssh.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }

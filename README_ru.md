@@ -116,19 +116,19 @@ Muon SSH предназначен для:
   </tr>
   <tr>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.deb">v2.4.0</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">v3.0.0</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.exe">Файл Exe</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.exe">Файл Exe</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.deb">Установщик DEB</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">Установщик DEB</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.dmg">Установщик DMG</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.dmg">Установщик DMG</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.jar">Портативный JAR (Java 11)</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.jar">Портативный JAR (Java 11)</a>
     </td>
   </tr>
 </table>

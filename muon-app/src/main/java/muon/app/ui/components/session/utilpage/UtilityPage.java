@@ -1,10 +1,8 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage;
 
 import muon.app.App;
-import muon.app.ui.components.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.keys.KeyPage;
@@ -21,7 +19,7 @@ import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -33,9 +31,7 @@ public class UtilityPage extends Page {
     private CardLayout cardLayout;
     private JPanel cardPanel;
 
-    /**
-     *
-     */
+    
     public UtilityPage(SessionContentPanel holder) {
         super(new BorderLayout());
         this.holder = holder;
@@ -57,37 +53,35 @@ public class UtilityPage extends Page {
 
     @Override
     public String getText() {
-        return bundle.getString("toolbox");
+        return App.getCONTEXT().getBundle().getString("toolbox");
     }
 
-    /**
-     *
-     */
+    
     private void createUI() {
         ButtonGroup bg = new ButtonGroup();
         Box vbox = Box.createVerticalBox();
-        UtilityPageButton b1 = new UtilityPageButton(bundle.getString("system_info"),
+        UtilityPageButton b1 = new UtilityPageButton(App.getCONTEXT().getBundle().getString("system_info"),
                 FontAwesomeContants.FA_LINUX);
 
-        UtilityPageButton b2 = new UtilityPageButton(bundle.getString("system_load"),
+        UtilityPageButton b2 = new UtilityPageButton(App.getCONTEXT().getBundle().getString("system_load"),
                 FontAwesomeContants.FA_AREA_CHART);
 
-        UtilityPageButton b3 = new UtilityPageButton(bundle.getString("services_systemd"),
+        UtilityPageButton b3 = new UtilityPageButton(App.getCONTEXT().getBundle().getString("services_systemd"),
                 FontAwesomeContants.FA_SERVER);
 
-        UtilityPageButton b4 = new UtilityPageButton(bundle.getString("process_ports"),
+        UtilityPageButton b4 = new UtilityPageButton(App.getCONTEXT().getBundle().getString("process_ports"),
                 FontAwesomeContants.FA_DATABASE);
 
-        UtilityPageButton b5 = new UtilityPageButton(bundle.getString("ssh_keys"),
+        UtilityPageButton b5 = new UtilityPageButton(App.getCONTEXT().getBundle().getString("ssh_keys"),
                 FontAwesomeContants.FA_KEY);
 
-        UtilityPageButton b6 = new UtilityPageButton(bundle.getString("network_tools"),
+        UtilityPageButton b6 = new UtilityPageButton(App.getCONTEXT().getBundle().getString("network_tools"),
                 FontAwesomeContants.FA_WRENCH);
 
         LayoutUtilities.equalizeSize(b1, b2, b3, b4, b5, b6);
 
         vbox.setBorder(
-                new MatteBorder(0, 0, 0, 1, App.SKIN.getDefaultBorderColor()));
+                new MatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         b1.setAlignmentX(Box.LEFT_ALIGNMENT);
         vbox.add(b1);

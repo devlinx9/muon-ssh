@@ -1,26 +1,24 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.logviewer;
 
+import muon.app.App;
 import muon.app.common.FileInfo;
-import muon.app.ui.components.ClosableTabbedPanel;
-import muon.app.ui.components.ClosableTabbedPanel.TabTitle;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.ClosableTabbedPanel;
+import muon.app.ui.components.common.ClosableTabbedPanel.TabTitle;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.util.FontAwesomeContants;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static muon.app.App.bundle;
 
 /**
  * @author subhro
- *
  */
 public class LogViewer extends Page {
     private final ClosableTabbedPanel tabs;
@@ -28,13 +26,10 @@ public class LogViewer extends Page {
     private final SessionContentPanel sessionContent;
     private final Set<String> openLogs = new LinkedHashSet<>();
 
-    /**
-     *
-     */
+    
     public LogViewer(SessionContentPanel sessionContent) {
         this.sessionContent = sessionContent;
         startPage = new StartPage(this::openLog, sessionContent.getInfo().getId());
-        JPanel content = new JPanel();
         tabs = new ClosableTabbedPanel(e -> {
             String path = promptLogPath();
             if (path != null) {
@@ -60,7 +55,7 @@ public class LogViewer extends Page {
 
     @Override
     public String getText() {
-        return bundle.getString("server_logs");
+        return App.getCONTEXT().getBundle().getString("server_logs");
     }
 
     public void openLog(FileInfo remotePath) {
@@ -79,7 +74,7 @@ public class LogViewer extends Page {
             }
         }
         LogContent logContent = new LogContent(sessionContent, remotePath,
-                startPage, e -> openLogs.remove(remotePath));
+                                               startPage, e -> openLogs.remove(remotePath));
         TabTitle title = new TabTitle();
         tabs.addTab(title, logContent);
         title.getCallback().accept(PathUtils.getFileName(remotePath));
@@ -88,12 +83,10 @@ public class LogViewer extends Page {
 
     private String promptLogPath() {
         JTextField txt = new SkinnedTextField(30);
-        if (JOptionPane.showOptionDialog(this,
-                new Object[]{bundle.getString("provide_log_file_path"),
-                             txt},
-                "Input", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
+        if (OptionPaneUtils.showOptionDialog(this,
+                                             new Object[]{App.getCONTEXT().getBundle().getString("provide_log_file_path"),
+                                                          txt},
+                                             "Input") == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
             return txt.getText();
         }
         return null;

@@ -23,7 +23,7 @@ public class TableCellLabelRenderer implements TableCellRenderer {
     private final Color foreground;
 
     public TableCellLabelRenderer() {
-        foreground = App.SKIN.getInfoTextForeground();
+        foreground = App.getCONTEXT().getSkin().getInfoTextForeground();
         panel = new JPanel(new BorderLayout(10, 5));
         panel.setBorder(new EmptyBorder(5, 10, 5, 5));
         textLabel = new JLabel();
@@ -32,7 +32,7 @@ public class TableCellLabelRenderer implements TableCellRenderer {
         textLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 14));
 
         iconLabel = new JLabel();
-        iconLabel.setFont(App.SKIN.getIconFont().deriveFont(Font.PLAIN, 20.f));
+        iconLabel.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(Font.PLAIN, 20.f));
         iconLabel.setText("\uf016");
         iconLabel.setForeground(foreground);
 

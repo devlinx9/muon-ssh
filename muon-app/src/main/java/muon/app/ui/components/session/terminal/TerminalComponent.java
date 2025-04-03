@@ -1,14 +1,11 @@
 package muon.app.ui.components.session.terminal;
 
-import com.jediterm.terminal.RequestOrigin;
 import com.jediterm.terminal.ui.JediTermWidget;
-import com.jediterm.terminal.ui.TerminalPanelListener;
-import com.jediterm.terminal.ui.TerminalSession;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.ClosableTabContent;
-import muon.app.ui.components.ClosableTabbedPanel.TabTitle;
+import muon.app.ui.components.common.ClosableTabContent;
+import muon.app.ui.components.common.ClosableTabbedPanel.TabTitle;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
 import muon.app.ui.components.session.terminal.ssh.DisposableTtyConnector;
@@ -75,7 +72,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         reconnectionBox.add(Box.createHorizontalGlue());
         reconnectionBox.add(btnReconnect);
         reconnectionBox.setBorder(new EmptyBorder(10, 10, 10, 10));
-        term.addListener((e) -> {
+        term.addListener(e -> {
             log.info("Disconnected");
             SwingUtilities.invokeLater(() -> {
                 contentPane.add(reconnectionBox, BorderLayout.NORTH);
@@ -84,24 +81,6 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
             });
         });
         term.setTtyConnector(tty);
-        term.setTerminalPanelListener(new TerminalPanelListener() {
-
-            @Override
-            public void onTitleChanged(String title) {
-                log.debug("new title: {}", title);
-                TerminalComponent.this.name = title;
-                SwingUtilities.invokeLater(() -> tabTitle.getCallback().accept(title));
-            }
-
-            @Override
-            public void onSessionChanged(TerminalSession currentSession) {
-                log.info("currentSession: {}", currentSession);
-            }
-
-            @Override
-            public void onPanelResize(Dimension pixelDimension, RequestOrigin origin) {
-            }
-        });
         contentPane.add(term);
 
     }
@@ -119,7 +98,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
     }
 
     public void sendCommand(String command) {
-        this.term.getTerminalStarter().sendString(command);
+        ((CustomJediterm) this.term).sendCommand(command);
     }
 
     public void start() {

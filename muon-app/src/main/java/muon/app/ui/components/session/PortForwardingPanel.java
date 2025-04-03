@@ -1,9 +1,10 @@
 package muon.app.ui.components.session;
 
 import muon.app.App;
-import muon.app.ui.components.SkinnedScrollPane;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.util.FontAwesomeContants;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.enums.PortForwardingType;
 
 import javax.swing.*;
@@ -13,7 +14,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static muon.app.App.bundle;
 
 public class PortForwardingPanel extends JPanel {
     private final PFTableModel model;
@@ -33,11 +33,11 @@ public class PortForwardingPanel extends JPanel {
 
         Box b1 = Box.createVerticalBox();
         JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.SKIN.getIconFont());
+        btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont());
         JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.SKIN.getIconFont());
+        btnDel.setFont(App.getCONTEXT().getSkin().getIconFont());
         JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.SKIN.getIconFont());
+        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont());
 
         btnAdd.addActionListener(e -> {
             PortForwardingRule ent = addOrEditEntry(null);
@@ -90,7 +90,7 @@ public class PortForwardingPanel extends JPanel {
     }
 
     private PortForwardingRule addOrEditEntry(PortForwardingRule r) {
-        JComboBox<String> cmbPFType = new JComboBox<>(new String[]{bundle.getString("local"), bundle.getString("remote")});
+        JComboBox<String> cmbPFType = new JComboBox<>(new String[]{App.getCONTEXT().getBundle().getString("local"), App.getCONTEXT().getBundle().getString("remote")});
 
         JTextField txtHost = new SkinnedTextField(30);
 
@@ -108,11 +108,10 @@ public class PortForwardingPanel extends JPanel {
             cmbPFType.setSelectedIndex(r.getType() == PortForwardingType.LOCAL ? 0 : 1);
         }
 
-        while (JOptionPane.showOptionDialog(this,
-                new Object[]{"Port forwarding type", cmbPFType, "Host", txtHost, "Source Port", spSourcePort,
-                        "Target Port", spTargetPort, "Bind Address", txtBindAddress},
-                "Port forwarding rule", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.OK_OPTION) {
+        while (OptionPaneUtils.showOptionDialog(this,
+                                                new Object[]{"Port forwarding type", cmbPFType, "Host", txtHost, "Source Port", spSourcePort,
+                                                             "Target Port", spTargetPort, "Bind Address", txtBindAddress},
+                                                "Port forwarding rule") == JOptionPane.OK_OPTION) {
 
             String host = txtHost.getText();
             int port1 = (Integer) spSourcePort.getValue();
@@ -120,7 +119,7 @@ public class PortForwardingPanel extends JPanel {
             String bindAddress = txtBindAddress.getText();
 
             if (host.isEmpty() || bindAddress.isEmpty() || port1 <= 0 || port2 <= 0) {
-                JOptionPane.showMessageDialog(this, bundle.getString("invalid_input"));
+                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_input"));
                 continue;
             }
 
@@ -139,7 +138,8 @@ public class PortForwardingPanel extends JPanel {
 
     private static class PFTableModel extends AbstractTableModel {
 
-        private final String[] columns = {bundle.getString("type"), bundle.getString("host"), bundle.getString("source_port"), bundle.getString("target_port"), bundle.getString("bind_host")};
+        private final String[] columns = {App.getCONTEXT().getBundle().getString("type"), App.getCONTEXT().getBundle().getString("host"), App.getCONTEXT().getBundle().getString("source_port"), App.getCONTEXT()
+                .getBundle().getString("target_port"), App.getCONTEXT().getBundle().getString("bind_host")};
         private final List<PortForwardingRule> list = new ArrayList<>();
 
         @Override

@@ -30,7 +30,7 @@ public class SudoUtils {
                     OutputStream out = cmd.getOutputStream();
                     StringBuilder sb = new StringBuilder();
                     Reader r = new InputStreamReader(in,
-                            StandardCharsets.UTF_8);
+                                                     StandardCharsets.UTF_8);
 
                     char[] b = new char[8192];
 
@@ -42,13 +42,10 @@ public class SudoUtils {
 
                         log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
-                            if (firstTime.get() || JOptionPane.showOptionDialog(null,
-                                    new Object[]{App.bundle.getString("user_password"),
-                                                 J_PASSWORD_FIELD},
-                                                                                App.bundle.getString("authentication"),
-                                    JOptionPane.OK_CANCEL_OPTION,
-                                    JOptionPane.PLAIN_MESSAGE, null, null,
-                                    null) == JOptionPane.OK_OPTION) {
+                            if (firstTime.get() || OptionPaneUtils.showOptionDialog(null,
+                                                                                    new Object[]{App.getCONTEXT().getBundle().getString("user_password"),
+                                                                                                 J_PASSWORD_FIELD},
+                                                                                    App.getCONTEXT().getBundle().getString("authentication")) == JOptionPane.OK_OPTION) {
                                 if (firstTime.get()) {
                                     firstTime.set(false);
                                     J_PASSWORD_FIELD.setText(password);
@@ -57,7 +54,7 @@ public class SudoUtils {
                                 sb = new StringBuilder();
                                 out.write(
                                         (new String(J_PASSWORD_FIELD.getPassword())
-                                                + "\n").getBytes());
+                                         + "\n").getBytes());
                                 out.flush();
                             } else {
                                 cmd.close();
@@ -91,7 +88,7 @@ public class SudoUtils {
                     OutputStream out = cmd.getOutputStream();
                     StringBuilder sb = new StringBuilder();
                     Reader r = new InputStreamReader(in,
-                            StandardCharsets.UTF_8);
+                                                     StandardCharsets.UTF_8);
 
                     char[] b = new char[8192];
 
@@ -103,17 +100,14 @@ public class SudoUtils {
 
                         log.info("buffer: {}", sb);
                         if (sb.indexOf(prompt) != -1) {
-                            if (JOptionPane.showOptionDialog(null,
-                                    new Object[]{App.bundle.getString("user_password"),
-                                                 J_PASSWORD_FIELD},
-                                                             App.bundle.getString("authentication"),
-                                    JOptionPane.OK_CANCEL_OPTION,
-                                    JOptionPane.PLAIN_MESSAGE, null, null,
-                                    null) == JOptionPane.OK_OPTION) {
+                            if (OptionPaneUtils.showOptionDialog(null,
+                                                                 new Object[]{App.getCONTEXT().getBundle().getString("user_password"),
+                                                                              J_PASSWORD_FIELD},
+                                                                 App.getCONTEXT().getBundle().getString("authentication")) == JOptionPane.OK_OPTION) {
                                 sb = new StringBuilder();
                                 out.write(
                                         (new String(J_PASSWORD_FIELD.getPassword())
-                                                + "\n").getBytes());
+                                         + "\n").getBytes());
                                 out.flush();
                             } else {
                                 cmd.close();
@@ -150,12 +144,13 @@ public class SudoUtils {
                     StringBuilder sb = new StringBuilder();
 
                     Reader r = new InputStreamReader(in,
-                            StandardCharsets.UTF_8);
+                                                     StandardCharsets.UTF_8);
 
                     while (true) {
                         int ch = r.read();
-                        if (ch == -1)
+                        if (ch == -1) {
                             break;
+                        }
                         sb.append((char) ch);
                         output.append((char) ch);
 
@@ -164,7 +159,7 @@ public class SudoUtils {
                             sb = new StringBuilder();
                             out.write(
                                     (password
-                                            + "\n").getBytes());
+                                     + "\n").getBytes());
                             out.flush();
                         }
 

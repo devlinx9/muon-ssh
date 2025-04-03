@@ -1,8 +1,7 @@
-/**
- *
- */
+
 package muon.app.ui.components.settings;
 
+import com.jediterm.core.Color;
 import lombok.Getter;
 import muon.app.App;
 
@@ -20,23 +19,24 @@ import java.awt.event.MouseEvent;
 @Getter
 public class ColorSelectorButton extends JLabel {
 
-    private Color color;
+    private java.awt.Color color;
 
     public ColorSelectorButton() {
         setBorder(new CompoundBorder(
-                new LineBorder(App.SKIN.getDefaultBorderColor()),
+                new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor()),
                 new CompoundBorder(
                         new MatteBorder(5, 5, 5, 5,
-                                        App.SKIN.getSelectedTabColor()),
-                        new LineBorder(App.SKIN.getDefaultBorderColor()))));
+                                        App.getCONTEXT().getSkin().getSelectedTabColor()),
+                        new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor()))));
         setOpaque(true);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                Color pColor = JColorChooser.showDialog(null, "Select color",
-                                                        getColor());
+                java.awt.Color pColor = JColorChooser.showDialog(null, "Select color",
+                                                                 getColor());
                 if (color != null) {
-                    setColor(pColor);
+                    Color jeditermColor = new Color(pColor.getRGB());
+                    setColor(jeditermColor);
                 }
             }
         });
@@ -61,8 +61,9 @@ public class ColorSelectorButton extends JLabel {
      * @param color the color to set
      */
     public void setColor(Color color) {
-        this.setBackground(color);
-        this.color = color;
+        java.awt.Color awtColor = new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+        this.setBackground(awtColor);
+        this.color = awtColor;
     }
 
 }

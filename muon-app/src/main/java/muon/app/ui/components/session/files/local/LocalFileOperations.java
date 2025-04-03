@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.common.FileSystem;
 import muon.app.common.local.LocalFileSystem;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 
 import javax.swing.*;
@@ -25,7 +26,7 @@ public class LocalFileOperations {
     }
 
     public boolean newFile(String folder) {
-        String text = JOptionPane.showInputDialog(App.bundle.getString("new_file"));
+        String text = OptionPaneUtils.showInputDialog(null, App.getCONTEXT().getBundle().getString("new_file"), App.getCONTEXT().getBundle().getString("new_file"));
         if (text == null || text.isEmpty()) {
             return false;
         }
@@ -35,13 +36,13 @@ public class LocalFileOperations {
             return true;
         } catch (Exception e1) {
             log.error(e1.getMessage(), e1);
-            JOptionPane.showMessageDialog(null, App.bundle.getString("unable_create_file"));
+            JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("unable_create_file"));
         }
         return false;
     }
 
     public boolean newFolder(String folder) {
-        String text = JOptionPane.showInputDialog(App.bundle.getString("new_folder_name"));
+        String text = OptionPaneUtils.showInputDialog(null, App.getCONTEXT().getBundle().getString("new_folder_name"), App.getCONTEXT().getBundle().getString("new_folder_name"));
         if (text == null || text.isEmpty()) {
             return false;
         }
@@ -51,7 +52,7 @@ public class LocalFileOperations {
             return true;
         } catch (Exception e1) {
             log.error(e1.getMessage(), e1);
-            JOptionPane.showMessageDialog(null, App.bundle.getString("unable_create_folder"));
+            JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("unable_create_folder"));
         }
         return false;
     }

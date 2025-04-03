@@ -1,12 +1,10 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage.portview;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.SkinnedScrollPane;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
 import muon.app.util.SudoUtils;
@@ -20,7 +18,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static muon.app.App.bundle;
+
 
 /**
  * @author subhro
@@ -36,9 +34,7 @@ public class PortViewer extends UtilPageItemView {
     private JCheckBox chkRunAsSuperUser;
     private List<SocketEntry> list;
 
-    /**
-     *
-     */
+    
     public PortViewer(SessionContentPanel holder) {
         super(holder);
         setBorder(new EmptyBorder(10, 10, 10, 10));
@@ -133,9 +129,9 @@ public class PortViewer extends UtilPageItemView {
         table.setIntercellSpacing(new Dimension(0, 0));
         table.setFillsViewportHeight(true);
 
-        JLabel lbl1 = new JLabel(bundle.getString("search"));
+        JLabel lbl1 = new JLabel(App.getCONTEXT().getBundle().getString("search"));
         txtFilter = new SkinnedTextField(30);
-        JButton btnFilter = new JButton(bundle.getString("search"));
+        JButton btnFilter = new JButton(App.getCONTEXT().getBundle().getString("search"));
 
         Box b1 = Box.createHorizontalBox();
         b1.add(lbl1);
@@ -152,11 +148,11 @@ public class PortViewer extends UtilPageItemView {
 
         Box box = Box.createHorizontalBox();
         box.setBorder(new EmptyBorder(10, 0, 0, 0));
-        JButton btnRefresh = new JButton(bundle.getString("refresh"));
+        JButton btnRefresh = new JButton(App.getCONTEXT().getBundle().getString("refresh"));
         btnRefresh.addActionListener(e -> getListingSockets());
 
         chkRunAsSuperUser = new JCheckBox(
-                bundle.getString("actions_sudo"));
+                App.getCONTEXT().getBundle().getString("actions_sudo"));
         box.add(chkRunAsSuperUser);
 
         box.add(Box.createHorizontalGlue());
@@ -220,7 +216,7 @@ public class PortViewer extends UtilPageItemView {
                         }
                     }
                     if (!holder.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                        JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
                     }
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);

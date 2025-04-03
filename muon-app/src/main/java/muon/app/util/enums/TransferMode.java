@@ -2,13 +2,14 @@ package muon.app.util.enums;
 
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import lombok.Getter;
+import muon.app.App;
 
-import static muon.app.App.bundle;
 
+@Deprecated(forRemoval = true)
 @Getter
 public enum TransferMode {
 
-    @JsonEnumDefaultValue NORMAL(0, bundle.getString("transfer_normally")), BACKGROUND(1, bundle.getString("transfer_background"));
+    @JsonEnumDefaultValue NORMAL(0, App.getCONTEXT().getBundle().getString("transfer_normally")), BACKGROUND(1, App.getCONTEXT().getBundle().getString("transfer_background"));
 
     private int key;
     private String value;
@@ -19,8 +20,8 @@ public enum TransferMode {
     }
 
     public static void update() {
-        NORMAL.setValue(bundle.getString("transfer_normally"));
-        BACKGROUND.setValue(bundle.getString("transfer_background"));
+        NORMAL.setValue(App.getCONTEXT().getBundle().getString("transfer_normally"));
+        BACKGROUND.setValue(App.getCONTEXT().getBundle().getString("transfer_background"));
     }
 
     public void setKey(int key) {

@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.util;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,15 +11,21 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Objects;
 
+import static java.util.Map.entry;
+
 /**
  * @author subhro
- *
  */
 @Slf4j
 public class FontUtils {
-    public static final Map<String, String> TERMINAL_FONTS = new CollectionHelper.OrderedDict<String, String>()
-            .putItem("DejaVuSansMono", "DejaVu Sans Mono").putItem("FiraCode-Regular", "Fira Code Regular")
-            .putItem("Inconsolata-Regular", "Inconsolata Regular").putItem("NotoMono-Regular", "Noto Mono");
+    FontUtils() {
+
+    }
+    public static final Map<String, String> TERMINAL_FONTS = Map.ofEntries(
+            entry("DejaVuSansMono", "DejaVu Sans Mono"),
+            entry("FiraCode-Regular", "Fira Code Regular"),
+            entry("Inconsolata-Regular", "Inconsolata Regular"),
+            entry("NotoMono-Regular", "Noto Mono"));
 
     public static Font loadFonts() {
         String fontPath = "/fonts/Helvetica.ttf";

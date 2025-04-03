@@ -1,12 +1,10 @@
-/**
- *
- */
+
 package muon.app.ui.components.session;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.AppWindow;
-import muon.app.ui.components.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
@@ -15,6 +13,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+
 /**
  * @author subhro
  */
@@ -22,13 +22,10 @@ import java.awt.event.MouseEvent;
 public class SessionListPanel extends JPanel {
     private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
     private static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
-    private final DefaultListModel<SessionContentPanel> sessionListModel;
-    private final JList<SessionContentPanel> sessionList;
+    private final DefaultListModel<ISessionContentPanel> sessionListModel;
+    private final JList<ISessionContentPanel> sessionList;
     private final AppWindow window;
 
-    /**
-     *
-     */
     public SessionListPanel(AppWindow window) {
         super(new BorderLayout());
         this.window = window;
@@ -41,6 +38,48 @@ public class SessionListPanel extends JPanel {
 
         JScrollPane scrollPane = new SkinnedScrollPane(sessionList);
         this.add(scrollPane);
+        setMouseListener();
+
+        setMouseMotionListener();
+
+        setAddListSelectionListener();
+    }
+
+    private void setAddListSelectionListener() {
+        sessionList.addListSelectionListener(e -> {
+            log.debug("called for index: {} {} {}{}", sessionList.getSelectedIndex(), e.getFirstIndex(), e.getLastIndex(), e.getValueIsAdjusting());
+            if (!e.getValueIsAdjusting()) {
+                int index = sessionList.getSelectedIndex();
+                if (index != -1) {
+                    this.selectSession(index);
+                }
+            }
+        });
+    }
+
+    private void setMouseMotionListener() {
+        sessionList.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int index = sessionList.locationToIndex(e.getPoint());
+                if (index != -1) {
+                    Rectangle r = sessionList.getCellBounds(index, index);
+                    if (r != null && r.contains(e.getPoint())) {
+                        int x = e.getPoint().x;
+                        int y = e.getPoint().y;
+
+                        if (x > r.x + r.width - 30 && x < r.x + r.width && y > r.y + 10 && y < r.y + r.height - 10) {
+                            sessionList.setCursor(HAND_CURSOR);
+                            return;
+                        }
+                    }
+                }
+                sessionList.setCursor(DEFAULT_CURSOR);
+            }
+        });
+    }
+
+    private void setMouseListener() {
         sessionList.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -65,55 +104,31 @@ public class SessionListPanel extends JPanel {
                 sessionList.setCursor(DEFAULT_CURSOR);
             }
         });
-
-        sessionList.addMouseMotionListener(new MouseAdapter() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                int index = sessionList.locationToIndex(e.getPoint());
-                if (index != -1) {
-                    Rectangle r = sessionList.getCellBounds(index, index);
-                    if (r != null && r.contains(e.getPoint())) {
-                        int x = e.getPoint().x;
-                        int y = e.getPoint().y;
-
-                        if (x > r.x + r.width - 30 && x < r.x + r.width && y > r.y + 10 && y < r.y + r.height - 10) {
-                            sessionList.setCursor(HAND_CURSOR);
-                            return;
-                        }
-                    }
-                }
-                sessionList.setCursor(DEFAULT_CURSOR);
-            }
-        });
-
-        sessionList.addListSelectionListener(e -> {
-            log.debug("called for index: {} {} {}{}", sessionList.getSelectedIndex(), e.getFirstIndex(), e.getLastIndex(), e.getValueIsAdjusting());
-            if (!e.getValueIsAdjusting()) {
-                int index = sessionList.getSelectedIndex();
-                if (index != -1) {
-                    this.selectSession(index);
-                }
-            }
-        });
     }
 
     public void createSession(SessionInfo info) {
         SessionContentPanel panel = new SessionContentPanel(info);
         sessionListModel.insertElementAt(panel, 0);
+        sessionList.setSelectedIndex(0);
+    }
 
+
+    public void createLocalSession() {
+        LocalSessionContentPanel panel = new LocalSessionContentPanel(null);
+        sessionListModel.insertElementAt(panel, 0);
         sessionList.setSelectedIndex(0);
     }
 
     public void selectSession(int index) {
-        SessionContentPanel sessionContentPanel = sessionListModel.get(index);
-        window.showSession(sessionContentPanel);
+        window.showSession(sessionListModel.get(index));
         window.revalidate();
         window.repaint();
     }
 
     public void removeSession(int index) {
-        if (JOptionPane.showConfirmDialog(window, App.bundle.getString("disconnect_session")) == JOptionPane.YES_OPTION) {
-            SessionContentPanel sessionContentPanel = sessionListModel.get(index);
+        if (!App.getGlobalSettings().isConfirmBeforeTerminalClosing() ||
+            JOptionPane.showConfirmDialog(window, App.getCONTEXT().getBundle().getString("disconnect_session")) == JOptionPane.YES_OPTION) {
+            ISessionContentPanel sessionContentPanel = sessionListModel.get(index);
             sessionContentPanel.close();
             window.removeSession(sessionContentPanel);
             window.revalidate();
@@ -130,9 +145,9 @@ public class SessionListPanel extends JPanel {
         }
     }
 
-    public SessionContentPanel getSessionContainer(int activeSessionId) {
+    public ISessionContentPanel getSessionContainer(int activeSessionId) {
         for (int i = 0; i < sessionListModel.size(); i++) {
-            SessionContentPanel scp = sessionListModel.get(i);
+            ISessionContentPanel scp = sessionListModel.get(i);
             if (scp.getActiveSessionId() == activeSessionId) {
                 return scp;
             }
@@ -140,7 +155,7 @@ public class SessionListPanel extends JPanel {
         return null;
     }
 
-    public static final class SessionListRenderer implements ListCellRenderer<SessionContentPanel> {
+    public static final class SessionListRenderer implements ListCellRenderer<ISessionContentPanel> {
 
         private final JPanel panel;
         private final JLabel lblIcon;
@@ -148,19 +163,17 @@ public class SessionListPanel extends JPanel {
         private final JLabel lblHost;
         private final JLabel lblClose;
 
-        /**
-         *
-         */
+
         public SessionListRenderer() {
             lblIcon = new JLabel();
             lblText = new JLabel();
             lblHost = new JLabel();
             lblClose = new JLabel();
 
-            lblIcon.setFont(App.SKIN.getIconFont().deriveFont(24.0f));
-            lblText.setFont(App.SKIN.getDefaultFont().deriveFont(14.0f));
-            lblHost.setFont(App.SKIN.getDefaultFont().deriveFont(12.0f));
-            lblClose.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+            lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(24.0f));
+            lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(SMALL_TEXT_SIZE));
+            lblHost.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(12.0f));
+            lblClose.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
 
             lblText.setText("Sample server");
             lblHost.setText("server host");
@@ -178,7 +191,7 @@ public class SessionListPanel extends JPanel {
             panel.add(textHolder);
 
             panel.setBorder(new EmptyBorder(10, 10, 10, 10));
-            panel.setBackground(App.SKIN.getDefaultBackground());
+            panel.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
             panel.setOpaque(true);
 
             Dimension d = panel.getPreferredSize();
@@ -187,10 +200,16 @@ public class SessionListPanel extends JPanel {
         }
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends SessionContentPanel> list,
-                                                      SessionContentPanel value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(JList<? extends ISessionContentPanel> list,
+                                                      ISessionContentPanel value, int index, boolean isSelected, boolean cellHasFocus) {
 
             SessionInfo info = value.getInfo();
+
+            if (value instanceof LocalSessionContentPanel) {
+                info = new SessionInfo();
+                info.setHost("Localhost");
+                info.setName("Local Terminal");
+            }
 
             lblText.setText(info.getName());
             lblHost.setText(info.getHost());
@@ -206,49 +225,20 @@ public class SessionListPanel extends JPanel {
             lblText.setVisible(isPanelVisible);
             lblHost.setVisible(isPanelVisible);
 
-            panel.setBackground(App.SKIN.getDefaultBackground());
-            lblText.setForeground(App.SKIN.getDefaultForeground());
-            lblHost.setForeground(App.SKIN.getInfoTextForeground());
-            lblIcon.setForeground(App.SKIN.getDefaultForeground());
+            panel.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
+            lblText.setForeground(App.getCONTEXT().getSkin().getDefaultForeground());
+            lblHost.setForeground(App.getCONTEXT().getSkin().getInfoTextForeground());
+            lblIcon.setForeground(App.getCONTEXT().getSkin().getDefaultForeground());
 
             if (isSelected) {
-                panel.setBackground(App.SKIN.getDefaultSelectionBackground());
-                lblText.setForeground(App.SKIN.getDefaultSelectionForeground());
-                lblHost.setForeground(App.SKIN.getDefaultSelectionForeground());
-                lblIcon.setForeground(App.SKIN.getDefaultSelectionForeground());
+                panel.setBackground(App.getCONTEXT().getSkin().getDefaultSelectionBackground());
+                lblText.setForeground(App.getCONTEXT().getSkin().getDefaultSelectionForeground());
+                lblHost.setForeground(App.getCONTEXT().getSkin().getDefaultSelectionForeground());
+                lblIcon.setForeground(App.getCONTEXT().getSkin().getDefaultSelectionForeground());
             }
 
             return panel;
         }
 
     }
-
-    public void resizeSessionPanel(boolean isVisible) {
-        // Iterate over all elements in session list and hide/show text & host labels
-        for (int i = 0; i < sessionListModel.size(); i++) {
-            SessionContentPanel panel = sessionListModel.get(i);
-            SessionInfo info = panel.getInfo();
-
-            if (info != null) {
-                Component rendererComponent = sessionList.getCellRenderer()
-                        .getListCellRendererComponent(sessionList, panel, i, false, false);
-
-                if (rendererComponent instanceof JPanel) {
-                    JPanel cellPanel = (JPanel) rendererComponent;
-                    for (Component component : cellPanel.getComponents()) {
-                        if (component instanceof JPanel) {
-                            component.setVisible(isVisible);
-                            ((JPanel) component).getComponents();
-
-                        }
-                    }
-                }
-            }
-        }
-
-        // Refresh UI
-        sessionList.revalidate();
-        sessionList.repaint();
-    }
-
 }

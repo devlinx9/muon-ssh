@@ -11,7 +11,11 @@ import java.util.function.Consumer;
 
 @Slf4j
 public final class Win32DragHandler {
-    private final FileMonitor fileMonitor = new W32FileMonitor();
+    private final FileMonitor fileMonitor;
+
+    public Win32DragHandler() {
+        fileMonitor = new W32FileMonitor();
+    }
 
     public synchronized void listenForDrop(String keyToListen, Consumer<File> callback) {
         FileSystemView fsv = FileSystemView.getFileSystemView();

@@ -16,9 +16,7 @@ public class SnippetItem {
     private String command;
     private String id;
 
-    /**
-     *
-     */
+    
     public SnippetItem() {
         
     }

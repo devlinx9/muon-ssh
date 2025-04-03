@@ -116,19 +116,19 @@ Muon SSH est conçu pour :
   </tr>
   <tr>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.deb">v2.4.0</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">v3.0.0</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.exe">Fichier Exe</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.exe">Fichier Exe</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.deb">Installeur DEB</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">Installeur DEB</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.dmg">Installeur DMG</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.dmg">Installeur DMG</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v2.4.0/muonssh_2.4.0.jar">JAR portable (Java 11)</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.jar">JAR portable (Java 11)</a>
     </td>
   </tr>
 </table>

@@ -4,9 +4,7 @@ import java.awt.*;
 
 public class AppSkinDark extends AppSkin {
 
-    /**
-     *
-     */
+    
     public AppSkinDark() {
         initDefaultsDark();
     }

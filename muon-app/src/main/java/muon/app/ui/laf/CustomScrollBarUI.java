@@ -40,7 +40,7 @@ public class CustomScrollBarUI extends BasicScrollBarUI {
         Color cx = color == null ? c.getBackground() : color;
         g.setColor(cx);
         g.fillRect(trackBounds.x, trackBounds.y, trackBounds.width,
-                trackBounds.height);
+                   trackBounds.height);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class CustomScrollBarUI extends BasicScrollBarUI {
             g.setColor(c.getForeground());
         }
         g.fillRect(thumbBounds.x, thumbBounds.y, thumbBounds.width,
-                thumbBounds.height);
+                   thumbBounds.height);
     }
 
     @Override
@@ -73,19 +73,5 @@ public class CustomScrollBarUI extends BasicScrollBarUI {
         btn.setMaximumSize(new Dimension(0, 0));
         btn.setPreferredSize(new Dimension(0, 0));
         return btn;
-    }
-
-    /**
-     * @return the trackColor
-     */
-    public Color getTrackColor() {
-        return trackColor;
-    }
-
-    /**
-     * @param trackColor the trackColor to set
-     */
-    public void setTrackColor(Color trackColor) {
-        this.trackColor = trackColor;
     }
 }

@@ -2,7 +2,7 @@ package muon.app.ui.components.session.terminal;
 
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.ClosableTabbedPanel;
+import muon.app.ui.components.common.ClosableTabbedPanel;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
@@ -17,6 +17,8 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+
 @Slf4j
 public class TerminalHolder extends Page implements AutoCloseable {
     private final ClosableTabbedPanel tabs;
@@ -27,21 +29,21 @@ public class TerminalHolder extends Page implements AutoCloseable {
     private final JButton btn;
     private final SessionContentPanel sessionContentPanel;
 
-    public TerminalHolder(SessionInfo info, SessionContentPanel sessionContentPanel) {
-        this.sessionContentPanel = sessionContentPanel;
+    public TerminalHolder(SessionInfo info, SessionContentPanel pSessionContentPanel) {
+        this.sessionContentPanel = pSessionContentPanel;
         this.tabs = new ClosableTabbedPanel(e -> openNewTerminal(null));
 
         btn = new JButton();
         btn.setToolTipText("Snippets");
         btn.addActionListener(e -> showSnippets());
-        btn.setFont(App.SKIN.getIconFont().deriveFont(16.0f));
+        btn.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
         btn.setText(FontAwesomeContants.FA_BOOKMARK);
-        btn.putClientProperty("Nimbus.Overrides", App.SKIN.createTabButtonSkin());
-        btn.setForeground(App.SKIN.getInfoTextForeground());
+        btn.putClientProperty("Nimbus.Overrides", App.getCONTEXT().getSkin().createTabButtonSkin());
+        btn.setForeground(App.getCONTEXT().getSkin().getInfoTextForeground());
         tabs.getButtonsBox().add(btn);
 
         long t1 = System.currentTimeMillis();
-        TerminalComponent tc = new TerminalComponent(info, c + "", null, sessionContentPanel);
+        TerminalComponent tc = new TerminalComponent(info, c + "", null, pSessionContentPanel);
         this.tabs.addTab(tc.getTabTitle(), tc);
         long t2 = System.currentTimeMillis();
         log.debug("Terminal init in: {} ms", t2 - t1);
@@ -58,14 +60,12 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
             @Override
             public void ancestorRemoved(AncestorEvent event) {
-                
-
+                log.debug("Ancestor removed");
             }
 
             @Override
             public void ancestorMoved(AncestorEvent event) {
-                
-
+                log.debug("Ancestor moved");
             }
 
             @Override
@@ -112,15 +112,15 @@ public class TerminalHolder extends Page implements AutoCloseable {
         this.snippetPopupMenu.pack();
         this.snippetPopupMenu.setInvoker(this.btn);
         this.snippetPopupMenu.show(this.btn, this.btn.getWidth() - this.snippetPopupMenu.getPreferredSize().width,
-                this.btn.getHeight());
+                                   this.btn.getHeight());
     }
 
     public void close() {
         Component[] components = tabs.getTabContents();
-        for (Component c : components) {
-            if (c instanceof TerminalComponent) {
-                log.info("Closing terminal: {}", c);
-                ((TerminalComponent) c).close();
+        for (Component component : components) {
+            if (component instanceof TerminalComponent) {
+                log.info("Closing terminal: {}", component);
+                ((TerminalComponent) component).close();
             }
         }
         revalidate();
@@ -134,13 +134,13 @@ public class TerminalHolder extends Page implements AutoCloseable {
 
     @Override
     public String getText() {
-        return App.bundle.getString("terminal");
+        return App.getCONTEXT().getBundle().getString("terminal");
     }
 
     public void openNewTerminal(String command) {
         c++;
         TerminalComponent tc = new TerminalComponent(this.sessionContentPanel.getInfo(), c + "", command,
-                this.sessionContentPanel);
+                                                     this.sessionContentPanel);
         this.tabs.addTab(tc.getTabTitle(), tc);
         tc.getTabTitle().getCallback().accept(tc.toString());
         tc.start();

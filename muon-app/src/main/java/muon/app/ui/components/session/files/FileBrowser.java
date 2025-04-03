@@ -7,8 +7,8 @@ import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ssh.SshFileSystem;
-import muon.app.ui.components.ClosableTabbedPanel;
-import muon.app.ui.components.SkinnedSplitPane;
+import muon.app.ui.components.common.ClosableTabbedPanel;
+import muon.app.ui.components.common.SkinnedSplitPane;
 import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
@@ -20,7 +20,6 @@ import muon.app.ui.components.session.files.view.DndTransferData;
 import muon.app.util.FontAwesomeContants;
 import muon.app.util.enums.ConflictAction;
 import muon.app.util.enums.PanelOrientation;
-import muon.app.util.enums.TransferMode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static muon.app.App.bundle;
 
 @Slf4j
 public class FileBrowser extends Page {
@@ -53,8 +51,6 @@ public class FileBrowser extends Page {
     private final List<AbstractFileBrowserView> viewList = new ArrayList<>();
     private FileTransfer ongoingFileTransfer;
     private boolean leftPopup = false;
-    private JLabel lblStat1;
-    private Box statusBox;
 
     public FileBrowser(SessionInfo info, SessionContentPanel holder, JRootPane rootPane, int activeSessionId) {
         this.activeSessionId = activeSessionId;
@@ -201,7 +197,7 @@ public class FileBrowser extends Page {
                                                             SwingUtilities.invokeLater(() -> {
                                                                 holder.endFileTransfer();
                                                                 if (!holder.isSessionClosed()) {
-                                                                    JOptionPane.showMessageDialog(null, App.bundle.getString("operation_failed"));
+                                                                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
                                                                 }
                                                             });
                                                         }
@@ -262,7 +258,7 @@ public class FileBrowser extends Page {
 
     @Override
     public String getText() {
-        return bundle.getString("file_browser");
+        return App.getCONTEXT().getBundle().getString("file_browser");
     }
 
     public void openPath(String path) {
@@ -274,7 +270,6 @@ public class FileBrowser extends Page {
     }
 
     public boolean selectTransferModeAndConflictAction(ResponseHolder holder) {
-        holder.transferMode = App.getGlobalSettings().getFileTransferMode();
         holder.conflictAction = App.getGlobalSettings().getConflictAction();
         return true;
     }
@@ -282,7 +277,7 @@ public class FileBrowser extends Page {
     public boolean handleLocalDrop(DndTransferData transferData, SessionInfo info, FileSystem currentFileSystem,
                                    String currentPath) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-            && JOptionPane.showConfirmDialog(null, bundle.getString("move_copy_files")) != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(null, App.getCONTEXT().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
             return false;
         }
 
@@ -302,16 +297,8 @@ public class FileBrowser extends Page {
             }
 
             if (info != null && info.hashCode() == sessionHashCode) {
-                if (holder.transferMode == TransferMode.BACKGROUND) {
-                    this.getHolder().downloadInBackground(transferData.getFiles(), currentPath, holder.conflictAction);
-                    return true;
-                }
-                FileSystem sourceFs = this.getSSHFileSystem();
-                if (sourceFs == null) {
-                    return false;
-                }
-                this.newFileTransfer(sourceFs, currentFileSystem, transferData.getFiles(), currentPath, this.hashCode(),
-                                     holder.conflictAction, this.getSessionInstance());
+                this.getHolder().downloadInBackground(transferData.getFiles(), currentPath, holder.conflictAction);
+                return true;
             }
             return true;
         } catch (Exception e) {
@@ -340,7 +327,6 @@ public class FileBrowser extends Page {
     }
 
     public static class ResponseHolder {
-        public TransferMode transferMode;
         public ConflictAction conflictAction;
     }
 }

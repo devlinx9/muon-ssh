@@ -7,6 +7,7 @@ import muon.app.common.local.LocalFileSystem;
 import muon.app.ui.components.session.BookmarkManager;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.view.FolderView;
+import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 import muon.app.util.PlatformUtils;
 import muon.app.util.enums.FileType;
@@ -21,9 +22,7 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static muon.app.App.bundle;
-import static muon.app.util.PlatformUtils.IS_MAC;
-import static muon.app.util.PlatformUtils.IS_WINDOWS;
+import static muon.app.util.PlatformUtils.getStringForOpenInFileBrowser;
 
 
 @Slf4j
@@ -66,18 +65,12 @@ public class LocalMenuHandler {
     }
 
     private void initMenuItems(InputMap map, ActionMap act) {
-        mOpen = new JMenuItem(bundle.getString("open"));
+        mOpen = new JMenuItem(App.getCONTEXT().getBundle().getString("open"));
         mOpen.addActionListener(e -> open());
-        mOpenInNewTab = new JMenuItem(bundle.getString("open_new_tab"));
+        mOpenInNewTab = new JMenuItem(App.getCONTEXT().getBundle().getString("open_new_tab"));
         mOpenInNewTab.addActionListener(e -> openNewTab());
 
-        if (IS_WINDOWS) {
-            mOpenInFileExplorer = new JMenuItem(
-                    "Open in Windows Explorer");
-        } else {
-            mOpenInFileExplorer = new JMenuItem(
-                    IS_MAC ? "Open in Finder" : "Open in File Browser");
-        }
+        mOpenInFileExplorer = new JMenuItem(getStringForOpenInFileBrowser());
         mOpenInFileExplorer.addActionListener(e -> {
             try {
                 PlatformUtils.openFolderInFileBrowser(folderView.getSelectedFiles()[0].getPath());
@@ -86,10 +79,10 @@ public class LocalMenuHandler {
             }
         });
 
-        mRename = new JMenuItem(bundle.getString("rename"));
+        mRename = new JMenuItem(App.getCONTEXT().getBundle().getString("rename"));
         mRename.addActionListener(e -> rename(folderView.getSelectedFiles()[0], fileBrowserView.getCurrentDirectory()));
 
-        mDelete = new JMenuItem(bundle.getString("delete"));
+        mDelete = new JMenuItem(App.getCONTEXT().getBundle().getString("delete"));
         AbstractAction aDelete = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -104,25 +97,25 @@ public class LocalMenuHandler {
         act.put("ksDelete", aDelete);
         mDelete.setAccelerator(ksDelete);
 
-        mNewFile = new JMenuItem(bundle.getString("new_file"));
+        mNewFile = new JMenuItem(App.getCONTEXT().getBundle().getString("new_file"));
         mNewFile.addActionListener(e -> newFile());
 
-        mNewFolder = new JMenuItem(bundle.getString("new_folder"));
+        mNewFolder = new JMenuItem(App.getCONTEXT().getBundle().getString("new_folder"));
         mNewFolder.addActionListener(e -> newFolder(fileBrowserView.getCurrentDirectory()));
 
-        JMenuItem mCopy = new JMenuItem(bundle.getString("copy"));
+        JMenuItem mCopy = new JMenuItem(App.getCONTEXT().getBundle().getString("copy"));
         mCopy.addActionListener(e -> {
         });
 
-        JMenuItem mPaste = new JMenuItem(bundle.getString("paste"));
+        JMenuItem mPaste = new JMenuItem(App.getCONTEXT().getBundle().getString("paste"));
         mPaste.addActionListener(e -> {
         });
 
-        JMenuItem mCut = new JMenuItem(bundle.getString("cut"));
+        JMenuItem mCut = new JMenuItem(App.getCONTEXT().getBundle().getString("cut"));
         mCut.addActionListener(e -> {
         });
 
-        mAddToFav = new JMenuItem(bundle.getString("bookmark"));
+        mAddToFav = new JMenuItem(App.getCONTEXT().getBundle().getString("bookmark"));
         mAddToFav.addActionListener(e -> addToFavourites());
     }
 
@@ -181,8 +174,8 @@ public class LocalMenuHandler {
     }
 
     private void rename(FileInfo info, String baseFolder) {
-        String text = JOptionPane.showInputDialog(bundle.getString("enter_new_name"), info.getName());
-        if (text != null && !text.isEmpty()) {
+        String text = OptionPaneUtils.showInputDialog(fileBrowser.getHolder(), App.getCONTEXT().getBundle().getString("enter_new_name"), info.getName(), info.getName());
+        if (text != null && !text.isEmpty() && !text.equals(info.getName())) {
             renameAsync(info.getPath(), PathUtils.combineUnix(PathUtils.getParent(info.getPath()), text), baseFolder);
         }
     }
@@ -207,7 +200,7 @@ public class LocalMenuHandler {
     private void delete(FileInfo[] selectedFiles, String baseFolder) {
         boolean delete = true;
         if (App.getGlobalSettings().isConfirmBeforeDelete()) {
-            delete = JOptionPane.showConfirmDialog(App.getAppWindow(), bundle.getString("delete_selected_files")) == JOptionPane.YES_OPTION;
+            delete = JOptionPane.showConfirmDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("delete_selected_files")) == JOptionPane.YES_OPTION;
         }
         if (!delete) {
             return;
@@ -267,10 +260,10 @@ public class LocalMenuHandler {
 
     public JPopupMenu createAddressPopup() {
         JPopupMenu popupMenu = new JPopupMenu();
-        JMenuItem mOpenInNewTab = new JMenuItem(bundle.getString("open_new_tab"));
-        JMenuItem mCopyPath = new JMenuItem(bundle.getString("copy_path"));
-        JMenuItem mOpenInTerminal = new JMenuItem(bundle.getString("open_in_terminal"));
-        JMenuItem mBookmark = new JMenuItem(bundle.getString("bookmark"));
+        JMenuItem mOpenInNewTab = new JMenuItem(App.getCONTEXT().getBundle().getString("open_new_tab"));
+        JMenuItem mCopyPath = new JMenuItem(App.getCONTEXT().getBundle().getString("copy_path"));
+        JMenuItem mOpenInTerminal = new JMenuItem(App.getCONTEXT().getBundle().getString("open_in_terminal"));
+        JMenuItem mBookmark = new JMenuItem(App.getCONTEXT().getBundle().getString("bookmark"));
         popupMenu.add(mOpenInNewTab);
         popupMenu.add(mCopyPath);
         popupMenu.add(mOpenInTerminal);

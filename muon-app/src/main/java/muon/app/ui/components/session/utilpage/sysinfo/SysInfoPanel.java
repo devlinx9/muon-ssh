@@ -1,11 +1,9 @@
-/**
- *
- */
+
 package muon.app.ui.components.session.utilpage.sysinfo;
 
 import lombok.extern.slf4j.Slf4j;
-import muon.app.ui.components.SkinnedScrollPane;
-import muon.app.ui.components.SkinnedTextArea;
+import muon.app.ui.components.common.SkinnedScrollPane;
+import muon.app.ui.components.common.SkinnedTextArea;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
 import muon.app.util.ScriptLoader;
@@ -20,9 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Slf4j
 public class SysInfoPanel extends UtilPageItemView {
-    /**
-     *
-     */
+    
 
     private JTextArea textArea;
 

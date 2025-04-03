@@ -1,8 +1,8 @@
 package muon.app.ui.components.session.utilpage.keys;
 
 import muon.app.App;
-import muon.app.ui.components.SkinnedTextArea;
-import muon.app.ui.components.SkinnedTextField;
+import muon.app.ui.components.common.SkinnedTextArea;
+import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.SessionInfo;
 
 import javax.swing.*;
@@ -10,7 +10,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.function.Consumer;
 
-import static muon.app.App.bundle;
+
 
 public class LocalKeyPanel extends JPanel {
     private final JTextField txtKeyFile;
@@ -19,9 +19,9 @@ public class LocalKeyPanel extends JPanel {
     public LocalKeyPanel(SessionInfo info, Consumer<?> callback1,
                          Consumer<?> callback2) {
         super(new BorderLayout());
-        JLabel lblTitle = new JLabel(bundle.getString("public_key_file"));
+        JLabel lblTitle = new JLabel(App.getCONTEXT().getBundle().getString("public_key_file"));
         txtKeyFile = new SkinnedTextField(20);
-        txtKeyFile.setBackground(App.SKIN.getDefaultBackground());
+        txtKeyFile.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
         txtKeyFile.setBorder(null);
         txtKeyFile.setEditable(false);
         Box hbox = Box.createHorizontalBox();
@@ -37,8 +37,8 @@ public class LocalKeyPanel extends JPanel {
         JScrollPane jScrollPane = new JScrollPane(txtPubKey);
         add(jScrollPane);
 
-        JButton btnGenNewKey = new JButton(bundle.getString("generate_new_key"));
-        JButton btnRefresh = new JButton(bundle.getString("refresh"));
+        JButton btnGenNewKey = new JButton(App.getCONTEXT().getBundle().getString("generate_new_key"));
+        JButton btnRefresh = new JButton(App.getCONTEXT().getBundle().getString("refresh"));
 
         btnGenNewKey.addActionListener(e -> callback1.accept(null));
 

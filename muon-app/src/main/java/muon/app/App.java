@@ -1,30 +1,19 @@
 package muon.app;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import muon.app.common.Settings;
-import muon.app.common.SnippetManager;
+import muon.app.common.AppContext;
+import muon.app.common.settings.Settings;
+import muon.app.common.settings.SettingsManager;
 import muon.app.ssh.GraphicalHostKeyVerifier;
-import muon.app.ssh.GraphicalInputBlocker;
-import muon.app.ssh.InputBlocker;
 import muon.app.ui.AppWindow;
 import muon.app.ui.components.session.ExternalEditorHandler;
-import muon.app.ui.components.session.SessionContentPanel;
+import muon.app.ui.components.session.ISessionContentPanel;
 import muon.app.ui.components.session.SessionExportImport;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
 import muon.app.ui.components.settings.SettingsPageName;
-import muon.app.ui.laf.AppSkin;
-import muon.app.ui.laf.AppSkinDark;
-import muon.app.ui.laf.AppSkinLight;
-import muon.app.updater.VersionEntry;
-import muon.app.util.Constants;
 import muon.app.util.PlatformUtils;
 import muon.app.util.enums.ConflictAction;
-import muon.app.util.enums.Language;
-import muon.app.util.enums.TransferMode;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.swing.*;
@@ -32,46 +21,23 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import static muon.app.util.Constants.APPLICATION_VERSION;
-import static muon.app.util.Constants.UPDATE_URL;
+import static muon.app.util.Constants.DEFAULT_CONFIG_DIR;
 
 @Slf4j
-public class App {
-    public static final VersionEntry VERSION = new VersionEntry("v" + APPLICATION_VERSION);
-    public static final String UPDATE_URL2 = UPDATE_URL + "/check-update.html?v="
-                                             + VERSION.getNumericValue();
-    public static String CONFIG_DIR = System.getProperty("user.home") + File.separatorChar + "muon-ssh";
-    private static final String PATH_MESSAGES_FILE = "i18n/messages";
-    public static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
-    public static final SnippetManager SNIPPET_MANAGER = new SnippetManager();
+public final class App {
 
-    public static final String APP_INSTANCE_ID = UUID.randomUUID().toString();
-    public static GraphicalHostKeyVerifier HOST_KEY_VERIFIER;
-    public static ResourceBundle bundle;
-    public static AppSkin SKIN;
-    private static Settings settings;
-
-    @Getter
-    private static InputBlocker inputBlocker;
+    private static final AppContext CONTEXT = new AppContext();
 
     @Getter
     private static ExternalEditorHandler externalEditorHandler;
     private static AppWindow mw;
-
-    @Getter
-    private static Map<String, List<String>> pinnedLogs = new HashMap<>();
 
     static {
         System.setProperty("java.net.useSystemProxies", "true");
     }
 
     public static void main(String[] args) throws UnsupportedLookAndFeelException {
-
-        setBundleLanguage();
 
         Security.addProvider(new BouncyCastleProvider());
         Security.setProperty("networkaddress.cache.ttl", "1");
@@ -82,148 +48,96 @@ public class App {
 
         boolean firstRun = false;
 
-        //Checks if the parameter muonPath is set in the startup
+        // Checks if the parameter muonPath is set in the startup
         String muonPath = System.getProperty("muonPath");
         boolean isMuonPath = false;
         if (muonPath != null && !muonPath.isEmpty()) {
             log.info("Muon path: {}", muonPath);
-            CONFIG_DIR = muonPath;
             isMuonPath = true;
+        } else {
+            muonPath = DEFAULT_CONFIG_DIR;
         }
 
-        File appDir = new File(CONFIG_DIR);
+        File appDir = new File(muonPath);
         if (!appDir.exists()) {
-            //Validate if the config directory can be created
+            // Validate if the config directory can be created
             if (!appDir.mkdirs()) {
-                log.error("The config directory for moun cannot be created: {}", CONFIG_DIR);
+                log.error("The config directory for moun cannot be created: {}", muonPath);
                 System.exit(1);
             }
             firstRun = true;
         }
 
-        loadSettings();
+        CONTEXT.setConfigDir(appDir);
+        CONTEXT.setSettingsManager(new SettingsManager(appDir));
+        CONTEXT.setSettings(CONTEXT.getSettingsManager().loadSettings());
+
         if (firstRun && !isMuonPath) {
             SessionExportImport.importOnFirstRun();
         }
 
-        if (settings.isManualScaling()) {
+        if (CONTEXT.getSettings().isManualScaling()) {
             System.setProperty("sun.java2d.uiScale.enabled", "true");
-            System.setProperty("sun.java2d.uiScale", String.format("%.2f", settings.getUiScaling()));
+            System.setProperty("sun.java2d.uiScale", String.format("%.2f", CONTEXT.getSettings().getUiScaling()));
         }
 
-        if (settings.getEditors().isEmpty()) {
+        if (CONTEXT.getSettings().getEditors().isEmpty()) {
             log.info("Searching for known editors...");
-            settings.setEditors(PlatformUtils.getKnownEditors());
-            saveSettings();
+            CONTEXT.getSettings().setEditors(PlatformUtils.getKnownEditors());
+            CONTEXT.getSettingsManager().saveSettings();
             log.info("Searching for known editors...done");
         }
 
-        setBundleLanguage();
-        TransferMode.update();
+        setKnownHostFile();
+
+        CONTEXT.setBundleLanguage();
         ConflictAction.update();
 
+        UIManager.setLookAndFeel(CONTEXT.updateSkin().getLaf());
 
-        SKIN = settings.isUseGlobalDarkTheme() ? new AppSkinDark() : new AppSkinLight();
+        validateMaxKeySize();
 
-        UIManager.setLookAndFeel(SKIN.getLaf());
+        mw = new AppWindow();
+        externalEditorHandler = new ExternalEditorHandler(mw);
+        SwingUtilities.invokeLater(() -> mw.setVisible(true));
+        mw.createFirstSessionPanel();
+    }
 
+    private static void setKnownHostFile() {
+        try {
+            File knownHostFile = new File(App.getCONTEXT().getConfigDir(), "known_hosts");
+            CONTEXT.setHostKeyVerifier(new GraphicalHostKeyVerifier(knownHostFile));
+        } catch (IOException e2) {
+            log.error(e2.getMessage(), e2);
+        }
+    }
+
+    private static void validateMaxKeySize() {
         try {
             int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
             log.info("maxKeySize: {}", maxKeySize);
             if (maxKeySize < Integer.MAX_VALUE) {
-                JOptionPane.showMessageDialog(null, App.bundle.getString("unlimited_cryptography"));
+                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("unlimited_cryptography"));
             }
         } catch (NoSuchAlgorithmException e1) {
             log.error(e1.getMessage(), e1);
         }
-
-        // JediTerm seems to take a long time to load, this might make UI more
-        // responsive
-        App.EXECUTOR.submit(() -> {
-            try {
-                Class.forName("com.jediterm.terminal.ui.JediTermWidget");
-            } catch (ClassNotFoundException e) {
-                log.error(e.getMessage(), e);
-            }
-        });
-
-        mw = new AppWindow();
-        inputBlocker = new GraphicalInputBlocker(mw);
-        externalEditorHandler = new ExternalEditorHandler(mw);
-        SwingUtilities.invokeLater(() -> mw.setVisible(true));
-
-        try {
-            File knownHostFile = new File(App.CONFIG_DIR, "known_hosts");
-            HOST_KEY_VERIFIER = new GraphicalHostKeyVerifier(knownHostFile);
-        } catch (Exception e2) {
-            log.error(e2.getMessage(), e2);
-        }
-
-        mw.createFirstSessionPanel();
-    }
-
-    public static synchronized Settings loadSettings() {
-        File file = new File(CONFIG_DIR, Constants.CONFIG_DB_FILE);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        if (file.exists()) {
-            try {
-                settings = objectMapper.readValue(file, Settings.class);
-                return settings;
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        settings = new Settings();
-        return settings;
-    }
-
-    public static synchronized void saveSettings() {
-        File file = new File(CONFIG_DIR, Constants.CONFIG_DB_FILE);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            objectMapper.writeValue(file, settings);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
     }
 
     public static synchronized Settings getGlobalSettings() {
-        return settings;
+        return CONTEXT.getSettings();
     }
 
-    public static SessionContentPanel getSessionContainer(int activeSessionId) {
+    public static ISessionContentPanel getSessionContainer(int activeSessionId) {
         return mw.getSessionListPanel().getSessionContainer(activeSessionId);
-    }
-
-    public static synchronized void loadPinnedLogs() {
-        File file = new File(CONFIG_DIR, Constants.PINNED_LOGS);
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        if (file.exists()) {
-            try {
-                pinnedLogs = objectMapper.readValue(file, new TypeReference<>() {
-                });
-                return;
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-        pinnedLogs = new HashMap<>();
-    }
-
-    public static synchronized void savePinnedLogs() {
-        File file = new File(CONFIG_DIR, Constants.PINNED_LOGS);
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            objectMapper.writeValue(file, pinnedLogs);
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-        }
     }
 
     public static synchronized void addUpload(BackgroundFileTransfer transfer) {
         mw.addUpload(transfer);
+    }
+
+    public static synchronized AppContext getCONTEXT() {
+        return CONTEXT;
     }
 
     public static synchronized void addDownload(BackgroundFileTransfer transfer) {
@@ -242,16 +156,4 @@ public class App {
         return mw;
     }
 
-    //Set the bundle language
-    private static void setBundleLanguage() {
-        Language language = Language.ENGLISH;
-        if (settings != null && settings.getLanguage() != null) {
-            language = settings.getLanguage();
-        }
-
-        Locale locale = new Locale.Builder().setLanguage(language.getLangAbbr()).build();
-        bundle = ResourceBundle.getBundle(PATH_MESSAGES_FILE, locale);
-        Locale.setDefault(locale);
-
-    }
 }

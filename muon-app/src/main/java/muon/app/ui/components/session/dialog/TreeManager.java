@@ -1,6 +1,7 @@
 package muon.app.ui.components.session.dialog;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ui.components.session.*;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static muon.app.App.bundle;
+
 
 @Slf4j
 public class TreeManager {
@@ -125,7 +126,7 @@ public class TreeManager {
 
     public static DefaultMutableTreeNode getNode(DefaultMutableTreeNode parentNode, DefaultMutableTreeNode rootNode, DefaultTreeModel treeModel) {
         SessionInfo sessionInfo = new SessionInfo();
-        sessionInfo.setName(bundle.getString("new_site"));
+        sessionInfo.setName(App.getCONTEXT().getBundle().getString("new_site"));
         sessionInfo.setId(getNewUuid(rootNode));
         DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(sessionInfo);
         childNode.setUserObject(sessionInfo);

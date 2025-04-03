@@ -1,14 +1,16 @@
-/**
- *
- */
+
 package muon.app.util;
 
 /**
  * @author subhro
- *
  */
 public class FontAwesomeContants {
+    protected FontAwesomeContants() {
+
+    }
+
     public static final String FA_CUBE = "\uf1b2";
+    public static final String FA_CUBES = "\uf1b3";
     public static final String FA_FOLDER = "\uf07b";
     public static final String FA_PENCIL_SQUARE_O = "\uf044";
     public static final String FA_BARS = "\uf0c9";
@@ -57,6 +59,7 @@ public class FontAwesomeContants {
     public static final String FA_ARROW_UP = "\uf062";
     public static final String FA_ARROW_DOWN = "\uf063";
     public static final String FA_FILE = "\uf15b";
+    public static final String FA_FILE_TEXT = "\uf15c";
     public static final String FA_FILE_WORD_O = "\uf1c2";
     public static final String FA_FILE_POWERPOINT_O = "\uf1c4";
     public static final String FA_FILE_PDF_O = "\uf1c1";
@@ -70,4 +73,8 @@ public class FontAwesomeContants {
     public static final String FA_TRASH = "\uf1f8";
     public static final String FA_ANGLE_DOUBLE_LEFT = "\uf100";
     public static final String FA_ANGLE_DOUBLE_RIGHT = "\uf101";
+    public static final String FA_WINDOWS = "\uf17a";
+    public static final String FA_APPLE = "\uf179";
+    public static final String FA_CERTIFICATE = "\uf0a3";
+    public static final String FA_VCARD = "\uf2bb";
 }

@@ -1,9 +1,10 @@
 package muon.app.ui.components.session;
 
 import lombok.extern.slf4j.Slf4j;
-import muon.app.ui.components.SkinnedTextArea;
-import muon.app.ui.components.SkinnedTextField;
-import muon.app.ui.components.TabbedPanel;
+import muon.app.App;
+import muon.app.ui.components.common.SkinnedTextArea;
+import muon.app.ui.components.common.SkinnedTextField;
+import muon.app.ui.components.common.TabbedPanel;
 import muon.app.util.enums.JumpType;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
 
-import static muon.app.App.bundle;
+
 
 @Slf4j
 public class SessionInfoPanel extends JPanel {
@@ -145,7 +146,7 @@ public class SessionInfoPanel extends JPanel {
     }
 
     private void showError(String msg) {
-        JOptionPane.showMessageDialog(this, msg, bundle.getString("error"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg, App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
     }
 
     private void setJumpHostDetails(boolean useJumpHosts, JumpType jumpType, List<HopEntry> jumpHosts) {
@@ -162,11 +163,11 @@ public class SessionInfoPanel extends JPanel {
         setLayout(new BorderLayout());
         setBorder(new EmptyBorder(10, 0, 10, 0));
         TabbedPanel tabs = new TabbedPanel();
-        tabs.addTab(bundle.getString("connection"), createConnectionPanel());
-        tabs.addTab(bundle.getString("directories"), createDirectoryPanel());
-        tabs.addTab(bundle.getString("proxy"), createProxyPanel());
-        tabs.addTab(bundle.getString("jump_hosts"), createJumpPanel());
-        tabs.addTab(bundle.getString("port_forwarding"), createPortForwardingPanel());
+        tabs.addTab(App.getCONTEXT().getBundle().getString("connection"), createConnectionPanel());
+        tabs.addTab(App.getCONTEXT().getBundle().getString("directories"), createDirectoryPanel());
+        tabs.addTab(App.getCONTEXT().getBundle().getString("proxy"), createProxyPanel());
+        tabs.addTab(App.getCONTEXT().getBundle().getString("jump_hosts"), createJumpPanel());
+        tabs.addTab(App.getCONTEXT().getBundle().getString("port_forwarding"), createPortForwardingPanel());
         this.add(tabs);
         tabs.setSelectedIndex(0);
     }
@@ -264,12 +265,12 @@ public class SessionInfoPanel extends JPanel {
         Insets noInset = new Insets(5, 10, 0, 10);
 
         // -----------
-        JLabel lblProxyType = new JLabel(bundle.getString("proxy_type"));
-        JLabel lblProxyHost = new JLabel(bundle.getString("proxy_host"));
+        JLabel lblProxyType = new JLabel(App.getCONTEXT().getBundle().getString("proxy_type"));
+        JLabel lblProxyHost = new JLabel(App.getCONTEXT().getBundle().getString("proxy_host"));
         lblProxyHost.setHorizontalAlignment(JLabel.LEADING);
-        JLabel lblProxyPort = new JLabel(bundle.getString("proxy_port"));
-        JLabel lblProxyUser = new JLabel(bundle.getString("proxy_user"));
-        JLabel lblProxyPass = new JLabel(bundle.getString("proxy_password") + bundle.getString("warning_plain_text"));
+        JLabel lblProxyPort = new JLabel(App.getCONTEXT().getBundle().getString("proxy_port"));
+        JLabel lblProxyUser = new JLabel(App.getCONTEXT().getBundle().getString("proxy_user"));
+        JLabel lblProxyPass = new JLabel(App.getCONTEXT().getBundle().getString("proxy_password") + App.getCONTEXT().getBundle().getString("warning_plain_text"));
 
         cmbProxy = new JComboBox<>(new String[]{"NONE", "HTTP", "SOCKS"});
         cmbProxy.addActionListener(e -> info.setProxyType(cmbProxy.getSelectedIndex()));
@@ -495,7 +496,7 @@ public class SessionInfoPanel extends JPanel {
             }
         });
 
-        JButton inpLocalBrowse = new JButton(bundle.getString("browse"));
+        JButton inpLocalBrowse = new JButton(App.getCONTEXT().getBundle().getString("browse"));
         inpLocalBrowse.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             jfc.setFileHidingEnabled(false);
@@ -566,14 +567,14 @@ public class SessionInfoPanel extends JPanel {
         Insets topInset = new Insets(20, 10, 0, 10);
         Insets noInset = new Insets(5, 10, 0, 10);
 
-        JLabel lblHost = new JLabel(bundle.getString("host"));
+        JLabel lblHost = new JLabel(App.getCONTEXT().getBundle().getString("host"));
         lblHost.setHorizontalAlignment(JLabel.LEADING);
-        JLabel lblPort = new JLabel(bundle.getString("port"));
-        JLabel lblUser = new JLabel(bundle.getString("user"));
-        JLabel lblPass = new JLabel(bundle.getString("password"));
-        lblLocalFolder = new JLabel(bundle.getString("local_folder"));
-        lblRemoteFolder = new JLabel(bundle.getString("remote_folder"));
-        JLabel lblKeyFile = new JLabel(bundle.getString("private_key_file"));
+        JLabel lblPort = new JLabel(App.getCONTEXT().getBundle().getString("port"));
+        JLabel lblUser = new JLabel(App.getCONTEXT().getBundle().getString("user"));
+        JLabel lblPass = new JLabel(App.getCONTEXT().getBundle().getString("password"));
+        lblLocalFolder = new JLabel(App.getCONTEXT().getBundle().getString("local_folder"));
+        lblRemoteFolder = new JLabel(App.getCONTEXT().getBundle().getString("remote_folder"));
+        JLabel lblKeyFile = new JLabel(App.getCONTEXT().getBundle().getString("private_key_file"));
 
         inpHostName = new SkinnedTextField(10);
         inpHostName.getDocument().addDocumentListener(new DocumentListener() {
@@ -670,7 +671,7 @@ public class SessionInfoPanel extends JPanel {
             }
         });
 
-        JButton inpKeyBrowse = new JButton(bundle.getString("browse"));// new
+        JButton inpKeyBrowse = new JButton(App.getCONTEXT().getBundle().getString("browse"));// new
         inpKeyBrowse.addActionListener(e -> {
             JFileChooser jfc = new JFileChooser();
             jfc.setFileHidingEnabled(false);
@@ -681,7 +682,7 @@ public class SessionInfoPanel extends JPanel {
             if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 String selectedFile = jfc.getSelectedFile().getAbsolutePath();
                 if (selectedFile.endsWith(".ppk") && !isSupportedPuttyKeyFile(jfc.getSelectedFile())) {
-                    JOptionPane.showMessageDialog(this, bundle.getString("unsupported_key")
+                    JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("unsupported_key")
                                                  );
                     return;
                 }
@@ -690,13 +691,13 @@ public class SessionInfoPanel extends JPanel {
             }
         });
 
-        JButton inpKeyShowPass = new JButton(bundle.getString("show"));
+        JButton inpKeyShowPass = new JButton(App.getCONTEXT().getBundle().getString("show"));
         inpKeyShowPass.addActionListener(e -> {
             SkinnedTextArea ta = new SkinnedTextArea();
             ta.setText(inpPassword.getText());
             ta.setEditable(false);
             ta.setLineWrap(false);
-            JOptionPane.showMessageDialog(this, ta, bundle.getString("password"), JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(this, ta, App.getCONTEXT().getBundle().getString("password"), JOptionPane.PLAIN_MESSAGE);
         });
 
         chkUseX11Forwarding = new JCheckBox("X11 forwarding");

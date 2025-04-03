@@ -10,9 +10,10 @@ import muon.app.ssh.RemoteSessionInstance;
 import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.SessionInfo;
+import muon.app.util.OptionPaneUtils;
+import muon.app.util.PathUtils;
 import net.schmizz.sshj.sftp.Response;
 import net.schmizz.sshj.sftp.SFTPException;
-import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.io.ByteArrayOutputStream;
@@ -41,8 +42,8 @@ public class SshKeyManager {
     private static void loadLocalKey(String pubKeyPath, SshKeyHolder holder) {
         try {
             Path defaultPath = pubKeyPath == null
-                    ? Paths.get(System.getProperty(USER_HOME), SSH, "id_rsa.pub").toAbsolutePath()
-                    : Paths.get(pubKeyPath);
+                               ? Paths.get(System.getProperty(USER_HOME), SSH, "id_rsa.pub").toAbsolutePath()
+                               : Paths.get(pubKeyPath);
             byte[] bytes = Files.readAllBytes(defaultPath);
             holder.setLocalPublicKey(new String(bytes, StandardCharsets.UTF_8));
             holder.setLocalPubKeyFile(defaultPath.toString());
@@ -65,7 +66,7 @@ public class SshKeyManager {
             holder.setRemotePublicKey(out.toString(StandardCharsets.UTF_8));
         } catch (SFTPException e) {
             if (e.getStatusCode() != Response.StatusCode.NO_SUCH_FILE
-                    && e.getStatusCode() != Response.StatusCode.NO_SUCH_PATH) {
+                && e.getStatusCode() != Response.StatusCode.NO_SUCH_PATH) {
                 throw e;
             }
         }
@@ -81,7 +82,7 @@ public class SshKeyManager {
             holder.setRemoteAuthorizedKeys(out.toString(StandardCharsets.UTF_8));
         } catch (SFTPException e) {
             if (e.getStatusCode() != Response.StatusCode.NO_SUCH_FILE
-                    && e.getStatusCode() != Response.StatusCode.NO_SUCH_PATH) {
+                && e.getStatusCode() != Response.StatusCode.NO_SUCH_PATH) {
                 throw e;
             }
         }
@@ -91,22 +92,21 @@ public class SshKeyManager {
             throws Exception {
         if (holder.getLocalPublicKey() != null) {
             if (JOptionPane.showConfirmDialog(null,
-                                              App.bundle.getString("overwrite_ssh_key"),
-                    "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
+                                              App.getCONTEXT().getBundle().getString("overwrite_ssh_key"),
+                                              "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
                 return;
             }
         }
 
-        JCheckBox chkGenPassPhrase = new JCheckBox(App.bundle.getString("protected_key_optional"));
+        JCheckBox chkGenPassPhrase = new JCheckBox(App.getCONTEXT().getBundle().getString("protected_key_optional"));
         JPasswordField txtPassPhrase = new JPasswordField(30);
         txtPassPhrase.setEditable(false);
         chkGenPassPhrase.addActionListener(e -> txtPassPhrase.setEditable(chkGenPassPhrase.isSelected()));
 
         String passPhrase = new String(txtPassPhrase.getPassword());
 
-        if (JOptionPane.showOptionDialog(null, new Object[]{chkGenPassPhrase, "Passphrase", txtPassPhrase},
-                "Passphrase", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null,
-                null) == JOptionPane.YES_OPTION) {
+        if (OptionPaneUtils.showOptionDialog(null, new Object[]{chkGenPassPhrase, "Passphrase", txtPassPhrase},
+                                             "Passphrase") == JOptionPane.YES_OPTION) {
             if (local) {
                 generateLocalKeys(holder, passPhrase);
             } else {
@@ -143,7 +143,7 @@ public class SshKeyManager {
             instance.getSshFs().deleteFile(path1);
         } catch (SFTPException e) {
             if (e.getStatusCode() != Response.StatusCode.NO_SUCH_FILE
-                    && e.getStatusCode() != Response.StatusCode.NO_SUCH_PATH) {
+                && e.getStatusCode() != Response.StatusCode.NO_SUCH_PATH) {
                 throw new Exception(e);
             }
         }
@@ -152,7 +152,7 @@ public class SshKeyManager {
             instance.getSshFs().deleteFile(path);
         } catch (SFTPException e) {
             if (e.getStatusCode() != Response.StatusCode.NO_SUCH_FILE
-                    && e.getStatusCode() != Response.StatusCode.NO_SUCH_PATH) {
+                && e.getStatusCode() != Response.StatusCode.NO_SUCH_PATH) {
                 throw new Exception(e);
             }
         }
@@ -167,7 +167,7 @@ public class SshKeyManager {
     private static String getPubKeyPath(SessionInfo info) {
         if (info.getPrivateKeyFile() != null && !info.getPrivateKeyFile().isEmpty()) {
             String path = PathUtils.combine(PathUtils.getParent(info.getPrivateKeyFile()),
-                    PathUtils.getFileName(info.getPrivateKeyFile()) + ".pub", File.separator);
+                                            PathUtils.getFileName(info.getPrivateKeyFile()) + ".pub", File.separator);
             if (new File(path).exists()) {
                 return path;
             }

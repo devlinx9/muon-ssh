@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.util;
 
 import com.sun.jna.Native;
@@ -12,12 +10,13 @@ import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.win32.StdCallLibrary;
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ui.components.settings.EditorEntry;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+
+import static java.util.Map.entry;
 
 /**
  * @author subhro
@@ -32,6 +31,36 @@ public class PlatformUtils {
     public static final boolean IS_LINUX = System.getProperty(OS_NAME, "").toLowerCase(Locale.ENGLISH)
             .contains("linux");
     public static final String VISUAL_STUDIO_CODE = "Visual Studio Code";
+
+    private static final Map<String, List<String>> KNOWN_LINUX_EDITORS = Map.ofEntries(
+            entry(VISUAL_STUDIO_CODE,
+                  List.of("/usr/bin/code", "/usr/local/bin/code", "/snap/bin/code", "/flatpak/bin/code")),
+            entry("Atom",
+                  List.of("/usr/bin/atom", "/usr/local/bin/atom", "/snap/bin/atom")),
+            entry("Sublime Text",
+                  List.of("/usr/bin/subl", "/usr/local/bin/subl", "/snap/bin/subl")),
+            entry("Gedit",
+                  List.of("/usr/bin/gedit")),
+            entry("Kate",
+                  List.of("/usr/bin/kate")));
+
+    // Immutable Map of Editors to Potential Paths
+    private static final Map<String, List<String>> KNOWN_MAC_EDITORS = Map.ofEntries(
+            entry(VISUAL_STUDIO_CODE, List.of(
+                    "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code",
+                    "/usr/local/bin/code",
+                    "/usr/bin/code")),
+            entry("Sublime Text", List.of(
+                    "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl",
+                    "/usr/local/bin/subl",
+                    "/usr/bin/subl")),
+            entry("Atom", List.of(
+                    "/Applications/Atom.app/Contents/MacOS/Atom",
+                    "/usr/local/bin/atom",
+                    "/usr/bin/atom")),
+            entry("IntelliJ IDEA", List.of(
+                    "/Applications/IntelliJ IDEA.app/Contents/MacOS/idea",
+                    "/usr/local/bin/idea")));
 
     public static void openWithDefaultApp(File file, boolean openWith) throws IOException {
         if (IS_MAC) {
@@ -135,86 +164,81 @@ public class PlatformUtils {
     public static List<EditorEntry> getKnownEditors() {
         List<EditorEntry> list = new ArrayList<>();
         if (IS_WINDOWS) {
-            try {
-                String vscode = detectVSCode(false);
-                if (vscode != null) {
-                    EditorEntry ent = new EditorEntry(VISUAL_STUDIO_CODE, vscode);
-                    list.add(ent);
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                String vscode = detectVSCode(true);
-                if (vscode != null) {
-                    EditorEntry ent = new EditorEntry(VISUAL_STUDIO_CODE, vscode);
-                    list.add(ent);
-                }
-            }
-
-            try {
-                String npp = Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE,
-                                                                 "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Notepad++", "DisplayIcon");
-                EditorEntry ent = new EditorEntry("Notepad++", npp);
-                list.add(ent);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
-
-            try {
-                String atom = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER,
-                                                                  "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
-                EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
-                list.add(ent);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                try {
-                    String atom = Advapi32Util.registryGetStringValue(WinReg.HKEY_LOCAL_MACHINE,
-                                                                      "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
-                    EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
-                    list.add(ent);
-                } catch (Exception e1) {
-                    log.error(e1.getMessage(), e1);
-                }
-            }
-
+            setWindowsEditors(list);
         } else if (IS_MAC) {
-            Map<String, String> knownEditorMap = new CollectionHelper.Dict<String, String>().putItem(
-                    VISUAL_STUDIO_CODE, "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code");
-            for (String key : knownEditorMap.keySet()) {
-                File file = new File(knownEditorMap.get(key));
-                if (file.exists()) {
-                    EditorEntry ent = new EditorEntry(key, file.getAbsolutePath());
-                    list.add(ent);
-                }
-            }
-
+            populateEditors(list, KNOWN_MAC_EDITORS);
         } else {
-            Map<String, String> knownEditorMap = new CollectionHelper.Dict<String, String>()
-                    .putItem(VISUAL_STUDIO_CODE, "/usr/bin/code").putItem("Atom", "/usr/bin/atom")
-                    .putItem("Sublime Text", "/usr/bin/subl").putItem("Gedit", "/usr/bin/gedit")
-                    .putItem("Kate", "/usr/bin/kate");
-            for (String key : knownEditorMap.keySet()) {
-                File file = new File(knownEditorMap.get(key));
-                if (file.exists()) {
-                    EditorEntry ent = new EditorEntry(key, file.getAbsolutePath());
-                    list.add(ent);
-                }
-            }
+            populateEditors(list, KNOWN_LINUX_EDITORS);
         }
         return list;
     }
 
-    private static String detectVSCode(boolean hklm) {
-        HKEY hkey = hklm ? WinReg.HKEY_LOCAL_MACHINE : WinReg.HKEY_CURRENT_USER;
-        String[] keys = Advapi32Util.registryGetKeys(hkey, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
-        for (String key : keys) {
-            Map<String, Object> values = Advapi32Util.registryGetValues(hkey,
-                                                                        "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + key);
-            if (values.containsKey("DisplayName")) {
-                String text = (values.get("DisplayName") + "").toLowerCase(Locale.ENGLISH);
-                if (text.contains("visual studio code")) {
-                    return values.get("DisplayIcon") + "";
+    private static void setWindowsEditors(List<EditorEntry> list) {
+        String vscode = detectVSCode(false);
+        if (vscode != null) {
+            EditorEntry ent = new EditorEntry(VISUAL_STUDIO_CODE, vscode);
+            list.add(ent);
+        } else {
+            vscode = detectVSCode(true);
+            if (vscode != null) {
+                EditorEntry ent = new EditorEntry(VISUAL_STUDIO_CODE, vscode);
+                list.add(ent);
+            }
+        }
+
+
+        String npp = RegUtil.regGetStr(WinReg.HKEY_LOCAL_MACHINE,
+                                       "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Notepad++", "DisplayIcon");
+        if (npp != null) {
+            EditorEntry ent = new EditorEntry("Notepad++", npp);
+            list.add(ent);
+        }
+
+        String atom = RegUtil.regGetStr(WinReg.HKEY_CURRENT_USER,
+                                        "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
+        if (atom != null) {
+            EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
+            list.add(ent);
+            return;
+        }
+
+        atom = RegUtil.regGetStr(WinReg.HKEY_LOCAL_MACHINE,
+                                 "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
+        if (atom != null) {
+            EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
+            list.add(ent);
+        }
+    }
+
+
+    private static void populateEditors(List<EditorEntry> list, Map<String, List<String>> knownLinuxEditors) {
+        for (Map.Entry<String, List<String>> knownEditor : knownLinuxEditors.entrySet()) {
+            for (String path : knownEditor.getValue()) {
+                File file = new File(path);
+                if (file.exists()) {
+                    list.add(new EditorEntry(knownEditor.getKey(), file.getAbsolutePath()));
+                    break;
                 }
             }
+        }
+    }
+
+    private static String detectVSCode(boolean hklm) {
+        try {
+            HKEY hkey = hklm ? WinReg.HKEY_LOCAL_MACHINE : WinReg.HKEY_CURRENT_USER;
+            String[] keys = Advapi32Util.registryGetKeys(hkey, "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
+            for (String key : keys) {
+                Map<String, Object> values = Advapi32Util.registryGetValues(hkey,
+                                                                            "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + key);
+                if (values.containsKey("DisplayName")) {
+                    String text = (values.get("DisplayName") + "").toLowerCase(Locale.ENGLISH);
+                    if (text.contains("visual studio code")) {
+                        return values.get("DisplayIcon") + "";
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
         return null;
     }
@@ -222,6 +246,37 @@ public class PlatformUtils {
     public interface Shell32 extends ShellAPI, StdCallLibrary {
         WinDef.HINSTANCE shellExecuteW(WinDef.HWND hwnd, WString lpOperation, WString lpFile, WString lpParameters,
                                        WString lpDirectory, int nShowCmd);
+    }
+
+    public static String getStringForOpenInFileBrowser() {
+        if (IS_WINDOWS) {
+            return App.getCONTEXT().getBundle().getString("open_in_file_browser_win");
+        } else {
+            return IS_MAC ? App.getCONTEXT().getBundle().getString("open_in_file_browser_mac") : App.getCONTEXT().getBundle().getString("open_in_file_browser_nix");
+        }
+    }
+
+    public static int executeLocalCommand(String command, StringBuilder output) throws IOException, InterruptedException {
+
+        ProcessBuilder pb = new ProcessBuilder("bash", "-c", command);
+
+        if (IS_WINDOWS) {
+            pb = new ProcessBuilder("cmd", "/c", command);
+        }
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+            }
+        }
+
+        // Wait for the command to complete and get the exit code
+        int exitCode = process.waitFor();
+        log.debug("Executed [{}] with exit code: {}", command, exitCode);
+        return exitCode;
     }
 
 }

@@ -1,11 +1,9 @@
-/**
- *
- */
+
 package muon.app.ui.laf;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import muon.app.ui.components.RoundedButtonPainter;
+import muon.app.ui.components.common.RoundedButtonPainter;
 import muon.app.ui.components.session.files.view.AddressBarBreadCrumbs;
 
 import javax.swing.*;

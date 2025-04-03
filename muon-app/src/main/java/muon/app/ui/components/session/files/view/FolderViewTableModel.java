@@ -1,6 +1,7 @@
 package muon.app.ui.components.session.files.view;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.common.FileInfo;
 
 import javax.swing.*;
@@ -11,14 +12,14 @@ import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import static muon.app.App.bundle;
+
 
 @Slf4j
 public class FolderViewTableModel extends AbstractTableModel implements ListModel<FileInfo> {
 
     private static final long serialVersionUID = 7212506492710233442L;
     private final List<FileInfo> files = new ArrayList<>();
-    private final String[] columns = {bundle.getString("name"), bundle.getString("modified"), bundle.getString("size"), bundle.getString("type"), bundle.getString("permission"), bundle.getString("owner")};
+    private final String[] columns = {App.getCONTEXT().getBundle().getString("name"), App.getCONTEXT().getBundle().getString("modified"), App.getCONTEXT().getBundle().getString("size"), App.getCONTEXT().getBundle().getString("type"), App.getCONTEXT().getBundle().getString("permission"), App.getCONTEXT().getBundle().getString("owner")};
     protected EventListenerList listenerList = new EventListenerList();
     private final boolean local;
 

@@ -1,22 +1,19 @@
-/**
- *
- */
+
 package muon.app.ui.components.settings;
 
+import com.jediterm.core.Color;
 import com.jediterm.terminal.TerminalColor;
 import com.jediterm.terminal.TextStyle;
 import muon.app.App;
 
-import java.awt.*;
 
 /**
  * @author subhro
- *
  */
 public class CustomTerminalTheme implements TerminalTheme {
 
     public static TerminalColor getTerminalColor(int rgb) {
-        return TerminalColor.awt(new Color(rgb));
+        return TerminalColor.fromColor(new Color(rgb));
     }
 
     @Override

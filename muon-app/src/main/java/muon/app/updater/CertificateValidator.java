@@ -102,6 +102,6 @@ public class CertificateValidator {
     }
 
     private static boolean confirmCert() {
-        return JOptionPane.showConfirmDialog(null, App.bundle.getString("update_check")) == JOptionPane.YES_OPTION;
+        return JOptionPane.showConfirmDialog(null, App.getCONTEXT().getBundle().getString("update_check")) == JOptionPane.YES_OPTION;
     }
 }

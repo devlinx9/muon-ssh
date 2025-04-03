@@ -1,13 +1,15 @@
 package muon.app.ui.components.session.diskspace;
 
+import muon.app.App;
+
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
-import static muon.app.App.bundle;
+
 
 public class PartitionTableModel extends AbstractTableModel {
-    private final String[] columns = {bundle.getString("filesystem"), bundle.getString("total_size"), bundle.getString("used"), bundle.getString("available"), bundle.getString("percentage_use"), bundle.getString("mount_point")};
+    private final String[] columns = {App.getCONTEXT().getBundle().getString("filesystem"), App.getCONTEXT().getBundle().getString("total_size"), App.getCONTEXT().getBundle().getString("used"), App.getCONTEXT().getBundle().getString("available"), App.getCONTEXT().getBundle().getString("percentage_use"), App.getCONTEXT().getBundle().getString("mount_point")};
 
     private final List<PartitionEntry> list = new ArrayList<>();
 

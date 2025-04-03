@@ -6,6 +6,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+
 public class SnippetListRenderer extends JPanel
         implements ListCellRenderer<SnippetItem> {
     private final JLabel lblName;
@@ -15,7 +17,7 @@ public class SnippetListRenderer extends JPanel
         super(new BorderLayout(5, 5));
         setBorder(new EmptyBorder(5, 10, 5, 10));
         lblName = new JLabel();
-        lblName.setFont(lblName.getFont().deriveFont(Font.PLAIN, 14.0f));
+        lblName.setFont(lblName.getFont().deriveFont(Font.PLAIN, SMALL_TEXT_SIZE));
         lblCommand = new JLabel();
         add(lblName);
         add(lblCommand, BorderLayout.SOUTH);
@@ -28,9 +30,9 @@ public class SnippetListRenderer extends JPanel
         setBackground(isSelected ? new Color(3, 155, 229)
                 : list.getBackground());
         lblName.setForeground(
-                isSelected ? App.SKIN.getDefaultSelectionForeground()
-                        : App.SKIN.getDefaultForeground());
-        lblCommand.setForeground(App.SKIN.getInfoTextForeground());
+                isSelected ? App.getCONTEXT().getSkin().getDefaultSelectionForeground()
+                        : App.getCONTEXT().getSkin().getDefaultForeground());
+        lblCommand.setForeground(App.getCONTEXT().getSkin().getInfoTextForeground());
         lblName.setText(value.getName());
         lblCommand.setText(value.getCommand());
         return this;

@@ -1,6 +1,4 @@
-/**
- *
- */
+
 package muon.app.util;
 
 import com.sun.jna.platform.win32.Advapi32Util;
@@ -12,6 +10,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RegUtil {
+
+    protected RegUtil() {
+
+    }
+
     public static String regGetStr(WinReg.HKEY hkey, String key,
                                    String value) {
         try {
