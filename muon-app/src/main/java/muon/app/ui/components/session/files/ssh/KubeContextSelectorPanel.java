@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.files.ssh;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.util.PlatformUtils;
@@ -12,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 public class KubeContextSelectorPanel extends JPanel {
@@ -19,6 +21,11 @@ public class KubeContextSelectorPanel extends JPanel {
     private final transient ScheduledExecutorService k8sContextUpdater = Executors.newSingleThreadScheduledExecutor();
 
     private final Box verticalBox;
+    @Getter
+    private boolean commandWorking = false;
+
+    @Getter
+    private String currentContext = "";
 
     public KubeContextSelectorPanel() {
         setLayout(new BorderLayout());
@@ -32,7 +39,7 @@ public class KubeContextSelectorPanel extends JPanel {
         startK8sContextUpdater();
     }
 
-    public void getContext() {
+    public void showContexts() {
         verticalBox.removeAll();
 
         String contexts = executeK8sCommands("kubectl config get-contexts");
@@ -47,9 +54,8 @@ public class KubeContextSelectorPanel extends JPanel {
             return;
         }
 
-        String actualContext = getActualContext(lines);
-
-        App.getAppWindow().getLblK8sContext().setText(actualContext);
+        currentContext = getActualContext(lines);
+        App.getAppWindow().getLblK8sContext().setText(currentContext);
 
         verticalBox.revalidate();
         verticalBox.repaint();
@@ -127,6 +133,7 @@ public class KubeContextSelectorPanel extends JPanel {
             log.warn("Attempted to switch context, but got an empty/failed response.");
         }
 
+        currentContext = context;
         App.getAppWindow().getLblK8sContext().setText(context);
 
         Container parent = this.getParent();
@@ -156,11 +163,22 @@ public class KubeContextSelectorPanel extends JPanel {
 
 
     private void startK8sContextUpdater() {
+        AtomicReference<String> context = new AtomicReference<>(executeK8sCommands("kubectl config current-context"));
+        if (context.get() == null || context.get().isEmpty()) {
+            log.error("Error uploading K8s context pluging");
+            return;
+        }
+
+        commandWorking = true;
         // Periodically refresh the current K8s context and show it in the main window label
         k8sContextUpdater.scheduleAtFixedRate(() -> {
-            String context = executeK8sCommands("kubectl config current-context");
-            App.getAppWindow().getLblK8sContext().setText(context);
+            context.set(executeK8sCommands("kubectl config current-context"));
+            currentContext = context.get();
+            if (App.getAppWindow().getLblK8sContext() != null) {
+                App.getAppWindow().getLblK8sContext().setText(context.get());
+            }
             log.info("Auto-updating local K8s context: {}", context);
         }, 0, 30, TimeUnit.SECONDS);
+
     }
 }

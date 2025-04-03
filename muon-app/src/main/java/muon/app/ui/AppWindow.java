@@ -67,12 +67,12 @@ public class AppWindow extends JFrame {
         this.add(createSessionPanel(), BorderLayout.WEST);
         this.add(this.cardPanel);
 
+        this.kubeContextSelectorPanel = new KubeContextSelectorPanel();
         this.bottomPanel = createBottomPanel();
         this.add(this.bottomPanel, BorderLayout.SOUTH);
 
         this.uploadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblUploadCount.setText(count + "")));
         this.downloadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblDownloadCount.setText(count + "")));
-        this.kubeContextSelectorPanel = new KubeContextSelectorPanel();
 
         checkForUpdates();
     }
@@ -264,8 +264,8 @@ public class AppWindow extends JFrame {
         b1.add(createRepositoryLabel());
         b1.add(Box.createHorizontalGlue());
 
-        if (App.getGlobalSettings().isEnabledK8sContextPlugin()) {
-            createK8sLabel();
+        if (App.getGlobalSettings().isEnabledK8sContextPlugin() && kubeContextSelectorPanel.isCommandWorking()) {
+            createK8sLabel(kubeContextSelectorPanel.getCurrentContext());
             b1.add(lblK8sContext);
             b1.add(createSpacer(5, 15));
         }
@@ -474,15 +474,15 @@ public class AppWindow extends JFrame {
         settingsDialog.showDialog(this, page);
     }
 
-    private void createK8sLabel() {
-        lblK8sContext = new JLabel("none");
+    private void createK8sLabel(String currentContext) {
+        lblK8sContext = new JLabel(currentContext);
         lblK8sContext.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblK8sContext.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 SwingUtilities.invokeLater(() -> {
                     try {
-                        kubeContextSelectorPanel.getContext();
+                        kubeContextSelectorPanel.showContexts();
                     } catch (Exception ex) {
                         log.error(ex.getMessage(), ex);
                     }
@@ -490,6 +490,7 @@ public class AppWindow extends JFrame {
                 });
             }
         });
+
     }
 
 }
