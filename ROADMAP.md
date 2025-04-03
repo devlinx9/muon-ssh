@@ -13,7 +13,7 @@ This document outlines the current status, upcoming releases, and future plans f
 ### Features:
 - [x] K8s current context plugin
 - [x] Change terminal tab name
-- [ ] Local term
+- [x] Local term
 
 ## Tasks: **v2.4.0**
 
