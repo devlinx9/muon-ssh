@@ -2,7 +2,7 @@
 
 [![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
 
-<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"> </div> 
+<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"></div> 
 
 **Muon SSH Terminal/SFTP Client** is a powerful graphical SSH client designed to simplify working with remote servers. Formerly known as "Snowflake," the project has been renamed to avoid confusion with another popular product of the same name.
 
