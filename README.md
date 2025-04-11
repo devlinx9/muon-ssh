@@ -79,13 +79,13 @@ Muon SSH is available as a Snap package, ensuring easy installation and updates 
 
 To install, run:
 ```sh  
-sudo snap install muon-ssh  
+sudo snap install muon-ssh --classic  
 ```
 
 For the latest build (may be unstable):
 
 ```sh  
-sudo snap install muon-ssh --edge    
+sudo snap install muon-ssh --classic --edge    
 ```
 ### Deb Package
 Muon SSH is also available as a Debian package. Install it using:

@@ -78,12 +78,12 @@ Muon SSH доступен в виде пакета Snap, что обеспечи
 
 Для установки выполните:
 ```sh  
-sudo snap install muon-ssh  
+sudo snap install muon-ssh --classic  
 ```
 
 Для последней сборки (может быть нестабильной):
 ```sh  
-sudo snap install muon-ssh --edge    
+sudo snap install muon-ssh --classic --edge    
 ```
 
 ### Пакет Deb
