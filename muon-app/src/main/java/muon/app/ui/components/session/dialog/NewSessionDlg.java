@@ -38,6 +38,9 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     private NamedItem selectedInfo;
     private SessionInfo info;
     private JLabel lblName;
+    private JPopupMenu groupPopupMenu;
+    private JMenuItem sortAZMenuItem;
+    private JMenuItem sortZAMenuItem;
 
     public NewSessionDlg(Window wnd) {
         super(wnd);
@@ -74,7 +77,16 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         tree.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    TreePath path = tree.getPathForLocation(e.getX(), e.getY());
+                    if (path != null) {
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        if (node != null && node.getChildCount() > 0) {
+                            tree.setSelectionPath(path);
+                            groupPopupMenu.show(tree, e.getX(), e.getY());
+                        }
+                    }
+                } else if (e.getClickCount() == 2) {
                     TreePath path = tree.getPathForLocation(e.getX(), e.getY());
                     if (path == null) {
                         return;
@@ -231,7 +243,48 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         sessionInfoPanel.setVisible(false);
         btnConnect.setVisible(false);
 
+        // --- Add popup menu for sorting ---
+        groupPopupMenu = new JPopupMenu();
+        sortAZMenuItem = new JMenuItem("Sort A-Z");
+        sortZAMenuItem = new JMenuItem("Sort Z-A");
+        groupPopupMenu.add(sortAZMenuItem);
+        groupPopupMenu.add(sortZAMenuItem);
+
+        sortAZMenuItem.addActionListener(e -> sortGroup(true));
+        sortZAMenuItem.addActionListener(e -> sortGroup(false));
+        // --- End popup menu ---
+
         rootNode = treeManager.loadTree(SessionStore.load(), treeModel, tree);
+    }
+
+    private void sortGroup(boolean ascending) {
+        TreePath path = tree.getSelectionPath();
+        if (path == null) return;
+        DefaultMutableTreeNode groupNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+        if (!(groupNode.getChildCount() > 0)) return;
+
+        java.util.List<DefaultMutableTreeNode> children = new java.util.ArrayList<>();
+        for (int i = 0; i < groupNode.getChildCount(); i++) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) groupNode.getChildAt(i);
+            if (child.getUserObject() instanceof SessionInfo) {
+                children.add(child);
+            }
+        }
+        // Remove all SessionInfo children
+        for (DefaultMutableTreeNode child : children) {
+            treeModel.removeNodeFromParent(child);
+        }
+        // Sort
+        children.sort((a, b) -> {
+            String nameA = ((SessionInfo) a.getUserObject()).getName();
+            String nameB = ((SessionInfo) b.getUserObject()).getName();
+            return ascending ? nameA.compareToIgnoreCase(nameB) : nameB.compareToIgnoreCase(nameA);
+        });
+        // Re-insert
+        for (DefaultMutableTreeNode child : children) {
+            treeModel.insertNodeInto(child, groupNode, groupNode.getChildCount());
+        }
+        tree.expandPath(path);
     }
 
     @Override
