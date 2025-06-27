@@ -39,8 +39,6 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     private SessionInfo info;
     private JLabel lblName;
     private JPopupMenu groupPopupMenu;
-    private JMenuItem sortAZMenuItem;
-    private JMenuItem sortZAMenuItem;
 
     public NewSessionDlg(Window wnd) {
         super(wnd);
@@ -245,8 +243,8 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
         // --- Add popup menu for sorting ---
         groupPopupMenu = new JPopupMenu();
-        sortAZMenuItem = new JMenuItem("Sort A-Z");
-        sortZAMenuItem = new JMenuItem("Sort Z-A");
+        JMenuItem sortAZMenuItem = new JMenuItem("Sort A-Z");
+        JMenuItem sortZAMenuItem = new JMenuItem("Sort Z-A");
         groupPopupMenu.add(sortAZMenuItem);
         groupPopupMenu.add(sortZAMenuItem);
 
