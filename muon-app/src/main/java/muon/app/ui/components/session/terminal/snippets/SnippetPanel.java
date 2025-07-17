@@ -85,7 +85,7 @@ public class SnippetPanel extends JPanel {
 
             if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                     new Object[]{"Snippet name", txtName, "Command",
-                            txtCommand},
+                            scrollPane},
                     "New snippet") == JOptionPane.OK_OPTION) {
                 if (txtCommand.getText().isEmpty()
                         || txtName.getText().isEmpty()) {
@@ -127,8 +127,8 @@ public class SnippetPanel extends JPanel {
 
             if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                     new Object[]{"Snippet name", txtName, "Command",
-                            txtCommand},
-                    "New snippet") == JOptionPane.OK_OPTION) {
+                            scrollPane},
+                    "Edit snippet") == JOptionPane.OK_OPTION) {
                 if (txtCommand.getText().isEmpty()
                         || txtName.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("enter_name_command")
@@ -151,7 +151,6 @@ public class SnippetPanel extends JPanel {
 
             SnippetItem snippetItem = listModel.get(index);
             App.getCONTEXT().getSnippetManager().getSnippetItems().remove(snippetItem);
-
             App.getCONTEXT().getSnippetManager().saveSnippets();
             loadSnippets();
             callback2.accept(null);
