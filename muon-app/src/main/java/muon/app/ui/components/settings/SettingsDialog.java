@@ -64,6 +64,7 @@ public class SettingsDialog extends JDialog {
     private JCheckBox chkPromptForSudo;
     private JCheckBox chkTransferTemporaryDirectory;
     private JCheckBox chkOpenInSecondScreen;
+    private JCheckBox chkStartWithTerminal;
     private JCheckBox chkDirectoryCache;
     private JCheckBox chkShowPathBar;
     private JCheckBox chkConfirmBeforeTerminalClosing;
@@ -439,6 +440,7 @@ public class SettingsDialog extends JDialog {
         chkUseSudo = new JCheckBox(App.getCONTEXT().getBundle().getString("use_sudo_if_fails"));
         chkTransferTemporaryDirectory = new JCheckBox(App.getCONTEXT().getBundle().getString("transfer_temporary_directory"));
         chkOpenInSecondScreen = new JCheckBox(App.getCONTEXT().getBundle().getString("open_second_screen"));
+        chkStartWithTerminal = new JCheckBox(App.getCONTEXT().getBundle().getString("open_with_local_term"));
         chkDirectoryCache = new JCheckBox(App.getCONTEXT().getBundle().getString("directory_caching"));
         chkShowPathBar = new JCheckBox(App.getCONTEXT().getBundle().getString("current_folder"));
         chkShowMessagePrompt = new JCheckBox(App.getCONTEXT().getBundle().getString("show_banner"));
@@ -477,6 +479,7 @@ public class SettingsDialog extends JDialog {
         chkFirstLocalViewInFileBrowserView.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkTransferTemporaryDirectory.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkOpenInSecondScreen.setAlignmentX(Box.LEFT_ALIGNMENT);
+        chkStartWithTerminal.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkUseSudo.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkPromptForSudo.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkDirectoryCache.setAlignmentX(Box.LEFT_ALIGNMENT);
@@ -515,9 +518,11 @@ public class SettingsDialog extends JDialog {
         vbox.add(chkShowPathBar);
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkShowMessagePrompt);
-        vbox.add(Box.createRigidArea(new Dimension(10, 20)));
+        vbox.add(Box.createRigidArea(new Dimension(10, 10)));
         vbox.add(chkStartMaximized);
-        vbox.add(Box.createRigidArea(new Dimension(10, 20)));
+        vbox.add(Box.createRigidArea(new Dimension(10, 10)));
+        vbox.add(chkStartWithTerminal);
+        vbox.add(Box.createRigidArea(new Dimension(10, 10)));
 
         JLabel lbl0 = new JLabel(App.getCONTEXT().getBundle().getString("log_viewer_lines"));
         JLabel lbl1 = new JLabel(App.getCONTEXT().getBundle().getString("connection_timeout"));
@@ -534,7 +539,7 @@ public class SettingsDialog extends JDialog {
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
 
         vbox.add(spConnectionKeepAlive);
-        vbox.add(Box.createRigidArea(new Dimension(10, 20)));
+        vbox.add(Box.createRigidArea(new Dimension(10, 10)));
 
         vbox.add(createRow(lbl2, Box.createHorizontalGlue(), spLogFontSize));
         vbox.add(Box.createRigidArea(new Dimension(10, 10)));
@@ -599,6 +604,7 @@ public class SettingsDialog extends JDialog {
         settings.setUseSudo(chkUseSudo.isSelected());
         settings.setTransferTemporaryDirectory(chkTransferTemporaryDirectory.isSelected());
         settings.setOpenInSecondScreen(chkOpenInSecondScreen.isSelected());
+        settings.setStartWithTerminal(chkStartWithTerminal.isSelected());
         settings.setPromptForSudo(chkPromptForSudo.isSelected());
         settings.setDirectoryCache(chkDirectoryCache.isSelected());
         settings.setShowPathBar(chkShowPathBar.isSelected());
@@ -687,6 +693,7 @@ public class SettingsDialog extends JDialog {
         chkFirstLocalViewInFileBrowserView.setSelected(settings.isFirstLocalViewInFileBrowser());
         chkTransferTemporaryDirectory.setSelected(settings.isTransferTemporaryDirectory());
         chkOpenInSecondScreen.setSelected(settings.isOpenInSecondScreen());
+        chkStartWithTerminal.setSelected(settings.isStartWithTerminal());
         chkUseSudo.setSelected(settings.isUseSudo());
         chkUseSudo.addActionListener(e -> setStatusCheckBox(chkPromptForSudo, chkUseSudo.isSelected()));
         if (settings.isUseSudo()) {

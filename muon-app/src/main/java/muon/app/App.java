@@ -100,7 +100,12 @@ public final class App {
         mw = new AppWindow();
         externalEditorHandler = new ExternalEditorHandler(mw);
         SwingUtilities.invokeLater(() -> mw.setVisible(true));
-        mw.createFirstSessionPanel();
+
+        if (App.getGlobalSettings().isStartWithTerminal()) {
+            mw.createLocalSessionPanel();
+        } else {
+            mw.createFirstSessionPanel();
+        }
     }
 
     private static void setKnownHostFile() {

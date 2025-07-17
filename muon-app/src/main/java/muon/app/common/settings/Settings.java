@@ -108,6 +108,8 @@ public class Settings {
     private double uiScaling = 1.0;
     private boolean manualScaling = false;
 
+    private boolean startWithTerminal = false;
+
     private List<EditorEntry> editors = new ArrayList<>();
 
     private String defaultPanel = "FILES";

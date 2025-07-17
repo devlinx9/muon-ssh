@@ -153,7 +153,7 @@ public class AppWindow extends JFrame {
         }
     }
 
-    private void createLocalSessionPanel() {
+    public void createLocalSessionPanel() {
         sessionListPanel.createLocalSession();
     }
 
