@@ -2,7 +2,7 @@
 
 [![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
 
-<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"> </div> 
+<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png" alt="File browser"> </div> 
 
 **Muon SSH Terminal/SFTP Client** is a powerful graphical SSH client designed to simplify working with remote servers. Formerly known as "Snowflake," the project has been renamed to avoid confusion with another popular product of the same name.
 
@@ -162,6 +162,16 @@ For detailed documentation, visit the <a href="https://github.com/devlinx9/muon-
 **JSch**: refer to [LICENSE-Jsch](LICENSE-Jsch)
 
 ---
+
+## Fonts
+**Source Code Pro** refer to <a href="https://github.com/adobe-fonts/source-code-pro/tree/release?tab=OFL-1.1-1-ov-file">Source Code Pro License</a>
+
+**JetBrains**: refer to <a href="https://github.com/JetBrains/JetBrainsMono/blob/master/OFL.txt">JetBrains License</a>
+
+**Hack**: refer to <a href="https://github.com/source-foundry/Hack/blob/v3.003/LICENSE.md">Hack License</a>
+
+---
+
 
 ## Changelog
 For a detailed list of changes, bug fixes, and new features, refer to the [CHANGELOG.md](CHANGELOG.md)

@@ -25,6 +25,9 @@ public class FontUtils {
             entry("DejaVuSansMono", "DejaVu Sans Mono"),
             entry("FiraCode-Regular", "Fira Code Regular"),
             entry("Inconsolata-Regular", "Inconsolata Regular"),
+            entry("JetBrainsMono-Regular", "JetBrainsMono Regular"),
+            entry("Hack-Regular", "Hack Regular"),
+            entry("SourceCodePro-Regular", "Source Code Pro Regular"),
             entry("NotoMono-Regular", "Noto Mono"));
 
     public static Font loadFonts() {
