@@ -50,6 +50,7 @@ public class LocalSessionContentPanel extends JPanel implements PageHolder, ISes
             this.pages[i] = tabbedPage;
             this.cardPanel.add(tabbedPage.getPage(), tabbedPage.getId());
             pageArr[i].putClientProperty(PAGE_ID, tabbedPage.getId());
+            tabbedPage.setVisible(false);
         }
 
         LayoutUtilities.equalizeSize(this.pages);
