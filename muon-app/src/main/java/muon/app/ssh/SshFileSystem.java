@@ -5,11 +5,11 @@ import muon.app.common.FileInfo;
 import muon.app.common.FileSystem;
 import muon.app.common.InputTransferChannel;
 import muon.app.common.OutputTransferChannel;
+import muon.app.util.PathUtils;
+import muon.app.util.enums.FileType;
 import net.schmizz.sshj.sftp.*;
 import net.schmizz.sshj.sftp.FileMode.Type;
 import net.schmizz.sshj.xfer.FilePermission;
-import muon.app.util.PathUtils;
-import muon.app.util.enums.FileType;
 
 import java.io.*;
 import java.nio.file.AccessDeniedException;
@@ -108,10 +108,10 @@ public class SshFileSystem implements FileSystem {
 
                 if (attrs.getType() != Type.SYMLINK) {
                     return new FileInfo(name, pathToResolve,
-                                        (attrs.getType() == Type.DIRECTORY ? -1 : attrs.getSize()),
+                            attrs.getSize(),
                             attrs.getType() == Type.DIRECTORY ? FileType.DIR_LINK : FileType.FILE_LINK,
                             attrs.getMtime() * 1000, FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
-                                        getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName, name.startsWith("."));
+                            getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName, name.startsWith("."));
                 }
             }
         } catch (SFTPException e) {
@@ -119,8 +119,8 @@ public class SshFileSystem implements FileSystem {
                     || e.getStatusCode() == Response.StatusCode.NO_SUCH_PATH
                     || e.getStatusCode() == Response.StatusCode.PERMISSION_DENIED) {
                 return new FileInfo(name, pathToResolve, 0, FileType.FILE_LINK, attrs.getMtime() * 1000,
-                                    FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
-                                    getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName, name.startsWith("."));
+                        FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
+                        getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName, name.startsWith("."));
             }
             throw e;
         } catch (Exception e) {
@@ -154,11 +154,11 @@ public class SshFileSystem implements FileSystem {
                             }
                         } else {
                             FileInfo e = new FileInfo(ent.getName(), ent.getPath(),
-                                                      (ent.isDirectory() ? -1 : attrs.getSize()),
-                                                      ent.isDirectory() ? FileType.DIRECTORY : FileType.FILE, attrs.getMtime() * 1000,
-                                                      FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
-                                                      getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName,
-                                                      ent.getName().startsWith("."));
+                                    attrs.getSize(),
+                                    ent.isDirectory() ? FileType.DIRECTORY : FileType.FILE, attrs.getMtime() * 1000,
+                                    FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
+                                    getPermissionStr(attrs.getPermissions()), attrs.getAtime(), longName,
+                                    ent.getName().startsWith("."));
                             childs.add(e);
                         }
                     }
@@ -222,10 +222,10 @@ public class SshFileSystem implements FileSystem {
                     return resolveSymlink(PathUtils.getFileName(path), path, attrs, null);
                 } else {
                     String name = PathUtils.getFileName(path);
-                    return new FileInfo(name, path, (attrs.getType() == Type.DIRECTORY ? -1 : attrs.getSize()),
+                    return new FileInfo(name, path, attrs.getSize(),
                             attrs.getType() == Type.DIRECTORY ? FileType.DIRECTORY : FileType.FILE,
                             attrs.getMtime() * 1000, FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
-                                        getPermissionStr(attrs.getPermissions()), attrs.getAtime(), null, name.startsWith("."));
+                            getPermissionStr(attrs.getPermissions()), attrs.getAtime(), null, name.startsWith("."));
                 }
             } catch (SFTPException e) {
                 if (e.getStatusCode() == Response.StatusCode.NO_SUCH_FILE

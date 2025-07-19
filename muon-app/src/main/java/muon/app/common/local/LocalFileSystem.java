@@ -12,16 +12,17 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 public class LocalFileSystem implements FileSystem {
     public static final String PROTO_LOCAL_FILE = "local";
 
-    public void chmod(int perm, String path) throws Exception {
+    public void chmod(int perm, String path) {
     }
 
     @Override
@@ -33,12 +34,12 @@ public class LocalFileSystem implements FileSystem {
         Path p = f.toPath();
         BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
         return new FileInfo(f.getName(), path, f.length(),
-                            f.isDirectory() ? FileType.DIRECTORY : FileType.FILE, f.lastModified(), -1, PROTO_LOCAL_FILE, "",
-                            attrs.creationTime().toMillis(), "", f.isHidden());
+                f.isDirectory() ? FileType.DIRECTORY : FileType.FILE, f.lastModified(), -1, PROTO_LOCAL_FILE, "",
+                attrs.creationTime().toMillis(), "", f.isHidden());
     }
 
     @Override
-    public String getHome() throws IOException {
+    public String getHome() {
         return System.getProperty("user.home");
     }
 
@@ -58,13 +59,29 @@ public class LocalFileSystem implements FileSystem {
         for (File f : childs) {
             try {
                 Path p = f.toPath();
-                BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
+                FileOwnerAttributeView ownerView = Files.getFileAttributeView(p, FileOwnerAttributeView.class);
+                UserPrincipal owner = ownerView.getOwner();
+
+                long creationTime;
+                String permissionString = "";
+                if (Files.getFileStore(p).supportsFileAttributeView(PosixFileAttributeView.class)) {
+                    PosixFileAttributes readAttributes = Files.readAttributes(p, PosixFileAttributes.class);
+                    Set<PosixFilePermission> permissions = readAttributes.permissions();
+                    permissionString = PosixFilePermissions.toString(permissions);
+                    creationTime = readAttributes.creationTime().toMillis();
+                } else {
+                    log.warn("POSIX file attribute view not supported.");
+                    BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
+                    creationTime = attrs.creationTime().toMillis();
+                }
+
                 FileInfo info = new FileInfo(f.getName(), f.getAbsolutePath(), f.length(),
-                                             f.isDirectory() ? FileType.DIRECTORY : FileType.FILE, f.lastModified(), -1, PROTO_LOCAL_FILE,
-                                             "", attrs.creationTime().toMillis(), "", f.isHidden());
+                        f.isDirectory() ? FileType.DIRECTORY : FileType.FILE, f.lastModified(), -1, PROTO_LOCAL_FILE,
+                        permissionString, creationTime, "", f.isHidden());
+                info.setUser(owner.getName());
                 list.add(info);
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                log.error("Error getting the metadata of the local file", e);
             }
         }
         return list;
@@ -121,7 +138,7 @@ public class LocalFileSystem implements FileSystem {
     }
 
     @Override
-    public boolean mkdirs(String absPath) throws Exception {
+    public boolean mkdirs(String absPath) {
         return new File(absPath).mkdirs();
     }
 
@@ -153,7 +170,7 @@ public class LocalFileSystem implements FileSystem {
      * @see nixexplorer.core.FileSystemProvider#deleteFile(java.lang.String)
      */
     @Override
-    public void deleteFile(String f) throws Exception {
+    public void deleteFile(String f) {
         new File(f).delete();
     }
 

@@ -6,12 +6,14 @@ import muon.app.App;
 import muon.app.common.FileInfo;
 import muon.app.util.FileIconUtil;
 import muon.app.util.FormatUtils;
-import muon.app.util.enums.FileType;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+
 @Slf4j
 public class TableCellLabelRenderer implements TableCellRenderer {
     private final JPanel panel;
@@ -25,11 +27,10 @@ public class TableCellLabelRenderer implements TableCellRenderer {
     public TableCellLabelRenderer() {
         foreground = App.getCONTEXT().getSkin().getInfoTextForeground();
         panel = new JPanel(new BorderLayout(10, 5));
-        panel.setBorder(new EmptyBorder(5, 10, 5, 5));
         textLabel = new JLabel();
         textLabel.setForeground(foreground);
         textLabel.setText("AAA");
-        textLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 14));
+        textLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
 
         iconLabel = new JLabel();
         iconLabel.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(Font.PLAIN, 20.f));
@@ -43,10 +44,11 @@ public class TableCellLabelRenderer implements TableCellRenderer {
         height = Math.max(d1.height, d2.height) + 10;
 
         iconLabel.setHorizontalAlignment(JLabel.CENTER);
+        iconLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        textLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
         panel.add(textLabel);
         panel.add(iconLabel, BorderLayout.WEST);
 
-        panel.doLayout();
 
         log.debug(panel.getPreferredSize().toString());
 
@@ -55,6 +57,9 @@ public class TableCellLabelRenderer implements TableCellRenderer {
         label.setBorder(new EmptyBorder(5, 5, 5, 5));
         label.setFont(new Font(Font.DIALOG, Font.PLAIN, 14));
         label.setOpaque(true);
+
+        panel.doLayout();
+
     }
 
     @Override
@@ -68,6 +73,14 @@ public class TableCellLabelRenderer implements TableCellRenderer {
         FileInfo ent = folderViewModel.getItemAt(r);
 
         panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+
+        textLabel.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                new EmptyBorder(1, 1, 1, 1)));
+        iconLabel.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                new EmptyBorder(1, 1, 1, 1)));
+        label.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                new EmptyBorder(1, 1, 1, 1)));
+
 
         textLabel.setForeground(isSelected ? table.getSelectionForeground() : foreground);
         iconLabel.setForeground(isSelected ? table.getSelectionForeground() : foreground);
@@ -85,11 +98,7 @@ public class TableCellLabelRenderer implements TableCellRenderer {
                 label.setText(FormatUtils.formatDate(ent.getLastModified()));
                 break;
             case 2:
-                if (ent.getType() == FileType.DIRECTORY || ent.getType() == FileType.DIR_LINK) {
-                    label.setText("");
-                } else {
-                    label.setText(FormatUtils.humanReadableByteCount(ent.getSize(), true));
-                }
+                label.setText(FormatUtils.humanReadableByteCount(ent.getSize(), true));
                 break;
             case 3:
                 label.setText(ent.getType() + "");
