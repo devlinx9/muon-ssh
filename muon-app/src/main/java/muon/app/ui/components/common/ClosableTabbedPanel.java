@@ -290,4 +290,14 @@ public class ClosableTabbedPanel extends JPanel {
             }
         }
     }
+
+    public void removeTab(Component body) {
+        for (int i = 0; i < tabHolder.getComponentCount(); i++) {
+            TabTitleComponent titleComp = (TabTitleComponent) tabHolder.getComponent(i);
+            if (titleComp.component == body) {
+                removeTabAt(i, titleComp);
+                return;
+            }
+        }
+    }
 }

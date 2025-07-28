@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.common.ClosableTabContent;
+import muon.app.ui.components.common.ClosableTabbedPanel;
 import muon.app.ui.components.common.ClosableTabbedPanel.TabTitle;
 import muon.app.util.PlatformUtils;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ import java.awt.event.ComponentEvent;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 public class LocalTerminalComponent extends JPanel implements ClosableTabContent {
@@ -32,6 +34,10 @@ public class LocalTerminalComponent extends JPanel implements ClosableTabContent
 
     @Getter
     private final TabTitle tabTitle;
+
+    private PtyProcess process;
+    private final AtomicBoolean closed = new AtomicBoolean(false);
+
 
     public LocalTerminalComponent(String name) {
         setLayout(new BorderLayout());
@@ -56,6 +62,8 @@ public class LocalTerminalComponent extends JPanel implements ClosableTabContent
             }
         });
 
+        this.process = null;
+
         try {
 
             // Get terminal settings
@@ -79,7 +87,7 @@ public class LocalTerminalComponent extends JPanel implements ClosableTabContent
             env.put("TERM", terminalType);
             env.put("LANG", "en_US.UTF-8");
 
-            PtyProcess process = new PtyProcessBuilder()
+            this.process = new PtyProcessBuilder()
                     .setCommand(command2)
                     .setDirectory(System.getProperty("user.home"))
                     .setEnvironment(env)
@@ -103,6 +111,33 @@ public class LocalTerminalComponent extends JPanel implements ClosableTabContent
                 }
             };
 
+            // watcher thread
+            Thread watcher = new Thread(() -> {
+                try {
+                    process.waitFor();
+                    if (!closed.get()) {
+                        SwingUtilities.invokeLater(() ->
+                                {
+                                    if (close()) {
+                                        Container container = SwingUtilities.getAncestorOfClass(
+                                                ClosableTabbedPanel.class,
+                                                LocalTerminalComponent.this
+                                        );
+                                        if (container instanceof ClosableTabbedPanel) {
+                                            ((ClosableTabbedPanel) container).removeTab(LocalTerminalComponent.this);
+                                        }
+                                    }
+                                }
+                        );
+                    }
+                } catch (InterruptedException e) {
+                    // interrupted because we’re closing
+                    Thread.currentThread().interrupt();
+                }
+            }, "Terminal‑Watcher-" + name);
+            watcher.setDaemon(true);
+            watcher.start();
+
             term.setTtyConnector(connector);
             contentPane.add(term);
         } catch (IOException e) {
@@ -119,6 +154,12 @@ public class LocalTerminalComponent extends JPanel implements ClosableTabContent
     @Override
     public boolean close() {
         log.info("Closing terminal...{}", name);
+
+        closed.set(true);
+        if (process != null && process.isAlive()) {
+            log.info("Stopping the process for the term ...{}", name);
+            process.destroyForcibly();
+        }
         this.term.close();
         return true;
     }
