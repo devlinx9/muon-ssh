@@ -89,6 +89,9 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             this.pages[i] = tabbedPage;
             this.cardPanel.add(tabbedPage.getPage(), tabbedPage.getId());
             pageArr[i].putClientProperty(PAGE_ID, tabbedPage.getId());
+            if (info.isSftpOnly()) {
+                tabbedPage.setVisible(false);
+            }
         }
 
         LayoutUtilities.equalizeSize(this.pages);
