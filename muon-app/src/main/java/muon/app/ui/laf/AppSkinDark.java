@@ -29,6 +29,8 @@ public class AppSkinDark extends AppSkin {
         Color buttonGradient5 = new Color(57 - 20, 62 - 20, 74 - 20);
         Color buttonGradient6 = new Color(57 - 10, 62 - 10, 74 - 10);
 
+        Color disabledText = new Color(130, 130, 130);
+
         this.defaults.put("nimbusBase", controlColor);
         this.defaults.put("nimbusSelection", selectionColor);
         this.defaults.put("textBackground", selectionColor);
@@ -79,6 +81,12 @@ public class AppSkinDark extends AppSkin {
         this.defaults.put("TextField.background", textFieldColor);
         this.defaults.put("FormattedTextField.background", textFieldColor);
         this.defaults.put("PasswordField.background", textFieldColor);
+
+        this.defaults.put("nimbusDisabledText", disabledText);
+        this.defaults.put("Label.disabledForeground", disabledText);
+
+        this.defaults.put("CheckBox[Disabled].textForeground", disabledText);
+        this.defaults.put("CheckBox.disabledText", disabledText);
 
         createSkinnedButton(this.defaults);
         createTextFieldSkin(this.defaults);
