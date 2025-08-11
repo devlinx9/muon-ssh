@@ -78,7 +78,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         logViewer = new LogViewer(this);
         terminalHolder = new TerminalHolder(info, this);
 
-        Page[] pageArr = getPages();
+        Page[] pageArr = getPages(info.isSftpOnly());
 
         this.cardLayout = new CardLayout();
         this.cardPanel = new JPanel(this.cardLayout);
@@ -116,21 +116,23 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         }
     }
 
-    private Page[] getPages() {
+    private Page[] getPages(boolean sftpOnly) {
+        if (sftpOnly) {
+            return new Page[]{fileBrowser};
+        }
+
         DiskspaceAnalyzer diskspaceAnalyzer = new DiskspaceAnalyzer(this);
         SearchPanel searchPanel = new SearchPanel(this);
         ProcessViewer processViewer = new ProcessViewer(this);
         UtilityPage utilityPage = new UtilityPage(this);
 
-        Page[] pageArr;
         if (App.getGlobalSettings().isFirstFileBrowserView()) {
-            pageArr = new Page[]{fileBrowser, terminalHolder, logViewer, searchPanel, diskspaceAnalyzer,
-                                 processViewer, utilityPage};
-        } else {
-            pageArr = new Page[]{terminalHolder, fileBrowser, logViewer, searchPanel, diskspaceAnalyzer,
-                                 processViewer, utilityPage};
+            return new Page[]{fileBrowser, terminalHolder, logViewer, searchPanel, diskspaceAnalyzer,
+                    processViewer, utilityPage};
         }
-        return pageArr;
+        return new Page[]{terminalHolder, fileBrowser, logViewer, searchPanel, diskspaceAnalyzer,
+                processViewer, utilityPage};
+
     }
 
     public void reconnect() {
@@ -213,6 +215,9 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     }
 
     public void openTerminal(String command) {
+        if (info.isSftpOnly()){
+            return;
+        }
         showPage(this.terminalHolder.getClientProperty(PAGE_ID) + "");
         this.terminalHolder.openNewTerminal(command);
     }
@@ -265,7 +270,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         FileSystem sourceFs = new LocalFileSystem();
         FileSystem targetFs = instance.getSshFs();
         FileTransfer transfer = new FileTransfer(sourceFs, targetFs, localFiles, targetRemoteDirectory, null,
-                                                 confiAction, instance);
+                confiAction, instance);
         App.addUpload(new BackgroundFileTransfer(transfer, instance, this));
     }
 
@@ -274,7 +279,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         RemoteSessionInstance instance = createBackgroundSession();
         SshFileSystem sourceFs = instance.getSshFs();
         FileTransfer transfer = new FileTransfer(sourceFs, targetFs, remoteFiles, targetLocalDirectory, null,
-                                                 confiAction, instance);
+                confiAction, instance);
         App.addDownload(new BackgroundFileTransfer(transfer, instance, this));
     }
 

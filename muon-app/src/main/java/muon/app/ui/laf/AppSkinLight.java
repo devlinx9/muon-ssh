@@ -36,6 +36,8 @@ public class AppSkinLight extends AppSkin {
 
         Color buttonGradient7 = new Color(248, 248, 249);
 
+        Color disabledText = new Color(140, 140, 140);
+
         this.defaults.put("nimbusBase", controlColor);
         this.defaults.put("nimbusSelection", selectionColor);
         this.defaults.put("textBackground", selectionColor);
@@ -87,6 +89,11 @@ public class AppSkinLight extends AppSkin {
         this.defaults.put("FormattedTextField.background", textFieldColor);
         this.defaults.put("PasswordField.background", textFieldColor);
 
+        this.defaults.put("nimbusDisabledText", disabledText);
+        this.defaults.put("Label.disabledForeground", disabledText);
+        this.defaults.put("CheckBox[Disabled].textForeground", disabledText);
+        this.defaults.put("CheckBox.disabledText", disabledText);
+
         createSkinnedButton(this.defaults);
         createTextFieldSkin(this.defaults);
         createSpinnerSkin(this.defaults);
@@ -99,6 +106,8 @@ public class AppSkinLight extends AppSkin {
         createTooltipSkin(this.defaults);
         createSkinnedToggleButton(this.defaults);
         createProgressBarSkin(this.defaults);
+
+
 
         this.defaults.put("ScrollBarUI", CustomScrollBarUI.class.getName());
     }

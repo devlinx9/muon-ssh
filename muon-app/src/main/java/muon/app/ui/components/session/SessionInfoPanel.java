@@ -18,7 +18,6 @@ import java.nio.file.Files;
 import java.util.List;
 
 
-
 @Slf4j
 public class SessionInfoPanel extends JPanel {
 
@@ -45,23 +44,26 @@ public class SessionInfoPanel extends JPanel {
     private PortForwardingPanel panPF;
     private SessionInfo info;
     private JCheckBox chkUseX11Forwarding;
+    private JCheckBox chkSftpOnly;
+
+    private JPanel proxyPanel;
+    private JPanel jumpPanel;
+    private JPanel portForwardingPanel;
 
 
     public SessionInfoPanel() {
         createUI();
     }
 
-    public void hideFields() {
-        for (Component c : this.getComponents()) {
-            c.setVisible(false);
+    private static void setEnableSubComponents(Component c, boolean enabled) {
+        c.setEnabled(enabled);
+        if (c instanceof Container) {
+            for (Component child : ((Container) c).getComponents()) {
+                setEnableSubComponents(child, enabled);
+            }
         }
     }
 
-    public void showFields() {
-        for (Component c : this.getComponents()) {
-            c.setVisible(true);
-        }
-    }
 
     public boolean validateFields() {
         if (inpHostName.getText().isEmpty()) {
@@ -93,6 +95,7 @@ public class SessionInfoPanel extends JPanel {
 
         setJumpHostDetails(info.isUseJumpHosts(), info.getJumpType(), info.getJumpHosts());
         this.chkUseX11Forwarding.setSelected(info.isUseX11Forwarding());
+        this.chkSftpOnly.setSelected(info.isSftpOnly());
 
         panPF.setInfo(info);
     }
@@ -165,9 +168,12 @@ public class SessionInfoPanel extends JPanel {
         TabbedPanel tabs = new TabbedPanel();
         tabs.addTab(App.getCONTEXT().getBundle().getString("connection"), createConnectionPanel());
         tabs.addTab(App.getCONTEXT().getBundle().getString("directories"), createDirectoryPanel());
-        tabs.addTab(App.getCONTEXT().getBundle().getString("proxy"), createProxyPanel());
-        tabs.addTab(App.getCONTEXT().getBundle().getString("jump_hosts"), createJumpPanel());
-        tabs.addTab(App.getCONTEXT().getBundle().getString("port_forwarding"), createPortForwardingPanel());
+        proxyPanel = createProxyPanel();
+        tabs.addTab(App.getCONTEXT().getBundle().getString("proxy"), proxyPanel);
+        jumpPanel = createJumpPanel();
+        tabs.addTab(App.getCONTEXT().getBundle().getString("jump_hosts"), jumpPanel);
+        portForwardingPanel = createPortForwardingPanel();
+        tabs.addTab(App.getCONTEXT().getBundle().getString("port_forwarding"), portForwardingPanel);
         this.add(tabs);
         tabs.setSelectedIndex(0);
     }
@@ -683,7 +689,7 @@ public class SessionInfoPanel extends JPanel {
                 String selectedFile = jfc.getSelectedFile().getAbsolutePath();
                 if (selectedFile.endsWith(".ppk") && !isSupportedPuttyKeyFile(jfc.getSelectedFile())) {
                     JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("unsupported_key")
-                                                 );
+                    );
                     return;
                 }
 
@@ -703,6 +709,10 @@ public class SessionInfoPanel extends JPanel {
         chkUseX11Forwarding = new JCheckBox("X11 forwarding");
 
         chkUseX11Forwarding.addActionListener(e -> info.setUseX11Forwarding(chkUseX11Forwarding.isSelected()));
+
+        chkSftpOnly = new JCheckBox("SFTP Only");
+
+        chkSftpOnly.addItemListener(e -> applySftpOnlyState(chkSftpOnly.isSelected()));
 
         GridBagConstraints c = new GridBagConstraints();
         c.weightx = 1;
@@ -793,6 +803,12 @@ public class SessionInfoPanel extends JPanel {
         c.gridy = 11;
         c.gridwidth = 2;
         c.insets = noInset;
+        panel.add(chkSftpOnly, c);
+
+        c.gridx = 0;
+        c.gridy = 12;
+        c.gridwidth = 2;
+        c.insets = noInset;
         panel.add(chkUseX11Forwarding, c);
 
         JPanel panel2 = new JPanel(new BorderLayout());
@@ -823,7 +839,7 @@ public class SessionInfoPanel extends JPanel {
                 return false;
             }
             if (content.contains("Encryption:")
-                && (content.contains("Encryption: aes256-cbc") || content.contains("Encryption: none"))) {
+                    && (content.contains("Encryption: aes256-cbc") || content.contains("Encryption: none"))) {
                 return true;
             }
         } catch (Exception e) {
@@ -831,5 +847,53 @@ public class SessionInfoPanel extends JPanel {
         }
         return false;
     }
+
+    private void applySftpOnlyState(boolean sftpOnly) {
+        info.setSftpOnly(sftpOnly);
+
+        // X11: deselect & disable (you already had this; keeping it here for one place)
+        if (sftpOnly) {
+            chkUseX11Forwarding.setSelected(false);
+            info.setUseX11Forwarding(false);
+        }
+        chkUseX11Forwarding.setEnabled(!sftpOnly);
+        chkUseX11Forwarding.setForeground(UIManager.getColor(
+                sftpOnly ? "Label.disabledForeground" : "Label.foreground"));
+
+        chkUseJumpHosts.setForeground(UIManager.getColor(
+                sftpOnly ? "Label.disabledForeground" : "Label.foreground"));
+
+
+        setEnableSubComponents(proxyPanel, !sftpOnly);
+        setEnableSubComponents(jumpPanel, !sftpOnly);
+        setEnableSubComponents(portForwardingPanel, !sftpOnly);
+
+        // Force model into a safe state when SFTP-only
+        if (sftpOnly) {
+            // Proxy → NONE
+            if (cmbProxy != null) {
+                cmbProxy.setSelectedIndex(0);
+                info.setProxyType(0);
+            }
+            // Jump hosts → off
+            if (chkUseJumpHosts != null) {
+                chkUseJumpHosts.setSelected(false);
+                info.setUseJumpHosts(false);
+            }
+            if (radMultiHopTunnel != null) radMultiHopTunnel.setSelected(false);
+            if (radMultiHopPortForwarding != null) radMultiHopPortForwarding.setSelected(false);
+        }
+
+        // Refresh visuals
+        proxyPanel.revalidate();
+        proxyPanel.repaint();
+        jumpPanel.revalidate();
+        jumpPanel.repaint();
+        portForwardingPanel.revalidate();
+        portForwardingPanel.repaint();
+        chkUseX11Forwarding.revalidate();
+        chkUseX11Forwarding.repaint();
+    }
+
 
 }
