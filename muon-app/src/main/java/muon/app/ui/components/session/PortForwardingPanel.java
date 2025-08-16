@@ -95,7 +95,11 @@ public class PortForwardingPanel extends JPanel {
         JTextField txtHost = new SkinnedTextField(30);
 
         JSpinner spSourcePort = new JSpinner(new SpinnerNumberModel(0, 0, SessionInfoPanel.DEFAULT_MAX_PORT, 1));
+        JSpinner.NumberEditor editorSource = new JSpinner.NumberEditor(spSourcePort, "#");
+        spSourcePort.setEditor(editorSource);
         JSpinner spTargetPort = new JSpinner(new SpinnerNumberModel(0, 0, SessionInfoPanel.DEFAULT_MAX_PORT, 1));
+        JSpinner.NumberEditor editorTarget = new JSpinner.NumberEditor(spTargetPort, "#");
+        spTargetPort.setEditor(editorTarget);
 
         JTextField txtBindAddress = new SkinnedTextField(30);
         txtBindAddress.setText("127.0.0.1");

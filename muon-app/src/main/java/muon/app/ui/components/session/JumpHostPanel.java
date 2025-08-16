@@ -133,6 +133,8 @@ public class JumpHostPanel extends JPanel {
     private HopEntry addOrEditEntry(HopEntry e) {
         JTextField txtHost = new SkinnedTextField(30);
         JSpinner spPort = new JSpinner(new SpinnerNumberModel(22, 1, SessionInfoPanel.DEFAULT_MAX_PORT, 1));
+        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spPort, "#");
+        spPort.setEditor(editor);
         JTextField txtUser = new SkinnedTextField(30);
         JPasswordField txtPassword = new JPasswordField(30);
 

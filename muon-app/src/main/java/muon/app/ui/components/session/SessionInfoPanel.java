@@ -306,6 +306,8 @@ public class SessionInfoPanel extends JPanel {
         proxyPortModel = new SpinnerNumberModel(8080, 1, DEFAULT_MAX_PORT, 1);
         proxyPortModel.addChangeListener(arg0 -> info.setProxyPort((Integer) proxyPortModel.getValue()));
         JSpinner inpProxyPort = new JSpinner(proxyPortModel);
+        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(inpProxyPort, "#");
+        inpProxyPort.setEditor(editor);
         inpProxyUserName = new SkinnedTextField(10);// new
         inpProxyUserName.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -608,6 +610,8 @@ public class SessionInfoPanel extends JPanel {
         portModel = new SpinnerNumberModel(22, 1, DEFAULT_MAX_PORT, 1);
         portModel.addChangeListener(arg0 -> info.setPort((Integer) portModel.getValue()));
         JSpinner inpPort = new JSpinner(portModel);
+        JSpinner.NumberEditor editorTarget = new JSpinner.NumberEditor(inpPort, "#");
+        inpPort.setEditor(editorTarget);
         inpUserName = new SkinnedTextField(10);
         inpUserName.getDocument().addDocumentListener(new DocumentListener() {
 

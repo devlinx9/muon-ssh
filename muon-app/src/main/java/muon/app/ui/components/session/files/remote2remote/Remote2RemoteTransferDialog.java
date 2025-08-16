@@ -185,6 +185,8 @@ public class Remote2RemoteTransferDialog extends JDialog {
         JTextField txtUser = new SkinnedTextField(30);
         JTextField txtPath = new SkinnedTextField(30);
         JSpinner spPort = new JSpinner(new SpinnerNumberModel(port, 1, 65535, 1));
+        JSpinner.NumberEditor editorTarget = new JSpinner.NumberEditor(spPort, "#");
+        spPort.setEditor(editorTarget);
 
         if (host != null) {
             txtHost.setText(host);
@@ -240,14 +242,14 @@ public class Remote2RemoteTransferDialog extends JDialog {
     }
 
     private void save() {
-        List<RemoteServerEntry> list = new ArrayList<>();
+        List<RemoteServerEntry> remoteServerEntries = new ArrayList<>();
         for (int i = 0; i < remoteHostModel.size(); i++) {
-            list.add(remoteHostModel.get(i));
+            remoteServerEntries.add(remoteHostModel.get(i));
         }
         File file = new File(App.getCONTEXT().getConfigDir(), Constants.TRANSFER_HOSTS);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            objectMapper.writeValue(file, list);
+            objectMapper.writeValue(file, remoteServerEntries);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
