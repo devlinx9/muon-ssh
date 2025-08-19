@@ -136,7 +136,11 @@ For other releases, visit <a href="https://github.com/devlinx9/muon-ssh/releases
 Muon SSH is a standard Maven project. To build from source, ensure you have Java and Maven installed, then run:
 
 ```sh  
-mvn clean install  
+git clone --recurse-submodules https://github.com/devlinx9/muon-ssh
+cd muon-ssh/muon-jediterm/
+./gradlew publishToMavenLocal
+cd ..
+mvn clean package  
 ```
 
 The compiled JAR file will be located in the target directory.

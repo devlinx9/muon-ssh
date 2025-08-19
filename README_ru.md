@@ -141,7 +141,11 @@ Muon SSH предназначен для:
 Muon SSH — это стандартный проект Maven. Для сборки из исходного кода убедитесь, что у вас установлены Java и Maven, затем выполните:
 
 ```sh  
-mvn clean install  
+git clone --recurse-submodules https://github.com/devlinx9/muon-ssh
+cd muon-ssh/muon-jediterm/
+./gradlew publishToMavenLocal
+cd ..
+mvn clean package  
 ```
 
 Скомпилированный файл JAR будет находиться в каталоге `target`.

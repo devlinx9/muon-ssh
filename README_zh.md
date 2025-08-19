@@ -140,7 +140,11 @@ Muon SSH 专为以下用户设计：
 ## 从源代码构建
 Muon SSH 是一个标准的 Maven 项目。要从源代码构建，请确保已安装 Java 和 Maven，然后运行：
 ```sh  
-mvn clean install  
+git clone --recurse-submodules https://github.com/devlinx9/muon-ssh
+cd muon-ssh/muon-jediterm/
+./gradlew publishToMavenLocal
+cd ..
+mvn clean package  
 ```
 
 编译后的 JAR 文件将位于 `target` 目录中。
