@@ -10,8 +10,8 @@ This document outlines the current status, upcoming releases, and future plans f
 ### Known Issues:
 - [x] [#131](https://github.com/devlinx9/muon-ssh/issues/131): missing dependency when compiling locally
 - [x] [#80](https://github.com/devlinx9/muon-ssh/issues/80): Implementation of ftp/sftp
-- [ ] [#64](https://github.com/devlinx9/muon-ssh/issues/64): Monitor for background upload/download
-- [ ] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo
+- [x] [#64](https://github.com/devlinx9/muon-ssh/issues/64): Monitor for background upload/download
+- [x] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo (Partially fix)
 - [ ] [#126](https://github.com/devlinx9/muon-ssh/issues/126): double click doesn't work
 - [ ] [#101](https://github.com/devlinx9/muon-ssh/issues/101): Error while copying
 - [ ] [#133](https://github.com/devlinx9/muon-ssh/issues/133): Unicode char are not shown

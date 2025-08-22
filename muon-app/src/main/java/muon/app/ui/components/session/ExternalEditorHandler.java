@@ -183,6 +183,7 @@ public class ExternalEditorHandler extends JDialog {
                 localFile.setLastModified(TimeUtils.toEpochMilli(remoteFile.getLastModified()));
                 fileWatcher.addForMonitoring(remoteFile, localFilePath.toAbsolutePath().toString(), activeSessionId);
             } catch (Exception e) {
+                JOptionPane.showMessageDialog(App.getAppWindow(), e.getMessage(),App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
                 log.error(e.getMessage(), e);
             } finally {
                 fileWatcher.resumeWatching();
@@ -202,6 +203,5 @@ public class ExternalEditorHandler extends JDialog {
         });
 
         setLocationRelativeTo(frame);
-        setVisible(true);
     }
 }

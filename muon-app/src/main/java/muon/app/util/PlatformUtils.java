@@ -116,7 +116,7 @@ public class PlatformUtils {
 
     public static void openLinux(final File f) throws FileNotFoundException {
         if (!f.exists()) {
-            throw new FileNotFoundException();
+            throw new FileNotFoundException(f.getAbsolutePath());
         }
         try {
             ProcessBuilder pb = new ProcessBuilder();
