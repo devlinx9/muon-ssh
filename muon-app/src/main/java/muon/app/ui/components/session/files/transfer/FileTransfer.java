@@ -42,7 +42,13 @@ public class FileTransfer implements Runnable, AutoCloseable {
     @Getter
     private final String targetFolder;
     private final AtomicBoolean stopFlag = new AtomicBoolean(false);
+
+    @Getter
+    @Setter
+    private AtomicBoolean operationCancelledByUser = new AtomicBoolean(false);
+
     private final RemoteSessionInstance instance;
+    @Getter
     private long totalSize;
     @Setter
     private FileTransferProgress callback;
@@ -50,6 +56,12 @@ public class FileTransfer implements Runnable, AutoCloseable {
     private int processedFilesCount;
     private long totalFiles;
     private ConflictAction conflictAction; // 0 -> overwrite, 1 -> auto rename, 2
+
+    @Getter
+    private String currentTargetFilePath;
+
+    @Getter
+    private String currentSourceFilePath;
 
     public FileTransfer(FileSystem sourceFs, FileSystem targetFs, FileInfo[] files, String targetFolder,
                         FileTransferProgress callback, ConflictAction defaultConflictAction, RemoteSessionInstance instance) {
@@ -75,6 +87,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
             this.conflictAction = checkForConflict(dupList);
             if (!dupList.isEmpty() && this.conflictAction == ConflictAction.CANCEL) {
                 log.info("Operation cancelled by user");
+                operationCancelledByUser.set(true);
                 return;
             }
         }
@@ -111,6 +124,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
             log.info("Copying: {}", file.info.getPath());
             if (stopFlag.get()) {
                 log.info("Operation cancelled by user");
+                operationCancelledByUser.set(true);
                 return;
             }
             copyFile(file.info, file.targetPath, file.proposedName, inc, outc);
@@ -139,9 +153,9 @@ public class FileTransfer implements Runnable, AutoCloseable {
                     }
 
                     if (!App.getGlobalSettings().isPromptForSudo() ||
-                        JOptionPane.showConfirmDialog(null,
-                                                      App.getCONTEXT().getBundle().getString("permission_denied_file"),
-                                                      App.getCONTEXT().getBundle().getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            JOptionPane.showConfirmDialog(null,
+                                    App.getCONTEXT().getBundle().getString("permission_denied_file"),
+                                    App.getCONTEXT().getBundle().getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
                         if (!App.getGlobalSettings().isTransferTemporaryDirectory()) {
                             targetFs.mkdir(tmpDir);
@@ -164,10 +178,11 @@ public class FileTransfer implements Runnable, AutoCloseable {
             log.error(e.getMessage(), e);
             if (stopFlag.get()) {
                 log.info("Operation cancelled by user");
+                operationCancelledByUser.set(true);
                 callback.done(this);
                 return;
             }
-            callback.error("Error", this);
+            callback.error(e.getMessage(), this);
         }
     }
 
@@ -198,9 +213,11 @@ public class FileTransfer implements Runnable, AutoCloseable {
                                        InputTransferChannel inc, OutputTransferChannel outc) throws Exception {
 
         String outPath = PathUtils.combine(targetDirectory, proposedName == null ? file.getName() : proposedName,
-                                           outc.getSeparator());
+                outc.getSeparator());
         String inPath = file.getPath();
         log.info("Copying -- {} to {}", inPath, outPath);
+        currentSourceFilePath = inPath;
+        currentTargetFilePath = outPath;
         try (InputStream in = inc.getInputStream(inPath); OutputStream out = outc.getOutputStream(outPath)) {
             long len = inc.getSize(inPath);
             log.info("Initiate write");
@@ -208,7 +225,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
             int bufferCapacity = BUF_SIZE;
             if (in instanceof SSHRemoteFileInputStream && out instanceof SSHRemoteFileOutputStream) {
                 bufferCapacity = Math.min(((SSHRemoteFileInputStream) in).getBufferCapacity(),
-                                          ((SSHRemoteFileOutputStream) out).getBufferCapacity());
+                        ((SSHRemoteFileOutputStream) out).getBufferCapacity());
             } else if (in instanceof SSHRemoteFileInputStream) {
                 bufferCapacity = ((SSHRemoteFileInputStream) in).getBufferCapacity();
             } else if (out instanceof SSHRemoteFileOutputStream) {
@@ -258,8 +275,8 @@ public class FileTransfer implements Runnable, AutoCloseable {
             JComboBox<ConflictAction> cmbs = SessionExportImport.getUserConflictAction();
 
             if (OptionPaneUtils.showOptionDialog(null,
-                                                 new Object[]{App.getCONTEXT().getBundle().getString("some_file_exists_action_required"), cmbs},
-                                                 App.getCONTEXT().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
+                    new Object[]{App.getCONTEXT().getBundle().getString("some_file_exists_action_required"), cmbs},
+                    App.getCONTEXT().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
                 action = (ConflictAction) cmbs.getSelectedItem();
             }
         }

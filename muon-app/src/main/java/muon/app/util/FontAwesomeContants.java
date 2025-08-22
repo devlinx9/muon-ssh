@@ -24,6 +24,7 @@ public class FontAwesomeContants {
     public static final String FA_FOLDER_OPEN_O = "\uf115";
     public static final String FA_LAPTOP = "\uf109";
     public static final String FA_TELEVISION = "\uf26c";
+    public static final String FA_STOP_CIRCLE = "\uf28d";
     public static final String FA_PLUS_SQUARE = "\uf0fe";
     public static final String FA_WINDOW_CLOSE = "\uf2d3";
     public static final String FA_COG = "\uf013";
