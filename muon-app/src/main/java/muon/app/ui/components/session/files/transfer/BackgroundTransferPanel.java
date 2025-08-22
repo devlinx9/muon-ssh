@@ -139,7 +139,7 @@ public class BackgroundTransferPanel extends JPanel {
                                 fileTransfer.getSourceName(),
                                 fileTransfer.getTargetName(),
                                 fileTransfer.getTotalSize() / 1024 / 1024,
-                                fileTransfer.getCurrentSourceFilePath()));
+                                FormatUtils.limitTextOutput(fileTransfer.getCurrentSourceFilePath(),40)));
                 progressLabel.setToolTipText(String.format("%s to %s",
                         fileTransfer.getCurrentSourceFilePath(),
                         fileTransfer.getCurrentTargetFilePath()));
@@ -156,7 +156,7 @@ public class BackgroundTransferPanel extends JPanel {
                                 fileTransfer.getSourceName(),
                                 fileTransfer.getTargetName(),
                                 fileTransfer.getTotalSize() / 1024 / 1024,
-                                fileTransfer.getCurrentSourceFilePath()));
+                                FormatUtils.limitTextOutput(fileTransfer.getCurrentSourceFilePath(),40)));
                 progressLabel.setToolTipText(String.format("%s to %s",
                         fileTransfer.getCurrentSourceFilePath(),
                         fileTransfer.getCurrentTargetFilePath()));
@@ -174,7 +174,7 @@ public class BackgroundTransferPanel extends JPanel {
                                 fileTransfer.getSourceName(),
                                 fileTransfer.getTargetName(),
                                 FormatUtils.limitTextOutput(cause, 15),
-                                FormatUtils.limitTextOutput(fileTransfer.getCurrentSourceFilePath(), 20)));
+                                FormatUtils.limitTextOutput(fileTransfer.getCurrentSourceFilePath(), 25)));
                 progressLabel.setToolTipText(fileTransfer.getCurrentSourceFilePath().concat(": ").concat(cause));
             });
         }
