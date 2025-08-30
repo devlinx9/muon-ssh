@@ -26,7 +26,7 @@ import muon.app.util.LayoutUtilities;
 import muon.app.util.enums.ConflictAction;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -34,6 +34,8 @@ import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 /**
  * @author subhro
@@ -72,7 +74,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         this.disabledPanel = new DisabledPanel();
         this.remoteSessionInstance = new RemoteSessionInstance(info, this, this);
         Box contentTabs = Box.createHorizontalBox();
-        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
+        contentTabs.setBorder(getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         fileBrowser = new FileBrowser(info, this, null, this.hashCode());
         logViewer = new LogViewer(this);

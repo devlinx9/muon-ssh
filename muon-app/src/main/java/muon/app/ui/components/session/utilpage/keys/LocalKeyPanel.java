@@ -6,10 +6,10 @@ import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.ui.components.session.SessionInfo;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.function.Consumer;
 
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 public class LocalKeyPanel extends JPanel {
@@ -25,7 +25,7 @@ public class LocalKeyPanel extends JPanel {
         txtKeyFile.setBorder(null);
         txtKeyFile.setEditable(false);
         Box hbox = Box.createHorizontalBox();
-        hbox.setBorder(new EmptyBorder(10, 10, 10, 10));
+        hbox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         hbox.add(lblTitle);
         hbox.add(Box.createHorizontalStrut(10));
         hbox.add(Box.createHorizontalGlue());
@@ -49,7 +49,7 @@ public class LocalKeyPanel extends JPanel {
         hbox1.add(btnGenNewKey);
         hbox1.add(Box.createHorizontalStrut(10));
         hbox1.add(btnRefresh);
-        hbox1.setBorder(new EmptyBorder(10, 10, 10, 10));
+        hbox1.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         add(hbox1, BorderLayout.SOUTH);
     }

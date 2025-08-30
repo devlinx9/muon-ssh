@@ -9,9 +9,8 @@ import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -19,6 +18,9 @@ import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.*;
 
 
 @Slf4j
@@ -33,10 +35,10 @@ public class SnippetPanel extends JPanel {
         setBorder(new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor(), 1));
         Box topBox = Box.createHorizontalBox();
         topBox.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
-                new EmptyBorder(10, 10, 10, 10)));
+                getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                getScaledEmptyBorder(10, 10, 10, 10)));
         JLabel lblSearch = new JLabel();
-        lblSearch.setFont(App.getCONTEXT().getSkin().getIconFont());
+        lblSearch.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         lblSearch.setText(FontAwesomeContants.FA_SEARCH);
         topBox.add(lblSearch);
         topBox.add(Box.createHorizontalStrut(10));
@@ -184,8 +186,8 @@ public class SnippetPanel extends JPanel {
 
         Box bottomBox = Box.createHorizontalBox();
         bottomBox.setBorder(new CompoundBorder(
-                new MatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
-                new EmptyBorder(10, 10, 10, 10)));
+                getScaledMatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                getScaledEmptyBorder(10, 10, 10, 10)));
         bottomBox.add(btnInsert);
         bottomBox.add(Box.createHorizontalStrut(5));
         bottomBox.add(btnCopy);
@@ -197,7 +199,7 @@ public class SnippetPanel extends JPanel {
         bottomBox.add(Box.createHorizontalStrut(5));
         bottomBox.add(btnDel);
 
-        setPreferredSize(new Dimension(400, 500));
+        setPreferredSize(scale(new Dimension(400, 500)));
         add(topBox, BorderLayout.NORTH);
         JScrollPane jScrollPane = new JScrollPane(listView);
         add(jScrollPane);

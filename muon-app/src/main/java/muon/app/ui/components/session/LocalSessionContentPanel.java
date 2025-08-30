@@ -9,10 +9,12 @@ import muon.app.ui.components.session.terminal.LocalTerminalHolder;
 import muon.app.util.LayoutUtilities;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 /**
  * @author subhro
@@ -36,7 +38,7 @@ public class LocalSessionContentPanel extends JPanel implements PageHolder, ISes
         this.info = info;
         this.disabledPanel = new DisabledPanel();
         Box contentTabs = Box.createHorizontalBox();
-        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
+        contentTabs.setBorder(getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
         terminalHolder = new LocalTerminalHolder();
 
         Page[] pageArr = new Page[]{terminalHolder};

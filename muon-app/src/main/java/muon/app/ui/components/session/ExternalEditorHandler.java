@@ -13,7 +13,6 @@ import muon.app.util.PlatformUtils;
 import muon.app.util.TimeUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +22,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 /**
@@ -46,8 +46,8 @@ public class ExternalEditorHandler extends JDialog {
 
         progressBar = new JProgressBar();
         progressLabel = new JLabel("Transferring...");
-        progressLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
-        progressLabel.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(18.0f));
+        progressLabel.setBorder(getScaledEmptyBorder(0, 0, 20, 0));
+        progressLabel.setFont(App.getCONTEXT().getSkin().getDefaultFont(18.0f));
         JButton btnCanel = new JButton(App.getCONTEXT().getBundle().getString("cancel"));
         Box bottomBox = Box.createHorizontalBox();
         bottomBox.add(Box.createHorizontalGlue());
@@ -63,7 +63,7 @@ public class ExternalEditorHandler extends JDialog {
         box.add(Box.createVerticalGlue());
         box.add(bottomBox);
 
-        box.setBorder(new EmptyBorder(10, 10, 10, 10));
+        box.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         this.add(box);
         this.fileWatcher = new FileChangeWatcher(files -> {

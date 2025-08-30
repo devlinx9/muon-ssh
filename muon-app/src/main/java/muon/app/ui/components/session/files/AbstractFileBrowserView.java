@@ -12,10 +12,12 @@ import muon.app.util.PathUtils;
 import muon.app.util.enums.PanelOrientation;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 @Slf4j
 public abstract class AbstractFileBrowserView extends JPanel implements FolderViewEventListener, ClosableTabContent {
@@ -79,7 +81,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         btnBack = new JButton();
         btnBack.putClientProperty(NIMBUS_OVERRIDES, toolbarButtonSkin);
-        btnBack.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnBack.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnBack.setText("\uf060");
         btnBack.addActionListener(e -> {
             String item = history.prevElement();
@@ -89,7 +91,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         btnNext = new JButton();
         btnNext.putClientProperty(NIMBUS_OVERRIDES, toolbarButtonSkin);
-        btnNext.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnNext.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnNext.setText("\uf061");
         btnNext.addActionListener(e -> {
             String item = history.nextElement();
@@ -99,7 +101,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         JButton btnHome = new JButton();
         btnHome.putClientProperty(NIMBUS_OVERRIDES, toolbarButtonSkin);
-        btnHome.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnHome.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnHome.setText("\uf015");
         btnHome.addActionListener(e -> {
             addBack(this.path);
@@ -109,7 +111,7 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         JButton btnUp = new JButton();
         btnUp.putClientProperty(NIMBUS_OVERRIDES, toolbarButtonSkin);
         btnUp.addActionListener(upAction);
-        btnUp.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnUp.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnUp.setText("\uf062");
 
         smallToolbar.add(Box.createHorizontalStrut(5));
@@ -117,13 +119,13 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
         JButton btnReload = new JButton();
         btnReload.putClientProperty(NIMBUS_OVERRIDES, toolbarButtonSkin);
         btnReload.addActionListener(reloadAction);
-        btnReload.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnReload.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnReload.setText("\uf021");
 
 
         JButton btnMore = new JButton();
         btnMore.putClientProperty(NIMBUS_OVERRIDES, toolbarButtonSkin);
-        btnMore.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnMore.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnMore.setText("\uf142");
         btnMore.addActionListener(e -> {
             JPopupMenu popupMenu = overflowMenuHandler.getOverflowMenu();
@@ -144,14 +146,14 @@ public abstract class AbstractFileBrowserView extends JPanel implements FolderVi
 
         Box b2 = Box.createHorizontalBox();
         b2.add(btnReload);
-        b2.setBorder(new EmptyBorder(3, 0, 3, 0));
+        b2.setBorder(getScaledEmptyBorder(3, 0, 3, 0));
         b2.add(btnReload);
         b2.add(btnMore);
 
         toolBar.add(smallToolbar, BorderLayout.WEST);
         toolBar.add(addressBar);
         toolBar.add(b2, BorderLayout.EAST);
-        toolBar.setBorder(new EmptyBorder(5, 5, 5, 5));
+        toolBar.setBorder(getScaledEmptyBorder(5, 5, 5, 5));
 
         add(toolBar, BorderLayout.NORTH);
 

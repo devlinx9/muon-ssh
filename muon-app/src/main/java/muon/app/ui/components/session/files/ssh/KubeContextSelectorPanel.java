@@ -15,6 +15,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static muon.app.util.ScalingUtil.scale;
+
 @Slf4j
 public class KubeContextSelectorPanel extends JPanel {
 
@@ -91,14 +93,14 @@ public class KubeContextSelectorPanel extends JPanel {
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         Font baseFont = label.getFont();
-        Font labelFont = baseFont.deriveFont(isCurrent ? Font.BOLD : Font.PLAIN, 14f);
+        Font labelFont = baseFont.deriveFont(isCurrent ? Font.BOLD : Font.PLAIN, scale(14f));
         label.setFont(labelFont);
 
         label.setForeground(isCurrent ? App.getCONTEXT().getSkin().getDefaultSelectionForeground() : App.getCONTEXT().getSkin().getDefaultForeground());
 
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        label.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        label.setBorder(BorderFactory.createEmptyBorder(scale(8), scale(12), scale(8), scale(12)));
 
         label.setOpaque(true);
         label.setBackground(isCurrent ? App.getCONTEXT().getSkin().getDefaultSelectionBackground() : App.getCONTEXT().getSkin().getDefaultBackground());

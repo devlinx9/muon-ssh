@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.ui.components.common.RoundedButtonPainter;
 import muon.app.ui.components.session.files.view.AddressBarBreadCrumbs;
+import muon.app.util.ScalingUtil;
 
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -12,6 +13,8 @@ import java.awt.*;
 
 import static muon.app.util.FontUtils.loadFontAwesomeFonts;
 import static muon.app.util.FontUtils.loadFonts;
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.scaleInsets;
 
 /**
  * @author subhro
@@ -39,11 +42,20 @@ public abstract class AppSkin {
         this.laf = new NimbusLookAndFeel();
         this.defaults = this.laf.getDefaults();
 
-        this.defaults.put("defaultFont", loadFonts());
+        Font base = loadFonts();
+        Font defaultFont = base.deriveFont(ScalingUtil.scale(14f));
+
+        this.defaults.put("Label.font", defaultFont);
+        this.defaults.put("Button.font", defaultFont);
+        this.defaults.put("TextField.font", defaultFont);
+        this.defaults.put("Table.font", defaultFont);
+        this.defaults.put("TableHeader.font", defaultFont);
+        this.defaults.put("TitledBorder.font", defaultFont);
+        this.defaults.put("defaultFont", defaultFont);
         this.defaults.put("iconFont", loadFontAwesomeFonts());
         this.defaults.put("defaultStroke", new BasicStroke(2.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
-        this.defaults.put("ScrollPane.contentMargins", new Insets(0, 0, 0, 0));
+        this.defaults.put("ScrollPane.contentMargins", scaleInsets(0, 0, 0, 0));
 
 
         Painter<? extends JComponent> scrollPaneBorderPainter = (graphics, component, width, height) -> {
@@ -55,7 +67,7 @@ public abstract class AppSkin {
         this.defaults.put("ScrollPane[Enabled+Focused].borderPainter", scrollPaneBorderPainter);
         this.defaults.put("ScrollPane[Enabled].borderPainter", scrollPaneBorderPainter);
 
-        this.defaults.put("ScrollBar.width", 7);
+        this.defaults.put("ScrollBar.width", ScalingUtil.scale(7));
 
         Painter<? extends JComponent> treeCellFocusPainter = (g, object, width, height) -> {
         };
@@ -86,6 +98,14 @@ public abstract class AppSkin {
         return UIManager.getFont("iconFont");
     }
 
+    public Font getIconFont(float size) {
+        return getIconFont().deriveFont(ScalingUtil.scale(size));
+    }
+
+    public Font getDefaultFont(float size) {
+        return getDefaultFont().deriveFont(ScalingUtil.scale(size));
+    }
+
     public Font getDefaultFont() {
         return UIManager.getFont("defaultFont");
     }
@@ -110,16 +130,16 @@ public abstract class AppSkin {
         };
 
         for (String key : new String[]{"SplitPane:SplitPaneDivider[Enabled].backgroundPainter",
-                                       "SplitPane:SplitPaneDivider[Enabled+Vertical].foregroundPainter",
-                                       "SplitPane:SplitPaneDivider[Enabled].backgroundPainter",
-                                       "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
-                                       "SplitPane:SplitPaneDivider[Focused].backgroundPainter",
-                                       "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
-                                       "SplitPane:SplitPaneDivider[Enabled].foregroundPainter"}) {
+                "SplitPane:SplitPaneDivider[Enabled+Vertical].foregroundPainter",
+                "SplitPane:SplitPaneDivider[Enabled].backgroundPainter",
+                "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
+                "SplitPane:SplitPaneDivider[Focused].backgroundPainter",
+                "SplitPane:SplitPaneDivider[Enabled].foregroundPainter",
+                "SplitPane:SplitPaneDivider[Enabled].foregroundPainter"}) {
             uiDefaults.put(key, painter);
         }
 
-        uiDefaults.put("SplitPane.contentMargins", new Insets(0, 0, 0, 0));
+        uiDefaults.put("SplitPane.contentMargins", scaleInsets(0, 0, 0, 0));
         uiDefaults.put("SplitPane.background", defaults.getColor(CONTROL));
 
         uiDefaults.put("background", defaults.getColor(CONTROL));
@@ -135,7 +155,7 @@ public abstract class AppSkin {
 
     public void createSkinnedButton(UIDefaults btnSkin) {
         RoundedButtonPainter cs = new RoundedButtonPainter(btnSkin);
-        btnSkin.put("Button.contentMargins", new Insets(8, 15, 8, 15));
+        btnSkin.put("Button.contentMargins", scaleInsets(8, 15, 8, 15));
         btnSkin.put("Button[Default+Focused+MouseOver].backgroundPainter", cs.getHotPainter());
         btnSkin.put("Button[Default+Focused+Pressed].backgroundPainter", cs.getPressedPainter());
         btnSkin.put("Button[Default+Focused].backgroundPainter", cs.getNormalPainter());
@@ -188,8 +208,8 @@ public abstract class AppSkin {
         uiDefaults.put("TextField[Enabled].borderPainter", normalBorder);
         uiDefaults.put("TextField[Focused].borderPainter", focusedBorder);
 
-        uiDefaults.put("TextField.contentMargins", new Insets(8, 8, 8, 8));
-        uiDefaults.put("PasswordField.contentMargins", new Insets(8, 8, 8, 8));
+        uiDefaults.put("TextField.contentMargins", scaleInsets(8, 8, 8, 8));
+        uiDefaults.put("PasswordField.contentMargins", scaleInsets(8, 8, 8, 8));
     }
 
     public void createSpinnerSkin(UIDefaults uiDefaults) {
@@ -239,7 +259,7 @@ public abstract class AppSkin {
         uiDefaults.put("Spinner:Panel:\"Spinner.formattedTextField\"[Enabled].backgroundPainter", painter1);
         uiDefaults.put("Spinner:Panel:\"Spinner.formattedTextField\"[Focused].backgroundPainter", painter1);
         uiDefaults.put("Spinner:Panel:\"Spinner.formattedTextField\"[Focused+Selected].backgroundPainter", painter1);
-        uiDefaults.put("Spinner:Panel:\"Spinner.formattedTextField\".contentMargins", new Insets(7, 7, 7, 7));
+        uiDefaults.put("Spinner:Panel:\"Spinner.formattedTextField\".contentMargins", scaleInsets(7, 7, 7, 7));
     }
 
     public void createComboBoxSkin(UIDefaults uiDefaults) {
@@ -312,8 +332,8 @@ public abstract class AppSkin {
         uiDefaults.put("ComboBox:\"ComboBox.arrowButton\"[Editable+MouseOver].backgroundPainter", painter2);
         uiDefaults.put("ComboBox:\"ComboBox.arrowButton\"[Editable+Pressed].backgroundPainter", painter2);
         uiDefaults.put("ComboBox:\"ComboBox.arrowButton\"[Editable+Selected].backgroundPainter", painter3);
-        uiDefaults.put("ComboBox.contentMargins", new Insets(3, 5, 3, 5));
-        uiDefaults.put("ComboBox:\"ComboBox.listRenderer\".contentMargins", new Insets(3, 5, 3, 5));
+        uiDefaults.put("ComboBox.contentMargins", scaleInsets(3, 5, 3, 5));
+        uiDefaults.put("ComboBox:\"ComboBox.listRenderer\".contentMargins", scaleInsets(3, 5, 3, 5));
         uiDefaults.put("ComboBox.rendererUseListColors", Boolean.TRUE);
     }
 
@@ -321,7 +341,7 @@ public abstract class AppSkin {
         uiDefaults.put("Tree[Enabled].closedIconPainter", (Painter<JComponent>) (g, object, width, height) -> {
             Font font = g.getFont();
             g.setColor(defaults.getColor("Tree.textForeground"));
-            g.setFont(getIconFont().deriveFont(16));
+            g.setFont(getIconFont(16));
             int h = g.getFontMetrics().getAscent() + g.getFontMetrics().getDescent();
 
             g.drawString("\uf07b", 0, h);
@@ -331,7 +351,7 @@ public abstract class AppSkin {
         uiDefaults.put("Tree[Enabled].openIconPainter", (Painter<JComponent>) (g, object, width, height) -> {
             g.setColor(defaults.getColor("Tree.textForeground"));
             Font font = g.getFont();
-            g.setFont(getIconFont().deriveFont(16));
+            g.setFont(getIconFont(16));
             int h = g.getFontMetrics().getAscent() + g.getFontMetrics().getDescent();
 
             g.drawString("\uf07c", 0, h);
@@ -341,13 +361,13 @@ public abstract class AppSkin {
         uiDefaults.put("Tree[Enabled].leafIconPainter", (Painter<JComponent>) (g, object, width, height) -> {
             g.setColor(defaults.getColor("Tree.textForeground"));
             Font font = g.getFont();
-            g.setFont(getIconFont().deriveFont(16));
+            g.setFont(getIconFont(16));
             int h = g.getFontMetrics().getAscent() + g.getFontMetrics().getDescent();
 
             g.drawString("\uf15b", 0, h);
             g.setFont(font);
         });
-        uiDefaults.put("Tree.rendererMargins", new Insets(5, 5, 5, 5));
+        uiDefaults.put("Tree.rendererMargins", scaleInsets(5, 5, 5, 5));
     }
 
     public UIDefaults createToolbarSkin() {
@@ -367,7 +387,7 @@ public abstract class AppSkin {
             g.fillRect(0, 0, width, height);
         };
 
-        toolBarButtonSkin.put("Button.contentMargins", new Insets(5, 8, 5, 8));
+        toolBarButtonSkin.put("Button.contentMargins", scaleInsets(5, 8, 5, 8));
 
         toolBarButtonSkin.put("Button[Disabled].backgroundPainter", toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Disabled].textForeground", Color.LIGHT_GRAY);
@@ -396,7 +416,7 @@ public abstract class AppSkin {
             g.fillRect(0, 0, width, height);
         };
 
-        toolBarButtonSkin.put("Button.contentMargins", new Insets(5, 8, 5, 8));
+        toolBarButtonSkin.put("Button.contentMargins", scaleInsets(5, 8, 5, 8));
 
         toolBarButtonSkin.put("Button[Disabled].backgroundPainter", toolBarButtonPainterNormal);
         toolBarButtonSkin.put("Button[Disabled].textForeground", Color.LIGHT_GRAY);
@@ -410,7 +430,7 @@ public abstract class AppSkin {
         Painter<?> painterNormal = (Graphics2D g, Object object, int width, int height) -> {
 
         };
-        uiDefaults.put("TableHeader.font", new Font(Font.DIALOG, Font.PLAIN, 14));
+        uiDefaults.put("TableHeader.font", new Font(Font.DIALOG, Font.PLAIN, scale(14)));
         uiDefaults.put("TableHeader.background", defaults.getColor(CONTROL));
         uiDefaults.put("TableHeader.foreground", defaults.getColor(TEXT));
         uiDefaults.put("TableHeader:\"TableHeader.renderer\".opaque", false);
@@ -434,8 +454,8 @@ public abstract class AppSkin {
         uiDefaults.put("Menu[Enabled].textForeground", textColor);
         uiDefaults.put("Menu[Enabled+Selected].textForeground", selectedTextColor);
 
-        uiDefaults.put("Menu.contentMargins", new Insets(5, 10, 5, 10));
-        uiDefaults.put("MenuItem.contentMargins", new Insets(5, 10, 5, 10));
+        uiDefaults.put("Menu.contentMargins", scaleInsets(5, 10, 5, 10));
+        uiDefaults.put("MenuItem.contentMargins", scaleInsets(5, 10, 5, 10));
         uiDefaults.put("MenuItem.foreground", textColor);
         uiDefaults.put("MenuItem[Enabled].textForeground", textColor);
         uiDefaults.put("MenuItem[MouseOver].textForeground", selectedTextColor);
@@ -509,7 +529,7 @@ public abstract class AppSkin {
         uiDefaults.put("CheckBoxMenuItem[MouseOver+Selected].checkIconPainter", painter2);
         uiDefaults.put("CheckBoxMenuItem.foreground", c1);
         uiDefaults.put("CheckBoxMenuItem[Enabled].textForeground", c1);
-        uiDefaults.put("CheckBoxMenuItem.contentMargins", new Insets(5, 10, 5, 10));
+        uiDefaults.put("CheckBoxMenuItem.contentMargins", scaleInsets(5, 10, 5, 10));
     }
 
     public void createRadioButtonSkin(UIDefaults uiDefaults) {
@@ -560,7 +580,7 @@ public abstract class AppSkin {
 
     public void createSkinnedToggleButton(UIDefaults btnSkin) {
         RoundedButtonPainter cs = new RoundedButtonPainter(btnSkin);
-        btnSkin.put("ToggleButton.contentMargins", new Insets(8, 15, 8, 15));
+        btnSkin.put("ToggleButton.contentMargins", scaleInsets(8, 15, 8, 15));
         btnSkin.put("ToggleButton[Default+Focused+MouseOver].backgroundPainter", cs.getHotPainter());
         btnSkin.put("ToggleButton[Default+Focused+Pressed].backgroundPainter", cs.getPressedPainter());
         btnSkin.put("ToggleButton[Default+Focused].backgroundPainter", cs.getNormalPainter());
@@ -596,8 +616,8 @@ public abstract class AppSkin {
             g.fillRoundRect(1, 1, width - 2, height - 2, 5, 5);
         };
 
-        uiDefaults.put("ProgressBar.horizontalSize", new Dimension(150, 10));
-        uiDefaults.put("ProgressBar.verticalSize", new Dimension(10, 150));
+        uiDefaults.put("ProgressBar.horizontalSize", ScalingUtil.scale(scale(new Dimension(150, 10))));
+        uiDefaults.put("ProgressBar.verticalSize", ScalingUtil.scale(scale(new Dimension(10, 150))));
 
         uiDefaults.put("ProgressBar[Disabled+Finished].foregroundPainter", painter2);
         uiDefaults.put("ProgressBar[Disabled].foregroundPainter", painter2);

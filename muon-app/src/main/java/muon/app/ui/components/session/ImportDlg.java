@@ -4,11 +4,13 @@ import muon.app.util.importers.PuttyImporter;
 import muon.app.util.importers.WinScpImporter;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 public class ImportDlg extends JDialog {
     private final JList<String> sessionList;
@@ -30,12 +32,12 @@ public class ImportDlg extends JDialog {
         }
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        panel.setBorder(getScaledEmptyBorder(5, 5, 5, 5));
         panel.add(new JScrollPane(sessionList));
         add(panel);
 
         Box b2 = Box.createHorizontalBox();
-        b2.setBorder(new EmptyBorder(0, 5, 5, 5));
+        b2.setBorder(getScaledEmptyBorder(0, 5, 5, 5));
 
         JButton btnSelect = new JButton("Select all");
         btnSelect.addActionListener(e -> {
@@ -53,7 +55,7 @@ public class ImportDlg extends JDialog {
         });
 
         b2.add(btnSelect);
-        b2.add(Box.createRigidArea(new Dimension(5, 5)));
+        b2.add(Box.createRigidArea(scale(new Dimension(5, 5))));
         b2.add(btnUnSelect);
 
         b2.add(Box.createHorizontalGlue());

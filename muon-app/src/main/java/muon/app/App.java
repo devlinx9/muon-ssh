@@ -76,11 +76,6 @@ public final class App {
             SessionExportImport.importOnFirstRun();
         }
 
-        if (CONTEXT.getSettings().isManualScaling()) {
-            System.setProperty("sun.java2d.uiScale.enabled", "true");
-            System.setProperty("sun.java2d.uiScale", String.format("%.2f", CONTEXT.getSettings().getUiScaling()));
-        }
-
         if (CONTEXT.getSettings().getEditors().isEmpty()) {
             log.info("Searching for known editors...");
             CONTEXT.getSettings().setEditors(PlatformUtils.getKnownEditors());

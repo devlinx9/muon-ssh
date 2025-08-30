@@ -7,13 +7,15 @@ import muon.app.ui.components.session.files.AddressBarComboBoxEditor;
 import muon.app.util.LayoutUtilities;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 @Slf4j
 public class AddressBar extends JPanel {
@@ -31,14 +33,14 @@ public class AddressBar extends JPanel {
     public AddressBar(char separator, ActionListener popupTriggeredListener) {
         setLayout(new BorderLayout());
         addrPanel = new JPanel(new BorderLayout());
-        addrPanel.setBorder(new EmptyBorder(3, 3, 3, 3));
+        addrPanel.setBorder(getScaledEmptyBorder(3, 3, 3, 3));
         this.separator = separator;
 
         UIDefaults toolbarSkin = App.getCONTEXT().getSkin().createToolbarSkin();
 
         JButton btnRoot = new JButton();
         btnRoot.putClientProperty("Nimbus.Overrides", toolbarSkin);
-        btnRoot.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnRoot.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnRoot.setText("\uf0a0");
         btnRoot.addActionListener(e -> createAndShowPopup());
 
@@ -92,11 +94,11 @@ public class AddressBar extends JPanel {
         });
 
         panBtn2 = new JPanel(new BorderLayout());
-        panBtn2.setBorder(new EmptyBorder(3, 3, 3, 3));
+        panBtn2.setBorder(getScaledEmptyBorder(3, 3, 3, 3));
 
         btnEdit = new JButton();
         btnEdit.putClientProperty("Nimbus.Overrides", toolbarSkin);
-        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnEdit.setText("\uf023");
         btnEdit.addActionListener(e -> {
             if (!isSelected()) {
@@ -114,7 +116,7 @@ public class AddressBar extends JPanel {
         addrPanel.add(addressBar);
         add(addrPanel);
         JPanel panBtn = new JPanel(new BorderLayout());
-        panBtn.setBorder(new EmptyBorder(3, 3, 3, 3));
+        panBtn.setBorder(getScaledEmptyBorder(3, 3, 3, 3));
         panBtn.add(btnEdit);
         add(panBtn, BorderLayout.EAST);
         add(panBtn2, BorderLayout.WEST);

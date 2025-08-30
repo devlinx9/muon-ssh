@@ -8,12 +8,13 @@ import muon.app.ui.components.common.SkinnedScrollPane;
 import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 /**
  * @author subhro
@@ -68,7 +69,11 @@ public class SessionListPanel extends JPanel {
                         int x = e.getPoint().x;
                         int y = e.getPoint().y;
 
-                        if (x > r.x + r.width - 30 && x < r.x + r.width && y > r.y + 10 && y < r.y + r.height - 10) {
+                        int rightPad = Math.round(scale(30));
+                        int vPad    = Math.round(scale(10));
+
+                        if (x > r.x + r.width - rightPad && x < r.x + r.width &&
+                                y > r.y + vPad && y < r.y + r.height - vPad) {
                             sessionList.setCursor(HAND_CURSOR);
                             return;
                         }
@@ -90,8 +95,10 @@ public class SessionListPanel extends JPanel {
                     if (r != null && r.contains(e.getPoint())) {
                         int x = e.getPoint().x;
                         int y = e.getPoint().y;
+                        int rightPad = Math.round(scale(30));
+                        int vPad    = Math.round(scale(10));
 
-                        if (x > r.x + r.width - 30 && x < r.x + r.width && y > r.y + 10 && y < r.y + r.height - 10) {
+                        if (x > r.x + r.width - rightPad && x < r.x + r.width && y > r.y + vPad && y < r.y + r.height - vPad) {
                             log.info("Clicked on: {}", index);
                             removeSession(index);
                         }
@@ -127,7 +134,7 @@ public class SessionListPanel extends JPanel {
 
     public void removeSession(int index) {
         if (!App.getGlobalSettings().isConfirmBeforeTerminalClosing() ||
-            JOptionPane.showConfirmDialog(window, App.getCONTEXT().getBundle().getString("disconnect_session")) == JOptionPane.YES_OPTION) {
+                JOptionPane.showConfirmDialog(window, App.getCONTEXT().getBundle().getString("disconnect_session")) == JOptionPane.YES_OPTION) {
             ISessionContentPanel sessionContentPanel = sessionListModel.get(index);
             sessionContentPanel.close();
             window.removeSession(sessionContentPanel);
@@ -170,10 +177,10 @@ public class SessionListPanel extends JPanel {
             lblHost = new JLabel();
             lblClose = new JLabel();
 
-            lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(24.0f));
-            lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(SMALL_TEXT_SIZE));
-            lblHost.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(12.0f));
-            lblClose.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+            lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont(scale(24.0f)));
+            lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont(scale(SMALL_TEXT_SIZE)));
+            lblHost.setFont(App.getCONTEXT().getSkin().getDefaultFont(scale(12.0f)));
+            lblClose.setFont(App.getCONTEXT().getSkin().getIconFont(scale(SMALL_TEXT_SIZE)));
 
             lblText.setText("Sample server");
             lblHost.setText("server host");
@@ -190,7 +197,7 @@ public class SessionListPanel extends JPanel {
             panel.add(lblClose, BorderLayout.EAST);
             panel.add(textHolder);
 
-            panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+            panel.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
             panel.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
             panel.setOpaque(true);
 

@@ -8,7 +8,6 @@ import muon.app.ui.components.common.TabbedPanel;
 import muon.app.util.enums.JumpType;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -16,6 +15,8 @@ import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
+
+import static muon.app.util.ScalingUtil.*;
 
 
 @Slf4j
@@ -164,7 +165,7 @@ public class SessionInfoPanel extends JPanel {
 
     private void createUI() {
         setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(10, 0, 10, 0));
+        setBorder(getScaledEmptyBorder(10, 0, 10, 0));
         TabbedPanel tabs = new TabbedPanel();
         tabs.addTab(App.getCONTEXT().getBundle().getString("connection"), createConnectionPanel());
         tabs.addTab(App.getCONTEXT().getBundle().getString("directories"), createDirectoryPanel());
@@ -182,8 +183,8 @@ public class SessionInfoPanel extends JPanel {
         GridBagLayout gbl1 = new GridBagLayout();
         JPanel panel = new JPanel(gbl1);
 
-        Insets topInset = new Insets(20, 10, 0, 10);
-        Insets noInset = new Insets(5, 10, 0, 10);
+        Insets topInset = scaleInsets(20, 10, 0, 10);
+        Insets noInset = scaleInsets(5, 10, 0, 10);
 
         chkUseJumpHosts = new JCheckBox("Jump Hosts / Multi hop port forwarding");
         radMultiHopTunnel = new JRadioButton("Use multihop SSH tunnel");
@@ -267,8 +268,8 @@ public class SessionInfoPanel extends JPanel {
         GridBagLayout gbl1 = new GridBagLayout();
         JPanel panel = new JPanel(gbl1);
 
-        Insets topInset = new Insets(20, 10, 0, 10);
-        Insets noInset = new Insets(5, 10, 0, 10);
+        Insets topInset = scaleInsets(20, 10, 0, 10);
+        Insets noInset = scaleInsets(5, 10, 0, 10);
 
         // -----------
         JLabel lblProxyType = new JLabel(App.getCONTEXT().getBundle().getString("proxy_type"));
@@ -455,8 +456,8 @@ public class SessionInfoPanel extends JPanel {
         GridBagLayout gbl1 = new GridBagLayout();
         JPanel panel = new JPanel(gbl1);
 
-        Insets topInset = new Insets(20, 10, 0, 10);
-        Insets noInset = new Insets(5, 10, 0, 10);
+        Insets topInset = scaleInsets(20, 10, 0, 10);
+        Insets noInset = scaleInsets(5, 10, 0, 10);
 
         inpLocalFolder = new SkinnedTextField(10);// new
         inpLocalFolder.getDocument().addDocumentListener(new DocumentListener() {
@@ -539,7 +540,7 @@ public class SessionInfoPanel extends JPanel {
         c.gridx = 1;
         c.gridy = 13;
         c.gridwidth = 1;
-        c.insets = new Insets(5, 0, 0, 10);
+        c.insets = scaleInsets(5, 0, 0, 10);
         c.weightx = 0;
         panel.add(inpLocalBrowse, c);
 
@@ -572,8 +573,8 @@ public class SessionInfoPanel extends JPanel {
         GridBagLayout gbl1 = new GridBagLayout();
         JPanel panel = new JPanel(gbl1);
 
-        Insets topInset = new Insets(20, 10, 0, 10);
-        Insets noInset = new Insets(5, 10, 0, 10);
+        Insets topInset = scaleInsets(20, 10, 0, 10);
+        Insets noInset = scaleInsets(5, 10, 0, 10);
 
         JLabel lblHost = new JLabel(App.getCONTEXT().getBundle().getString("host"));
         lblHost.setHorizontalAlignment(JLabel.LEADING);
@@ -779,7 +780,7 @@ public class SessionInfoPanel extends JPanel {
         c.gridy = 8;
         c.gridwidth = 1;
         c.weightx = 0;
-        c.insets = new Insets(5, 0, 0, 8);
+        c.insets = scaleInsets(5, 0, 0, 8);
         panel.add(inpKeyShowPass, c);
 
         c.gridx = 0;
@@ -800,7 +801,7 @@ public class SessionInfoPanel extends JPanel {
         c.gridwidth = 1;
         c.weightx = 0;
         c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(5, 0, 0, 10);
+        c.insets = scaleInsets(5, 0, 0, 10);
         panel.add(inpKeyBrowse, c);
 
         c.gridx = 0;

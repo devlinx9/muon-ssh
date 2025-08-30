@@ -8,8 +8,7 @@ import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -17,6 +16,8 @@ import java.io.Serializable;
 import java.util.function.Consumer;
 
 import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 @Slf4j
 public class ClosableTabbedPanel extends JPanel {
@@ -50,7 +51,7 @@ public class ClosableTabbedPanel extends JPanel {
 
         JButton btn = new JButton();
         btn.setToolTipText("New tab");
-        btn.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(MEDIUM_TEXT_SIZE));
+        btn.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btn.setText(FontAwesomeContants.FA_PLUS_SQUARE);
         btn.putClientProperty("Nimbus.Overrides",
                               App.getCONTEXT().getSkin().createTabButtonSkin());
@@ -62,7 +63,7 @@ public class ClosableTabbedPanel extends JPanel {
         buttonsBox = new JPanel(new GridLayout(1, 0));
         buttonsBox.setOpaque(true);
         buttonsBox.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
-        buttonsBox.setBorder(new EmptyBorder(0, 0, 0, 0));
+        buttonsBox.setBorder(getScaledEmptyBorder(0, 0, 0, 0));
         buttonsBox.add(btn);
         tabTop.add(buttonsBox, BorderLayout.EAST);
 
@@ -275,8 +276,8 @@ public class ClosableTabbedPanel extends JPanel {
         public TabTitleComponent(boolean closable) {
             super(new BorderLayout());
             setBorder(
-                    new CompoundBorder(new MatteBorder(0, 0, 0, 1, selectedBg),
-                                       new EmptyBorder(5, 10, 5, 5)));
+                    new CompoundBorder(getScaledMatteBorder(0, 0, 0, 1, selectedBg),
+                                       getScaledEmptyBorder(5, 10, 5, 5)));
             setBackground(unselectedBg);
             setOpaque(true);
             titleLabel = new JLabel();

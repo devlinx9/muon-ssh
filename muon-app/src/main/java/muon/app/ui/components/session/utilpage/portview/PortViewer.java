@@ -10,7 +10,6 @@ import muon.app.ui.components.session.utilpage.UtilPageItemView;
 import muon.app.util.SudoUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +17,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 /**
@@ -37,7 +38,7 @@ public class PortViewer extends UtilPageItemView {
     
     public PortViewer(SessionContentPanel holder) {
         super(holder);
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
     }
 
@@ -126,7 +127,7 @@ public class PortViewer extends UtilPageItemView {
     protected void createUI() {
         JTable table = new JTable(model);
         table.setShowGrid(false);
-        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setIntercellSpacing(scale(new Dimension(0, 0)));
         table.setFillsViewportHeight(true);
 
         JLabel lbl1 = new JLabel(App.getCONTEXT().getBundle().getString("search"));
@@ -147,7 +148,7 @@ public class PortViewer extends UtilPageItemView {
         add(new SkinnedScrollPane(table));
 
         Box box = Box.createHorizontalBox();
-        box.setBorder(new EmptyBorder(10, 0, 0, 0));
+        box.setBorder(getScaledEmptyBorder(10, 0, 0, 0));
         JButton btnRefresh = new JButton(App.getCONTEXT().getBundle().getString("refresh"));
         btnRefresh.addActionListener(e -> getListingSockets());
 

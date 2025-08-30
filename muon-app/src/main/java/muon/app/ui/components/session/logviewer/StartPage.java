@@ -13,8 +13,7 @@ import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -24,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 
 /**
@@ -61,7 +63,7 @@ public class StartPage extends JPanel {
         pinnedLogList.setCellRenderer(new PinnedLogsRenderer());
         pinnedLogList.setBackground(App.getCONTEXT().getSkin().getSelectedTabColor());
         JScrollPane jsp = new SkinnedScrollPane(pinnedLogList);
-        jsp.setBorder(new EmptyBorder(0, 10, 0, 10));
+        jsp.setBorder(getScaledEmptyBorder(0, 10, 0, 10));
         this.add(jsp);
         JButton btnAddLog = new JButton(App.getCONTEXT().getBundle().getString("add_log"));
         JButton btnDelLog = new JButton(App.getCONTEXT().getBundle().getString("delete"));
@@ -85,7 +87,7 @@ public class StartPage extends JPanel {
         bottomBox.add(btnAddLog);
         bottomBox.add(Box.createHorizontalStrut(10));
         bottomBox.add(btnDelLog);
-        bottomBox.setBorder(new EmptyBorder(10, 10, 10, 10));
+        bottomBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         this.add(bottomBox, BorderLayout.SOUTH);
         pinnedLogList.addMouseMotionListener(new MouseAdapter() {
 
@@ -156,9 +158,9 @@ public class StartPage extends JPanel {
         public PinnedLogsRenderer() {
             setOpaque(true);
             setBorder(new CompoundBorder(
-                    new MatteBorder(0, 0, 2, 0,
+                    getScaledMatteBorder(0, 0, 2, 0,
                                     App.getCONTEXT().getSkin().getDefaultBackground()),
-                    new EmptyBorder(10, 10, 10, 10)));
+                    getScaledEmptyBorder(10, 10, 10, 10)));
         }
 
         @Override

@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+
 
 public class JumpHostPanel extends JPanel {
     private final DefaultListModel<HopEntry> hopModel = new DefaultListModel<>();
@@ -28,15 +30,15 @@ public class JumpHostPanel extends JPanel {
 
         Box b1 = Box.createVerticalBox();
         JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnDel.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         JButton btnUp = new JButton(FontAwesomeContants.FA_ARROW_UP);
-        btnUp.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnUp.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         JButton btnDown = new JButton(FontAwesomeContants.FA_ARROW_DOWN);
-        btnDown.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnDown.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
 
         btnAdd.addActionListener(e -> {
             HopEntry ent = addOrEditEntry(null);

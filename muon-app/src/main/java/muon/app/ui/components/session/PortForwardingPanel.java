@@ -8,11 +8,14 @@ import muon.app.util.OptionPaneUtils;
 import muon.app.util.enums.PortForwardingType;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 public class PortForwardingPanel extends JPanel {
@@ -22,22 +25,22 @@ public class PortForwardingPanel extends JPanel {
 
     public PortForwardingPanel() {
         super(new BorderLayout(10, 10));
-        setBorder(new EmptyBorder(10, 0, 0, 10));
+        setBorder(getScaledEmptyBorder(10, 0, 0, 10));
         model = new PFTableModel();
         table = new JTable(model);
 
         JLabel lblTitle = new JLabel("Port forwarding rules");
 
         JScrollPane scrollPane = new SkinnedScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setPreferredSize(scale(new Dimension(400, 200)));
 
         Box b1 = Box.createVerticalBox();
         JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnDel.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
 
         btnAdd.addActionListener(e -> {
             PortForwardingRule ent = addOrEditEntry(null);

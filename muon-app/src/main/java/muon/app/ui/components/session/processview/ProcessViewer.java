@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static muon.app.util.ScalingUtil.scale;
 
 
 /**
@@ -50,7 +51,7 @@ public class ProcessViewer extends Page {
     
     private void createUI() {
         processListPanel = new ProcessListPanel(this::runCommand);
-        processListPanel.setMinimumSize(new Dimension(10, 10));
+        processListPanel.setMinimumSize(scale(new Dimension(10, 10)));
         this.add(processListPanel);
     }
 

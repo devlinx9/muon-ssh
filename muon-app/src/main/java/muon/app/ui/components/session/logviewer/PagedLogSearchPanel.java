@@ -8,11 +8,13 @@ import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 /**
  * @author subhro
@@ -37,13 +39,13 @@ public class PagedLogSearchPanel extends JPanel {
 
         JButton btnSearch = new JButton();
         btnSearch.putClientProperty("Nimbus.Overrides", skin);
-        btnSearch.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnSearch.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnSearch.setText(FontAwesomeContants.FA_SEARCH);
         btnSearch.addActionListener(e -> startSearch());
 
         JButton btnNext = new JButton();
         btnNext.putClientProperty("Nimbus.Overrides", skin);
-        btnNext.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnNext.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnNext.setText(FontAwesomeContants.FA_ANGLE_DOWN);
         btnNext.addActionListener(e -> {
             if (raf == null || this.resultCount < 1)
@@ -65,7 +67,7 @@ public class PagedLogSearchPanel extends JPanel {
 
         JButton btnPrev = new JButton();
         btnPrev.putClientProperty("Nimbus.Overrides", skin);
-        btnPrev.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnPrev.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         btnPrev.setText(FontAwesomeContants.FA_ANGLE_UP);
         btnPrev.addActionListener(e -> {
             if (raf == null || this.resultCount < 1)
@@ -96,13 +98,13 @@ public class PagedLogSearchPanel extends JPanel {
         b1.add(lblResults);
 
         setBorder(new CompoundBorder(
-                new MatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
-                new EmptyBorder(5, 5, 5, 5)));
+                getScaledMatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                getScaledEmptyBorder(5, 5, 5, 5)));
 
         add(b1);
     }
 
-    
+
     private void startSearch() {
         String text = txtSearch.getText();
         if (text.isEmpty())

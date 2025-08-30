@@ -6,7 +6,6 @@ import muon.app.util.FontAwesomeContants;
 import muon.app.util.FormatUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,6 +14,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 @Slf4j
 public class BackgroundTransferPanel extends JPanel {
@@ -91,9 +94,9 @@ public class BackgroundTransferPanel extends JPanel {
             transfer.getFileTransfer().setCallback(this);
             progressBar = new JProgressBar();
             progressLabel = new JLabel("Waiting...");
-            progressLabel.setBorder(new EmptyBorder(10, 0, 10, 5));
+            progressLabel.setBorder(getScaledEmptyBorder(10, 0, 10, 5));
             removeLabel = new JLabel();
-            removeLabel.setFont(App.getCONTEXT().getSkin().getIconFont());
+            removeLabel.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
             removeLabel.setText(FontAwesomeContants.FA_STOP_CIRCLE);
 
             removeLabel.addMouseListener(new MouseAdapter() {
@@ -114,7 +117,7 @@ public class BackgroundTransferPanel extends JPanel {
                 }
             });
 
-            setBorder(new EmptyBorder(10, 10, 10, 10));
+            setBorder(getScaledEmptyBorder(10, 10, 10, 10));
             Box topBox = Box.createHorizontalBox();
             topBox.add(progressLabel);
             topBox.add(Box.createHorizontalGlue());
@@ -123,7 +126,7 @@ public class BackgroundTransferPanel extends JPanel {
             add(topBox);
             add(progressBar, BorderLayout.SOUTH);
 
-            setMaximumSize(new Dimension(getMaximumSize().width, getPreferredSize().height));
+            setMaximumSize(scale(new Dimension(getMaximumSize().width, getPreferredSize().height)));
         }
 
         public void stop() {

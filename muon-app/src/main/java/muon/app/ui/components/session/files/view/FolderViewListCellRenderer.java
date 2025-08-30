@@ -6,8 +6,10 @@ import muon.app.util.FileIconUtil;
 import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 public class FolderViewListCellRenderer extends JPanel implements ListCellRenderer<FileInfo> {
     private final JLabel lblIcon;
@@ -15,13 +17,13 @@ public class FolderViewListCellRenderer extends JPanel implements ListCellRender
 
     public FolderViewListCellRenderer() {
         super(new BorderLayout(10, 5));
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         lblIcon = new JLabel();
         lblIcon.setOpaque(true);
-        lblIcon.setBorder(new EmptyBorder(0, 20, 0, 20));
+        lblIcon.setBorder(getScaledEmptyBorder(0, 20, 0, 20));
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         lblIcon.setVerticalAlignment(JLabel.CENTER);
-        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(Font.PLAIN, 48.f));
+        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE).deriveFont(Font.PLAIN, 48.f));
         lblIcon.setText(FontAwesomeContants.FA_FOLDER);
 
         this.lblText = new WrappedLabel();

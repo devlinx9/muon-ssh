@@ -6,12 +6,14 @@ import lombok.Setter;
 import muon.app.App;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 /**
  * @author subhro
@@ -32,7 +34,7 @@ public class KeyShortcutComponent extends JComponent {
 
     public KeyShortcutComponent() {
         setFocusable(true);
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -103,8 +105,8 @@ public class KeyShortcutComponent extends JComponent {
         int width = fmt.stringWidth(getText());
         int height = fmt.getHeight();
         Insets insets = getInsets();
-        return new Dimension(width + insets.left + insets.right + 6,
-                height + insets.top + insets.bottom + 6);
+        return scale(scale(new Dimension(width + insets.left + insets.right + 6,
+                height + insets.top + insets.bottom + 6)));
     }
 
     @Override

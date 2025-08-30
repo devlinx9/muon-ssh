@@ -13,8 +13,7 @@ import muon.app.util.ScriptLoader;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
+
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -31,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static muon.app.util.ScalingUtil.*;
 
 
 /**
@@ -334,8 +334,8 @@ public class SearchPanel extends Page {
 
         txtSize = new SkinnedTextField();
         txtSize.setAlignmentX(LEFT_ALIGNMENT);
-        Dimension txtSizeD = new Dimension(60,
-                txtSize.getPreferredSize().height);
+        Dimension txtSizeD = scale(new Dimension(60,
+                txtSize.getPreferredSize().height));
         txtSize.setPreferredSize(txtSizeD);
         txtSize.setMaximumSize(txtSizeD);
 
@@ -344,7 +344,7 @@ public class SearchPanel extends Page {
 
         cmbSize = new JComboBox<>(new String[]{"=", "<", ">"});
         cmbSize.setMaximumSize(
-                new Dimension(20, cmbSize.getPreferredSize().height));
+                scale(new Dimension(20, cmbSize.getPreferredSize().height)));
         cmbSize.setAlignmentX(LEFT_ALIGNMENT);
 
         JLabel lblMtime = new JLabel(App.getCONTEXT().getBundle().getString("modified"));
@@ -456,7 +456,7 @@ public class SearchPanel extends Page {
             }
         });
 
-        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setIntercellSpacing(scale(new Dimension(0, 0)));
         table.setRowHeight(24);
         table.setShowGrid(false);
         resizeColumnWidth(table);
@@ -501,9 +501,9 @@ public class SearchPanel extends Page {
         boxSize.add(lblSize);
         boxSize.add(Box.createHorizontalGlue());
         boxSize.add(cmbSize);
-        boxSize.add(Box.createRigidArea(new Dimension(3, 0)));
+        boxSize.add(Box.createRigidArea(scale(new Dimension(3, 0))));
         boxSize.add(txtSize);
-        boxSize.add(Box.createRigidArea(new Dimension(3, 0)));
+        boxSize.add(Box.createRigidArea(scale(new Dimension(3, 0))));
         boxSize.add(cmbSizeUnit);
 
         b1.add(boxSize);
@@ -543,18 +543,18 @@ public class SearchPanel extends Page {
         b1.setMinimumSize(b1.getPreferredSize());
         b1.setMaximumSize(b1.getPreferredSize());
 
-        b1.setBorder(new EmptyBorder(10, 10, 10, 10));
+        b1.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
 
         Box statBox = Box.createHorizontalBox();
         statBox.setOpaque(true);
-        statBox.add(Box.createRigidArea(new Dimension(10, 25)));
+        statBox.add(Box.createRigidArea(scale(new Dimension(10, 25))));
         statBox.add(lblStat);
         statBox.add(Box.createHorizontalGlue());
         statBox.add(lblCount);
-        statBox.add(Box.createRigidArea(new Dimension(10, 25)));
+        statBox.add(Box.createRigidArea(scale(new Dimension(10, 25))));
         statBox.setBorder(
-                new MatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
+                getScaledMatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         btnShowInBrowser = new JButton(App.getCONTEXT().getBundle().getString("show_location"));
         btnCopyPath = new JButton(App.getCONTEXT().getBundle().getString("copy_path"));
@@ -585,7 +585,7 @@ public class SearchPanel extends Page {
 
         Box bActions = Box.createHorizontalBox();
         bActions.setOpaque(true);
-        bActions.setBorder(new EmptyBorder(5, 10, 5, 10));
+        bActions.setBorder(getScaledEmptyBorder(5, 10, 5, 10));
         bActions.add(Box.createHorizontalGlue());
         bActions.add(btnShowInBrowser);
         bActions.add(Box.createHorizontalStrut(10));
@@ -605,12 +605,12 @@ public class SearchPanel extends Page {
 
         JPanel pp = new JPanel(new BorderLayout());
         pp.setBorder(new CompoundBorder(
-                new MatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getSelectedTabColor()),
-                new EmptyBorder(5, 5, 5, 5)));
+                getScaledMatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getSelectedTabColor()),
+                getScaledEmptyBorder(5, 5, 5, 5)));
         pp.add(jspB1);
 
         JPanel buttonHolder = new JPanel(new BorderLayout());
-        buttonHolder.setBorder(new EmptyBorder(5, 10, 5, 10));
+        buttonHolder.setBorder(getScaledEmptyBorder(5, 10, 5, 10));
         buttonHolder.add(btnSearch);
         pp.add(buttonHolder, BorderLayout.SOUTH);
 

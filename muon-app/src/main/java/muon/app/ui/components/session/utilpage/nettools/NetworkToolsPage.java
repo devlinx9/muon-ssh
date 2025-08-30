@@ -10,12 +10,13 @@ import muon.app.ui.components.session.utilpage.UtilPageItemView;
 import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 /**
@@ -47,7 +48,7 @@ public class NetworkToolsPage extends UtilPageItemView {
                                                   "dig +short", "host", "getent ahostsv4"});
 
         JPanel grid = new JPanel(new GridLayout(1, 4, 10, 10));
-        grid.setBorder(new EmptyBorder(10, 10, 10, 10));
+        grid.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         JButton btn1 = new JButton("Ping");
         JButton btn2 = new JButton("Port check");
@@ -95,7 +96,7 @@ public class NetworkToolsPage extends UtilPageItemView {
         grid.add(btn3);
         grid.add(btn4);
 
-        this.setBorder(new EmptyBorder(5, 5, 5, 5));
+        this.setBorder(getScaledEmptyBorder(5, 5, 5, 5));
         this.add(grid, BorderLayout.NORTH);
 
         txtOutput = new SkinnedTextArea();

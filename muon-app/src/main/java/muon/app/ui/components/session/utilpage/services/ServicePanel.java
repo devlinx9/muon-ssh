@@ -11,7 +11,6 @@ import muon.app.ui.components.session.utilpage.UtilPageItemView;
 import muon.app.util.SudoUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -20,6 +19,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 /**
@@ -220,7 +221,7 @@ public class ServicePanel extends UtilPageItemView {
 
     @Override
     protected void createUI() {
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         ServiceTableCellRenderer r = new ServiceTableCellRenderer();
 
@@ -228,7 +229,7 @@ public class ServicePanel extends UtilPageItemView {
         table.setDefaultRenderer(Object.class, r);
         table.setShowGrid(false);
         table.setRowHeight(r.getPreferredSize().height);
-        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setIntercellSpacing(scale(new Dimension(0, 0)));
         table.setFillsViewportHeight(true);
 
         JLabel lbl1 = new JLabel(App.getCONTEXT().getBundle().getString("search"));
@@ -278,7 +279,7 @@ public class ServicePanel extends UtilPageItemView {
         box.add(Box.createHorizontalStrut(5));
         box.add(btnRefresh);
         box.add(Box.createHorizontalStrut(5));
-        box.setBorder(new EmptyBorder(10, 0, 0, 0));
+        box.setBorder(getScaledEmptyBorder(10, 0, 0, 0));
 
         add(box, BorderLayout.SOUTH);
 

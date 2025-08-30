@@ -18,8 +18,7 @@ import muon.app.util.enums.FileType;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -27,6 +26,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 
 @Slf4j
@@ -59,7 +62,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
         remoteHostList.setBackground(App.getCONTEXT().getSkin().getTextFieldBackground());
 
         SkinnedScrollPane scrollPane = new SkinnedScrollPane(remoteHostList);
-        scrollPane.setBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
+        scrollPane.setBorder(getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         this.add(scrollPane);
         if (!remoteHostModel.isEmpty()) {
@@ -136,19 +139,19 @@ public class Remote2RemoteTransferDialog extends JDialog {
         bottom.add(btnRemove);
         bottom.add(Box.createHorizontalGlue());
         bottom.add(btnSend);
-        bottom.setBorder(new EmptyBorder(10, 10, 10, 10));
+        bottom.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         this.add(bottom, BorderLayout.SOUTH);
 
         Box top = Box.createHorizontalBox();
         JLabel lblSearch = new JLabel(FontAwesomeContants.FA_SEARCH);
-        lblSearch.setFont(App.getCONTEXT().getSkin().getIconFont());
+        lblSearch.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         JTextField txtSearch = new SkinnedTextField(30);
         txtSearch.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
-        txtSearch.setBorder(new EmptyBorder(10, 10, 10, 10));
+        txtSearch.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         top.add(lblSearch);
         top.add(txtSearch);
-        top.setBorder(new CompoundBorder(new EmptyBorder(0, 10, 10, 10),
-                                         new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultSelectionBackground())));
+        top.setBorder(new CompoundBorder(getScaledEmptyBorder(0, 10, 10, 10),
+                                         getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultSelectionBackground())));
 
         this.add(top, BorderLayout.NORTH);
 

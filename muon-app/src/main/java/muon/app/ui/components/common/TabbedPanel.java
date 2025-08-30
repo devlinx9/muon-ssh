@@ -5,11 +5,13 @@ import muon.app.App;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 public class TabbedPanel extends JPanel {
     private final Color unselectedBg = App.getCONTEXT().getSkin().getSelectedTabColor();
@@ -18,12 +20,12 @@ public class TabbedPanel extends JPanel {
     private final JPanel cardPanel;
     private final Box tabHolder;
     private final Border selectedTabBorder = new CompoundBorder(
-            new MatteBorder(2, 0, 0, 0,
+            getScaledMatteBorder(2, 0, 0, 0,
                     App.getCONTEXT().getSkin().getDefaultSelectionBackground()),
-            new EmptyBorder(10, 15, 10, 15));
+            getScaledEmptyBorder(10, 15, 10, 15));
     private final Border unselectedTabBorder = new CompoundBorder(
-            new MatteBorder(2, 0, 0, 0, App.getCONTEXT().getSkin().getSelectedTabColor()),
-            new EmptyBorder(10, 15, 10, 15));
+            getScaledMatteBorder(2, 0, 0, 0, App.getCONTEXT().getSkin().getSelectedTabColor()),
+            getScaledEmptyBorder(10, 15, 10, 15));
 
     public TabbedPanel() {
         super(new BorderLayout(), true);

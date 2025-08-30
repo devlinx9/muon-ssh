@@ -6,7 +6,6 @@ import muon.app.ui.components.common.SkinnedTextField;
 import muon.app.util.enums.CommandMode;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.BiConsumer;
 
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 public class ProcessListPanel extends JPanel {
@@ -33,7 +33,7 @@ public class ProcessListPanel extends JPanel {
     public ProcessListPanel(BiConsumer<String, CommandMode> consumer) {
         super(new BorderLayout());
         this.consumer = consumer;
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         JPanel pan = new JPanel(new BorderLayout(5, 5));
         model = new ProcessTableModel();
         table = new JTable(model);

@@ -14,13 +14,13 @@ import muon.app.ui.components.settings.SettingsDialog;
 import muon.app.ui.components.settings.SettingsPageName;
 import muon.app.updater.UpdateChecker;
 import muon.app.util.FontAwesomeContants;
+import muon.app.util.ScalingUtil;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 import static muon.app.util.Constants.*;
+import static muon.app.util.ScalingUtil.*;
 
 /**
  * @author subhro
@@ -39,7 +40,7 @@ import static muon.app.util.Constants.*;
 public class AppWindow extends JFrame {
 
     private final String updateUrl = BASE_UPDATE_URL + "/check-update.html?v="
-                                     + App.getCONTEXT().getVersion().getNumericValue();
+            + App.getCONTEXT().getVersion().getNumericValue();
     private final CardLayout sessionCard = new CardLayout();
     private final JPanel cardPanel = new JPanel(sessionCard, true);
     private final BackgroundTransferPanel uploadPanel;
@@ -104,6 +105,11 @@ public class AppWindow extends JFrame {
         // Get the graphics environment
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] screens = ge.getScreenDevices();
+
+        float scaleFactor = ScalingUtil.getScaleFactor();
+        int baseWidth;
+        int baseHeight;
+
         if (App.getGlobalSettings().isOpenInSecondScreen() && screens.length > 1) {
             // Get the default configuration of the second screen (index 1)
             GraphicsConfiguration gc = screens[1].getDefaultConfiguration();
@@ -113,11 +119,8 @@ public class AppWindow extends JFrame {
             Insets inset = Toolkit.getDefaultToolkit().getScreenInsets(gc);
 
             // Calculate the available screen size (excluding insets)
-            int screenWidth = bounds.width - inset.left - inset.right;
-            int screenHeight = bounds.height - inset.top - inset.bottom;
-
-            // Set the window size based on the available screen size
-            setScreenWidthAndHeight(screenWidth, screenHeight);
+            baseWidth = bounds.width - inset.left - inset.right;
+            baseHeight = bounds.height - inset.top - inset.bottom;
 
             // Set the window location to the second screen
             int x = bounds.x + inset.left; // Adjust for insets
@@ -126,18 +129,26 @@ public class AppWindow extends JFrame {
         } else {
             // Fallback to primary screen if no second screen is detected
             Dimension screenD = Toolkit.getDefaultToolkit().getScreenSize();
-            int screenWidth = screenD.width;
-            int screenHeight = screenD.height;
-
-            setScreenWidthAndHeight(screenWidth, screenHeight);
+            baseWidth = screenD.width;
+            baseHeight = screenD.height;
 
             // Center on the primary screen
             setLocationRelativeTo(null);
         }
+
+        // FIX: Multiply by scale factor, not divide!
+        int screenWidth = (int)(baseWidth * scaleFactor);
+        int screenHeight = (int)(baseHeight * scaleFactor);
+
+        setScreenWidthAndHeight(screenWidth, screenHeight);
     }
 
     private void setScreenWidthAndHeight(int screenWidth, int screenHeight) {
-        if (screenWidth < 1024 || screenHeight < 650 || App.getGlobalSettings().isStartMaximized()) {
+        // FIX: Use scaled minimum dimensions
+        int minWidth = scale(1024);
+        int minHeight = scale(650);
+
+        if (screenWidth < minWidth || screenHeight < minHeight || App.getGlobalSettings().isStartMaximized()) {
             setSize(screenWidth, screenHeight);
         } else {
             int width = (screenWidth * 80) / 100;
@@ -160,16 +171,16 @@ public class AppWindow extends JFrame {
 
     private JPanel createSessionPanel() {
         JButton btnNew = new JButton(FontAwesomeContants.FA_TELEVISION);
-        btnNew.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+        btnNew.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
         btnNew.addActionListener(e -> this.createFirstSessionPanel());
         btnNew.setToolTipText(App.getCONTEXT().getBundle().getString("new_connection"));
 
         JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
-        btnToggle.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+        btnToggle.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
 
         JButton btnLocalTerm = new JButton(FontAwesomeContants.FA_TERMINAL);
         btnLocalTerm.addActionListener(e -> this.createLocalSessionPanel());
-        btnLocalTerm.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+        btnLocalTerm.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
 
         // Calculate the maximum width and height between the two buttons
         Dimension sizeNew = btnNew.getPreferredSize();
@@ -179,7 +190,7 @@ public class AppWindow extends JFrame {
         int maxHeight = Math.max(sizeNew.height, sizeToggle.height);
 
         // Create a new Dimension with the maximum width and height
-        Dimension maxSize = new Dimension(maxWidth, maxHeight);
+        Dimension maxSize = scale(new Dimension(maxWidth, maxHeight));
 
         // Set the preferred, minimum, and maximum size for both buttons
         btnNew.setPreferredSize(maxSize);
@@ -196,15 +207,15 @@ public class AppWindow extends JFrame {
 
         JPanel topBox = new JPanel();
         topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
-        topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
-        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        topBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
+        topBox.add(Box.createRigidArea(scale(new Dimension(5, 0))));
         topBox.add(btnToggle);
-        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        topBox.add(Box.createRigidArea(scale(new Dimension(5, 0))));
         topBox.add(btnNew);
-        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        topBox.add(Box.createRigidArea(scale(new Dimension(5, 0))));
         topBox.add(btnLocalTerm);
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
+        panel.setBorder(getScaledMatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         sessionListPanel = new SessionListPanel(this);
         panel.add(topBox, BorderLayout.NORTH);
@@ -218,7 +229,7 @@ public class AppWindow extends JFrame {
 
             if (!isVisible) {
                 topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
-                topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
+                topBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
             }
 
             btnToggle.setText(isVisible ? FontAwesomeContants.FA_ANGLE_DOUBLE_RIGHT : FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
@@ -250,13 +261,13 @@ public class AppWindow extends JFrame {
     private Component createBottomPanel() {
         popup = new JPopupMenu();
         popup.setBorder(new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor(), 1));
-        popup.setPreferredSize(new Dimension(400, 500));
+        popup.setPreferredSize(scale(new Dimension(400, 500)));
 
         Box b1 = Box.createHorizontalBox();
         b1.setOpaque(true);
         b1.setBackground(App.getCONTEXT().getSkin().getTableBackgroundColor());
-        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
-                                        new EmptyBorder(5, 5, 5, 5)));
+        b1.setBorder(new CompoundBorder(getScaledMatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                getScaledEmptyBorder(5, 5, 5, 5)));
         b1.add(createSpacer(10, 10));
         b1.add(createBrandLabel());
         b1.add(createSpacer(10, 10));
@@ -390,7 +401,7 @@ public class AppWindow extends JFrame {
     }
 
     private Component createSpacer(int width, int height) {
-        return Box.createRigidArea(new Dimension(width, height));
+        return Box.createRigidArea(scale(new Dimension(width, height)));
     }
 
     private JLabel createBrandLabel() {
@@ -410,7 +421,7 @@ public class AppWindow extends JFrame {
 
     private JLabel createIconLabel(String icon) {
         JLabel label = new JLabel(icon);
-        label.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(MEDIUM_TEXT_SIZE));
+        label.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return label;
     }
@@ -454,13 +465,13 @@ public class AppWindow extends JFrame {
         popup.setInvoker(bottomPanel);
 
         if (panel instanceof KubeContextSelectorPanel) {
-            popup.setPreferredSize(new Dimension(150, 200));
+            popup.setPreferredSize(scale(new Dimension(150, 200)));
             popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
-                       -popup.getPreferredSize().height);
+                    -popup.getPreferredSize().height);
         } else {
-            popup.setPreferredSize(new Dimension(400, 500));
+            popup.setPreferredSize(scale(new Dimension(400, 500)));
             popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
-                       -popup.getPreferredSize().height);
+                    -popup.getPreferredSize().height);
         }
     }
 

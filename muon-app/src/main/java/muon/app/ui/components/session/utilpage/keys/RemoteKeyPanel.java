@@ -8,9 +8,10 @@ import muon.app.ui.components.session.SessionInfo;
 import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.function.Consumer;
+
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 public class RemoteKeyPanel extends JPanel {
@@ -29,7 +30,7 @@ public class RemoteKeyPanel extends JPanel {
         txtKeyFile.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
         txtKeyFile.setEditable(false);
         Box hbox = Box.createHorizontalBox();
-        hbox.setBorder(new EmptyBorder(10, 10, 10, 10));
+        hbox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         hbox.add(lblTitle);
         hbox.add(Box.createHorizontalStrut(10));
         hbox.add(Box.createHorizontalGlue());
@@ -51,7 +52,7 @@ public class RemoteKeyPanel extends JPanel {
         hbox1.add(btnGenNewKey);
         hbox1.add(Box.createHorizontalStrut(10));
         hbox1.add(btnRefresh);
-        hbox1.setBorder(new EmptyBorder(10, 10, 10, 10));
+        hbox1.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         JPanel hostKeyPanel = new JPanel(new BorderLayout());
         hostKeyPanel.add(hbox, BorderLayout.NORTH);
@@ -105,10 +106,10 @@ public class RemoteKeyPanel extends JPanel {
         boxBottom.add(btnEdit);
         boxBottom.add(Box.createHorizontalStrut(10));
         boxBottom.add(btnRemove);
-        boxBottom.setBorder(new EmptyBorder(10, 10, 10, 10));
+        boxBottom.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         Box hbox2 = Box.createHorizontalBox();
-        hbox2.setBorder(new EmptyBorder(10, 10, 10, 10));
+        hbox2.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         hbox2.add(new JLabel(App.getCONTEXT().getBundle().getString("authorized_keys")));
         hbox2.add(Box.createHorizontalStrut(10));
 

@@ -9,7 +9,6 @@ import muon.app.util.OptionPaneUtils;
 import muon.app.util.enums.ImportOption;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.*;
 import javax.swing.tree.*;
@@ -19,6 +18,8 @@ import java.util.Enumeration;
 
 import static muon.app.ui.components.session.dialog.TreeManager.getNewUuid;
 import static muon.app.ui.components.session.dialog.TreeManager.getNode;
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 @Slf4j
 public class NewSessionDlg extends JDialog implements ActionListener, TreeSelectionListener, TreeModelListener {
@@ -48,7 +49,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         setBackground(new Color(245, 245, 245));
         setLayout(new BorderLayout());
 
-        setSize(800, 600);
+        setSize(scale(800), scale(600));
         setModal(true);
 
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -126,7 +127,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         normalizeButtonSize();
 
         Box box1 = Box.createHorizontalBox();
-        box1.setBorder(new EmptyBorder(10, 10, 10, 10));
+        box1.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         box1.add(Box.createHorizontalGlue());
         box1.add(Box.createHorizontalStrut(10));
         box1.add(btnConnect);
@@ -135,7 +136,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
         GridLayout gl = new GridLayout(3, 2, 5, 5);
         JPanel btnPane = new JPanel(gl);
-        btnPane.setBorder(new EmptyBorder(10, 0, 0, 0));
+        btnPane.setBorder(getScaledEmptyBorder(10, 0, 0, 0));
         btnPane.add(btnNewHost);
         btnPane.add(btnNewFolder);
         btnPane.add(btnDup);
@@ -146,7 +147,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         JSplitPane splitPane = new SkinnedSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 
         JPanel treePane = new JPanel(new BorderLayout());
-        treePane.setBorder(new EmptyBorder(10, 10, 10, 0));
+        treePane.setBorder(getScaledEmptyBorder(10, 10, 10, 0));
         treePane.add(jsp);
         treePane.add(btnPane, BorderLayout.SOUTH);
 
@@ -171,12 +172,12 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         BoxLayout boxLayout = new BoxLayout(namePanel, BoxLayout.PAGE_AXIS);
         namePanel.setLayout(boxLayout);
 
-        namePanel.setBorder(new EmptyBorder(10, 0, 0, 10));
+        namePanel.setBorder(getScaledEmptyBorder(10, 0, 0, 10));
 
         lblName = new JLabel(App.getCONTEXT().getBundle().getString("name"));
         lblName.setAlignmentX(Component.LEFT_ALIGNMENT);
         lblName.setHorizontalAlignment(JLabel.LEADING);
-        lblName.setBorder(new EmptyBorder(0, 0, 5, 0));
+        lblName.setBorder(getScaledEmptyBorder(0, 0, 5, 0));
 
 
         txtName = new SkinnedTextField(10);
@@ -504,7 +505,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
 
     private void normalizeButtonSize() {
         int width = Math.max(btnConnect.getPreferredSize().width, btnCancel.getPreferredSize().width);
-        btnConnect.setPreferredSize(new Dimension(width, btnConnect.getPreferredSize().height));
-        btnCancel.setPreferredSize(new Dimension(width, btnCancel.getPreferredSize().height));
+        btnConnect.setPreferredSize(scale(new Dimension(width, btnConnect.getPreferredSize().height)));
+        btnCancel.setPreferredSize(scale(new Dimension(width, btnCancel.getPreferredSize().height)));
     }
 }

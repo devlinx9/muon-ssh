@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
 import java.awt.*;
 
+import static muon.app.util.ScalingUtil.scale;
+
 /**
  * @author subhro
  *
@@ -37,7 +39,7 @@ public class TextGutter extends JComponent {
         Dimension d = textArea.getPreferredSize();
         FontMetrics fm = getFontMetrics(getFont());
         int w = fm.charWidth('w');
-        return new Dimension(digitCount * w + 20, d.height);
+        return scale(new Dimension(digitCount * w + 20, d.height));
     }
 
     @Override

@@ -3,10 +3,10 @@ package muon.app.ui.components.session.terminal.snippets;
 import muon.app.App;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 public class SnippetListRenderer extends JPanel
         implements ListCellRenderer<SnippetItem> {
@@ -15,7 +15,7 @@ public class SnippetListRenderer extends JPanel
 
     public SnippetListRenderer() {
         super(new BorderLayout(5, 5));
-        setBorder(new EmptyBorder(5, 10, 5, 10));
+        setBorder(getScaledEmptyBorder(5, 10, 5, 10));
         lblName = new JLabel();
         lblName.setFont(lblName.getFont().deriveFont(Font.PLAIN, SMALL_TEXT_SIZE));
         lblCommand = new JLabel();

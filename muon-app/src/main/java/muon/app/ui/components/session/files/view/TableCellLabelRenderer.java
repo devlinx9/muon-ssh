@@ -9,10 +9,12 @@ import muon.app.util.FormatUtils;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 @Slf4j
 public class TableCellLabelRenderer implements TableCellRenderer {
@@ -33,7 +35,7 @@ public class TableCellLabelRenderer implements TableCellRenderer {
         textLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 15));
 
         iconLabel = new JLabel();
-        iconLabel.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(Font.PLAIN, 20.f));
+        iconLabel.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE).deriveFont(Font.PLAIN, 20.f));
         iconLabel.setText("\uf016");
         iconLabel.setForeground(foreground);
 
@@ -44,8 +46,8 @@ public class TableCellLabelRenderer implements TableCellRenderer {
         height = Math.max(d1.height, d2.height) + 10;
 
         iconLabel.setHorizontalAlignment(JLabel.CENTER);
-        iconLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        textLabel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        iconLabel.setBorder(getScaledEmptyBorder(5, 5, 5, 5));
+        textLabel.setBorder(getScaledEmptyBorder(5, 5, 5, 5));
         panel.add(textLabel);
         panel.add(iconLabel, BorderLayout.WEST);
 
@@ -54,7 +56,7 @@ public class TableCellLabelRenderer implements TableCellRenderer {
 
         label = new JLabel();
         label.setForeground(foreground);
-        label.setBorder(new EmptyBorder(5, 5, 5, 5));
+        label.setBorder(getScaledEmptyBorder(5, 5, 5, 5));
         label.setFont(new Font(Font.DIALOG, Font.PLAIN, 14));
         label.setOpaque(true);
 
@@ -74,12 +76,12 @@ public class TableCellLabelRenderer implements TableCellRenderer {
 
         panel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
 
-        textLabel.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
-                new EmptyBorder(1, 1, 1, 1)));
-        iconLabel.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
-                new EmptyBorder(1, 1, 1, 1)));
-        label.setBorder(new CompoundBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
-                new EmptyBorder(1, 1, 1, 1)));
+        textLabel.setBorder(new CompoundBorder(getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                getScaledEmptyBorder(1, 1, 1, 1)));
+        iconLabel.setBorder(new CompoundBorder(getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                getScaledEmptyBorder(1, 1, 1, 1)));
+        label.setBorder(new CompoundBorder(getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                getScaledEmptyBorder(1, 1, 1, 1)));
 
 
         textLabel.setForeground(isSelected ? table.getSelectionForeground() : foreground);

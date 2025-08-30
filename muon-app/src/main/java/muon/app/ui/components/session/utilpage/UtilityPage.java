@@ -15,10 +15,11 @@ import muon.app.util.FontAwesomeContants;
 import muon.app.util.LayoutUtilities;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 
 /**
@@ -81,7 +82,7 @@ public class UtilityPage extends Page {
         LayoutUtilities.equalizeSize(b1, b2, b3, b4, b5, b6);
 
         vbox.setBorder(
-                new MatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
+                getScaledMatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         b1.setAlignmentX(Box.LEFT_ALIGNMENT);
         vbox.add(b1);

@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static muon.app.util.ScalingUtil.scale;
+
 @Slf4j
 public class FolderView extends JPanel {
     private final FolderViewTableModel folderViewModel;
@@ -56,7 +58,7 @@ public class FolderView extends JPanel {
 
         listener.install(this);
 
-        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setIntercellSpacing(scale(new Dimension(0, 0)));
         table.setDragEnabled(true);
         table.setDropMode(DropMode.ON);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);

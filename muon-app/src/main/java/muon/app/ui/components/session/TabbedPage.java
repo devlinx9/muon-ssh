@@ -7,11 +7,12 @@ import muon.app.App;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import static muon.app.util.ScalingUtil.*;
 
 /**
  * @author subhro
@@ -23,12 +24,12 @@ public class TabbedPage extends JPanel {
     private final JLabel lblIcon;
     private final JLabel lblText;
     private final Border selectedBorder = new CompoundBorder(
-            new MatteBorder(0, 0, 2, 0,
+            getScaledMatteBorder(0, 0, 2, 0,
                             App.getCONTEXT().getSkin().getDefaultSelectionBackground()),
-            new EmptyBorder(10, 0, 10, 0));
+            getScaledEmptyBorder(10, 0, 10, 0));
     private final Border normalBorder = new CompoundBorder(
-            new MatteBorder(0, 0, 2, 0, App.getCONTEXT().getSkin().getDefaultBackground()),
-            new EmptyBorder(10, 0, 10, 0));
+            getScaledMatteBorder(0, 0, 2, 0, App.getCONTEXT().getSkin().getDefaultBackground()),
+            getScaledEmptyBorder(10, 0, 10, 0));
 
     public TabbedPage(Page page, PageHolder holder) {
         super(new BorderLayout(5, 5));
@@ -65,18 +66,18 @@ public class TabbedPage extends JPanel {
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         lblText.setHorizontalAlignment(JLabel.CENTER);
 
-        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(24.0f));
-        lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(12.0f));
+        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont(24.0f));
+        lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont(12.0f));
 
         this.add(lblIcon);
         this.add(lblText, BorderLayout.SOUTH);
 
         this.setPreferredSize(
-                new Dimension(prefW, this.getPreferredSize().height));
+                scale(new Dimension(prefW, this.getPreferredSize().height)));
         this.setMaximumSize(
-                new Dimension(prefW, this.getPreferredSize().height));
+                scale(new Dimension(prefW, this.getPreferredSize().height)));
         this.setMinimumSize(
-                new Dimension(prefW, this.getPreferredSize().height));
+                scale(new Dimension(prefW, this.getPreferredSize().height)));
     }
 
     public void setSelected(boolean selected) {

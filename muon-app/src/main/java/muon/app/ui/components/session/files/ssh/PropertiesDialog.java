@@ -9,7 +9,6 @@ import muon.app.util.FormatUtils;
 import muon.app.util.enums.FileType;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -19,6 +18,8 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 @Slf4j
@@ -196,12 +197,12 @@ public class PropertiesDialog extends JDialog {
         int w = Math.max(btnOK.getPreferredSize().width,
                          btnCancel.getPreferredSize().width);
         btnOK.setPreferredSize(
-                new Dimension(w, btnOK.getPreferredSize().height));
+                scale(new Dimension(w, btnOK.getPreferredSize().height)));
         btnCancel.setPreferredSize(
-                new Dimension(w, btnCancel.getPreferredSize().height));
+                scale(new Dimension(w, btnCancel.getPreferredSize().height)));
 
-        b.setBorder(new EmptyBorder((10), (10), (10), (10)));
-        b2.setBorder(new EmptyBorder((10), (10), (10), (10)));
+        b.setBorder(getScaledEmptyBorder((10), (10), (10), (10)));
+        b2.setBorder(getScaledEmptyBorder((10), (10), (10), (10)));
         add(b);
         add(b2, BorderLayout.SOUTH);
         pack();
@@ -302,7 +303,7 @@ public class PropertiesDialog extends JDialog {
         txt.setBorder(null);
         JLabel lblFileName = new JLabel(label);
         lblFileName.setPreferredSize(
-                new Dimension((150), lblFileName.getPreferredSize().height));
+                scale(new Dimension((150), lblFileName.getPreferredSize().height)));
         Box b11 = Box.createHorizontalBox();
         b11.setAlignmentX(Box.LEFT_ALIGNMENT);
         b11.add(lblFileName);
@@ -315,7 +316,7 @@ public class PropertiesDialog extends JDialog {
         JDialog dlg = new JDialog(this);
         dlg.setModal(true);
         JLabel lbl = new JLabel("Calculating...");
-        lbl.setBorder(new EmptyBorder(10, 10, 10, 10));
+        lbl.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         dlg.add(lbl);
         dlg.addWindowListener(new WindowAdapter() {
             @Override
@@ -346,7 +347,7 @@ public class PropertiesDialog extends JDialog {
         JDialog dlg = new JDialog(this);
         dlg.setModal(true);
         JLabel lbl = new JLabel("Calculating...");
-        lbl.setBorder(new EmptyBorder(10, 10, 10, 10));
+        lbl.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         dlg.add(lbl);
         dlg.addWindowListener(new WindowAdapter() {
             @Override
@@ -467,7 +468,7 @@ public class PropertiesDialog extends JDialog {
         JDialog dlg = new JDialog(this);
         dlg.setModal(true);
         JLabel lbl = new JLabel("Calculating...");
-        lbl.setBorder(new EmptyBorder(10, 10, 10, 10));
+        lbl.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         dlg.add(lbl);
         dlg.addWindowListener(new WindowAdapter() {
             @Override
