@@ -15,8 +15,8 @@ This document outlines the current status, upcoming releases, and future plans f
 - [ ] [#126](https://github.com/devlinx9/muon-ssh/issues/126): double click doesn't work
 - [ ] [#101](https://github.com/devlinx9/muon-ssh/issues/101): Error while copying
 - [ ] [#133](https://github.com/devlinx9/muon-ssh/issues/133): Unicode char are not shown
-- [ ] [#71](https://github.com/devlinx9/muon-ssh/issues/71): Fractional scaling not working under Linux
-- [ ] [#76](https://github.com/devlinx9/muon-ssh/issues/76): Everything too small on hidpi monitors
+- [x] [#71](https://github.com/devlinx9/muon-ssh/issues/71): Fractional scaling not working under Linux
+- [x] [#76](https://github.com/devlinx9/muon-ssh/issues/76): Everything too small on hidpi monitors
 - [ ] [#128](https://github.com/devlinx9/muon-ssh/issues/128): Copying text now working outside the app
 - [ ] [#135](https://github.com/devlinx9/muon-ssh/issues/135): Muon SSH missing icon in dash taskbar
 - [ ] [#65](https://github.com/devlinx9/muon-ssh/issues/65): Scroll in vi or nano not work (jediterm support)
