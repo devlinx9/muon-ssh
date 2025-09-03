@@ -17,8 +17,8 @@ This document outlines the current status, upcoming releases, and future plans f
 - [ ] [#133](https://github.com/devlinx9/muon-ssh/issues/133): Unicode char are not shown
 - [x] [#71](https://github.com/devlinx9/muon-ssh/issues/71): Fractional scaling not working under Linux
 - [x] [#76](https://github.com/devlinx9/muon-ssh/issues/76): Everything too small on hidpi monitors
-- [ ] [#128](https://github.com/devlinx9/muon-ssh/issues/128): Copying text now working outside the app
-- [ ] [#135](https://github.com/devlinx9/muon-ssh/issues/135): Muon SSH missing icon in dash taskbar
+- [x] [#128](https://github.com/devlinx9/muon-ssh/issues/128): Copying text now working outside the app
+- [x] [#135](https://github.com/devlinx9/muon-ssh/issues/135): Muon SSH missing icon in dash taskbar
 - [ ] [#65](https://github.com/devlinx9/muon-ssh/issues/65): Scroll in vi or nano not work (jediterm support)
 - [ ] [#137](https://github.com/devlinx9/muon-ssh/issues/137): tmux in SSH connection is very slow
 - [ ] [#136](https://github.com/devlinx9/muon-ssh/issues/136): Can connect on port 2223

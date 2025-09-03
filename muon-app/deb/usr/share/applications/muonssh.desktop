@@ -3,3 +3,4 @@ Name=Muon SSH client
 Exec=/usr/bin/muonssh
 Icon=/opt/muonssh/muonssh-logo.png
 Type=Application
+StartupWMClass=muon-app-App

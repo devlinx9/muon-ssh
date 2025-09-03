@@ -1,2 +1,86 @@
-#!/bin/sh
-java -jar /opt/muonssh/muonssh.jar
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+# ---------- CONFIG ----------
+APP_DIR="/opt/muonssh"
+JAR="${APP_DIR}/muonssh.jar"
+APP_NAME="muonssh"
+
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/${APP_NAME}"
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/${APP_NAME}"
+LOG_DIR="${STATE_DIR}"
+LOG_FILE="${LOG_DIR}/launch.log"
+MAX_LOG_SIZE=$((1024 * 1024))   # 1 MiB
+ROTATE_KEEP=3
+UMASK="077"
+JAVA_PIN=""
+
+# ---------- PREP ----------
+umask "${UMASK}"
+mkdir -p "${LOG_DIR}" "${CACHE_DIR}"
+touch "${LOG_FILE}"
+chmod 600 "${LOG_FILE}" || true
+
+rotate_logs() {
+  # Simple size-based rotation: launch.log -> launch.log.1 ... up to ROTATE_KEEP
+  local f="${LOG_FILE}"
+  if [ -f "$f" ] && [ "$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f")" -ge "${MAX_LOG_SIZE}" ]; then
+    for ((i=ROTATE_KEEP; i>=1; i--)); do
+      local prev="${f}.$((i-1))"
+      local curr="${f}.${i}"
+      [ $i -eq 1 ] && prev="$f"
+      [ -f "${prev}" ] && mv -f "${prev}" "${curr}" || true
+    done
+    # After shifting, truncate active log
+    : > "${f}"
+  fi
+}
+
+# ---------- JAVA RESOLUTION ----------
+pick_java() {
+  if [ -n "${JAVA_PIN}" ] && [ -x "${JAVA_PIN}" ]; then
+    echo "${JAVA_PIN}"; return
+  fi
+  if [ -n "${JAVA_HOME:-}" ] && [ -x "${JAVA_HOME}/bin/java" ]; then
+    echo "${JAVA_HOME}/bin/java"; return
+  fi
+  if [ -x "/usr/lib/jvm/java-11-openjdk-amd64/bin/java" ]; then
+    echo "/usr/lib/jvm/java-11-openjdk-amd64/bin/java"; return
+  fi
+  if command -v java >/dev/null 2>&1; then
+    command -v java; return
+  fi
+  echo "ERROR: No Java runtime found." >&2
+  exit 127
+}
+
+JAVA_BIN="$(pick_java)"
+
+# ---------- VALIDATION ----------
+if [ ! -r "${JAR}" ]; then
+  {
+    echo "===================="
+    date
+    echo "ERROR: JAR not found: ${JAR}"
+  } >> "${LOG_FILE}"
+  exit 1
+fi
+
+# ---------- LOG HEADER ----------
+rotate_logs
+{
+  echo "===================="
+  date
+  echo "Launcher: /usr/bin/${APP_NAME}"
+  echo "CWD: $(pwd)"
+  echo "User: $(id -un) (uid $(id -u))"
+  echo "Session: XDG_SESSION_TYPE=${XDG_SESSION_TYPE:-<unset>} DISPLAY=${DISPLAY:-<unset>} WAYLAND_DISPLAY=${WAYLAND_DISPLAY:-<unset>}"
+  echo "Java: ${JAVA_BIN}"
+  "${JAVA_BIN}" -version 2>&1
+  echo "Jar: ${JAR}"
+  echo "---- launching ----"
+} >> "${LOG_FILE}" 2>&1
+
+# ---------- LAUNCH ----------
+cd "${APP_DIR}" 2>>"${LOG_FILE}" || true
+exec "${JAVA_BIN}" -jar "${JAR}" >> "${LOG_FILE}" 2>&1
