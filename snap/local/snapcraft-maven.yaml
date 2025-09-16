@@ -18,8 +18,10 @@ compression: lzo
 apps:
   muon:
     command: usr/lib/jvm/java-17-openjdk-amd64/bin/java -jar $SNAP/jar/muonssh_3.0.0.jar
-    common-id: muonssh.desktop
+    #common-id: muonssh.desktop
+    desktop: snap/gui/muon-ssh.desktop
     environment:
+      BAMF_DESKTOP_FILE_HINT: /var/lib/snapd/desktop/applications/muon-ssh_muon-ssh.desktop
       # Needed for fontconfig
       XDG_DATA_HOME: ${SNAP}/usr/share
       FONTCONFIG_PATH: ${SNAP}/etc/fonts/config.d
