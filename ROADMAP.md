@@ -11,7 +11,7 @@ This document outlines the current status, upcoming releases, and future plans f
 - [x] [#131](https://github.com/devlinx9/muon-ssh/issues/131): missing dependency when compiling locally
 - [x] [#80](https://github.com/devlinx9/muon-ssh/issues/80): Implementation of ftp/sftp
 - [x] [#64](https://github.com/devlinx9/muon-ssh/issues/64): Monitor for background upload/download
-- [x] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo (Partially fix)
+- [x] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo (Partially fixed)
 - [ ] [#126](https://github.com/devlinx9/muon-ssh/issues/126): double click doesn't work
 - [ ] [#101](https://github.com/devlinx9/muon-ssh/issues/101): Error while copying
 - [ ] [#133](https://github.com/devlinx9/muon-ssh/issues/133): Unicode char are not shown
@@ -29,7 +29,7 @@ This document outlines the current status, upcoming releases, and future plans f
 - [ ] [#88](https://github.com/devlinx9/muon-ssh/issues/88): [Request] Built-in Code Editor
 - [ ] [#93](https://github.com/devlinx9/muon-ssh/issues/93): A mobaxterm feature: ssh to tmate.io links
 - [ ] [#129](https://github.com/devlinx9/muon-ssh/issues/129): need at switch tabs hotkeys
-- [ ] [#127](https://github.com/devlinx9/muon-ssh/issues/127): Option to change connection list width
+- [x] [#127](https://github.com/devlinx9/muon-ssh/issues/127): Option to change connection list width (Partially fixed)
 
 ## Tasks: **v3.0.0**
 

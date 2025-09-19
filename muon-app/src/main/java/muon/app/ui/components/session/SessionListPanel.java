@@ -1,4 +1,3 @@
-
 package muon.app.ui.components.session;
 
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +12,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import static muon.app.util.Constants.SMALL_TEXT_SIZE;
-import static muon.app.util.ScalingUtil.scale;
 import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.scale;
 
 /**
  * @author subhro
@@ -23,9 +22,16 @@ import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 public class SessionListPanel extends JPanel {
     private static final Cursor HAND_CURSOR = new Cursor(Cursor.HAND_CURSOR);
     private static final Cursor DEFAULT_CURSOR = new Cursor(Cursor.DEFAULT_CURSOR);
+    private static final Cursor E_RESIZE_CURSOR = new Cursor(Cursor.E_RESIZE_CURSOR);
+
     private final DefaultListModel<ISessionContentPanel> sessionListModel;
     private final JList<ISessionContentPanel> sessionList;
     private final AppWindow window;
+
+    // Resizing config
+    private final int minWidthPx = scale(170);
+    private final int maxWidthPx = scale(560);
+    private final int gripWidthPx = scale(8);
 
     public SessionListPanel(AppWindow window) {
         super(new BorderLayout());
@@ -33,17 +39,47 @@ public class SessionListPanel extends JPanel {
         sessionListModel = new DefaultListModel<>();
         sessionList = new JList<>(sessionListModel);
         sessionList.setCursor(DEFAULT_CURSOR);
-
-        SessionListRenderer r = new SessionListRenderer();
-        sessionList.setCellRenderer(r);
+        sessionList.setCellRenderer(new SessionListRenderer());
 
         JScrollPane scrollPane = new SkinnedScrollPane(sessionList);
-        this.add(scrollPane);
+
+        // Container that allows us to place a resize grip on the right edge
+        JPanel content = new JPanel(new BorderLayout());
+        content.add(scrollPane, BorderLayout.CENTER);
+
+        EdgeGrip edgeGrip = new EdgeGrip();
+        content.add(edgeGrip, BorderLayout.EAST);
+
+        this.add(content, BorderLayout.CENTER);
+
+        // Initial preferred width
+        int initialWidthPx = scale(170);
+        int init = clamp(initialWidthPx, minWidthPx, maxWidthPx);
+        setPreferredSize(new Dimension(init, getPreferredSize().height));
+        setMinimumSize(new Dimension(minWidthPx, 0));
+        setMaximumSize(new Dimension(maxWidthPx, Integer.MAX_VALUE));
+
         setMouseListener();
-
         setMouseMotionListener();
-
         setAddListSelectionListener();
+    }
+
+    private int clamp(int val, int min, int max) {
+        return Math.max(min, Math.min(max, val));
+    }
+
+    private void revalidateAll() {
+        this.revalidate();
+        this.repaint();
+        Container p = getParent();
+        if (p != null) {
+            p.revalidate();
+            p.repaint();
+        }
+        if (window != null) {
+            window.revalidate();
+            window.repaint();
+        }
     }
 
     private void setAddListSelectionListener() {
@@ -69,8 +105,8 @@ public class SessionListPanel extends JPanel {
                         int x = e.getPoint().x;
                         int y = e.getPoint().y;
 
-                        int rightPad = Math.round(scale(30));
-                        int vPad    = Math.round(scale(10));
+                        int rightPad = scale(30);
+                        int vPad = scale(10);
 
                         if (x > r.x + r.width - rightPad && x < r.x + r.width &&
                                 y > r.y + vPad && y < r.y + r.height - vPad) {
@@ -95,10 +131,11 @@ public class SessionListPanel extends JPanel {
                     if (r != null && r.contains(e.getPoint())) {
                         int x = e.getPoint().x;
                         int y = e.getPoint().y;
-                        int rightPad = Math.round(scale(30));
-                        int vPad    = Math.round(scale(10));
+                        int rightPad = scale(30);
+                        int vPad = scale(10);
 
-                        if (x > r.x + r.width - rightPad && x < r.x + r.width && y > r.y + vPad && y < r.y + r.height - vPad) {
+                        if (x > r.x + r.width - rightPad && x < r.x + r.width &&
+                                y > r.y + vPad && y < r.y + r.height - vPad) {
                             log.info("Clicked on: {}", index);
                             removeSession(index);
                         }
@@ -119,7 +156,6 @@ public class SessionListPanel extends JPanel {
         sessionList.setSelectedIndex(0);
     }
 
-
     public void createLocalSession() {
         LocalSessionContentPanel panel = new LocalSessionContentPanel(null);
         sessionListModel.insertElementAt(panel, 0);
@@ -134,7 +170,8 @@ public class SessionListPanel extends JPanel {
 
     public void removeSession(int index) {
         if (!App.getGlobalSettings().isConfirmBeforeTerminalClosing() ||
-                JOptionPane.showConfirmDialog(window, App.getCONTEXT().getBundle().getString("disconnect_session")) == JOptionPane.YES_OPTION) {
+                JOptionPane.showConfirmDialog(window, App.getCONTEXT().getBundle().getString("disconnect_session"))
+                        == JOptionPane.YES_OPTION) {
             ISessionContentPanel sessionContentPanel = sessionListModel.get(index);
             sessionContentPanel.close();
             window.removeSession(sessionContentPanel);
@@ -169,7 +206,6 @@ public class SessionListPanel extends JPanel {
         private final JLabel lblText;
         private final JLabel lblHost;
         private final JLabel lblClose;
-
 
         public SessionListRenderer() {
             lblIcon = new JLabel();
@@ -208,7 +244,10 @@ public class SessionListPanel extends JPanel {
 
         @Override
         public Component getListCellRendererComponent(JList<? extends ISessionContentPanel> list,
-                                                      ISessionContentPanel value, int index, boolean isSelected, boolean cellHasFocus) {
+                                                      ISessionContentPanel value,
+                                                      int index,
+                                                      boolean isSelected,
+                                                      boolean cellHasFocus) {
 
             SessionInfo info = value.getInfo();
 
@@ -246,6 +285,61 @@ public class SessionListPanel extends JPanel {
 
             return panel;
         }
+    }
 
+    /**
+     * A thin panel docked at the EAST that captures drags and updates this panel's preferred width.
+     * Parent revalidation is handled by outer class.
+     */
+    private final class EdgeGrip extends JPanel {
+        private boolean dragging = false;
+        private int dragStartXOnScreen;
+        private int startWidthPx;
+
+        EdgeGrip() {
+            setOpaque(false);
+            setCursor(E_RESIZE_CURSOR);
+            setPreferredSize(new Dimension(gripWidthPx, 1));
+            setMinimumSize(new Dimension(gripWidthPx, 1));
+            setMaximumSize(new Dimension(gripWidthPx, Integer.MAX_VALUE));
+
+            MouseAdapter ma = new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    if (e.getButton() != MouseEvent.BUTTON1) return;
+                    dragging = true;
+                    dragStartXOnScreen = e.getXOnScreen();
+                    startWidthPx = SessionListPanel.this.getWidth();
+                    e.consume();
+                }
+
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                    if (!dragging) return;
+                    int delta = e.getXOnScreen() - dragStartXOnScreen;
+                    int newWidth = clamp(startWidthPx + delta, minWidthPx, maxWidthPx);
+
+                    Dimension pref = SessionListPanel.this.getPreferredSize();
+                    if (pref.width != newWidth) {
+                        SessionListPanel.this.setPreferredSize(new Dimension(newWidth, pref.height));
+                        SessionListPanel.this.setMinimumSize(new Dimension(minWidthPx, 0));
+                        SessionListPanel.this.setMaximumSize(new Dimension(maxWidthPx, Integer.MAX_VALUE));
+                        revalidateAll();
+                    }
+                    e.consume();
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    if (dragging) {
+                        dragging = false;
+                        e.consume();
+                    }
+                }
+            };
+
+            addMouseListener(ma);
+            addMouseMotionListener(ma);
+        }
     }
 }
