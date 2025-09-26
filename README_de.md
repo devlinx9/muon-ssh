@@ -140,6 +140,11 @@ Für andere Versionen besuchen Sie die <a href="https://github.com/devlinx9/muon
 ## Aus dem Quellcode erstellen
 Muon SSH ist ein Standard-Maven-Projekt. Um es aus dem Quellcode zu erstellen, stellen Sie sicher, dass Java und Maven installiert sind, und führen Sie dann aus:
 ```sh  
+## (Temp solution)
+git clone https://github.com/devlinx9/sshj 
+cd sshj
+./gradlew publishToMavenLocal
+cd ..
 git clone --recurse-submodules https://github.com/devlinx9/muon-ssh
 cd muon-ssh/muon-jediterm/
 ./gradlew publishToMavenLocal

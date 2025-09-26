@@ -140,6 +140,11 @@ Para outras versões, visite a <a href="https://github.com/devlinx9/muon-ssh/rel
 ## Compilação a partir do código-fonte
 O Muon SSH é um projeto padrão do Maven. Para compilar a partir do código-fonte, certifique-se de ter Java e Maven instalados, depois execute:
 ```sh  
+## (Temp solution)
+git clone https://github.com/devlinx9/sshj 
+cd sshj
+./gradlew publishToMavenLocal
+cd ..
 git clone --recurse-submodules https://github.com/devlinx9/muon-ssh
 cd muon-ssh/muon-jediterm/
 ./gradlew publishToMavenLocal

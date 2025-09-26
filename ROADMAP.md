@@ -27,7 +27,7 @@ This document outlines the current status, upcoming releases, and future plans f
 ### Features:
 - [ ] [#28](https://github.com/devlinx9/muon-ssh/issues/28): Scroll in vi or nano not work (jediterm support)
 - [ ] [#88](https://github.com/devlinx9/muon-ssh/issues/88): [Request] Built-in Code Editor
-- [ ] [#93](https://github.com/devlinx9/muon-ssh/issues/93): A mobaxterm feature: ssh to tmate.io links
+- [x] [#93](https://github.com/devlinx9/muon-ssh/issues/93): A mobaxterm feature: ssh to tmate.io links (I've made a fix in the sshj library, until it's officially publish, I'm using my own repo)
 - [ ] [#129](https://github.com/devlinx9/muon-ssh/issues/129): need at switch tabs hotkeys
 - [x] [#127](https://github.com/devlinx9/muon-ssh/issues/127): Option to change connection list width (Partially fixed)
 
