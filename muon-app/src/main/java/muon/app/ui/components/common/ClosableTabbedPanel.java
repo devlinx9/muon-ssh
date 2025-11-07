@@ -25,6 +25,7 @@ public class ClosableTabbedPanel extends JPanel {
     private final Color selectedBg = App.getCONTEXT().getSkin().getDefaultBackground();
     private final CardLayout cardLayout;
     private final JPanel cardPanel;
+    @Getter
     private final JPanel tabHolder;
 
     @Getter

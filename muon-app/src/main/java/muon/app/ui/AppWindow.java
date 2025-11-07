@@ -3,9 +3,8 @@ package muon.app.ui;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.session.ISessionContentPanel;
-import muon.app.ui.components.session.SessionInfo;
-import muon.app.ui.components.session.SessionListPanel;
+import muon.app.ui.components.common.ClosableTabbedPanel;
+import muon.app.ui.components.session.*;
 import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.files.ssh.KubeContextSelectorPanel;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
@@ -20,11 +19,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
-
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -47,6 +43,9 @@ public class AppWindow extends JFrame {
     private final BackgroundTransferPanel downloadPanel;
     private final KubeContextSelectorPanel kubeContextSelectorPanel;
     private final Component bottomPanel;
+
+    private JPanel topBox;
+    private JButton btnToggle;
 
     @Getter
     private SessionListPanel sessionListPanel;
@@ -76,6 +75,98 @@ public class AppWindow extends JFrame {
         this.downloadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblDownloadCount.setText(count + "")));
 
         checkForUpdates();
+
+        addKeyboardShortcuts();
+    }
+
+    private void addKeyboardShortcuts() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .addKeyEventDispatcher(e -> {
+
+                    if (e.getID() != KeyEvent.KEY_PRESSED) return false;
+
+                    boolean ctrl = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
+                    boolean shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
+                    boolean alt = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
+                    boolean isTab = (e.getKeyCode() == KeyEvent.VK_TAB);
+                    boolean isF9 = (e.getKeyCode() == KeyEvent.VK_F9);
+                    boolean isPageUp = (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN);
+                    boolean isPageDown = (e.getKeyCode() == KeyEvent.VK_PAGE_UP);
+                    boolean isSKey = (e.getKeyCode() == KeyEvent.VK_S);
+
+                    if (alt) {
+                        if (isSKey) {
+                            createFirstSessionPanel();
+                            e.consume();
+                            return true;
+                        }
+                        if (isF9) {
+                            hideSessionPanel();
+                            e.consume();
+                            return true;
+                        }
+                    }
+
+                    if (ctrl) {
+                        if (isTab) {
+                            changeSessionTab(shift);
+                            e.consume();
+                            return true;
+                        }
+
+                        if (isPageUp) {
+                            changeTerminalTab(true);
+                            e.consume();
+                            return true;
+                        }
+
+                        if (isPageDown) {
+                            changeTerminalTab(false);
+                            e.consume();
+                            return true;
+                        }
+                    }
+
+                    return false;
+                });
+    }
+
+    private void changeSessionTab(boolean shift) {
+        int size = sessionListPanel.getSessionList().getModel().getSize();
+        if (size <= 1) {
+            return;
+        }
+
+        int selectedIndex = sessionListPanel.getSessionList().getSelectedIndex();
+        int step = shift ? -1 : 1;   // Ctrl+Shift+Tab = previous, Ctrl+Tab = next
+        int next = selectedIndex;
+
+        next = Math.floorMod(next + step, size);
+        sessionListPanel.selectSession(next);
+        sessionListPanel.getSessionList().setSelectedIndex(next);
+    }
+
+    private void changeTerminalTab(boolean isUp) {
+        int selectedIndex = sessionListPanel.getSessionList().getSelectedIndex();
+        var session = sessionListPanel.getSessionList().getModel().getElementAt(selectedIndex);
+        ClosableTabbedPanel tabs = null;
+        if (session instanceof LocalSessionContentPanel) {
+            var localContentPanel = (LocalSessionContentPanel) session;
+            tabs = localContentPanel.getTerminalHolder().getTabs();
+        } else if (session instanceof SessionContentPanel) {
+            var localContentPanel = (SessionContentPanel) session;
+            tabs = localContentPanel.getTerminalHolder().getTabs();
+        }
+
+        if (tabs == null) {
+            return;
+        }
+        var size = tabs.getTabHolder().getComponentCount();
+        int step = isUp ? -1 : 1;   // Ctrl+page up = previous, Ctrl+down = next
+        int next = tabs.getSelectedIndex();
+
+        next = Math.floorMod(next + step, size);
+        tabs.setSelectedIndex(next);
     }
 
     private void setWindowProperties() {
@@ -137,8 +228,8 @@ public class AppWindow extends JFrame {
         }
 
         // FIX: Multiply by scale factor, not divide!
-        int screenWidth = (int)(baseWidth * scaleFactor);
-        int screenHeight = (int)(baseHeight * scaleFactor);
+        int screenWidth = (int) (baseWidth * scaleFactor);
+        int screenHeight = (int) (baseHeight * scaleFactor);
 
         setScreenWidthAndHeight(screenWidth, screenHeight);
     }
@@ -175,7 +266,7 @@ public class AppWindow extends JFrame {
         btnNew.addActionListener(e -> this.createFirstSessionPanel());
         btnNew.setToolTipText(App.getCONTEXT().getBundle().getString("new_connection"));
 
-        JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
+        btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
         btnToggle.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
 
         JButton btnLocalTerm = new JButton(FontAwesomeContants.FA_TERMINAL);
@@ -205,7 +296,7 @@ public class AppWindow extends JFrame {
         btnLocalTerm.setMinimumSize(maxSize);
         btnLocalTerm.setMaximumSize(maxSize);
 
-        JPanel topBox = new JPanel();
+        topBox = new JPanel();
         topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
         topBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         topBox.add(Box.createRigidArea(scale(new Dimension(5, 0))));
@@ -221,26 +312,26 @@ public class AppWindow extends JFrame {
         panel.add(topBox, BorderLayout.NORTH);
         panel.add(sessionListPanel, BorderLayout.CENTER);
 
-        btnToggle.addActionListener(e -> {
-            boolean isVisible = sessionListPanel.isVisible();
-            topBox.setLayout(new BoxLayout(topBox, BoxLayout.Y_AXIS));
-            sessionListPanel.setVisible(!isVisible);
-            topBox.setBorder(null);
-
-            if (!isVisible) {
-                topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
-                topBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
-            }
-
-            btnToggle.setText(isVisible ? FontAwesomeContants.FA_ANGLE_DOUBLE_RIGHT : FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
-
-            topBox.revalidate();
-            topBox.repaint();
-
-        });
-
+        btnToggle.addActionListener(e -> hideSessionPanel());
 
         return panel;
+    }
+
+    private void hideSessionPanel() {
+        boolean isVisible = sessionListPanel.isVisible();
+        topBox.setLayout(new BoxLayout(topBox, BoxLayout.Y_AXIS));
+        sessionListPanel.setVisible(!isVisible);
+        topBox.setBorder(null);
+
+        if (!isVisible) {
+            topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
+            topBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
+        }
+
+        btnToggle.setText(isVisible ? FontAwesomeContants.FA_ANGLE_DOUBLE_RIGHT : FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
+
+        topBox.revalidate();
+        topBox.repaint();
     }
 
 

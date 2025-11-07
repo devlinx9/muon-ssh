@@ -1,5 +1,6 @@
 package muon.app.ui.components.session;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.AppWindow;
@@ -25,6 +26,7 @@ public class SessionListPanel extends JPanel {
     private static final Cursor E_RESIZE_CURSOR = new Cursor(Cursor.E_RESIZE_CURSOR);
 
     private final DefaultListModel<ISessionContentPanel> sessionListModel;
+    @Getter
     private final JList<ISessionContentPanel> sessionList;
     private final AppWindow window;
 

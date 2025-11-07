@@ -55,6 +55,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     private final TabbedPage[] pages;
     public final FileBrowser fileBrowser;
     private final LogViewer logViewer;
+    @Getter
     private final TerminalHolder terminalHolder;
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final Deque<RemoteSessionInstance> cachedSessions = new LinkedList<>();

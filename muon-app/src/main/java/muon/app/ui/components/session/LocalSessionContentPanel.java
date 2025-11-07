@@ -30,6 +30,7 @@ public class LocalSessionContentPanel extends JPanel implements PageHolder, ISes
     private final JRootPane rootPane;
     private final DisabledPanel disabledPanel;
     private final TabbedPage[] pages;
+    @Getter
     private final LocalTerminalHolder terminalHolder;
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
