@@ -92,16 +92,23 @@ public class AppWindow extends JFrame {
                     boolean isF9 = (e.getKeyCode() == KeyEvent.VK_F9);
                     boolean isPageUp = (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN);
                     boolean isPageDown = (e.getKeyCode() == KeyEvent.VK_PAGE_UP);
-                    boolean isSKey = (e.getKeyCode() == KeyEvent.VK_S);
+                    boolean isLKey = (e.getKeyCode() == KeyEvent.VK_L);
+                    boolean isNKey = (e.getKeyCode() == KeyEvent.VK_N);
 
                     if (alt) {
-                        if (isSKey) {
+                        if (isNKey) {
                             createFirstSessionPanel();
                             e.consume();
                             return true;
                         }
                         if (isF9) {
                             hideSessionPanel();
+                            e.consume();
+                            return true;
+                        }
+
+                        if (isLKey) {
+                            createLocalSessionPanel();
                             e.consume();
                             return true;
                         }
@@ -264,7 +271,7 @@ public class AppWindow extends JFrame {
         JButton btnNew = new JButton(FontAwesomeContants.FA_TELEVISION);
         btnNew.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
         btnNew.addActionListener(e -> this.createFirstSessionPanel());
-        btnNew.setToolTipText(App.getCONTEXT().getBundle().getString("new_connection"));
+        btnNew.setToolTipText(String.format(TOOLTIP_FORMAT, App.getCONTEXT().getBundle().getString("new_connection"), "alt+n"));
 
         btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
         btnToggle.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
@@ -272,6 +279,7 @@ public class AppWindow extends JFrame {
         JButton btnLocalTerm = new JButton(FontAwesomeContants.FA_TERMINAL);
         btnLocalTerm.addActionListener(e -> this.createLocalSessionPanel());
         btnLocalTerm.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
+        btnLocalTerm.setToolTipText(String.format(TOOLTIP_FORMAT, App.getCONTEXT().getBundle().getString("local_term"), "alt+l"));
 
         // Calculate the maximum width and height between the two buttons
         Dimension sizeNew = btnNew.getPreferredSize();
@@ -291,6 +299,7 @@ public class AppWindow extends JFrame {
         btnToggle.setPreferredSize(maxSize);
         btnToggle.setMinimumSize(maxSize);
         btnToggle.setMaximumSize(maxSize);
+        btnToggle.setToolTipText(String.format(TOOLTIP_FORMAT, App.getCONTEXT().getBundle().getString("hide_panel"), "alt+f9"));
 
         btnLocalTerm.setPreferredSize(maxSize);
         btnLocalTerm.setMinimumSize(maxSize);

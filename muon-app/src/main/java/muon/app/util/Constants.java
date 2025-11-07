@@ -21,6 +21,7 @@ public class Constants {
     public static final String PINNED_LOGS = "pinned-logs.json";
     public static final String TRANSFER_HOSTS = "transfer-hosts.json";
     public static final String BOOKMARKS_FILE = "bookmarks.json";
+    public static final String TOOLTIP_FORMAT="<html>%s <span style='font-size:smaller; color:gray;'>(%s)</span></html>";
 
     public static final String APP_INSTANCE_ID = UUID.randomUUID().toString();
 
