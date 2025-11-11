@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
+import java.util.prefs.Preferences;
 
 import static muon.app.util.Constants.*;
 import static muon.app.util.ScalingUtil.*;
@@ -43,6 +44,15 @@ public class AppWindow extends JFrame {
     private final BackgroundTransferPanel downloadPanel;
     private final KubeContextSelectorPanel kubeContextSelectorPanel;
     private final Component bottomPanel;
+
+    // Load stored preferences
+    static final Preferences prefs = Preferences.userRoot().node("muonPrefs");
+
+
+    private static final String PREF_X = "frame_x";
+    private static final String PREF_Y = "frame_y";
+    private static final String PREF_WIDTH = "frame_width";
+    private static final String PREF_HEIGHT = "frame_height";
 
     private JPanel topBox;
     private JButton btnToggle;
@@ -185,6 +195,18 @@ public class AppWindow extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         setWindowsSizeAndPosition();
+
+        // Save position and size on close
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Rectangle bounds = getBounds();
+                prefs.putInt(PREF_X, bounds.x);
+                prefs.putInt(PREF_Y, bounds.y);
+                prefs.putInt(PREF_WIDTH, bounds.width);
+                prefs.putInt(PREF_HEIGHT, bounds.height);
+            }
+        });
     }
 
     private void checkForUpdates() {
@@ -232,27 +254,21 @@ public class AppWindow extends JFrame {
 
             // Center on the primary screen
             setLocationRelativeTo(null);
+
+            if (App.getGlobalSettings().isRememberLastSizeAndPosition()) {
+                int x = prefs.getInt(PREF_X, 100);
+                int y = prefs.getInt(PREF_Y, 100);
+                baseWidth = prefs.getInt(PREF_WIDTH, screenD.width);
+                baseHeight = prefs.getInt(PREF_HEIGHT, screenD.height);
+                setLocation(x, y);
+            }
         }
 
         // FIX: Multiply by scale factor, not divide!
         int screenWidth = (int) (baseWidth * scaleFactor);
         int screenHeight = (int) (baseHeight * scaleFactor);
 
-        setScreenWidthAndHeight(screenWidth, screenHeight);
-    }
-
-    private void setScreenWidthAndHeight(int screenWidth, int screenHeight) {
-        // FIX: Use scaled minimum dimensions
-        int minWidth = scale(1024);
-        int minHeight = scale(650);
-
-        if (screenWidth < minWidth || screenHeight < minHeight || App.getGlobalSettings().isStartMaximized()) {
-            setSize(screenWidth, screenHeight);
-        } else {
-            int width = (screenWidth * 80) / 100;
-            int height = (screenHeight * 80) / 100;
-            setSize(width, height);
-        }
+        setSize(screenWidth, screenHeight);
     }
 
     public void createFirstSessionPanel() {

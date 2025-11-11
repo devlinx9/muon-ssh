@@ -70,7 +70,8 @@ public class SettingsDialog extends JDialog {
     private JCheckBox chkShowPathBar;
     private JCheckBox chkConfirmBeforeTerminalClosing;
     private JCheckBox chkShowMessagePrompt;
-    private JCheckBox chkStartMaximized;
+    private JRadioButton rbStartMaximized;
+    private JRadioButton rbRememberLastSizeAndPosition;
     private JCheckBox chkUseGlobalDarkTheme;
     private JCheckBox spConnectionKeepAlive;
     private KeyShortcutComponent[] kcc;
@@ -594,7 +595,8 @@ public class SettingsDialog extends JDialog {
         settings.setShowMessagePrompt(chkShowMessagePrompt.isSelected());
         settings.setUseGlobalDarkTheme(chkUseGlobalDarkTheme.isSelected());
 
-        settings.setStartMaximized(chkStartMaximized.isSelected());
+        settings.setStartMaximized(rbStartMaximized.isSelected());
+        settings.setRememberLastSizeAndPosition(rbRememberLastSizeAndPosition.isSelected());
 
         settings.setConnectionTimeout((Integer) spConnectionTimeout.getValue());
         settings.setConnectionKeepAlive(spConnectionKeepAlive.isSelected());
@@ -616,10 +618,6 @@ public class SettingsDialog extends JDialog {
 
         App.getCONTEXT().getSettingsManager().saveSettings();
         super.setVisible(false);
-    }
-
-    public boolean showDialog(JFrame window) {
-        return this.showDialog(window, null);
     }
 
     public boolean showDialog(JFrame window, SettingsPageName page) {
@@ -691,7 +689,8 @@ public class SettingsDialog extends JDialog {
         chkShowMessagePrompt.setSelected(settings.isShowMessagePrompt());
         chkUseGlobalDarkTheme.setSelected(settings.isUseGlobalDarkTheme());
 
-        chkStartMaximized.setSelected(settings.isStartMaximized());
+        rbStartMaximized.setSelected(settings.isStartMaximized());
+        rbRememberLastSizeAndPosition.setSelected(settings.isRememberLastSizeAndPosition());
         chkK8sPlugin.setSelected(settings.isEnabledK8sContextPlugin());
 
         spConnectionTimeout.setValue(settings.getConnectionTimeout());
@@ -719,6 +718,8 @@ public class SettingsDialog extends JDialog {
 
         this.chkUseMasterPassword.setSelected(settings.isUsingMasterPassword());
         this.btnChangeMasterPassword.setEnabled(settings.isUsingMasterPassword());
+
+        checkRbScreenSelection();
 
     }
 
@@ -779,7 +780,12 @@ public class SettingsDialog extends JDialog {
 
         chkOpenInSecondScreen = new JCheckBox(App.getCONTEXT().getBundle().getString("open_second_screen"));
         chkStartWithTerminal = new JCheckBox(App.getCONTEXT().getBundle().getString("open_with_local_term"));
-        chkStartMaximized = new JCheckBox(App.getCONTEXT().getBundle().getString("start_maximized"));
+        rbStartMaximized = new JRadioButton(App.getCONTEXT().getBundle().getString("start_maximized"));
+        rbRememberLastSizeAndPosition = new JRadioButton(App.getCONTEXT().getBundle().getString("remember_last_size_position"));
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(rbStartMaximized);
+        bg.add(rbRememberLastSizeAndPosition);
+
         chkFirstFileBrowserView = new JCheckBox(App.getCONTEXT().getBundle().getString("show_filebrowser_first"));
         chkFirstLocalViewInFileBrowserView = new JCheckBox(App.getCONTEXT().getBundle().getString("show_local_view_first_in_filebrowser"));
 
@@ -787,18 +793,24 @@ public class SettingsDialog extends JDialog {
         chkUseManualScaling.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkOpenInSecondScreen.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkStartWithTerminal.setAlignmentX(Box.LEFT_ALIGNMENT);
-        chkStartMaximized.setAlignmentX(Box.LEFT_ALIGNMENT);
+        rbStartMaximized.setAlignmentX(Box.LEFT_ALIGNMENT);
+        rbRememberLastSizeAndPosition.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkFirstFileBrowserView.setAlignmentX(Box.LEFT_ALIGNMENT);
         chkFirstLocalViewInFileBrowserView.setAlignmentX(Box.LEFT_ALIGNMENT);
         vbox.add(chkUseManualScaling);
         vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
         vbox.add(createRow(new JLabel(App.getCONTEXT().getBundle().getString("zoom_percentage")), Box.createRigidArea(scale(new Dimension(10, 10))), spScaleValue));
+        vbox.add(Box.createVerticalStrut(30));
         vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
         vbox.add(chkUseGlobalDarkTheme);
+        vbox.add(Box.createVerticalStrut(30));
+        vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
+        vbox.add(rbStartMaximized);
+        vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
+        vbox.add(rbRememberLastSizeAndPosition);
         vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
         vbox.add(chkOpenInSecondScreen);
-        vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
-        vbox.add(chkStartMaximized);
+        vbox.add(Box.createVerticalStrut(30));
         vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
         vbox.add(chkStartWithTerminal);
         vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
@@ -808,6 +820,8 @@ public class SettingsDialog extends JDialog {
         vbox.setBorder(getScaledEmptyBorder(30, 10, 10, 10));
 
         panel.add(vbox);
+        rbStartMaximized.addActionListener(e -> checkRbScreenSelection());
+        rbRememberLastSizeAndPosition.addActionListener(e -> checkRbScreenSelection());
 
         return panel;
     }
@@ -983,6 +997,18 @@ public class SettingsDialog extends JDialog {
             return this;
         }
 
+    }
+
+
+    private void checkRbScreenSelection() {
+        if (rbRememberLastSizeAndPosition.isSelected()) {
+            chkOpenInSecondScreen.setEnabled(false);
+            chkOpenInSecondScreen.setSelected(false);
+            chkOpenInSecondScreen.setForeground(Color.gray);
+        } else if (rbStartMaximized.isSelected()) {
+            chkOpenInSecondScreen.setEnabled(true);
+            chkOpenInSecondScreen.setForeground(null);
+        }
     }
 
 }

@@ -32,6 +32,7 @@ public class Settings {
     private boolean confirmBeforeDelete = true;
     private boolean enabledK8sContextPlugin = false;
     private boolean startMaximized = true;
+    private boolean rememberLastSizeAndPosition = false;
     private boolean confirmBeforeMoveOrCopy = false;
     private boolean showHiddenFilesByDefault = false;
     private boolean firstFileBrowserView = false;
