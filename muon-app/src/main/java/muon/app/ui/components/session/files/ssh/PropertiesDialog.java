@@ -18,8 +18,8 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static muon.app.util.ScalingUtil.scale;
 import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.scale;
 
 
 @Slf4j
@@ -33,8 +33,12 @@ public class PropertiesDialog extends JDialog {
     public static final int S_IROTH = 00004; // read by others
     public static final int S_IWOTH = 00002; // write by others
     public static final int S_IXOTH = 00001; // execute/search by others
+    public static final int S_ISUID = 04000; // Set user ID on execution
+    public static final int S_ISGID = 02000; // Set group ID on execution
+    public static final int S_ISVTX = 01000; // Sticky bit
+
     static final int[] PERMS = new int[]{S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP,
-                                         S_IWGRP, S_IXGRP, S_IROTH, S_IWOTH, S_IXOTH};
+                                         S_IWGRP, S_IXGRP, S_IROTH, S_IWOTH, S_IXOTH, S_ISUID, S_ISGID, S_ISVTX};
     private static final String USER_GROUP_REGEX = "^[^\\s]+\\s+[^\\s]+\\s+([^\\s]+)\\s+([^\\s]+)";
     private static final Pattern DU_PATTERN = Pattern
             .compile("([\\d]+)\\s+(.+)");
@@ -46,6 +50,8 @@ public class PropertiesDialog extends JDialog {
     private final FileBrowser fileBrowser;
     private final AtomicBoolean modified = new AtomicBoolean(false);
     private final JButton btnOK;
+    private final JCheckBox chkRecursive;
+
     @Getter
     private int dialogResult = JOptionPane.CANCEL_OPTION;
     private FileInfo[] details;
@@ -54,12 +60,12 @@ public class PropertiesDialog extends JDialog {
     private JTextField txtOwner;
     private JTextField txtGroup;
     private JTextField txtModified;
-    private JTextField txtCreated;
     private JTextField txtPath;
     private JTextField txtFileCount;
     private JButton btnCalculate1;
     private JButton btnCalculate2;
     private Pattern pattern;
+
     public PropertiesDialog(FileBrowser holder, Window window,
                             boolean multimode) {
         super(window);
@@ -67,22 +73,33 @@ public class PropertiesDialog extends JDialog {
         setResizable(true);
         setModal(true);
         setTitle("Properties");
-        chkPermissons = new JCheckBox[9];
+        chkPermissons = new JCheckBox[12];
         for (int i = 0; i < 9; i++) {
             String[] labels = new String[]{"read", "write", "execute"};
-            chkPermissons[i] = new JCheckBox(labels[i % 3]);
-            chkPermissons[i].setAlignmentX(Box.LEFT_ALIGNMENT);
-            chkPermissons[i].addActionListener(e -> {
-                modified.set(true);
-                updateButtonState();
-            });
+            chkPermissons[i] = generateChkPermission(labels[i % 3]);
         }
+
+        chkPermissons[9] = generateChkPermission("SUID");
+        chkPermissons[10] = generateChkPermission("GUID");
+        chkPermissons[11] = generateChkPermission("StickyBit");
+
+        chkRecursive = new JCheckBox("Apply Recursive changes");
+
+        chkRecursive.setAlignmentX(Box.LEFT_ALIGNMENT);
+        chkRecursive.addActionListener(e -> {
+            modified.set(true);
+            updateButtonState();
+        });
+
+
         JLabel lblOwner = new JLabel("Owner permissions");
         lblOwner.setAlignmentX(Box.LEFT_ALIGNMENT);
         JLabel lblGroup = new JLabel("Group permissions");
         lblGroup.setAlignmentX(Box.LEFT_ALIGNMENT);
         JLabel lblOther = new JLabel("Other permissions");
         lblOther.setAlignmentX(Box.LEFT_ALIGNMENT);
+        JLabel lblAdvance = new JLabel("Advance permissions");
+        lblAdvance.setAlignmentX(Box.LEFT_ALIGNMENT);
 
         Box b = Box.createVerticalBox();
 
@@ -174,12 +191,21 @@ public class PropertiesDialog extends JDialog {
             b.add(chkPermissons[i]);
         }
 
+        b.add(Box.createVerticalStrut((10)));
+        b.add(lblAdvance);
+        for (int i = 9; i < 12; i++) {
+            b.add(chkPermissons[i]);
+        }
+
+        b.add(Box.createVerticalStrut((10)));
+        b.add(chkRecursive);
+
         Box b2 = Box.createHorizontalBox();
         btnOK = new JButton("Change permissions");
         btnOK.setEnabled(false);
         btnOK.addActionListener(e -> {
             dialogResult = JOptionPane.OK_OPTION;
-            chmodAsync(getPermissions(), details);
+            chmodAsync(getPermissions(), details, chkRecursive.isSelected());
             dispose();
         });
         JButton btnCancel = new JButton(App.getCONTEXT().getBundle().getString("cancel"));
@@ -209,9 +235,20 @@ public class PropertiesDialog extends JDialog {
         setLocationRelativeTo(App.getAppWindow());
     }
 
+    private JCheckBox generateChkPermission(String label) {
+        var chkPermission = new JCheckBox(label);
+        chkPermission.setAlignmentX(Box.LEFT_ALIGNMENT);
+        chkPermission.addActionListener(e -> {
+            modified.set(true);
+            updateButtonState();
+        });
+
+        return chkPermission;
+    }
+
     private boolean[] extractPermissions(int permissions) {
-        boolean[] perms = new boolean[9];
-        for (int i = 0; i < 9; i++) {
+        boolean[] perms = new boolean[12];
+        for (int i = 0; i < 12; i++) {
             perms[i] = (permissions & PropertiesDialog.PERMS[i]) != 0;
         }
         return perms;
@@ -222,10 +259,14 @@ public class PropertiesDialog extends JDialog {
         this.details[0] = details;
         log.info("Extra: {}", details.getExtra());
         btnCalculate2.setEnabled(details.getType() == FileType.DIRECTORY
-                || details.getType() == FileType.DIR_LINK);
+                                 || details.getType() == FileType.DIR_LINK);
+
+        chkRecursive.setEnabled(details.getType() == FileType.DIRECTORY);
+        chkRecursive.setForeground(UIManager.getColor(
+                details.getType() != FileType.DIRECTORY ? "Label.disabledForeground" : "Label.foreground"));
         int permissions = details.getPermission();
         if (this.pattern != null && details.getExtra() != null
-                && !details.getExtra().isEmpty()) {
+            && !details.getExtra().isEmpty()) {
             Matcher matcher = pattern.matcher(details.getExtra());
             if (matcher.find()) {
                 String user = matcher.group(1);
@@ -236,18 +277,18 @@ public class PropertiesDialog extends JDialog {
             }
         }
         this.txtModified.setText(details.getLastModified()
-                .format(DateTimeFormatter.ISO_DATE_TIME));
+                                         .format(DateTimeFormatter.ISO_DATE_TIME));
         this.txtName.setText(details.getName());
         this.txtPath.setText(details.getPath());
         this.txtSize.setText(details.getType() == FileType.DIRECTORY
-                || details.getType() == FileType.DIR_LINK ? "---"
-                                                          : FormatUtils.humanReadableByteCount(details.getSize(),
-                true));
+                             || details.getType() == FileType.DIR_LINK ? "---"
+                                                                       : FormatUtils.humanReadableByteCount(details.getSize(),
+                                                                                                            true));
         this.txtType.setText(details.getType() == FileType.DIRECTORY
-                || details.getType() == FileType.DIR_LINK ? "Directory"
-                                                          : "File");
+                             || details.getType() == FileType.DIR_LINK ? "Directory"
+                                                                       : "File");
         boolean[] perms = extractPermissions(permissions);
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 12; i++) {
             chkPermissons[i].setSelected(perms[i]);
         }
     }
@@ -258,7 +299,7 @@ public class PropertiesDialog extends JDialog {
         long totalSize = 0;
         for (FileInfo file : files) {
             if (file.getType() == FileType.DIR_LINK
-                    || file.getType() == FileType.DIRECTORY) {
+                || file.getType() == FileType.DIRECTORY) {
                 hasAnyDir = true;
                 break;
             }
@@ -266,7 +307,7 @@ public class PropertiesDialog extends JDialog {
         if (!hasAnyDir) {
             for (FileInfo file : files) {
                 if (file.getType() == FileType.FILE
-                        || file.getType() == FileType.FILE_LINK) {
+                    || file.getType() == FileType.FILE_LINK) {
                     totalSize += file.getSize();
                 }
             }
@@ -278,7 +319,7 @@ public class PropertiesDialog extends JDialog {
         int dc = 0;
         for (FileInfo f : files) {
             if (f.getType() == FileType.DIRECTORY
-                    || f.getType() == FileType.DIR_LINK) {
+                || f.getType() == FileType.DIR_LINK) {
                 dc++;
             } else {
                 fc++;
@@ -289,7 +330,7 @@ public class PropertiesDialog extends JDialog {
 
     public int getPermissions() {
         int perms = 0;
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 12; i++) {
             if (chkPermissons[i].isSelected()) {
                 perms |= PropertiesDialog.PERMS[i];
             }
@@ -393,9 +434,9 @@ public class PropertiesDialog extends JDialog {
                     return;
                 }
                 if (!ret && !fileBrowser.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_errors")
-                                );
-                    }
+                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_errors")
+                                                 );
+                }
 
                 for (String line : output.toString().split("\n")) {
                     Matcher matcher = DU_PATTERN.matcher(line.trim());
@@ -430,9 +471,9 @@ public class PropertiesDialog extends JDialog {
                     return;
                 }
                 if (!ret && !fileBrowser.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null,
-                                                      App.getCONTEXT().getBundle().getString("operation_errors"));
-                    }
+                    JOptionPane.showMessageDialog(null,
+                                                  App.getCONTEXT().getBundle().getString("operation_errors"));
+                }
 
 
                 String[] lines = output.toString().split("\n");
@@ -440,15 +481,15 @@ public class PropertiesDialog extends JDialog {
                     Matcher matcher = DF_PATTERN.matcher(lines[1]);
                     if (matcher.find()) {
                         long total = Long.parseLong(matcher.group(1).trim())
-                                * 1024;
+                                     * 1024;
                         long free = Long.parseLong(matcher.group(3).trim())
-                                * 1024;
+                                    * 1024;
                         long freePct = 100 - Long.parseLong(
                                 matcher.group(4).replace("%", "").trim());
                         String result = String.format("Free %s of %s (%s)",
-                                FormatUtils.humanReadableByteCount(free, true),
-                                FormatUtils.humanReadableByteCount(total, true),
-                                freePct + "%");
+                                                      FormatUtils.humanReadableByteCount(free, true),
+                                                      FormatUtils.humanReadableByteCount(total, true),
+                                                      freePct + "%");
                         biConsumer.accept(result, true);
                         return;
                     } else {
@@ -463,7 +504,7 @@ public class PropertiesDialog extends JDialog {
         });
     }
 
-    private void chmodAsync(int perm, FileInfo[] paths) {
+    private void chmodAsync(int perm, FileInfo[] paths, boolean isUpdateRecursive) {
         AtomicBoolean stopFlag = new AtomicBoolean(false);
         JDialog dlg = new JDialog(this);
         dlg.setModal(true);
@@ -483,7 +524,7 @@ public class PropertiesDialog extends JDialog {
         fileBrowser.getHolder().EXECUTOR.submit(() -> {
             try {
                 for (FileInfo path : paths) {
-                    fileBrowser.getSSHFileSystem().chmod(perm, path.getPath());
+                    chmodRecursive(perm, path.getPath(), isUpdateRecursive);
                     log.info("Permissions changed");
                 }
                 modified.set(true);
@@ -507,5 +548,32 @@ public class PropertiesDialog extends JDialog {
 
     private void updateButtonState() {
         btnOK.setEnabled(modified.get());
+    }
+
+    private void chmodRecursive(int perm, String path, boolean isUpdateRecursive) throws Exception {
+
+        fileBrowser.getSSHFileSystem().chmod(perm, path);
+        fileBrowser.getSSHDirectoryCache().remove(path);
+
+        if (!isUpdateRecursive) {
+            return;
+        }
+
+        for (var item : fileBrowser.getSSHFileSystem().list(path)) {
+            String childPath = item.getPath();
+
+            // Skip "." and ".."
+            if (item.getName().equals(".") || item.getName().equals("..")) {
+                continue;
+            }
+            log.debug(childPath);
+
+            if (item.isDirectory()) {
+                chmodRecursive(perm, childPath, isUpdateRecursive);
+            } else {
+                fileBrowser.getSSHFileSystem().chmod(perm, childPath);
+                fileBrowser.getSSHDirectoryCache().remove(childPath);
+            }
+        }
     }
 }
