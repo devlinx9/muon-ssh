@@ -24,12 +24,12 @@
         <dependency>
             <groupId>org.jetbrains.jediterm</groupId>
             <artifactId>jediterm-core</artifactId>
-            <version>3.51-SNAPSHOT</version>
+            <version>3.61</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.jediterm</groupId>
             <artifactId>jediterm-ui</artifactId>
-            <version>3.51-SNAPSHOT</version>
+            <version>3.61</version>
         </dependency>
 
         <dependency>
@@ -130,14 +130,14 @@
         <dependency>
             <groupId>com.hierynomus</groupId>
             <artifactId>sshj</artifactId>
-            <version>0.40.1-SNAPSHOT</version>
+            <version>0.40.0</version>
         </dependency>
 
         <!--https://mvnrepository.com/artifact/com.jcraft/jsch -->
         <dependency>
             <groupId>com.github.mwiede</groupId>
             <artifactId>jsch</artifactId>
-            <version>0.2.23</version>
+            <version>2.27.7</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.github.markusbernhardt/proxy-vole -->
@@ -375,6 +375,11 @@
             <id>personal</id>
             <name>extra</name>
             <url>https://subhra74.github.io/extra-jars/</url>
+        </repository>
+        <repository>
+            <id>intelliJ</id>
+            <name>intelliJ</name>
+            <url>https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/</url>
         </repository>
     </repositories>
 </project>
