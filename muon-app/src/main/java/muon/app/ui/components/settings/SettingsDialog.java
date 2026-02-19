@@ -73,6 +73,7 @@ public class SettingsDialog extends JDialog {
     private JRadioButton rbStartMaximized;
     private JRadioButton rbRememberLastSizeAndPosition;
     private JCheckBox chkUseGlobalDarkTheme;
+    private JCheckBox chkUseCompactView;
     private JCheckBox spConnectionKeepAlive;
     private KeyShortcutComponent[] kcc;
     private JCheckBox chkLogWrap;
@@ -594,6 +595,7 @@ public class SettingsDialog extends JDialog {
         settings.setShowPathBar(chkShowPathBar.isSelected());
         settings.setShowMessagePrompt(chkShowMessagePrompt.isSelected());
         settings.setUseGlobalDarkTheme(chkUseGlobalDarkTheme.isSelected());
+        settings.setUseCompactView(chkUseCompactView.isSelected());
 
         settings.setStartMaximized(rbStartMaximized.isSelected());
         settings.setRememberLastSizeAndPosition(rbRememberLastSizeAndPosition.isSelected());
@@ -688,6 +690,7 @@ public class SettingsDialog extends JDialog {
         chkShowPathBar.setSelected(settings.isShowPathBar());
         chkShowMessagePrompt.setSelected(settings.isShowMessagePrompt());
         chkUseGlobalDarkTheme.setSelected(settings.isUseGlobalDarkTheme());
+        chkUseCompactView.setSelected(settings.isUseCompactView());
 
         rbStartMaximized.setSelected(settings.isStartMaximized());
         rbRememberLastSizeAndPosition.setSelected(settings.isRememberLastSizeAndPosition());
@@ -778,6 +781,9 @@ public class SettingsDialog extends JDialog {
         chkUseGlobalDarkTheme = new JCheckBox(App.getCONTEXT().getBundle().getString("global_dark_theme"));
         chkUseGlobalDarkTheme.setAlignmentX(Box.LEFT_ALIGNMENT);
 
+        chkUseCompactView = new JCheckBox(App.getCONTEXT().getBundle().getString("compact_view"));
+        chkUseCompactView.setAlignmentX(Box.LEFT_ALIGNMENT);
+
         chkOpenInSecondScreen = new JCheckBox(App.getCONTEXT().getBundle().getString("open_second_screen"));
         chkStartWithTerminal = new JCheckBox(App.getCONTEXT().getBundle().getString("open_with_local_term"));
         rbStartMaximized = new JRadioButton(App.getCONTEXT().getBundle().getString("start_maximized"));
@@ -803,7 +809,8 @@ public class SettingsDialog extends JDialog {
         vbox.add(Box.createVerticalStrut(30));
         vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
         vbox.add(chkUseGlobalDarkTheme);
-        vbox.add(Box.createVerticalStrut(30));
+        vbox.add(Box.createVerticalStrut(10));
+        vbox.add(chkUseCompactView);
         vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));
         vbox.add(rbStartMaximized);
         vbox.add(Box.createRigidArea(scale(new Dimension(10, 10))));

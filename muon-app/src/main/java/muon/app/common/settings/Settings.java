@@ -48,6 +48,7 @@ public class Settings {
     private boolean useGlobalDarkTheme = true;
     private int connectionTimeout = 60;
     private boolean connectionKeepAlive = false;
+    private boolean useCompactView = false;
     private int logViewerFont = 14;
     private boolean logViewerUseWordWrap = true;
     private int logViewerLinesPerPage = 50;

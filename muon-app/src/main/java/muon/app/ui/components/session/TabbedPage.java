@@ -25,7 +25,7 @@ public class TabbedPage extends JPanel {
     private final JLabel lblText;
     private final Border selectedBorder = new CompoundBorder(
             getScaledMatteBorder(0, 0, 2, 0,
-                            App.getCONTEXT().getSkin().getDefaultSelectionBackground()),
+                                 App.getCONTEXT().getSkin().getDefaultSelectionBackground()),
             getScaledEmptyBorder(10, 0, 10, 0));
     private final Border normalBorder = new CompoundBorder(
             getScaledMatteBorder(0, 0, 2, 0, App.getCONTEXT().getSkin().getDefaultBackground()),
@@ -66,12 +66,16 @@ public class TabbedPage extends JPanel {
         lblIcon.setHorizontalAlignment(JLabel.CENTER);
         lblText.setHorizontalAlignment(JLabel.CENTER);
 
+
         lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont(24.0f));
         lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont(12.0f));
 
         this.add(lblIcon);
-        this.add(lblText, BorderLayout.SOUTH);
-
+        if (!App.getCONTEXT().getSettings().isUseCompactView()) {
+            lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont(16.0f));
+        } else {
+            this.add(lblText, BorderLayout.SOUTH);
+        }
         this.setPreferredSize(
                 scale(new Dimension(prefW, this.getPreferredSize().height)));
         this.setMaximumSize(
@@ -90,7 +94,7 @@ public class TabbedPage extends JPanel {
         this.repaint();
     }
 
-    
+
     public String getText() {
         return lblText.getText();
     }
