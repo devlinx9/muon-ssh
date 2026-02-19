@@ -234,7 +234,7 @@ public class SSHHandler implements Closeable {
                         passwordAuth(authenticated);
                         break;
                     default:
-                        throw new IllegalStateException("Unexpected value: " + authMethod);
+                        log.warn("Unexpected auth method: " + authMethod);
                 }
 
                 if (authenticated.get()) {
