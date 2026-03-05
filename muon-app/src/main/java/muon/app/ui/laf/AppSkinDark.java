@@ -17,6 +17,8 @@ public class AppSkinDark extends AppSkin {
         Color selectedTextColor = new Color(230, 230, 230);
         Color infoTextColor = new Color(180, 180, 180);
         Color borderColor = new Color(24, 26, 31);
+        Color readOnlyFieldBackground = new Color(68, 72, 84);
+        Color readOnlyFieldForeground = new Color(225, 225, 225);
         Color treeTextColor = new Color(75 + 20, 83 + 20, 98 + 20);
         Color scrollbarColor = new Color(75, 83, 98);
         Color scrollbarRolloverColor = new Color(75 + 20, 83 + 20, 98 + 20);
@@ -29,7 +31,8 @@ public class AppSkinDark extends AppSkin {
         Color buttonGradient5 = new Color(57 - 20, 62 - 20, 74 - 20);
         Color buttonGradient6 = new Color(57 - 10, 62 - 10, 74 - 10);
 
-        Color disabledText = new Color(130, 130, 130);
+        Color disabledText = readOnlyFieldForeground;
+        Color disabledFieldBackground = readOnlyFieldBackground;
 
         this.defaults.put("nimbusBase", controlColor);
         this.defaults.put("nimbusSelection", selectionColor);
@@ -46,6 +49,8 @@ public class AppSkinDark extends AppSkin {
         this.defaults.put("nimbusBorder", borderColor);
         this.defaults.put("Table.alternateRowColor", controlColor);
         this.defaults.put("nimbusLightBackground", textFieldColor);
+        this.defaults.put(READ_ONLY_FIELD_BACKGROUND, readOnlyFieldBackground);
+        this.defaults.put(READ_ONLY_FIELD_FOREGROUND, readOnlyFieldForeground);
 
         this.defaults.put("tabSelectionBackground", scrollbarColor);
         this.defaults.put("Table.background", buttonGradient6);
@@ -81,12 +86,35 @@ public class AppSkinDark extends AppSkin {
         this.defaults.put("TextField.background", textFieldColor);
         this.defaults.put("FormattedTextField.background", textFieldColor);
         this.defaults.put("PasswordField.background", textFieldColor);
+        this.defaults.put("TextArea.background", textFieldColor);
+        this.defaults.put("EditorPane.background", textFieldColor);
 
         this.defaults.put("nimbusDisabledText", disabledText);
         this.defaults.put("Label.disabledForeground", disabledText);
 
         this.defaults.put("CheckBox[Disabled].textForeground", disabledText);
         this.defaults.put("CheckBox.disabledText", disabledText);
+        this.defaults.put("RadioButton[Disabled].textForeground", disabledText);
+        this.defaults.put("RadioButton.disabledText", disabledText);
+        this.defaults.put("Button[Disabled].textForeground", disabledText);
+        this.defaults.put("Button.disabledText", disabledText);
+        this.defaults.put("Button.disabled", disabledFieldBackground);
+        this.defaults.put("ComboBox.disabledForeground", disabledText);
+        this.defaults.put("ComboBox.disabledBackground", disabledFieldBackground);
+        this.defaults.put("TextField.disabledText", disabledText);
+        this.defaults.put("TextField.inactiveForeground", disabledText);
+        this.defaults.put("TextField.disabledBackground", disabledFieldBackground);
+        this.defaults.put("TextField.inactiveBackground", disabledFieldBackground);
+        this.defaults.put("FormattedTextField.disabledText", disabledText);
+        this.defaults.put("FormattedTextField.inactiveForeground", disabledText);
+        this.defaults.put("FormattedTextField.disabledBackground", disabledFieldBackground);
+        this.defaults.put("FormattedTextField.inactiveBackground", disabledFieldBackground);
+        this.defaults.put("PasswordField.disabledText", disabledText);
+        this.defaults.put("PasswordField.inactiveForeground", disabledText);
+        this.defaults.put("PasswordField.disabledBackground", disabledFieldBackground);
+        this.defaults.put("PasswordField.inactiveBackground", disabledFieldBackground);
+        this.defaults.put("TextArea.disabledText", disabledText);
+        this.defaults.put("TextArea.disabledBackground", disabledFieldBackground);
 
         createSkinnedButton(this.defaults);
         createTextFieldSkin(this.defaults);
