@@ -42,6 +42,14 @@ public final class ScalingUtil {
                     }
                 }
 
+                // macOS Retina rendering looks oversized with our defaults; default to 1.0 unless user overrides
+                boolean mac = System.getProperty("os.name", "").toLowerCase().contains("mac");
+                if (mac) {
+                    scaleFactor = 1.0f;
+                    log.info("macOS detected; defaulting scale factor to {}", scaleFactor);
+                    return scaleFactor;
+                }
+
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
                 GraphicsDevice gd = ge.getDefaultScreenDevice();
                 GraphicsConfiguration gc = gd != null ? gd.getDefaultConfiguration() : null;

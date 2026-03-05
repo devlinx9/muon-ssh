@@ -407,6 +407,9 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     private void deleteNode() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (node != null && node.getParent() != null) {
+            if (!confirmDeletion(node)) {
+                return;
+            }
             DefaultMutableTreeNode sibling = getSibling(node);
             if (sibling != null) {
                 String id = ((NamedItem) sibling.getUserObject()).getId();
@@ -419,6 +422,47 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
             }
             treeModel.removeNodeFromParent(node);
         }
+    }
+
+    private boolean confirmDeletion(DefaultMutableTreeNode node) {
+        Object obj = node.getUserObject();
+        if (obj instanceof SessionFolder) {
+            SessionFolder folder = (SessionFolder) obj;
+            int siteCount = countSites(node);
+            if (siteCount > 1) {
+                String prompt = String.format(App.getCONTEXT().getBundle().getString("confirm_delete_folder_name"),
+                        folder.getName());
+                String input = JOptionPane.showInputDialog(this, prompt,
+                        App.getCONTEXT().getBundle().getString("delete"), JOptionPane.WARNING_MESSAGE);
+                if (input == null) return false; // cancelled
+                if (!folder.getName().equals(input.trim())) {
+                    JOptionPane.showMessageDialog(this,
+                            App.getCONTEXT().getBundle().getString("delete_folder_name_mismatch"),
+                            App.getCONTEXT().getBundle().getString("delete"),
+                            JOptionPane.WARNING_MESSAGE);
+                    return false;
+                }
+                return true;
+            }
+        }
+
+        String msgKey = (obj instanceof SessionFolder) ? "confirm_delete_folder" : "confirm_delete_session";
+        int res = JOptionPane.showConfirmDialog(this,
+                App.getCONTEXT().getBundle().getString(msgKey),
+                App.getCONTEXT().getBundle().getString("delete"),
+                JOptionPane.YES_NO_OPTION);
+        return res == JOptionPane.YES_OPTION;
+    }
+
+    private int countSites(DefaultMutableTreeNode node) {
+        int count = 0;
+        for (int i = 0; i < node.getChildCount(); i++) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
+            Object uo = child.getUserObject();
+            if (uo instanceof SessionInfo) count++;
+            if (uo instanceof SessionFolder) count += countSites(child);
+        }
+        return count;
     }
 
     private static DefaultMutableTreeNode getSibling(DefaultMutableTreeNode node) {
