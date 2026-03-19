@@ -407,6 +407,13 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
     private void deleteNode() {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (node != null && node.getParent() != null) {
+            // guard: do not delete root
+            if (node.getUserObject() != null && "Empty_Root".equals(node.getUserObject().toString())) {
+                return;
+            }
+            if (!confirmDeletion(node)) {
+                return;
+            }
             DefaultMutableTreeNode sibling = getSibling(node);
             if (sibling != null) {
                 String id = ((NamedItem) sibling.getUserObject()).getId();
@@ -419,6 +426,106 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
             }
             treeModel.removeNodeFromParent(node);
         }
+    }
+
+    private boolean confirmDeletion(DefaultMutableTreeNode node) {
+        boolean isFolder = isFolderNode(node);
+        if (isFolder) {
+            SessionFolder folder = extractFolder(node);
+            return confirmFolderByName(folder);
+        }
+
+        String msgKey = "confirm_delete_session";
+        int res = JOptionPane.showConfirmDialog(this,
+                App.getCONTEXT().getBundle().getString(msgKey),
+                App.getCONTEXT().getBundle().getString("delete"),
+                JOptionPane.YES_NO_OPTION);
+        return res == JOptionPane.YES_OPTION;
+    }
+
+    private boolean isFolderNode(DefaultMutableTreeNode node) {
+        Object obj = node.getUserObject();
+        if (obj instanceof SessionFolder) return true;
+        // fallback: any node that allows children but is not a SessionInfo is treated as folder
+        if (node.getAllowsChildren() && !(obj instanceof SessionInfo)) return true;
+        return false;
+    }
+
+    private SessionFolder extractFolder(DefaultMutableTreeNode node) {
+        Object obj = node.getUserObject();
+        if (obj instanceof SessionFolder) {
+            return (SessionFolder) obj;
+        }
+        // fabricate minimal folder info for prompt
+        SessionFolder folder = new SessionFolder();
+        folder.setName(obj == null ? "" : obj.toString());
+        return folder;
+    }
+
+    private boolean confirmFolderByName(SessionFolder folder) {
+        String expected = folder.getName();
+        String prompt = String.format(App.getCONTEXT().getBundle().getString("confirm_delete_folder_name"), expected);
+
+        JPanel panel = new JPanel(new BorderLayout(0, scale(8)));
+        panel.add(new JLabel(prompt), BorderLayout.NORTH);
+        JTextField input = new JTextField();
+        panel.add(input, BorderLayout.CENTER);
+
+        JButton ok = new JButton(App.getCONTEXT().getBundle().getString("ok"));
+        JButton cancel = new JButton(App.getCONTEXT().getBundle().getString("cancel"));
+        ok.setEnabled(false);
+
+        final boolean[] confirmed = {false};
+
+        ActionListener closeOk = e -> {
+            confirmed[0] = true;
+            SwingUtilities.getWindowAncestor(panel).dispose();
+        };
+        ActionListener closeCancel = e -> {
+            confirmed[0] = false;
+            SwingUtilities.getWindowAncestor(panel).dispose();
+        };
+        ok.addActionListener(closeOk);
+        cancel.addActionListener(closeCancel);
+
+        input.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+            private void update() {
+                ok.setEnabled(expected.equals(input.getText().trim()));
+            }
+            public void insertUpdate(javax.swing.event.DocumentEvent e) { update(); }
+            public void removeUpdate(javax.swing.event.DocumentEvent e) { update(); }
+            public void changedUpdate(javax.swing.event.DocumentEvent e) { update(); }
+        });
+
+        input.addActionListener(closeOk);
+
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, scale(8), 0));
+        buttons.add(cancel);
+        buttons.add(ok);
+
+        JPanel container = new JPanel(new BorderLayout(0, scale(10)));
+        container.setBorder(BorderFactory.createEmptyBorder(scale(10), scale(10), scale(10), scale(10)));
+        container.add(panel, BorderLayout.CENTER);
+        container.add(buttons, BorderLayout.SOUTH);
+
+        JDialog dialog = new JDialog(this, App.getCONTEXT().getBundle().getString("delete"), true);
+        dialog.getContentPane().add(container);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+
+        return confirmed[0];
+    }
+
+    private int countSites(DefaultMutableTreeNode node) {
+        int count = 0;
+        for (int i = 0; i < node.getChildCount(); i++) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) node.getChildAt(i);
+            Object uo = child.getUserObject();
+            if (uo instanceof SessionInfo) count++;
+            if (uo instanceof SessionFolder) count += countSites(child);
+        }
+        return count;
     }
 
     private static DefaultMutableTreeNode getSibling(DefaultMutableTreeNode node) {
