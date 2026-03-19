@@ -26,6 +26,8 @@ public class KubeContextSelectorPanel extends JPanel {
     @Getter
     private boolean commandWorking = false;
 
+    private static final int MAX_LENGTH_TEXT = 16;
+
     @Getter
     private String currentContext = "";
 
@@ -79,7 +81,7 @@ public class KubeContextSelectorPanel extends JPanel {
                     String contextName = isCurrent ? parts[1] : parts[0];
                     actualContext = isCurrent ? contextName : actualContext;
 
-                    JLabel label = createContextLabel(contextName, isCurrent);
+                    JLabel label = createItemContextLabel(contextName, isCurrent);
                     verticalBox.add(label);
                 }
             }
@@ -88,9 +90,11 @@ public class KubeContextSelectorPanel extends JPanel {
         return actualContext;
     }
 
-    private @NotNull JLabel createContextLabel(String contextName, boolean isCurrent) {
-        JLabel label = new JLabel(contextName);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+    private @NotNull JLabel createItemContextLabel(String contextName, boolean isCurrent) {
+        JLabel label = new JLabel();
+        label.setText(truncateText(contextName));
+        label.setToolTipText(contextName);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         Font baseFont = label.getFont();
         Font labelFont = baseFont.deriveFont(isCurrent ? Font.BOLD : Font.PLAIN, scale(14f));
@@ -182,5 +186,17 @@ public class KubeContextSelectorPanel extends JPanel {
             log.info("Auto-updating local K8s context: {}", context);
         }, 0, 30, TimeUnit.SECONDS);
 
+    }
+
+    private static String truncateText(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+
+        if (text.length() <= MAX_LENGTH_TEXT) {
+            return text;
+        }
+
+        return text.substring(0, MAX_LENGTH_TEXT - 3) + "...";
     }
 }
