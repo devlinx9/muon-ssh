@@ -21,6 +21,8 @@ public class AppSkinLight extends AppSkin {
         Color selectedTextColor = new Color(250, 250, 250);
         Color infoTextColor = new Color(80, 80, 80);
         Color borderColor = new Color(230, 230, 230);
+        Color readOnlyFieldBackground = new Color(236, 238, 242);
+        Color readOnlyFieldForeground = new Color(45, 45, 45);
         Color treeTextColor = new Color(150, 150, 150);
         Color scrollbarColor = new Color(200, 200, 200);
         Color scrollbarRolloverColor = new Color(230, 230, 230);
@@ -36,7 +38,8 @@ public class AppSkinLight extends AppSkin {
 
         Color buttonGradient7 = new Color(248, 248, 249);
 
-        Color disabledText = new Color(140, 140, 140);
+        Color disabledText = readOnlyFieldForeground;
+        Color disabledFieldBackground = readOnlyFieldBackground;
 
         this.defaults.put("nimbusBase", controlColor);
         this.defaults.put("nimbusSelection", selectionColor);
@@ -52,6 +55,8 @@ public class AppSkinLight extends AppSkin {
         this.defaults.put("control", controlColor);
         this.defaults.put("nimbusBorder", borderColor);
         this.defaults.put("nimbusLightBackground", controlColor);
+        this.defaults.put(READ_ONLY_FIELD_BACKGROUND, readOnlyFieldBackground);
+        this.defaults.put(READ_ONLY_FIELD_FOREGROUND, readOnlyFieldForeground);
 
         this.defaults.put("Table.alternateRowColor", controlColor);
 
@@ -93,6 +98,23 @@ public class AppSkinLight extends AppSkin {
         this.defaults.put("Label.disabledForeground", disabledText);
         this.defaults.put("CheckBox[Disabled].textForeground", disabledText);
         this.defaults.put("CheckBox.disabledText", disabledText);
+        this.defaults.put("RadioButton[Disabled].textForeground", disabledText);
+        this.defaults.put("RadioButton.disabledText", disabledText);
+        this.defaults.put("Button[Disabled].textForeground", disabledText);
+        this.defaults.put("ComboBox.disabledForeground", disabledText);
+        this.defaults.put("ComboBox.disabledBackground", disabledFieldBackground);
+        this.defaults.put("TextField.disabledText", disabledText);
+        this.defaults.put("TextField.inactiveForeground", disabledText);
+        this.defaults.put("TextField.disabledBackground", disabledFieldBackground);
+        this.defaults.put("TextField.inactiveBackground", disabledFieldBackground);
+        this.defaults.put("FormattedTextField.disabledText", disabledText);
+        this.defaults.put("FormattedTextField.inactiveForeground", disabledText);
+        this.defaults.put("FormattedTextField.disabledBackground", disabledFieldBackground);
+        this.defaults.put("FormattedTextField.inactiveBackground", disabledFieldBackground);
+        this.defaults.put("PasswordField.disabledText", disabledText);
+        this.defaults.put("PasswordField.inactiveForeground", disabledText);
+        this.defaults.put("PasswordField.disabledBackground", disabledFieldBackground);
+        this.defaults.put("PasswordField.inactiveBackground", disabledFieldBackground);
 
         createSkinnedButton(this.defaults);
         createTextFieldSkin(this.defaults);

@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
@@ -24,6 +25,7 @@ public class SessionInfoPanel extends JPanel {
 
     public static final int DEFAULT_MAX_PORT = 65535;
     private static final long serialVersionUID = 6679029920589652547L;
+    private static final String ORIG_COMBO_RENDERER = "orig.combo.renderer";
     private JTextField inpHostName;
     private JTextField inpUserName;
     private JPasswordField inpPassword;
@@ -65,6 +67,147 @@ public class SessionInfoPanel extends JPanel {
         }
     }
 
+    public void setEditable(boolean editable) {
+        applyEditability(this, editable);
+        if (panJumpHost != null) {
+            panJumpHost.setEditable(editable);
+        }
+        if (panPF != null) {
+            panPF.setEditable(editable);
+        }
+        applyReadOnlyColors(editable);
+        if (editable && info != null) {
+            applySftpOnlyState(info.isSftpOnly());
+        }
+    }
+
+    private void applyEditability(Component component, boolean editable) {
+        if (component instanceof JLabel) {
+            component.setEnabled(true);
+            return;
+        }
+
+        if (component instanceof JTextComponent) {
+            JTextComponent textComponent = (JTextComponent) component;
+            textComponent.setEnabled(true);
+            textComponent.setEditable(editable);
+            textComponent.setFocusable(editable);
+            return;
+        }
+
+        if (component instanceof JComboBox || component instanceof JSpinner || component instanceof AbstractButton
+                || component instanceof JTable || component instanceof JList || component instanceof JTree) {
+            component.setEnabled(editable);
+        }
+
+        if (component instanceof Container) {
+            Container container = (Container) component;
+            for (Component child : container.getComponents()) {
+                applyEditability(child, editable);
+            }
+        }
+    }
+
+    private void applyReadOnlyColors(boolean editable) {
+        Color readOnlyBg = App.getCONTEXT().getSkin().getReadOnlyFieldBackground();
+        Color readOnlyFg = App.getCONTEXT().getSkin().getReadOnlyFieldForeground();
+
+        for (Component c : getAllComponents(this)) {
+            boolean formControl = c instanceof JTextComponent || c instanceof JComboBox || c instanceof JSpinner || c instanceof JCheckBox || c instanceof JButton;
+            if (!formControl) continue;
+
+            boolean readOnlyText = c instanceof JTextComponent && !((JTextComponent) c).isEditable();
+            boolean disabled = !c.isEnabled();
+            if (readOnlyText || disabled) {
+                c.setBackground(readOnlyBg);
+                c.setForeground(readOnlyFg);
+                if (c instanceof JComponent) {
+                    ((JComponent) c).setOpaque(true);
+                }
+                if (c instanceof JTextComponent) {
+                    ((JTextComponent) c).setDisabledTextColor(readOnlyFg);
+                    ((JTextComponent) c).setCaretColor(readOnlyFg);
+                }
+                if (c instanceof JSpinner) {
+                    JComponent editor = ((JSpinner) c).getEditor();
+                    if (editor instanceof JSpinner.DefaultEditor) {
+                        JTextField tf = ((JSpinner.DefaultEditor) editor).getTextField();
+                        tf.setBackground(readOnlyBg);
+                        tf.setForeground(readOnlyFg);
+                        tf.setDisabledTextColor(readOnlyFg);
+                    }
+                    for (Component sc : ((JSpinner) c).getComponents()) {
+                        if (sc instanceof JButton || sc instanceof JComponent) {
+                            sc.setBackground(readOnlyBg);
+                            sc.setForeground(readOnlyFg);
+                            if (sc instanceof JComponent) {
+                                ((JComponent) sc).setOpaque(true);
+                            }
+                        }
+                    }
+                }
+                if (c instanceof JComboBox) {
+                    JComboBox<?> combo = (JComboBox<?>) c;
+                    combo.setBackground(readOnlyBg);
+                    combo.setForeground(readOnlyFg);
+                    applyComboRenderer(combo, readOnlyBg, readOnlyFg, true);
+                    ComboBoxEditor editor = combo.getEditor();
+                    if (editor != null && editor.getEditorComponent() instanceof JComponent) {
+                        JComponent ec = (JComponent) editor.getEditorComponent();
+                        ec.setBackground(readOnlyBg);
+                        ec.setForeground(readOnlyFg);
+                        ec.setOpaque(true);
+                    }
+                }
+            } else {
+                c.setBackground(null);
+                c.setForeground(null);
+                if (c instanceof JTextComponent) {
+                    ((JTextComponent) c).setDisabledTextColor(UIManager.getColor("nimbusDisabledText"));
+                }
+                if (c instanceof JComboBox) {
+                    applyComboRenderer((JComboBox<?>) c, readOnlyBg, readOnlyFg, false);
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void applyComboRenderer(JComboBox<?> combo, Color bg, Color fg, boolean readOnly) {
+        if (readOnly) {
+            if (combo.getClientProperty(ORIG_COMBO_RENDERER) == null) {
+                combo.putClientProperty(ORIG_COMBO_RENDERER, combo.getRenderer());
+            }
+            combo.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                              boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    if (index == -1 || isSelected) {
+                        label.setBackground(bg);
+                        label.setForeground(fg);
+                    }
+                    return label;
+                }
+            });
+        } else {
+            Object original = combo.getClientProperty(ORIG_COMBO_RENDERER);
+            if (original instanceof ListCellRenderer) {
+                combo.setRenderer((ListCellRenderer<? super Object>) original);
+            }
+        }
+    }
+
+    private java.util.List<Component> getAllComponents(Container c) {
+        java.util.List<Component> list = new java.util.ArrayList<>();
+        for (Component comp : c.getComponents()) {
+            list.add(comp);
+            if (comp instanceof Container) {
+                list.addAll(getAllComponents((Container) comp));
+            }
+        }
+        return list;
+    }
 
     public boolean validateFields() {
         if (inpHostName.getText().isEmpty()) {

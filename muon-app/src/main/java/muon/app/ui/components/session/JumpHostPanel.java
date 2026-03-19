@@ -19,7 +19,13 @@ import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
 public class JumpHostPanel extends JPanel {
     private final DefaultListModel<HopEntry> hopModel = new DefaultListModel<>();
     private final JList<HopEntry> hopList = new JList<>(hopModel);
+    private final JButton btnAdd;
+    private final JButton btnDel;
+    private final JButton btnEdit;
+    private final JButton btnUp;
+    private final JButton btnDown;
     private SessionInfo info;
+    private boolean editable = true;
 
     public JumpHostPanel() {
         super(new BorderLayout(5, 5));
@@ -29,18 +35,19 @@ public class JumpHostPanel extends JPanel {
         JScrollPane scrollPane = new SkinnedScrollPane(hopList);
 
         Box b1 = Box.createVerticalBox();
-        JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
+        btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
         btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
-        JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
+        btnDel = new JButton(FontAwesomeContants.FA_MINUS);
         btnDel.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
-        JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
+        btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
         btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
-        JButton btnUp = new JButton(FontAwesomeContants.FA_ARROW_UP);
+        btnUp = new JButton(FontAwesomeContants.FA_ARROW_UP);
         btnUp.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
-        JButton btnDown = new JButton(FontAwesomeContants.FA_ARROW_DOWN);
+        btnDown = new JButton(FontAwesomeContants.FA_ARROW_DOWN);
         btnDown.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
 
         btnAdd.addActionListener(e -> {
+            if (!editable) return;
             HopEntry ent = addOrEditEntry(null);
             if (ent != null) {
                 hopModel.addElement(ent);
@@ -49,6 +56,7 @@ public class JumpHostPanel extends JPanel {
         });
 
         btnEdit.addActionListener(e -> {
+            if (!editable) return;
             int index = hopList.getSelectedIndex();
             if (index != -1) {
                 HopEntry ent = hopModel.get(index);
@@ -62,6 +70,7 @@ public class JumpHostPanel extends JPanel {
         });
 
         btnDel.addActionListener(e -> {
+            if (!editable) return;
             int index = hopList.getSelectedIndex();
             if (index != -1) {
                 hopModel.remove(index);
@@ -70,6 +79,7 @@ public class JumpHostPanel extends JPanel {
         });
 
         btnUp.addActionListener(e -> {
+            if (!editable) return;
             int index = hopList.getSelectedIndex();
             if (index > 0) {
                 HopEntry ent = hopModel.remove(index);
@@ -79,6 +89,7 @@ public class JumpHostPanel extends JPanel {
         });
 
         btnDown.addActionListener(e -> {
+            if (!editable) return;
             int index = hopList.getSelectedIndex();
             if (index < hopModel.size() - 1) {
                 HopEntry ent = hopModel.remove(index);
@@ -105,6 +116,16 @@ public class JumpHostPanel extends JPanel {
         this.add(lblTitle, BorderLayout.NORTH);
         this.add(scrollPane);
         this.add(b1, BorderLayout.EAST);
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+        hopList.setEnabled(editable);
+        btnAdd.setEnabled(editable);
+        btnEdit.setEnabled(editable);
+        btnDel.setEnabled(editable);
+        btnUp.setEnabled(editable);
+        btnDown.setEnabled(editable);
     }
 
     private List<HopEntry> getJumpHosts() {
