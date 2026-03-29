@@ -106,6 +106,11 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     }
 
     @Override
+    public boolean forceActionOnMouseReporting() {
+        return App.getGlobalSettings().isPuttyLikeCopyPaste();
+    }
+
+    @Override
     public boolean copyOnSelect() {
         return App.getGlobalSettings().isPuttyLikeCopyPaste();
     }
