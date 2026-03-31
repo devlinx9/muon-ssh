@@ -9,6 +9,7 @@ import muon.app.util.PathUtils;
 import muon.app.util.enums.FileType;
 import net.schmizz.sshj.sftp.*;
 import net.schmizz.sshj.sftp.FileMode.Type;
+import net.schmizz.sshj.transport.TransportException;
 import net.schmizz.sshj.xfer.FilePermission;
 
 import java.io.*;
@@ -179,6 +180,14 @@ public class SshFileSystem implements FileSystem {
                 if (e.getStatusCode() == Response.StatusCode.PERMISSION_DENIED) {
                     throw new AccessDeniedException(path);
                 }
+            } catch (TransportException e) {
+                log.error("SSH connection failed with: " + e.getMessage());
+                if (ssh.isConnected()) {
+                    ssh.disconnect();
+                    ssh.getSession().disconnect();
+                    sftp = null;
+                }
+                throw new IOException(e);
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 throw new IOException(e);

@@ -10,20 +10,24 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
-import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.FormatUtils.humanReadableByteCount;
 import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.scale;
 
 @Slf4j
 public class BackgroundTransferPanel extends JPanel {
     private final Box verticalBox;
     private final AtomicInteger transferCount = new AtomicInteger(0);
     private final Consumer<Integer> callback;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
 
     /**
      * @param callback callback for notifying number of active transfers
@@ -138,14 +142,15 @@ public class BackgroundTransferPanel extends JPanel {
         public void init(long totalSize, long files, FileTransfer fileTransfer) {
             SwingUtilities.invokeLater(() -> {
                 progressLabel.setText(
-                        String.format("<html>Copying %s to %s (%s Mb)<br>File: %s</html>",
-                                fileTransfer.getSourceName(),
-                                fileTransfer.getTargetName(),
-                                fileTransfer.getTotalSize() / 1024 / 1024,
-                                FormatUtils.limitTextOutput(fileTransfer.getCurrentSourceFilePath(),40)));
+                        String.format("<html>%s: %s to %s (%s)<br>File: %s</html>",
+                                      formatter.format(fileTransfer.getStartTransactionDate()),
+                                      fileTransfer.getSourceFs().getName(),
+                                      fileTransfer.getTargetName(),
+                                      humanReadableByteCount(totalSize, false),
+                                      FormatUtils.limitTextOutput(fileTransfer.getCurrentSourceFilePath(), 40)));
                 progressLabel.setToolTipText(String.format("%s to %s",
-                        fileTransfer.getCurrentSourceFilePath(),
-                        fileTransfer.getCurrentTargetFilePath()));
+                                                           fileTransfer.getCurrentSourceFilePath(),
+                                                           fileTransfer.getCurrentTargetFilePath()));
                 progressBar.setValue(0);
             });
         }
@@ -154,15 +159,20 @@ public class BackgroundTransferPanel extends JPanel {
         public void progress(long processedBytes, long totalBytes, long processedCount, long totalCount,
                              FileTransfer fileTransfer) {
             SwingUtilities.invokeLater(() -> {
+                String fileName = "";
+                if (fileTransfer.getCurrentSourceFilePath() == null && fileTransfer.getFiles().length > 0) {
+                    fileName = fileTransfer.getFiles()[0].getName();
+                }
                 progressLabel.setText(
-                        String.format("<html>Copying %s to %s (%s Mb)<br>File: %s</html>",
-                                fileTransfer.getSourceName(),
-                                fileTransfer.getTargetName(),
-                                fileTransfer.getTotalSize() / 1024 / 1024,
-                                FormatUtils.limitTextOutput(fileTransfer.getCurrentSourceFilePath(),40)));
+                        String.format("<html>%s: %s to %s (%s)<br>File: %s</html>",
+                                      formatter.format(fileTransfer.getStartTransactionDate()),
+                                      fileTransfer.getSourceName(),
+                                      fileTransfer.getTargetName(),
+                                      humanReadableByteCount(totalBytes, false),
+                                      FormatUtils.limitTextOutput(fileName, 40)));
                 progressLabel.setToolTipText(String.format("%s to %s",
-                        fileTransfer.getCurrentSourceFilePath(),
-                        fileTransfer.getCurrentTargetFilePath()));
+                                                           fileTransfer.getCurrentSourceFilePath(),
+                                                           fileTransfer.getCurrentTargetFilePath()));
                 progressBar.setValue(totalBytes > 0 ? ((int) ((processedBytes * 100) / totalBytes)) : 0);
             });
         }
@@ -171,14 +181,22 @@ public class BackgroundTransferPanel extends JPanel {
         public void error(String cause, FileTransfer fileTransfer) {
             transferCount.decrementAndGet();
             callback.accept(transferCount.get());
+
             SwingUtilities.invokeLater(() -> {
+                String fileName = "";
+                if (fileTransfer.getCurrentSourceFilePath() == null && fileTransfer.getFiles().length > 0) {
+                    fileName = fileTransfer.getFiles()[0].getName();
+                }
+
                 progressLabel.setText(
-                        String.format("<html>Error %s to %s<br>File (%s): %s</html>",
-                                fileTransfer.getSourceName(),
-                                fileTransfer.getTargetName(),
-                                FormatUtils.limitTextOutput(cause, 15),
-                                FormatUtils.limitTextOutput(fileTransfer.getCurrentSourceFilePath(), 25)));
-                progressLabel.setToolTipText(fileTransfer.getCurrentSourceFilePath().concat(": ").concat(cause));
+                        String.format("<html>%s: Error %s to %s<br>File (%s): %s</html>",
+                                      formatter.format(fileTransfer.getStartTransactionDate()),
+                                      fileTransfer.getSourceName(),
+                                      fileTransfer.getTargetName(),
+                                      FormatUtils.limitTextOutput(fileName, 15),
+                                      FormatUtils.limitTextOutput(cause, 25)));
+                progressLabel.setToolTipText(fileName.concat(": ").concat(cause));
+                removeLabel.setText(FontAwesomeContants.FA_EXCLAMATION_TRIANGLE);
             });
         }
 
@@ -196,11 +214,12 @@ public class BackgroundTransferPanel extends JPanel {
             log.info(status);
 
             progressLabel.setText(
-                    String.format("<html>Copying %s to %s (%s Mb)<br>%s</html>",
-                            fileTransfer.getSourceName(),
-                            fileTransfer.getTargetName(),
-                            fileTransfer.getTotalSize() / 1024 / 1024,
-                            status));
+                    String.format("<html>%s: %s to %s (%s)<br>%s</html>",
+                                  formatter.format(fileTransfer.getStartTransactionDate()),
+                                  fileTransfer.getSourceName(),
+                                  fileTransfer.getTargetName(),
+                                  humanReadableByteCount(fileTransfer.getTotalSize(), false),
+                                  status));
             progressLabel.setToolTipText(status);
 
             this.fileTransfer.getSession().fileBrowser.reloadView();

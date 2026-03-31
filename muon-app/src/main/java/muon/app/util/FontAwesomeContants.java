@@ -78,4 +78,5 @@ public class FontAwesomeContants {
     public static final String FA_APPLE = "\uf179";
     public static final String FA_CERTIFICATE = "\uf0a3";
     public static final String FA_VCARD = "\uf2bb";
+    public static final String FA_EXCLAMATION_TRIANGLE = "\uf06a";
 }

@@ -173,6 +173,7 @@ public class SSHHandler implements Closeable {
 
     private void connect(Deque<HopEntry> hopStack) throws IOException, OperationCancelledException {
         try {
+            closed.set(false);
             this.sessionContentPanel.disableUi();
             initializeSSHClient();
             if (hopStack.isEmpty()) {

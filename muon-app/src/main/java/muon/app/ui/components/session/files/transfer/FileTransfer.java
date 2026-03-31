@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +34,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class FileTransfer implements Runnable, AutoCloseable {
     // -> skip
     private static final int BUF_SIZE = Short.MAX_VALUE;
+    @Getter
+    private LocalDateTime startTransactionDate = LocalDateTime.now();
     @Getter
     private final FileSystem sourceFs;
     @Getter
@@ -82,6 +85,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
         List<FileInfoHolder> fileList = new ArrayList<>();
         List<FileInfo> list = targetFs.list(targetFolder);
         List<FileInfo> dupList = new ArrayList<>();
+        startTransactionDate = LocalDateTime.now();
 
         if (this.conflictAction == ConflictAction.PROMPT) {
             this.conflictAction = checkForConflict(dupList);
@@ -153,9 +157,9 @@ public class FileTransfer implements Runnable, AutoCloseable {
                     }
 
                     if (!App.getGlobalSettings().isPromptForSudo() ||
-                            JOptionPane.showConfirmDialog(null,
-                                    App.getCONTEXT().getBundle().getString("permission_denied_file"),
-                                    App.getCONTEXT().getBundle().getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                        JOptionPane.showConfirmDialog(null,
+                                                      App.getCONTEXT().getBundle().getString("permission_denied_file"),
+                                                      App.getCONTEXT().getBundle().getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
                         if (!App.getGlobalSettings().isTransferTemporaryDirectory()) {
                             targetFs.mkdir(tmpDir);
@@ -182,7 +186,13 @@ public class FileTransfer implements Runnable, AutoCloseable {
                 callback.done(this);
                 return;
             }
-            callback.error(e.getMessage(), this);
+            String errorSession = e.getMessage();
+
+            if (e instanceof muon.app.ssh.OperationCancelledException) {
+                errorSession = "Connection error with the server";
+            }
+
+            callback.error(errorSession, this);
         }
     }
 
@@ -213,7 +223,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
                                        InputTransferChannel inc, OutputTransferChannel outc) throws Exception {
 
         String outPath = PathUtils.combine(targetDirectory, proposedName == null ? file.getName() : proposedName,
-                outc.getSeparator());
+                                           outc.getSeparator());
         String inPath = file.getPath();
         log.info("Copying -- {} to {}", inPath, outPath);
         currentSourceFilePath = inPath;
@@ -225,7 +235,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
             int bufferCapacity = BUF_SIZE;
             if (in instanceof SSHRemoteFileInputStream && out instanceof SSHRemoteFileOutputStream) {
                 bufferCapacity = Math.min(((SSHRemoteFileInputStream) in).getBufferCapacity(),
-                        ((SSHRemoteFileOutputStream) out).getBufferCapacity());
+                                          ((SSHRemoteFileOutputStream) out).getBufferCapacity());
             } else if (in instanceof SSHRemoteFileInputStream) {
                 bufferCapacity = ((SSHRemoteFileInputStream) in).getBufferCapacity();
             } else if (out instanceof SSHRemoteFileOutputStream) {
@@ -275,8 +285,8 @@ public class FileTransfer implements Runnable, AutoCloseable {
             JComboBox<ConflictAction> cmbs = SessionExportImport.getUserConflictAction();
 
             if (OptionPaneUtils.showOptionDialog(null,
-                    new Object[]{App.getCONTEXT().getBundle().getString("some_file_exists_action_required"), cmbs},
-                    App.getCONTEXT().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
+                                                 new Object[]{App.getCONTEXT().getBundle().getString("some_file_exists_action_required"), cmbs},
+                                                 App.getCONTEXT().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
                 action = (ConflictAction) cmbs.getSelectedItem();
             }
         }
