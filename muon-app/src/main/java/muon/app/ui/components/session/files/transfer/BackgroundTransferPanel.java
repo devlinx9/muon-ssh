@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.util.FontAwesomeContants;
 import muon.app.util.FormatUtils;
+import muon.app.util.PathUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -159,10 +160,7 @@ public class BackgroundTransferPanel extends JPanel {
         public void progress(long processedBytes, long totalBytes, long processedCount, long totalCount,
                              FileTransfer fileTransfer) {
             SwingUtilities.invokeLater(() -> {
-                String fileName = "";
-                if (fileTransfer.getCurrentSourceFilePath() == null && fileTransfer.getFiles().length > 0) {
-                    fileName = fileTransfer.getFiles()[0].getName();
-                }
+                String fileName = getFileName(fileTransfer);
                 progressLabel.setText(
                         String.format("<html>%s: %s to %s (%s)<br>File: %s</html>",
                                       formatter.format(fileTransfer.getStartTransactionDate()),
@@ -183,10 +181,7 @@ public class BackgroundTransferPanel extends JPanel {
             callback.accept(transferCount.get());
 
             SwingUtilities.invokeLater(() -> {
-                String fileName = "";
-                if (fileTransfer.getCurrentSourceFilePath() == null && fileTransfer.getFiles().length > 0) {
-                    fileName = fileTransfer.getFiles()[0].getName();
-                }
+                String fileName = getFileName(fileTransfer);
 
                 progressLabel.setText(
                         String.format("<html>%s: Error %s to %s<br>File (%s): %s</html>",
@@ -224,5 +219,17 @@ public class BackgroundTransferPanel extends JPanel {
 
             this.fileTransfer.getSession().fileBrowser.reloadView();
         }
+    }
+
+    private static String getFileName(FileTransfer fileTransfer) {
+        String fileName = "";
+        if (fileTransfer.getCurrentSourceFilePath() == null) {
+            if(fileTransfer.getFiles().length > 0){
+                fileName = fileTransfer.getFiles()[0].getName();
+            }
+        } else {
+            fileName = PathUtils.getFileName(fileTransfer.getCurrentSourceFilePath());
+        }
+        return fileName;
     }
 }
