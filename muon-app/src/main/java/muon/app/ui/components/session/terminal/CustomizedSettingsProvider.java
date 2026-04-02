@@ -123,6 +123,13 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     }
 
     @Override
+    public Font getTerminalEmojiFont() {
+        log.debug("Called terminal emoji font: {}", App.getGlobalSettings().getTerminalEmojiFontName());
+        return FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalEmojiFontName()).deriveFont(Font.PLAIN,
+                                                                                                    scale(App.getGlobalSettings().getTerminalFontSize()));
+    }
+
+    @Override
     public float getTerminalFontSize() {
         return scale(App.getGlobalSettings().getTerminalFontSize());
     }
