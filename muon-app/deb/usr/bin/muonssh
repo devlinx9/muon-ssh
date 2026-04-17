@@ -44,8 +44,8 @@ pick_java() {
   if [ -n "${JAVA_HOME:-}" ] && [ -x "${JAVA_HOME}/bin/java" ]; then
     echo "${JAVA_HOME}/bin/java"; return
   fi
-  if [ -x "/usr/lib/jvm/java-11-openjdk-amd64/bin/java" ]; then
-    echo "/usr/lib/jvm/java-11-openjdk-amd64/bin/java"; return
+  if [ -x "/usr/lib/jvm/java-17-openjdk-amd64/bin/java" ]; then
+    echo "/usr/lib/jvm/java-17-openjdk-amd64/bin/java"; return
   fi
   if command -v java >/dev/null 2>&1; then
     command -v java; return

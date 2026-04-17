@@ -3,7 +3,7 @@ Version: [[version]]
 Section: base
 Priority: optional
 Architecture: all
-Depends: openjdk-11-jre
+Depends: openjdk-17-jre
 Maintainer: Devlinx9 <devlinx9@github.com>
 Description: Muon is a modern graphical SSH client
  Muon is a modern graphical SSH client which provides
