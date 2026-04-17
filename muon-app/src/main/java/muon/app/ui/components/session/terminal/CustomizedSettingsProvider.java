@@ -13,7 +13,11 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
+import static muon.app.util.FontUtils.TERMINAL_FONTS_EMOJI_FALLBACK;
 import static muon.app.util.ScalingUtil.scale;
 
 /**
@@ -73,25 +77,25 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     @Override
     public @NotNull TextStyle getDefaultStyle() {
         return new TextStyle(getTerminalColor(App.getGlobalSettings().getDefaultColorFg()),
-                getTerminalColor(App.getGlobalSettings().getDefaultColorBg()));
+                             getTerminalColor(App.getGlobalSettings().getDefaultColorBg()));
     }
 
     @Override
     public @NotNull TextStyle getFoundPatternColor() {
         return new TextStyle(getTerminalColor(App.getGlobalSettings().getDefaultFoundFg()),
-                getTerminalColor(App.getGlobalSettings().getDefaultFoundBg()));
+                             getTerminalColor(App.getGlobalSettings().getDefaultFoundBg()));
     }
 
     @Override
     public @NotNull TextStyle getSelectionColor() {
         return new TextStyle(getTerminalColor(App.getGlobalSettings().getDefaultSelectionFg()),
-                getTerminalColor(App.getGlobalSettings().getDefaultSelectionBg()));
+                             getTerminalColor(App.getGlobalSettings().getDefaultSelectionBg()));
     }
 
     @Override
     public TextStyle getHyperlinkColor() {
         return new TextStyle(getTerminalColor(App.getGlobalSettings().getDefaultHrefFg()),
-                getTerminalColor(App.getGlobalSettings().getDefaultHrefBg()));
+                             getTerminalColor(App.getGlobalSettings().getDefaultHrefBg()));
 
     }
 
@@ -119,14 +123,19 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     public Font getTerminalFont() {
         log.debug("Called terminal font: {}", App.getGlobalSettings().getTerminalFontName());
         return FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalFontName()).deriveFont(Font.PLAIN,
-                scale(App.getGlobalSettings().getTerminalFontSize()));
+                                                                                                    scale(App.getGlobalSettings().getTerminalFontSize()));
     }
 
     @Override
-    public Font getTerminalEmojiFont() {
-        log.debug("Called terminal emoji font: {}", App.getGlobalSettings().getTerminalEmojiFontName());
-        return FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalEmojiFontName()).deriveFont(Font.PLAIN,
-                                                                                                    scale(App.getGlobalSettings().getTerminalFontSize()));
+    public Set<Font> getTerminalEmojiFonts() {
+        var fonts = new HashSet<Font>();
+        for (var terminalFont : TERMINAL_FONTS_EMOJI_FALLBACK.entrySet()) {
+            log.debug("Called terminal emoji font: {}", terminalFont.getValue());
+
+            var font = Objects.requireNonNull(FontUtils.loadTerminalFont(terminalFont.getKey())).deriveFont(Font.PLAIN, scale(App.getGlobalSettings().getTerminalFontSize()));
+            fonts.add(font);
+        }
+        return fonts;
     }
 
     @Override
@@ -165,7 +174,7 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
 
     private KeyStroke getKeyStroke(String key) {
         return KeyStroke.getKeyStroke(App.getGlobalSettings().getKeyCodeMap().get(key),
-                App.getGlobalSettings().getKeyModifierMap().get(key));
+                                      App.getGlobalSettings().getKeyModifierMap().get(key));
     }
 
 }

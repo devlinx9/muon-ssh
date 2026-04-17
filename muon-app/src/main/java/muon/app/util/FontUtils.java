@@ -30,6 +30,10 @@ public class FontUtils {
             entry("SourceCodePro-Regular", "Source Code Pro Regular"),
             entry("NotoMono-Regular", "Noto Mono"));
 
+    public static final Map<String, String> TERMINAL_FONTS_EMOJI_FALLBACK = Map.ofEntries(
+            entry("NotoEmoji-Regular", "Noto Emoji Regular"),
+            entry("UnifontExMono", "Unifont Ex Mono"));
+
     public static Font loadFonts() {
         String fontPath = "/fonts/Helvetica.ttf";
         if (App.getGlobalSettings().getLanguage().equals(Language.CHINESE)) {

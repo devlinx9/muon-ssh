@@ -60,7 +60,6 @@ public class Settings {
     private int termHeight = 24;
     private boolean terminalBell = false;
     private String terminalFontName = "FiraCode-Regular";
-    private String terminalEmojiFontName = "NotoEmoji-Regular";
     private int terminalFontSize = 14;
     private Language language = Language.ENGLISH;
     private String terminalTheme = "Dark";
