@@ -22,6 +22,7 @@ import net.schmizz.sshj.connection.channel.forwarded.SocketForwardingConnectList
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.transport.Transport;
 import net.schmizz.sshj.transport.compression.DelayedZlibCompression;
+import net.schmizz.sshj.transport.compression.NoneCompression;
 import net.schmizz.sshj.transport.compression.ZlibCompression;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import net.schmizz.sshj.userauth.method.AuthKeyboardInteractive;
@@ -181,6 +182,7 @@ public class SSHHandler implements Closeable {
                 this.sshj.addHostKeyVerifier(App.getCONTEXT().getHostKeyVerifier());
                 this.sshj.getTransport().getConfig().setCompressionFactories(
                         Arrays.asList(
+                                new NoneCompression.Factory(),
                                 new DelayedZlibCompression.Factory(),
                                 new ZlibCompression.Factory()));
                 sshj.connect(info.getHost(), info.getPort());
