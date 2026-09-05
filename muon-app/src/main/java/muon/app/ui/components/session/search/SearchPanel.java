@@ -20,6 +20,7 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -66,7 +67,7 @@ public class SearchPanel extends Page {
     private JButton btnShowInBrowser;
     private JButton btnCopyPath;
 
-    
+
     public SearchPanel(SessionContentPanel holder) {
         this.holder = holder;
     }
@@ -151,7 +152,7 @@ public class SearchPanel extends Page {
 
             if (!d1.before(d2)) {
                 JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_date_range")
-                        );
+                                             );
                 return;
             }
 
@@ -211,7 +212,7 @@ public class SearchPanel extends Page {
             StringBuilder output = new StringBuilder();
 
             if (holder.getRemoteSessionInstance().exec(findCmd, stopFlag,
-                    output) != 0) {
+                                                       output) != 0) {
                 log.info("Error in search");
             }
 
@@ -268,8 +269,8 @@ public class SearchPanel extends Page {
                     break;
             }
 
-            return new SearchResult(PathUtils.getFileName(path), path,
-                    fileType);
+            return new SearchResult(Path.of(path).getFileName().toString(), path,
+                                    fileType);
         }
 
         return null;
@@ -335,7 +336,7 @@ public class SearchPanel extends Page {
         txtSize = new SkinnedTextField();
         txtSize.setAlignmentX(LEFT_ALIGNMENT);
         Dimension txtSizeD = scale(new Dimension(60,
-                txtSize.getPreferredSize().height));
+                                                 txtSize.getPreferredSize().height));
         txtSize.setPreferredSize(txtSizeD);
         txtSize.setMaximumSize(txtSizeD);
 
@@ -592,10 +593,9 @@ public class SearchPanel extends Page {
         bActions.add(btnCopyPath);
 
         JScrollPane jspB1 = new JScrollPane(b1,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                                            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                                            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         jspB1.setBorder(null);
-
 
 
         JPanel p = new JPanel(new BorderLayout(1, 1));

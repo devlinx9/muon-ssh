@@ -167,7 +167,7 @@ public class SshKeyManager {
     private static String getPubKeyPath(SessionInfo info) {
         if (info.getPrivateKeyFile() != null && !info.getPrivateKeyFile().isEmpty()) {
             String path = PathUtils.combine(PathUtils.getParent(info.getPrivateKeyFile()),
-                                            PathUtils.getFileName(info.getPrivateKeyFile()) + ".pub", File.separator);
+                                            Path.of(info.getPrivateKeyFile()).getFileName().toString() + ".pub", File.separator);
             if (new File(path).exists()) {
                 return path;
             }

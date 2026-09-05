@@ -10,9 +10,9 @@ import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.util.FontAwesomeContants;
 import muon.app.util.OptionPaneUtils;
-import muon.app.util.PathUtils;
 
 import javax.swing.*;
+import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,7 +26,7 @@ public class LogViewer extends Page {
     private final SessionContentPanel sessionContent;
     private final Set<String> openLogs = new LinkedHashSet<>();
 
-    
+
     public LogViewer(SessionContentPanel sessionContent) {
         this.sessionContent = sessionContent;
         startPage = new StartPage(this::openLog, sessionContent.getInfo().getId());
@@ -77,7 +77,7 @@ public class LogViewer extends Page {
                                                startPage, e -> openLogs.remove(remotePath));
         TabTitle title = new TabTitle();
         tabs.addTab(title, logContent);
-        title.getCallback().accept(PathUtils.getFileName(remotePath));
+        title.getCallback().accept(Path.of(remotePath).getFileName().toString());
         openLogs.add(remotePath);
     }
 

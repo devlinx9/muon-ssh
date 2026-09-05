@@ -14,6 +14,7 @@ import net.schmizz.sshj.xfer.FilePermission;
 
 import java.io.*;
 import java.nio.file.AccessDeniedException;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -235,9 +236,9 @@ public class SshFileSystem implements FileSystem {
             try {
                 FileAttributes attrs = sftp.stat(path);
                 if (attrs.getType() == Type.SYMLINK) {
-                    return resolveSymlink(PathUtils.getFileName(path), path, attrs, null);
+                    return resolveSymlink(Path.of(path).getFileName().toString(), path, attrs, null);
                 } else {
-                    String name = PathUtils.getFileName(path);
+                    String name = Path.of(path).getFileName().toString();
                     return new FileInfo(name, path, attrs.getSize(),
                                         attrs.getType() == Type.DIRECTORY ? FileType.DIRECTORY : FileType.FILE,
                                         attrs.getMtime() * 1000, FilePermission.toMask(attrs.getPermissions()), PROTO_SFTP,
@@ -374,7 +375,7 @@ public class SshFileSystem implements FileSystem {
             ensureConnected();
             long size = 0;
             log.info("get files: {}", dir);
-            String parentFolder = PathUtils.combine(baseDir, PathUtils.getFileName(dir), File.separator);
+            String parentFolder = PathUtils.combine(baseDir, Path.of(dir).getFileName().toString(), File.separator);
 
             folderMap.put(dir, parentFolder);
 

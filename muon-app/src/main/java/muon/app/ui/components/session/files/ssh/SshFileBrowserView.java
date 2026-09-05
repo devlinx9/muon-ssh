@@ -21,6 +21,7 @@ import muon.app.util.enums.TransferAction;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -104,7 +105,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
             SwingUtilities.invokeLater(() -> {
                 addressBar.setText(path);
                 folderView.setItems(list2);
-                tabTitle.getCallback().accept(PathUtils.getFileName(path));
+                tabTitle.getCallback().accept(Path.of(path).getFileName().toString());
                 int tc = list2.size();
                 String text = String.format("Total %d remote file(s)", tc);
                 fileBrowser.updateRemoteStatus(text);
@@ -168,8 +169,15 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
         FileInfo fileInfo = folderView.getSelectedFiles()[0];
         try {
+            if (App.getGlobalSettings().isUseLocalEditor()){
+                App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
+                                                              fileBrowser.getActiveSessionId(), false, "muon-editor", fileBrowser.getHolder());
+                return;
+
+            }
+
             App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                                                          fileBrowser.getActiveSessionId(), false, null);
+                                                          fileBrowser.getActiveSessionId(), false, null, null);
         } catch (IOException e1) {
             log.error(e1.getMessage(), e1);
         }

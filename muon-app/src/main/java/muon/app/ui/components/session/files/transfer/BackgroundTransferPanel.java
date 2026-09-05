@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -228,7 +229,7 @@ public class BackgroundTransferPanel extends JPanel {
                 fileName = fileTransfer.getFiles()[0].getName();
             }
         } else {
-            fileName = PathUtils.getFileName(fileTransfer.getCurrentSourceFilePath());
+            fileName = Path.of(fileTransfer.getCurrentSourceFilePath()).getFileName().toString();
         }
         return fileName;
     }

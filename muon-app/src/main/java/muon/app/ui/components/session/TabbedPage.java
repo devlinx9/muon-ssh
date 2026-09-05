@@ -71,7 +71,7 @@ public class TabbedPage extends JPanel {
         lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont(12.0f));
 
         this.add(lblIcon);
-        if (!App.getCONTEXT().getSettings().isUseCompactView()) {
+        if (App.getCONTEXT().getSettings().isUseCompactView()) {
             lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont(16.0f));
         } else {
             this.add(lblText, BorderLayout.SOUTH);

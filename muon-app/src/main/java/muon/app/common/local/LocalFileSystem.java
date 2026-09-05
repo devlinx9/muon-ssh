@@ -147,7 +147,7 @@ public class LocalFileSystem implements FileSystem {
             throws Exception {
         long size = 0;
         log.info("get files: {}", dir);
-        String parentFolder = PathUtils.combineUnix(baseDir, PathUtils.getFileName(dir));
+        String parentFolder = PathUtils.combineUnix(baseDir, Path.of(dir).getFileName().toString());
 
         folderMap.put(dir, parentFolder);
 

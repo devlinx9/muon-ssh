@@ -30,6 +30,7 @@ public class Settings {
     private TransferMode fileTransferMode = TransferMode.BACKGROUND;
     private ConflictAction conflictAction = ConflictAction.AUTORENAME;
     private boolean confirmBeforeDelete = true;
+    private boolean useLocalEditor = false;
     private boolean enabledK8sContextPlugin = false;
     private boolean startMaximized = true;
     private boolean rememberLastSizeAndPosition = false;

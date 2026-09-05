@@ -193,6 +193,10 @@ public class FolderView extends JPanel {
                     listener.render(str, App.getGlobalSettings().isDirectoryCache());
                 }
 
+                if (files.length == 1) {
+                    listener.openApp(files[0]);
+                }
+
             }
         });
 

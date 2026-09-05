@@ -7,7 +7,6 @@ import muon.app.ui.components.session.files.AbstractFileBrowserView;
 import muon.app.ui.components.session.files.FileBrowser;
 import muon.app.ui.components.session.files.local.LocalFileBrowserView;
 import muon.app.ui.components.session.files.ssh.SshFileBrowserView;
-import muon.app.util.PathUtils;
 import muon.app.util.PlatformUtils;
 
 import javax.swing.*;
@@ -15,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
 
 import static muon.app.util.PlatformUtils.getStringForOpenInFileBrowser;
 
@@ -89,7 +89,7 @@ public class OverflowMenuHandler {
         this.favouriteLocations.removeAll();
         String id = fileBrowserView instanceof LocalFileBrowserView ? null : fileBrowser.getInfo().getId();
         for (String path : BookmarkManager.getBookmarks(id)) {
-            JMenuItem item = new JMenuItem(PathUtils.getFileName(path));
+            JMenuItem item = new JMenuItem(Path.of(path).getFileName().toString());
             item.setName(path);
             this.favouriteLocations.add(item);
             item.addActionListener(e -> fileBrowserView.render(item.getName()));

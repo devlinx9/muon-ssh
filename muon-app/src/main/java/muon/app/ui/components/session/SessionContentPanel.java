@@ -14,6 +14,8 @@ import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.common.DisabledPanel;
 import muon.app.ui.components.session.diskspace.DiskspaceAnalyzer;
 import muon.app.ui.components.session.files.FileBrowser;
+import muon.app.ui.components.session.files.editor.TextEditor;
+import muon.app.ui.components.session.files.editor.TextEditorHolder;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
 import muon.app.ui.components.session.files.transfer.FileTransfer;
 import muon.app.ui.components.session.files.transfer.TransferProgressPanel;
@@ -26,8 +28,8 @@ import muon.app.util.LayoutUtilities;
 import muon.app.util.enums.ConflictAction;
 
 import javax.swing.*;
-
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -54,6 +56,9 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     private final TransferProgressPanel progressPanel = new TransferProgressPanel();
     private final TabbedPage[] pages;
     public final FileBrowser fileBrowser;
+
+    @Getter
+    public final TextEditorHolder textEditorHolder;
     private final LogViewer logViewer;
     @Getter
     private final TerminalHolder terminalHolder;
@@ -78,6 +83,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         contentTabs.setBorder(getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         fileBrowser = new FileBrowser(info, this, null, this.hashCode());
+        textEditorHolder = new TextEditorHolder(new TextEditor(this, false));
         logViewer = new LogViewer(this);
         terminalHolder = new TerminalHolder(info, this);
 
@@ -132,12 +138,26 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         ProcessViewer processViewer = new ProcessViewer(this);
         UtilityPage utilityPage = new UtilityPage(this);
 
+        ArrayList<Page> pagesList = new ArrayList<>();
+
         if (App.getGlobalSettings().isFirstFileBrowserView()) {
-            return new Page[]{fileBrowser, terminalHolder, logViewer, searchPanel, diskspaceAnalyzer,
-                    processViewer, utilityPage};
+            pagesList.add(fileBrowser);
+            pagesList.add(terminalHolder);
+        } else {
+            pagesList.add(terminalHolder);
+            pagesList.add(fileBrowser);
         }
-        return new Page[]{terminalHolder, fileBrowser, logViewer, searchPanel, diskspaceAnalyzer,
-                processViewer, utilityPage};
+
+        if (App.getGlobalSettings().isUseLocalEditor()) {
+            pagesList.add(textEditorHolder);
+        }
+
+        pagesList.add(logViewer);
+        pagesList.add(searchPanel);
+        pagesList.add(diskspaceAnalyzer);
+        pagesList.add(processViewer);
+        pagesList.add(utilityPage);
+        return pagesList.toArray(new Page[0]);
 
     }
 
@@ -221,7 +241,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     }
 
     public void openTerminal(String command) {
-        if (info.isSftpOnly()){
+        if (info.isSftpOnly()) {
             return;
         }
         showPage(this.terminalHolder.getClientProperty(PAGE_ID) + "");
@@ -276,7 +296,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         FileSystem sourceFs = new LocalFileSystem();
         FileSystem targetFs = instance.getSshFs();
         FileTransfer transfer = new FileTransfer(sourceFs, targetFs, localFiles, targetRemoteDirectory, null,
-                confiAction, instance);
+                                                 confiAction, instance);
         App.addUpload(new BackgroundFileTransfer(transfer, instance, this));
     }
 
@@ -285,7 +305,7 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         RemoteSessionInstance instance = createBackgroundSession();
         SshFileSystem sourceFs = instance.getSshFs();
         FileTransfer transfer = new FileTransfer(sourceFs, targetFs, remoteFiles, targetLocalDirectory, null,
-                confiAction, instance);
+                                                 confiAction, instance);
         App.addDownload(new BackgroundFileTransfer(transfer, instance, this));
     }
 

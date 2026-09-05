@@ -60,6 +60,7 @@ public class SshMenuHandler {
     private JMenuItem mChangePerm;
     private JMenuItem mUpload;
     private JMenuItem mEditorConfig;
+    private JMenuItem mOpenWithLocalEditor;
     private JMenuItem mOpenWithLogView;
     private JMenuItem mDownload;
     private JMenuItem mCreateLink;
@@ -110,8 +111,14 @@ public class SshMenuHandler {
                 log.info("Open app");
                 FileInfo fileInfo = folderView.getSelectedFiles()[0];
                 try {
+                    if (App.getGlobalSettings().isUseLocalEditor()) {
+                        App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
+                                                                      fileBrowser.getActiveSessionId(), false, "muon-editor", fileBrowser.getHolder());
+                        return;
+                    }
                     App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                                                                  fileBrowser.getActiveSessionId(), false, null);
+                                                                  fileBrowser.getActiveSessionId(), false, null, null);
+
                 } catch (IOException e1) {
 
                     log.error(e1.getMessage(), e1);
@@ -133,13 +140,26 @@ public class SshMenuHandler {
                 try {
                     log.info("Called open with");
                     App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                                                                  fileBrowser.getActiveSessionId(), true, null);
+                                                                  fileBrowser.getActiveSessionId(), true, null, null);
                 } catch (IOException e1) {
 
                     log.error(e1.getMessage(), e1);
                 }
             });
         }
+
+        mOpenWithLocalEditor = new JMenuItem(App.getCONTEXT().getBundle().getString("muon_editor"));
+        mOpenWithLocalEditor.addActionListener(e -> {
+            FileInfo fileInfo = folderView.getSelectedFiles()[0];
+            try {
+                log.info("Called open with");
+                App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
+                                                              fileBrowser.getActiveSessionId(), false, "muon-editor", fileBrowser.getHolder());
+            } catch (IOException e1) {
+
+                log.error(e1.getMessage(), e1);
+            }
+        });
 
         mEditorConfig = new JMenuItem(App.getCONTEXT().getBundle().getString("configure_editor"));
         mEditorConfig.addActionListener(e -> openEditorConfig());
@@ -854,7 +874,7 @@ public class SshMenuHandler {
         FileInfo fileInfo = folderView.getSelectedFiles()[0];
         try {
             App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                                                          fileBrowser.getActiveSessionId(), false, path);
+                                                          fileBrowser.getActiveSessionId(), false, path, null);
         } catch (IOException e1) {
             log.error(e1.getMessage(), e1);
         }
@@ -882,6 +902,10 @@ public class SshMenuHandler {
             JMenuItem mEditorItem = new JMenuItem(ent.getName());
             mEditorItem.addActionListener(e -> openWithEditor(ent.getPath()));
             mEditWith.add(mEditorItem);
+        }
+
+        if (App.getGlobalSettings().isUseLocalEditor()) {
+            mEditWith.add(mOpenWithLocalEditor);
         }
         mEditWith.add(mEditorConfig);
     }

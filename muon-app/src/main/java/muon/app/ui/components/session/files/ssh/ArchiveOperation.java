@@ -6,6 +6,7 @@ import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 
 import javax.swing.*;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -96,8 +97,7 @@ public class ArchiveOperation {
                 .format(command, archivePath,
                         isSingleArchive(archivePath)
                         ? PathUtils.combineUnix(targetFolder,
-                                                getArchiveFileName(PathUtils
-                                                                           .getFileName(archivePath)))
+                                                getArchiveFileName(Path.of(archivePath).getFileName().toString()))
                         : targetFolder);
         log.info("Invoke command: {}", command);
         StringBuilder output = new StringBuilder();
@@ -108,7 +108,7 @@ public class ArchiveOperation {
 
     public boolean createArchive(RemoteSessionInstance client,
                                  List<String> files, String targetFolder, AtomicBoolean stopFlag) throws Exception {
-        String text = files.size() > 1 ? PathUtils.getFileName(targetFolder)
+        String text = files.size() > 1 ? Path.of(targetFolder).getFileName().toString()
                                        : files.get(0);
         JTextField txtFileName = new JTextField(text);
         JTextField txtTargetFolder = new JTextField(targetFolder);

@@ -9,10 +9,6 @@ public class PathUtils {
         return combine(path1, path2, "/");
     }
 
-    public static String combineWin(String path1, String path2) {
-        return combine(path1, path2, "\\");
-    }
-
     public static String combine(String path1, String path2, String separator) {
         if (path2.startsWith(separator)) {
             path2 = path2.substring(1);
@@ -24,20 +20,7 @@ public class PathUtils {
         }
     }
 
-    public static String getFileName(String file) {
-        if (file.endsWith("/") || file.endsWith("\\")) {
-            file = file.substring(0, file.length() - 1);
-        }
-        int index1 = file.lastIndexOf('/');
-        int index2 = file.lastIndexOf('\\');
-        int index = Math.max(index1, index2);
-        if (index >= 0) {
-            return file.substring(index + 1);
-        }
-        return file;
-    }
-
-    public static String getParent(String file) {
+    public static String getParent(String file) { //TODO delete this devlinx9
         if (file.endsWith("/") || file.endsWith("\\")) {
             file = file.substring(0, file.length() - 1);
         }

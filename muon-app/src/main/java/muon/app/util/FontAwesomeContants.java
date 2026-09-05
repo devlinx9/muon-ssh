@@ -19,6 +19,7 @@ public class FontAwesomeContants {
     public static final String FA_SEARCH = "\uf002";
     public static final String FA_BOLT = "\uf0e7";
     public static final String FA_STICKY_NOTE_O = "\uf24a";
+    public static final String FA_FLOPPY_O = "\uf0c7";
     public static final String FA_FOLDER_O = "\uf114";
     public static final String FA_SLIDERS = "\uf1de";
     public static final String FA_FOLDER_OPEN_O = "\uf115";

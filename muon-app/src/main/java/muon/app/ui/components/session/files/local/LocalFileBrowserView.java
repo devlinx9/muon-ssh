@@ -18,6 +18,7 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
                 SwingUtilities.invokeLater(() -> {
                     addressBar.setText(path);
                     folderView.setItems(list);
-                    tabTitle.getCallback().accept(PathUtils.getFileName(path).concat(" (local)"));
+                    tabTitle.getCallback().accept(Path.of(path).getFileName().toString().concat(" (local)"));
                 });
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
@@ -118,7 +119,7 @@ public class LocalFileBrowserView extends AbstractFileBrowserView {
                     int tc = list.size();
                     String text = String.format("Total %d remote file(s)", tc);
                     fileBrowser.updateRemoteStatus(text);
-                    tabTitle.getCallback().accept(PathUtils.getFileName(this.path).concat(" (local)"));
+                    tabTitle.getCallback().accept(Path.of(this.path).getFileName().toString().concat(" (local)"));
                 });
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
