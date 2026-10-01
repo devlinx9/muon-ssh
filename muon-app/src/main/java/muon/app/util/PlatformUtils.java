@@ -208,6 +208,21 @@ public class PlatformUtils {
             EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
             list.add(ent);
         }
+
+        String winDir = System.getenv("SystemRoot");
+        if (winDir == null) {
+            winDir = "C:\\Windows";
+        }
+
+        File notepad = new File(winDir, "System32\\notepad.exe");
+        if (!notepad.exists()) {
+            notepad = new File(winDir, "notepad.exe");
+        }
+
+        if (notepad.exists()) {
+            EditorEntry ent = new EditorEntry("Notepad", notepad.getAbsolutePath());
+            list.add(ent);
+        }
     }
 
 
