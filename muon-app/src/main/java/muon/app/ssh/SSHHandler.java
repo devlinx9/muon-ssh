@@ -366,7 +366,7 @@ public class SSHHandler implements Closeable {
         if (user == null || user.isEmpty()) {
             JTextField txtUser = new SkinnedTextField(30);
             JCheckBox chkCacheUser = new JCheckBox(App.getCONTEXT().getBundle().getString("remember_username"));
-            int ret = OptionPaneUtils.showOptionDialog(null, new Object[]{App.getCONTEXT().getBundle().getString("username"), txtUser, chkCacheUser}, App.getCONTEXT().getBundle().getString("user"));
+            int ret = OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{App.getCONTEXT().getBundle().getString("username"), txtUser, chkCacheUser}, App.getCONTEXT().getBundle().getString("user"));
             if (ret == JOptionPane.OK_OPTION) {
                 user = txtUser.getText();
                 if (chkCacheUser.isSelected()) {

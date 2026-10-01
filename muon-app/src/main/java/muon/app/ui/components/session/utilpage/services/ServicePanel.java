@@ -374,7 +374,7 @@ public class ServicePanel extends UtilPageItemView {
                         }
                     }
                     if (!holder.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null,
+                        JOptionPane.showMessageDialog(App.getAppWindow(),
                                 App.getCONTEXT().getBundle().getString("operation_failed"));
                     }
                 } catch (Exception e) {

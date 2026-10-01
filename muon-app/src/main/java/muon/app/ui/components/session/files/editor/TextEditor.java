@@ -118,7 +118,7 @@ public class TextEditor extends JPanel {
                     txtFilePath.setText(jfc.getSelectedFile().getAbsolutePath());
                 } else {
                     JOptionPane.showMessageDialog(App.getAppWindow(),
-                                                  "Please enter full path of the file to be opened");
+                                                  App.getCONTEXT().getBundle().getString("full_path_file_open"));
                     return;
                 }
             }
@@ -422,8 +422,8 @@ public class TextEditor extends JPanel {
 
             if (userSelection == JFileChooser.APPROVE_OPTION) {
                 File fileToSave = fileChooser.getSelectedFile();
-                if (fileToSave.exists() && JOptionPane.showConfirmDialog(this,
-                                                                         "Overwrite", "Unsaved changes",
+                if (fileToSave.exists() && JOptionPane.showConfirmDialog(App.getAppWindow(),
+                                                                         App.getCONTEXT().getBundle().getString("overwrite"), App.getCONTEXT().getBundle().getString("unsaved_changes"),
                                                                          JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                     return;
                 }
@@ -472,15 +472,14 @@ public class TextEditor extends JPanel {
             ref.text = jfc.getSelectedFile().getAbsolutePath();
         } else {
             ref.text = JOptionPane.showInputDialog(
-                    "Please enter full path of the file to be opened");
+                    App.getCONTEXT().getBundle().getString("full_path_file_open"));
             if (ref.text == null) {
                 return;
             }
 
             if (ref.text.trim().isEmpty()) {
 
-                JOptionPane.showMessageDialog(App.getAppWindow(),
-                                              "Please enter full path of the file to be opened");
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("full_path_file_open"));
                 return;
 
             }
@@ -499,7 +498,7 @@ public class TextEditor extends JPanel {
         var tempFile = Paths.get(file);
         if (!Files.isRegularFile(tempFile)) {
             JOptionPane.showMessageDialog(App.getAppWindow(),
-                                          "File doesn't exists or is invalid");
+                                          App.getCONTEXT().getBundle().getString("file_no_exists_or_invalid"));
             throw new RuntimeException("File doesn't exists or is invalid");
         }
 
@@ -580,8 +579,8 @@ public class TextEditor extends JPanel {
 
     public void closeTab(int index) {
         var tab = (EditorTab) tabs.getComponentAt(index);
-        if (tab.hasUnsavedChanges() && JOptionPane.showConfirmDialog(this,
-                                                                     "Changes will be lost, continue?", "Unsaved changes",
+        if (tab.hasUnsavedChanges() && JOptionPane.showConfirmDialog(App.getAppWindow(),
+                                                                     App.getCONTEXT().getBundle().getString("change_lost"), App.getCONTEXT().getBundle().getString("unsaved_changes"),
                                                                      JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             return;
         }

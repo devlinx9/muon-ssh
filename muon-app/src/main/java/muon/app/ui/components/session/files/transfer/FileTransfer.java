@@ -153,11 +153,11 @@ public class FileTransfer implements Runnable, AutoCloseable {
                         JTextArea tmpFilePath = new JTextArea(5, 20);
                         tmpFilePath.setText("Files copied in " + tmpDir + " due to permission issues");
                         tmpFilePath.setEnabled(true);
-                        JOptionPane.showMessageDialog(null, tmpFilePath, App.getCONTEXT().getBundle().getString("copied_temp_directory"), JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(App.getAppWindow(), tmpFilePath, App.getCONTEXT().getBundle().getString("copied_temp_directory"), JOptionPane.WARNING_MESSAGE);
                     }
 
                     if (!App.getGlobalSettings().isPromptForSudo() ||
-                        JOptionPane.showConfirmDialog(null,
+                        JOptionPane.showConfirmDialog(App.getAppWindow(),
                                                       App.getCONTEXT().getBundle().getString("permission_denied_file"),
                                                       App.getCONTEXT().getBundle().getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
@@ -284,7 +284,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
 
             JComboBox<ConflictAction> cmbs = SessionExportImport.getUserConflictAction();
 
-            if (OptionPaneUtils.showOptionDialog(null,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("some_file_exists_action_required"), cmbs},
                                                  App.getCONTEXT().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
                 action = (ConflictAction) cmbs.getSelectedItem();

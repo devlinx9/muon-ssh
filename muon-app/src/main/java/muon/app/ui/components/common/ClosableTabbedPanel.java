@@ -163,10 +163,14 @@ public class ClosableTabbedPanel extends JPanel {
         // Check for the secondary (context) mouse button
         if (e.getButton() == MouseEvent.BUTTON3) {
             JPopupMenu contextMenu = new JPopupMenu();
-            JMenuItem changeNameItem = new JMenuItem("Change Name");
+            JMenuItem changeNameItem = new JMenuItem(App.getCONTEXT()
+                                                             .getBundle()
+                                                             .getString("change_name"));
 
             changeNameItem.addActionListener(event -> {
-                String newName = JOptionPane.showInputDialog(App.getAppWindow(), "Enter new name:");
+                String newName = JOptionPane.showInputDialog(App.getAppWindow(), App.getCONTEXT()
+                        .getBundle()
+                        .getString("enter_new_name"));
                 if (newName != null && !newName.trim().isEmpty()) {
                     titleComponent.titleLabel.setText(newName);
                     titleComponent.revalidate();

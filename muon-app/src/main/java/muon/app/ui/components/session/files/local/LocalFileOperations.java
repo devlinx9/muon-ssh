@@ -26,7 +26,7 @@ public class LocalFileOperations {
     }
 
     public boolean newFile(String folder) {
-        String text = OptionPaneUtils.showInputDialog(null, App.getCONTEXT().getBundle().getString("new_file"), App.getCONTEXT().getBundle().getString("new_file"));
+        String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("new_file"), App.getCONTEXT().getBundle().getString("new_file"));
         if (text == null || text.isEmpty()) {
             return false;
         }
@@ -36,13 +36,13 @@ public class LocalFileOperations {
             return true;
         } catch (Exception e1) {
             log.error(e1.getMessage(), e1);
-            JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("unable_create_file"));
+            JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("unable_create_file"));
         }
         return false;
     }
 
     public boolean newFolder(String folder) {
-        String text = OptionPaneUtils.showInputDialog(null, App.getCONTEXT().getBundle().getString("new_folder_name"), App.getCONTEXT().getBundle().getString("new_folder_name"));
+        String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("new_folder_name"), App.getCONTEXT().getBundle().getString("new_folder_name"));
         if (text == null || text.isEmpty()) {
             return false;
         }
@@ -52,7 +52,7 @@ public class LocalFileOperations {
             return true;
         } catch (Exception e1) {
             log.error(e1.getMessage(), e1);
-            JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("unable_create_folder"));
+            JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("unable_create_folder"));
         }
         return false;
     }

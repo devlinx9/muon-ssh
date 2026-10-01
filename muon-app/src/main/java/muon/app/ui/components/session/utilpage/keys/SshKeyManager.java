@@ -91,7 +91,7 @@ public class SshKeyManager {
     public static void generateKeys(SshKeyHolder holder, RemoteSessionInstance instance, boolean local)
             throws Exception {
         if (holder.getLocalPublicKey() != null) {
-            if (JOptionPane.showConfirmDialog(null,
+            if (JOptionPane.showConfirmDialog(App.getAppWindow(),
                                               App.getCONTEXT().getBundle().getString("overwrite_ssh_key"),
                                               "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION) {
                 return;
@@ -105,7 +105,7 @@ public class SshKeyManager {
 
         String passPhrase = new String(txtPassPhrase.getPassword());
 
-        if (OptionPaneUtils.showOptionDialog(null, new Object[]{chkGenPassPhrase, "Passphrase", txtPassPhrase},
+        if (OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{chkGenPassPhrase, "Passphrase", txtPassPhrase},
                                              "Passphrase") == JOptionPane.YES_OPTION) {
             if (local) {
                 generateLocalKeys(holder, passPhrase);

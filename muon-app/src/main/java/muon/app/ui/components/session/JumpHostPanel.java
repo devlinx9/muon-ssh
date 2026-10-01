@@ -192,7 +192,7 @@ public class JumpHostPanel extends JPanel {
             }
         });
 
-        while (OptionPaneUtils.showOptionDialog(this,
+        while (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                 new Object[]{App.getCONTEXT().getBundle().getString("host"), txtHost, App.getCONTEXT().getBundle().getString("port"), spPort, App.getCONTEXT()
                                                         .getBundle().getString("user"), txtUser, App.getCONTEXT().getBundle().getString("password"), txtPassword, App.getCONTEXT()
                                                                      .getBundle().getString("private_key_file"),
@@ -204,7 +204,7 @@ public class JumpHostPanel extends JPanel {
             String path = txtKeyFile.getText();
             int port = (Integer) spPort.getValue();
             if (host.isEmpty() || user.isEmpty() || port <= 0) {
-                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_input"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("invalid_input"));
                 continue;
             }
 

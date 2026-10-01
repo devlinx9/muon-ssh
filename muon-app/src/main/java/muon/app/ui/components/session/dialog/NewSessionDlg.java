@@ -349,7 +349,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         }
         JComboBox<ImportOption> cmbImports = new JComboBox<>(ImportOption.values());
 
-        if (OptionPaneUtils.showOptionDialog(this, new Object[]{App.getCONTEXT().getBundle().getString("import_from"), cmbImports}, App.getCONTEXT().getBundle().getString("import_sessions")) == JOptionPane.OK_OPTION) {
+        if (OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{App.getCONTEXT().getBundle().getString("import_from"), cmbImports}, App.getCONTEXT().getBundle().getString("import_sessions")) == JOptionPane.OK_OPTION) {
             manageImportOptions(parentNode, cmbImports);
         }
     }
@@ -449,7 +449,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         }
 
         String msgKey = "confirm_delete_session";
-        int res = JOptionPane.showConfirmDialog(this,
+        int res = JOptionPane.showConfirmDialog(App.getAppWindow(),
                 App.getCONTEXT().getBundle().getString(msgKey),
                 App.getCONTEXT().getBundle().getString("delete"),
                 JOptionPane.YES_NO_OPTION);
@@ -521,7 +521,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         container.add(panel, BorderLayout.CENTER);
         container.add(buttons, BorderLayout.SOUTH);
 
-        JDialog dialog = new JDialog(this, App.getCONTEXT().getBundle().getString("delete"), true);
+        JDialog dialog = new JDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("delete"), true);
         dialog.getContentPane().add(container);
         dialog.pack();
         dialog.setLocationRelativeTo(this);
@@ -592,7 +592,7 @@ public class NewSessionDlg extends JDialog implements ActionListener, TreeSelect
         save();
         this.info = (SessionInfo) selectedInfo;
         if (this.info.getHost() == null || this.info.getHost().isEmpty()) {
-            JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("no_hostname"));
+            JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("no_hostname"));
             this.info = null;
             log.debug("Returned");
         } else {

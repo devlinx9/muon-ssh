@@ -131,7 +131,7 @@ public class PortForwardingPanel extends JPanel {
             cmbPFType.setSelectedIndex(r.getType() == PortForwardingType.LOCAL ? 0 : 1);
         }
 
-        while (OptionPaneUtils.showOptionDialog(this,
+        while (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                 new Object[]{"Port forwarding type", cmbPFType, "Host", txtHost, "Source Port", spSourcePort,
                                                              "Target Port", spTargetPort, "Bind Address", txtBindAddress},
                                                 "Port forwarding rule") == JOptionPane.OK_OPTION) {
@@ -142,7 +142,7 @@ public class PortForwardingPanel extends JPanel {
             String bindAddress = txtBindAddress.getText();
 
             if (host.isEmpty() || bindAddress.isEmpty() || port1 <= 0 || port2 <= 0) {
-                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_input"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("invalid_input"));
                 continue;
             }
 

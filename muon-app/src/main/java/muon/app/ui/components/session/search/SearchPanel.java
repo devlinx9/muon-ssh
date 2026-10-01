@@ -133,7 +133,7 @@ public class SearchPanel extends Page {
                 criteriaBuffer.append(size).append("c");
                 criteriaBuffer.append(" ");
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("invalid_size"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("invalid_size"));
                 return;
             }
         }
@@ -151,8 +151,7 @@ public class SearchPanel extends Page {
             Date d2 = (Date) spDate2.getValue();
 
             if (!d1.before(d2)) {
-                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_date_range")
-                                             );
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("invalid_date_range"));
                 return;
             }
 

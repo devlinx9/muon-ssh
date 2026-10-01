@@ -68,7 +68,7 @@ public class RemoteKeyPanel extends JPanel {
         JButton btnRemove = new JButton();
 
         btnAdd.addActionListener(e -> {
-            String text = OptionPaneUtils.showInputDialog(null, App.getCONTEXT().getBundle().getString("new_entry"), App.getCONTEXT().getBundle().getString("new_entry"));
+            String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("new_entry"), App.getCONTEXT().getBundle().getString("new_entry"));
             if (text != null && !text.isEmpty()) {
                 model.addElement(text);
                 callback3.accept(getAuthorizedKeys());
@@ -78,11 +78,11 @@ public class RemoteKeyPanel extends JPanel {
         btnEdit.addActionListener(e -> {
             int index = jList.getSelectedIndex();
             if (index < 0) {
-                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("no_entry_selected"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("no_entry_selected"));
                 return;
             }
             String str = model.get(index);
-            String text = OptionPaneUtils.showInputDialog(null, App.getCONTEXT().getBundle().getString("new_entry"), str);
+            String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("new_entry"), str);
             if (text != null && !text.isEmpty()) {
                 model.set(index, text);
                 callback3.accept(getAuthorizedKeys());
@@ -92,7 +92,7 @@ public class RemoteKeyPanel extends JPanel {
         btnRemove.addActionListener(e -> {
             int index = jList.getSelectedIndex();
             if (index < 0) {
-                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("no_entry_selected"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("no_entry_selected"));
                 return;
             }
             model.remove(index);

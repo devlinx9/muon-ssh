@@ -117,7 +117,7 @@ public final class App {
             int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
             log.info("maxKeySize: {}", maxKeySize);
             if (maxKeySize < Integer.MAX_VALUE) {
-                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("unlimited_cryptography"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("unlimited_cryptography"));
             }
         } catch (NoSuchAlgorithmException e1) {
             log.error(e1.getMessage(), e1);

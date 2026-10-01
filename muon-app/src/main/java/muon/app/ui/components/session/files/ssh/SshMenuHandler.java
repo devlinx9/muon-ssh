@@ -92,7 +92,7 @@ public class SshMenuHandler {
     }
 
     private void initMenuItems(InputMap map, ActionMap act) {
-        KeyStroke ksOpenInTab = KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK);
+        KeyStroke ksOpenInTab = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
         mOpenInTab = new JMenuItem(App.getCONTEXT().getBundle().getString("open_in_tab"));
         mOpenInTab.setAccelerator(ksOpenInTab);
         AbstractAction aOpenInTab = new AbstractAction() {
@@ -196,7 +196,8 @@ public class SshMenuHandler {
         mRunScriptInBackground = new JMenuItem(App.getCONTEXT().getBundle().getString("run_file_in_background"));
         mRunScriptInBackground.addActionListener(e -> openRunInBackground(fileBrowserView.getCurrentDirectory(), folderView.getSelectedFiles()[0].getPath()));
 
-        KeyStroke ksRename = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
+        KeyStroke ksRename = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK);
+        KeyStroke ksRename2 = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
         AbstractAction aRename = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -205,9 +206,10 @@ public class SshMenuHandler {
         };
         mRename = new JMenuItem(App.getCONTEXT().getBundle().getString("rename"));
         mRename.addActionListener(aRename);
-        map.put(ksRename, "mRename");
-        act.put("mRename", aRename);
-        mRename.setAccelerator(ksRename);
+        map.put(ksRename, "ksRename");
+        map.put(ksRename2, "ksRename");
+        act.put("ksRename", aRename);
+        mRename.setAccelerator(ksRename2);
 
         KeyStroke ksDelete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
         AbstractAction aDelete = new AbstractAction() {
@@ -345,7 +347,7 @@ public class SshMenuHandler {
 
         mExtractTo = new JMenuItem(App.getCONTEXT().getBundle().getString("extract_to"));
         mExtractTo.addActionListener(e -> {
-            String text = OptionPaneUtils.showInputDialog(null, App.getCONTEXT().getBundle().getString("select_target"),
+            String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("select_target"),
                                                           fileBrowserView.getCurrentDirectory());
             if (text == null || text.isEmpty()) {
                 return;
@@ -803,7 +805,7 @@ public class SshMenuHandler {
             try {
                 if (!archiveOperation.extractArchive(fileBrowserView.getSshClient(), archive, folder, stopFlag)
                     && !fileBrowser.isSessionClosed()) {
-                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
+                    JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("operation_failed"));
                 }
 
                 fileBrowserView.render(currentFolder);
@@ -819,7 +821,7 @@ public class SshMenuHandler {
             fileBrowser.disableUi(stopFlag);
             try {
                 if (!archiveOperation.createArchive(fileBrowserView.getSshClient(), files, folder, stopFlag) && !fileBrowser.isSessionClosed()) {
-                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
+                    JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("operation_failed"));
                 }
                 fileBrowserView.render(currentFolder);
             } catch (Exception e) {

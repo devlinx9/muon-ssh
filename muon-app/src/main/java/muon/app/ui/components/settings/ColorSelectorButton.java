@@ -35,7 +35,7 @@ public class ColorSelectorButton extends JLabel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                java.awt.Color pColor = JColorChooser.showDialog(null, "Select color",
+                java.awt.Color pColor = JColorChooser.showDialog(App.getAppWindow(), "Select color",
                                                                  getColor());
                 if (color != null) {
                     Color jeditermColor = new Color(pColor.getRGB());

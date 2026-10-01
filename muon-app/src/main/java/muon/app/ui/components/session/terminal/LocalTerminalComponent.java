@@ -142,7 +142,7 @@ public class LocalTerminalComponent extends JPanel implements ClosableTabContent
             contentPane.add(term);
         } catch (IOException e) {
             log.error("Cannot start local terminal", e);
-            JOptionPane.showMessageDialog(this, "Failed to start terminal: " + e.getMessage());
+            JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("failed_start_terminal") + e.getMessage());
         }
     }
 

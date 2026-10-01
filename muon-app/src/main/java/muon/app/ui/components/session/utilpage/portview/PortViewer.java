@@ -217,7 +217,7 @@ public class PortViewer extends UtilPageItemView {
                         }
                     }
                     if (!holder.isSessionClosed()) {
-                        JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
+                        JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("operation_failed"));
                     }
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);

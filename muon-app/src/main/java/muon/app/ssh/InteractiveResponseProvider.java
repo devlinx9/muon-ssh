@@ -29,7 +29,7 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
         log.info("ChallengeResponseProvider init - resource: {} name: {} instruction: {}", resource, name, instruction);
         if ((name != null && !name.isEmpty())
             || (instruction != null && !instruction.isEmpty())) {
-            JOptionPane.showMessageDialog(null, name + "\n" + instruction);
+            JOptionPane.showMessageDialog(App.getAppWindow(), name + "\n" + instruction);
         }
     }
 
@@ -38,14 +38,14 @@ public class InteractiveResponseProvider implements ChallengeResponseProvider {
         log.info("prompt: {} echo: {}", prompt, echo);
 
         if (echo) {
-            String str = OptionPaneUtils.showInputDialog(null, prompt, App.getCONTEXT().getBundle().getString("input"));
+            String str = OptionPaneUtils.showInputDialog(App.getAppWindow(), prompt, App.getCONTEXT().getBundle().getString("input"));
             if (str != null) {
                 return str.toCharArray();
             }
         } else {
             JPasswordField passwordField = new JPasswordField(30);
-            int ret = OptionPaneUtils.showOptionDialog(null,
-                                                       new Object[]{prompt, passwordField}, App.getCONTEXT().getBundle().getString("Input"));
+            int ret = OptionPaneUtils.showOptionDialog(App.getAppWindow(),
+                                                       new Object[]{prompt, passwordField}, App.getCONTEXT().getBundle().getString("input"));
             if (ret == JOptionPane.OK_OPTION) {
                 return passwordField.getPassword();
             }

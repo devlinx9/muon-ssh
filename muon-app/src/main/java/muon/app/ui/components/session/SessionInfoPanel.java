@@ -293,7 +293,7 @@ public class SessionInfoPanel extends JPanel {
     }
 
     private void showError(String msg) {
-        JOptionPane.showMessageDialog(this, msg, App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(App.getAppWindow(), msg, App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
     }
 
     private void setJumpHostDetails(boolean useJumpHosts, JumpType jumpType, List<HopEntry> jumpHosts) {
@@ -836,7 +836,7 @@ public class SessionInfoPanel extends JPanel {
             if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 String selectedFile = jfc.getSelectedFile().getAbsolutePath();
                 if (selectedFile.endsWith(".ppk") && !isSupportedPuttyKeyFile(jfc.getSelectedFile())) {
-                    JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("unsupported_key")
+                    JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("unsupported_key")
                     );
                     return;
                 }
@@ -851,7 +851,7 @@ public class SessionInfoPanel extends JPanel {
             ta.setText(inpPassword.getText());
             ta.setEditable(false);
             ta.setLineWrap(false);
-            JOptionPane.showMessageDialog(this, ta, App.getCONTEXT().getBundle().getString("password"), JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(App.getAppWindow(), ta, App.getCONTEXT().getBundle().getString("password"), JOptionPane.PLAIN_MESSAGE);
         });
 
         chkUseX11Forwarding = new JCheckBox("X11 forwarding");

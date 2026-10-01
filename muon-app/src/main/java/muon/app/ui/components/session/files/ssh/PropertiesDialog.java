@@ -434,7 +434,7 @@ public class PropertiesDialog extends JDialog {
                     return;
                 }
                 if (!ret && !fileBrowser.isSessionClosed()) {
-                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_errors")
+                    JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("operation_errors")
                                                  );
                 }
 
@@ -471,7 +471,7 @@ public class PropertiesDialog extends JDialog {
                     return;
                 }
                 if (!ret && !fileBrowser.isSessionClosed()) {
-                    JOptionPane.showMessageDialog(null,
+                    JOptionPane.showMessageDialog(App.getAppWindow(),
                                                   App.getCONTEXT().getBundle().getString("operation_errors"));
                 }
 
@@ -531,7 +531,7 @@ public class PropertiesDialog extends JDialog {
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 if (!fileBrowser.isSessionClosed()) {
-                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
+                    JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("operation_failed"));
                 }
             }
             SwingUtilities.invokeLater(() -> {

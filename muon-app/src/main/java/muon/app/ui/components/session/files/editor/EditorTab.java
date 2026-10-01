@@ -115,7 +115,6 @@ public class EditorTab extends Page implements SearchListener {
         setHasChanges(false);
 
 
-
     }
 
     private @NotNull JPanel getXp() {
@@ -188,8 +187,8 @@ public class EditorTab extends Page implements SearchListener {
                 break;
             case REPLACE_ALL:
                 result = SearchEngine.replaceAll(textArea, context);
-                JOptionPane.showMessageDialog(null,
-                                              result.getCount() + " occurrences replaced.");
+                JOptionPane.showMessageDialog(App.getAppWindow(),
+                                              String.format(App.getCONTEXT().getBundle().getString("count_occurrences_replaced"), result.getCount()));
                 break;
             default:
                 log.error("invalid type: {}", type);
@@ -312,7 +311,7 @@ public class EditorTab extends Page implements SearchListener {
     }
 
 
-    public void discardEdits(){
+    public void discardEdits() {
         textArea.discardAllEdits();
     }
 }

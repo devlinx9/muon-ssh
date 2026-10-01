@@ -83,10 +83,10 @@ public class LogViewer extends Page {
 
     private String promptLogPath() {
         JTextField txt = new SkinnedTextField(30);
-        if (OptionPaneUtils.showOptionDialog(this,
+        if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                              new Object[]{App.getCONTEXT().getBundle().getString("provide_log_file_path"),
                                                           txt},
-                                             "Input") == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
+                                             App.getCONTEXT().getBundle().getString("path")) == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
             return txt.getText();
         }
         return null;

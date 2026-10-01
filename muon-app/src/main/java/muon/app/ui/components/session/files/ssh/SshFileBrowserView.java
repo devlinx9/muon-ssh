@@ -144,10 +144,10 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
                         log.error(e.getMessage(), e);
                         if (JOptionPane.showConfirmDialog(App.getAppWindow(),
-                                                          "Unable to connect to server " + this.fileBrowser.getInfo().getName() + " at "
-                                                          + this.fileBrowser.getInfo().getHost()
-                                                          + (e.getMessage() != null ? "\n\nReason: " + e.getMessage() : "\n")
-                                                          + "\n\nDo you want to retry?") == JOptionPane.YES_OPTION) {
+                                                          String.format(App.getCONTEXT().getBundle().getString("unable_connect_server_sentence"),
+                                                                        this.fileBrowser.getInfo().getName(),
+                                                                        this.fileBrowser.getInfo().getHost(),
+                                                                        (e.getMessage() != null ? ": " + e.getMessage() : "\n"))) == JOptionPane.YES_OPTION) {
                             continue;
                         }
                         break;
@@ -169,7 +169,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
         FileInfo fileInfo = folderView.getSelectedFiles()[0];
         try {
-            if (App.getGlobalSettings().isUseLocalEditor()){
+            if (App.getGlobalSettings().isUseLocalEditor()) {
                 App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
                                                               fileBrowser.getActiveSessionId(), false, "muon-editor", fileBrowser.getHolder());
                 return;
@@ -212,7 +212,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
     public boolean handleDrop(DndTransferData transferData) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-            && JOptionPane.showConfirmDialog(null, App.getCONTEXT().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
             return false;
         }
         try {
@@ -251,7 +251,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                         pwd += "/";
                     }
                     if (parent.equals(pwd)) {
-                        JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("same_directory"));
+                        JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("same_directory"));
                         return false;
                     }
                 }

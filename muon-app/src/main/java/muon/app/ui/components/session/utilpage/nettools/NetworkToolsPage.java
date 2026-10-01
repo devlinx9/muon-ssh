@@ -56,14 +56,14 @@ public class NetworkToolsPage extends UtilPageItemView {
         JButton btn4 = new JButton("DNS lookup");
 
         btn1.addActionListener(e -> {
-            if (OptionPaneUtils.showOptionDialog(this,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("host_ping"), cmbHost}, "Ping") == JOptionPane.OK_OPTION) {
                 executeAsync("ping -c 4 " + cmbHost.getSelectedItem());
             }
         });
 
         btn2.addActionListener(e -> {
-            if (OptionPaneUtils.showOptionDialog(this,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("host_name"), cmbHost, App.getCONTEXT().getBundle().getString("port_number"),
                                                               cmbPort},
                                                  "Port check") == JOptionPane.OK_OPTION) {
@@ -75,14 +75,14 @@ public class NetworkToolsPage extends UtilPageItemView {
         });
 
         btn3.addActionListener(e -> {
-            if (OptionPaneUtils.showOptionDialog(this,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("host_name"), cmbHost}, "Traceroute") == JOptionPane.OK_OPTION) {
                 executeAsync("traceroute " + cmbHost.getSelectedItem());
             }
         });
 
         btn4.addActionListener(e -> {
-            if (OptionPaneUtils.showOptionDialog(this,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("host_name"), cmbHost, App.getCONTEXT().getBundle().getString("tool_use"),
                                                               cmbDNSTool},
                                                  "DNS lookup") == JOptionPane.OK_OPTION) {
@@ -118,7 +118,7 @@ public class NetworkToolsPage extends UtilPageItemView {
                     outText.append(bout.toString(StandardCharsets.UTF_8)).append("\n");
                     log.info("Command stdout: {}", outText);
                 } else {
-                    JOptionPane.showMessageDialog(this,
+                    JOptionPane.showMessageDialog(App.getAppWindow(),
                                                   App.getCONTEXT().getBundle().getString("executed_errors"));
                 }
             } catch (Exception e) {

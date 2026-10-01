@@ -1,6 +1,7 @@
 package muon.app.ui.components.session.files.ssh;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
@@ -114,7 +115,7 @@ public class ArchiveOperation {
         JTextField txtTargetFolder = new JTextField(targetFolder);
         JComboBox<String> comboBox = new JComboBox<>(
                 compressCommands.keySet().toArray(new String[0]));
-        if (OptionPaneUtils.showOptionDialog(null,
+        if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                              new Object[]{"Archive name", txtFileName, "Target folder",
                                                           txtTargetFolder, "Archive type", comboBox},
                                              "Create archive") == JOptionPane.OK_OPTION) {

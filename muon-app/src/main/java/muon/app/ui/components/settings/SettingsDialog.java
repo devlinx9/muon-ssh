@@ -172,7 +172,7 @@ public class SettingsDialog extends JDialog {
 
         btnReset.addActionListener(e -> {
             loadSettings(new Settings());
-            JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("settings_saved"));
+            JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("settings_saved"));
         });
 
         bottomBox.add(btnReset);
@@ -754,7 +754,7 @@ public class SettingsDialog extends JDialog {
                 File file = jfc.getSelectedFile();
                 JTextField txt = new SkinnedTextField(30);
                 txt.setText(file.getName());
-                String name = OptionPaneUtils.showInputDialog(this, App.getCONTEXT().getBundle().getString("editor_name"), file.getName(), App.getCONTEXT().getBundle().getString("add_editor2"));
+                String name = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("editor_name"), file.getName(), App.getCONTEXT().getBundle().getString("add_editor2"));
                 if (name != null) {
                     editorModel.addEntry(new EditorEntry(name, file.getAbsolutePath()));
                 }
@@ -883,7 +883,7 @@ public class SettingsDialog extends JDialog {
             updateSettingsAndNotify(true, "password_aes");
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
-            JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("error_operation"), App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("error_operation"), App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -911,7 +911,7 @@ public class SettingsDialog extends JDialog {
             updateSettingsAndNotify(true, "password_aes");
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
-            JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("error_operation"), App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("error_operation"), App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -933,13 +933,13 @@ public class SettingsDialog extends JDialog {
     private void updateSettingsAndNotify(boolean usingMasterPassword, String messageKey) {
         App.getGlobalSettings().setUsingMasterPassword(usingMasterPassword);
         App.getCONTEXT().getSettingsManager().saveSettings();
-        JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString(messageKey));
+        JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString(messageKey));
     }
 
     private char[] promptPassword() {
         JPasswordField pass1 = new JPasswordField(30);
         JPasswordField pass2 = new JPasswordField(30);
-        while (OptionPaneUtils.showOptionDialog(this,
+        while (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                 new Object[]{App.getCONTEXT().getBundle().getString("new_master_password"), pass1, App.getCONTEXT().getBundle().getString("reenter_master_password"), pass2},
                                                 App.getCONTEXT().getBundle()
                                                         .getString("master_password")) == JOptionPane.OK_OPTION) {
@@ -963,7 +963,7 @@ public class SettingsDialog extends JDialog {
             }
 
             if (!passwordOK) {
-                JOptionPane.showMessageDialog(this, reason);
+                JOptionPane.showMessageDialog(App.getAppWindow(), reason);
             } else {
                 return password1;
             }

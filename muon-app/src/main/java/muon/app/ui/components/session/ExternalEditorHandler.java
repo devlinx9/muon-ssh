@@ -7,6 +7,7 @@ import muon.app.common.FileInfo;
 import muon.app.ssh.SSHRemoteFileInputStream;
 import muon.app.ssh.SSHRemoteFileOutputStream;
 import muon.app.ssh.SshFileSystem;
+import muon.app.ui.AppWindow;
 import muon.app.ui.components.session.FileChangeWatcher.FileModificationInfo;
 import muon.app.util.OptionPaneUtils;
 import muon.app.util.PlatformUtils;
@@ -69,11 +70,14 @@ public class ExternalEditorHandler extends JDialog {
         this.add(box);
         this.fileWatcher = new FileChangeWatcher(files -> {
             List<String> messages = new ArrayList<>();
-            messages.add("Some file(s) have been modified, upload changes to server?\n");
-            messages.add("Changed file(s):");
+            messages.add(App.getCONTEXT()
+                                 .getBundle()
+                                 .getString("some_files_been_modified"));
             messages.addAll(files.stream().map(Object::toString).collect(Collectors.toList()));
-            if (OptionPaneUtils.showOptionDialog(this.frame, messages.toArray(new String[0]),
-                                                 "File changed") == JOptionPane.OK_OPTION) {
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(), messages.toArray(new String[0]),
+                                                 App.getCONTEXT()
+                                                         .getBundle()
+                                                         .getString("files_changed")) == JOptionPane.OK_OPTION) {
                 this.fileWatcher.stopWatching();
                 App.getCONTEXT().getExecutor().submit(() -> {
                     try {
@@ -81,6 +85,12 @@ public class ExternalEditorHandler extends JDialog {
                         this.saveRemoteFiles(files);
                     } catch (Exception e) {
                         log.error(e.getMessage(), e);
+                        setVisible(false);
+                        JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT()
+                                .getBundle()
+                                .getString("error_operation") + ": " + e.getMessage(), App.getCONTEXT()
+                                .getBundle()
+                                .getString("error"), JOptionPane.ERROR_MESSAGE);
                     }
                 });
             }
@@ -115,14 +125,13 @@ public class ExternalEditorHandler extends JDialog {
      *
      */
     public long saveRemoteFile(FileModificationInfo info, long total, long totalBytes) {
-        log.info("Init transfer...1");
         ISessionContentPanel scp = App.getSessionContainer(info.activeSessionId);
         if (scp == null) {
             log.info("No session found");
             return info.remoteFile.getSize();
         }
 
-        log.info("Init transfer...2");
+        log.info("Init transfer...");
         try (OutputStream out = scp.getRemoteSessionInstance().getSshFs().outputTransferChannel()
                 .getOutputStream(info.remoteFile.getPath()); InputStream in = new FileInputStream(info.localFile)) {
             int cap = 8192;
@@ -130,7 +139,8 @@ public class ExternalEditorHandler extends JDialog {
                 cap = ((SSHRemoteFileOutputStream) out).getBufferCapacity();
             }
             byte[] b = new byte[cap];
-            log.info("Init transfer...");
+            log.info("Transferring...");
+
             while (!this.stopFlag.get()) {
                 int x = in.read(b);
                 if (x == -1) {
@@ -143,6 +153,7 @@ public class ExternalEditorHandler extends JDialog {
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+
         }
         return info.remoteFile.getSize();
     }
@@ -207,7 +218,9 @@ public class ExternalEditorHandler extends JDialog {
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            JOptionPane.showMessageDialog(App.getAppWindow(), "There was an error opening the file: " + e.getMessage());
+            JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT()
+                                                                      .getBundle()
+                                                                      .getString("error_open_file") + ": " + e.getMessage());
         }
     }
 

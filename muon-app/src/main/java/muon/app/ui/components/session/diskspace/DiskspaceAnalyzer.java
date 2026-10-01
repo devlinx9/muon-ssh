@@ -84,7 +84,7 @@ public class DiskspaceAnalyzer extends Page {
                 cardLayout.show(this, "volPanel");
                 listVolumes();
             } else {
-                String text = OptionPaneUtils.showInputDialog(this, "Please enter folder path to analyze", "Input");
+                String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("analyze_sentence_path"), App.getCONTEXT().getBundle().getString("path"));
                 if (text != null) {
                     cardLayout.show(this, "resultPanel");
                     analyze(text);
@@ -146,7 +146,7 @@ public class DiskspaceAnalyzer extends Page {
                 cardLayout.show(this, "resultPanel");
                 analyze(model.get(r).getMountPoint());
             } else {
-                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("select_partition"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("select_partition"));
             }
         });
 

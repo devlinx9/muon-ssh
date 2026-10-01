@@ -204,7 +204,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             spPort.setValue(port);
         }
 
-        while (OptionPaneUtils.showOptionDialog(this,
+        while (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                 new Object[]{"Host", txtHost, "User", txtUser, "Copy to ( target directory)", txtPath, "Port",
                                                              spPort},
                                                 "Remote host details") == JOptionPane.OK_OPTION) {
@@ -213,7 +213,7 @@ public class Remote2RemoteTransferDialog extends JDialog {
             path = txtPath.getText();
             port = (Integer) spPort.getValue();
             if (host.isEmpty() || user.isEmpty() || path.isEmpty() || port <= 0) {
-                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_input"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("invalid_input"));
                 continue;
             }
             return new RemoteServerEntry(host, port, user, path);

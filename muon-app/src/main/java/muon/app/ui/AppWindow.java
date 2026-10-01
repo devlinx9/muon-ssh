@@ -598,7 +598,7 @@ public class AppWindow extends JFrame {
 
     public void openSettings(SettingsPageName page) {
         SettingsDialog settingsDialog = new SettingsDialog(this);
-        settingsDialog.showDialog(this, page);
+        settingsDialog.showDialog(App.getAppWindow(), page);
     }
 
     private void createK8sLabel(String currentContext) {
