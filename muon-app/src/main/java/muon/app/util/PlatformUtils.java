@@ -101,7 +101,7 @@ public class PlatformUtils {
             WinDef.HWND h = null;
             WString file = new WString(f.getAbsolutePath());
             instance.shellExecuteW(h, new WString("open"), file, null, null, 1);
-        } catch (Exception e) {
+        } catch (Exception | UnsatisfiedLinkError e) {
             log.error(e.getMessage(), e);
             try {
                 ProcessBuilder builder = new ProcessBuilder();

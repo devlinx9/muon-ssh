@@ -211,6 +211,12 @@ public class ExternalEditorHandler extends JDialog {
             if (app == null) {
                 PlatformUtils.openWithDefaultApp(watchedFile.localFile.toPath().toFile(), openWith);
             } else if (sessionContentPanel != null) {
+                if (sessionContentPanel.getTextEditorHolder().getClientProperty(PAGE_ID) == null){
+                    JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT()
+                                                                              .getBundle()
+                                                                              .getString("settings_saved"));
+                    return;
+                }
                 sessionContentPanel.getTextEditorHolder().getEditor().openRemoteFile(remoteFile, watchedFile.localFile.getAbsolutePath());
                 sessionContentPanel.showPage(sessionContentPanel.getTextEditorHolder().getClientProperty(PAGE_ID) + "");
             } else {
