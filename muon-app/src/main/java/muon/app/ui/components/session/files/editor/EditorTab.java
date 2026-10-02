@@ -177,6 +177,11 @@ public class EditorTab extends Page implements SearchListener {
                 result = SearchEngine.find(textArea, context);
                 if (!result.wasFound()) {
                     UIManager.getLookAndFeel().provideErrorFeedback(textArea);
+
+                    if (result.getMarkedCount() > 0 ){
+                        textArea.setCaretPosition(0);
+                        SearchEngine.find(textArea, context);
+                    }
                 }
                 break;
             case REPLACE:
