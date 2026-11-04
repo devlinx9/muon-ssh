@@ -2,7 +2,7 @@
 
 [![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
 
-<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png" alt="File browser"> </div> 
+<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png" alt="File browser"> </div>
 
 **Muon SSH Terminal/SFTP Client** is a powerful graphical SSH client designed to simplify working with remote servers. Formerly known as "Snowflake," the project has been renamed to avoid confusion with another popular product of the same name.
 
@@ -22,15 +22,15 @@ Not everyone prefers or is comfortable working with English-based software. By o
 - [Deutsch](README_de.md)
 - [中文](README_zh.md)
 
-
 ---
 
 ## Table of Contents
+
 - [About Muon SSH](#about-muon-ssh)
 - [Features](#features)
 - [Installation](#installation)
-    - [Snap Package (Recommended)](#snap-package-recommended)
-    - [Deb Package](#deb-package)
+  - [Snap Package (Recommended)](#snap-package-recommended)
+  - [Deb Package](#deb-package)
 - [Intended Audience](#intended-audience)
 - [Download](#download)
 - [Building from Source](#building-from-source)
@@ -43,7 +43,9 @@ Not everyone prefers or is comfortable working with English-based software. By o
 ---
 
 ## About Muon SSH
+
 Muon SSH is a feature-rich graphical SSH client that provides an intuitive interface for managing remote servers. It includes tools such as:
+
 - Enhanced SFTP file browser
 - SSH terminal emulator
 - Remote resource/process manager
@@ -57,6 +59,7 @@ Muon SSH eliminates the need for server-side installations, as it operates entir
 ---
 
 ## Features
+
 - **Graphical Interface for File Operations**: Simplify common file tasks with an intuitive interface.
 - **Built-in Text Editor**: Edit files remotely with syntax highlighting and sudo support.
 - **Log/Text File Viewer**: Quickly view and search large log or text files.
@@ -73,27 +76,33 @@ Muon SSH eliminates the need for server-side installations, as it operates entir
 ## Installation
 
 ### Snap Package (Recommended)
+
 [![Install Muon SSH Terminal using Snap](https://snapcraft.io/muon-ssh/badge.svg)](https://snapcraft.io/muon-ssh)
 
 Muon SSH is available as a Snap package, ensuring easy installation and updates across multiple Linux distributions.
 
 To install, run:
-```sh  
-sudo snap install muon-ssh --classic  
+
+```sh
+sudo snap install muon-ssh --classic
 ```
 
 For the latest build (may be unstable):
 
-```sh  
-sudo snap install muon-ssh --classic --edge    
+```sh
+sudo snap install muon-ssh --classic --edge
 ```
+
 ### Deb Package
+
 Muon SSH is also available as a Debian package. Install it using:
 
-```sh  
-sudo dpkg -i muon_package.deb   
+```sh
+sudo dpkg -i muon_package.deb
 ```
+
 ## Intended Audience
+
 Muon SSH is designed for:
 
 **Web/Backend Developers:** Simplify deployment and debugging on remote servers.
@@ -101,6 +110,7 @@ Muon SSH is designed for:
 **System Administrators:** Manage multiple remote servers efficiently without relying on complex terminal commands.
 
 ## Download
+
 **Note**: Java 11 or higher is required.
 
 <table>
@@ -113,31 +123,32 @@ Muon SSH is designed for:
   </tr>
 <tr>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">v3.0.0</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.deb">v3.1.0</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.exe">Exe file</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.exe">Exe file</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">DEB installer</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.deb">DEB installer</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.dmg">DMG installer</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.dmg">DMG installer</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.jar">Portable JAR (Java 11)</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.jar">Portable JAR (Java 11)</a>
     </td>
   </tr>
 
 </table>
-For other releases, visit <a href="https://github.com/devlinx9/muon-ssh/releases">release page</a> 
+For other releases, visit <a href="https://github.com/devlinx9/muon-ssh/releases">release page</a>
 
 ## Building from Source
+
 Muon SSH is a standard Maven project. To build from source, ensure you have Java and Maven installed, then run:
 
-```sh  
+```sh
 ## (Temp solution)
-git clone https://github.com/devlinx9/sshj 
+git clone https://github.com/devlinx9/sshj
 cd sshj
 ./gradlew publishToMavenLocal
 cd ..
@@ -145,7 +156,7 @@ git clone --recurse-submodules https://github.com/devlinx9/muon-ssh
 cd muon-ssh/muon-jediterm/
 ./gradlew publishToMavenLocal
 cd ..
-mvn clean package  
+mvn clean package
 ```
 
 The compiled JAR file will be located in the target directory.
@@ -153,19 +164,23 @@ The compiled JAR file will be located in the target directory.
 ---
 
 ## Roadmap
+
 See [ROADMAP.md](ROADMAP.md)
 
 ## Documentation
+
 For detailed documentation, visit the <a href="https://github.com/devlinx9/muon-ssh/wiki">Muon SSH Wiki</a>
 
 ## Development
-**Main Branch**: <a href="https://github.com/devlinx9/muon-ssh">Stable release</a> 
 
-**Develop Branch**: <a href="https://github.com/devlinx9/muon-ssh/tree/develop">Active development</a>  
+**Main Branch**: <a href="https://github.com/devlinx9/muon-ssh">Stable release</a>
+
+**Develop Branch**: <a href="https://github.com/devlinx9/muon-ssh/tree/develop">Active development</a>
 
 ---
 
 ## License and Third-Party Libraries
+
 **Muon SSH** refer to [LICENSE](LICENSE)
 
 **JSch**: refer to [LICENSE-Jsch](LICENSE-Jsch)
@@ -173,6 +188,7 @@ For detailed documentation, visit the <a href="https://github.com/devlinx9/muon-
 ---
 
 ## Fonts
+
 **Source Code Pro** refer to <a href="https://github.com/adobe-fonts/source-code-pro/tree/release?tab=OFL-1.1-1-ov-file">Source Code Pro License</a>
 
 **JetBrains**: refer to <a href="https://github.com/JetBrains/JetBrainsMono/blob/master/OFL.txt">JetBrains License</a>
@@ -181,6 +197,6 @@ For detailed documentation, visit the <a href="https://github.com/devlinx9/muon-
 
 ---
 
-
 ## Changelog
+
 For a detailed list of changes, bug fixes, and new features, refer to the [CHANGELOG.md](CHANGELOG.md)

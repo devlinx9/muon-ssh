@@ -2,7 +2,7 @@
 
 [![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
 
-<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"> </div> 
+<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"> </div>
 
 **Muon SSH 终端/SFTP 客户端** 是一款功能强大的图形化 SSH 客户端，旨在简化与远程服务器的交互。该项目原名 "Snowflake"，为避免与另一款同名流行产品混淆，现已更名为 Muon SSH。
 
@@ -25,6 +25,7 @@
 ---
 
 ## 目录
+
 - [关于 Muon SSH](#关于-muon-ssh)
 - [功能](#功能)
 - [安装](#安装)
@@ -42,7 +43,9 @@
 ---
 
 ## 关于 Muon SSH
+
 Muon SSH 是一款功能丰富的图形化 SSH 客户端，提供直观的界面来管理远程服务器。它包括以下工具：
+
 - 增强的 SFTP 文件浏览器
 - SSH 终端模拟器
 - 远程资源/进程管理器
@@ -56,6 +59,7 @@ Muon SSH 无需在服务器端安装任何软件，因为它完全通过 SSH 从
 ---
 
 ## 功能
+
 - **图形化文件操作界面**：通过直观的界面简化常见的文件操作。
 - **内置文本编辑器**：远程编辑文件，支持语法高亮和 sudo 权限。
 - **日志/文本文件查看器**：快速查看和搜索大型日志或文本文件。
@@ -72,29 +76,35 @@ Muon SSH 无需在服务器端安装任何软件，因为它完全通过 SSH 从
 ## 安装
 
 ### Snap 包 (推荐)
+
 [![通过 Snap 安装 Muon SSH 终端](https://snapcraft.io/muon-ssh/badge.svg)](https://snapcraft.io/muon-ssh)
 
 Muon SSH 提供 Snap 包，确保在多种 Linux 发行版上轻松安装和更新。
 
 安装命令：
-```sh  
-sudo snap install muon-ssh --classic  
+
+```sh
+sudo snap install muon-ssh --classic
 ```
 
 安装最新版本（可能不稳定）：
-```sh  
-sudo snap install muon-ssh --classic --edge    
+
+```sh
+sudo snap install muon-ssh --classic --edge
 ```
 
 ### Deb 包
+
 Muon SSH 也提供 Debian 包。使用以下命令安装：
-```sh  
-sudo dpkg -i muon_package.deb   
+
+```sh
+sudo dpkg -i muon_package.deb
 ```
 
 ---
 
 ## 目标用户
+
 Muon SSH 专为以下用户设计：
 
 **Web/后端开发人员**：简化远程服务器的部署和调试。
@@ -104,6 +114,7 @@ Muon SSH 专为以下用户设计：
 ---
 
 ## 下载
+
 **注意**：需要 Java 11 或更高版本。
 
 <table>
@@ -116,19 +127,19 @@ Muon SSH 专为以下用户设计：
   </tr>
   <tr>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">v3.0.0</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.deb">v3.1.0</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.exe">Exe 文件</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.exe">Exe 文件</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">DEB 安装包</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.deb">DEB 安装包</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.dmg">DMG 安装包</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.dmg">DMG 安装包</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.jar">便携版 JAR (Java 11)</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.jar">便携版 JAR (Java 11)</a>
     </td>
   </tr>
 </table>
@@ -138,10 +149,12 @@ Muon SSH 专为以下用户设计：
 ---
 
 ## 从源代码构建
+
 Muon SSH 是一个标准的 Maven 项目。要从源代码构建，请确保已安装 Java 和 Maven，然后运行：
-```sh  
+
+```sh
 ## (Temp solution)
-git clone https://github.com/devlinx9/sshj 
+git clone https://github.com/devlinx9/sshj
 cd sshj
 ./gradlew publishToMavenLocal
 cd ..
@@ -149,7 +162,7 @@ git clone --recurse-submodules https://github.com/devlinx9/muon-ssh
 cd muon-ssh/muon-jediterm/
 ./gradlew publishToMavenLocal
 cd ..
-mvn clean package  
+mvn clean package
 ```
 
 编译后的 JAR 文件将位于 `target` 目录中。
@@ -157,16 +170,19 @@ mvn clean package
 ---
 
 ## 路线图
+
 查看 [ROADMAP.md](ROADMAP.md)
 
 ---
 
 ## 文档
+
 详细文档请访问 <a href="https://github.com/devlinx9/muon-ssh/wiki">Muon SSH Wiki</a>。
 
 ---
 
 ## 开发
+
 **主分支**: <a href="https://github.com/devlinx9/muon-ssh">稳定版</a>
 
 **开发分支**: <a href="https://github.com/devlinx9/muon-ssh/tree/develop">活跃开发版</a>
@@ -174,6 +190,7 @@ mvn clean package
 ---
 
 ## 许可证与第三方库
+
 **Muon SSH**: 参见 [LICENSE](LICENSE)
 
 **JSch**: 参见 [LICENSE-Jsch](LICENSE-Jsch)
@@ -181,4 +198,5 @@ mvn clean package
 ---
 
 ## 更新日志
+
 详细的变更、错误修复和新功能列表，请参阅 [CHANGELOG.md](CHANGELOG.md)

@@ -2,7 +2,7 @@
 
 [![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
 
-<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"> </div> 
+<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"> </div>
 
 **Muon SSH Терминал/Клиент SFTP** — это мощный графический SSH-клиент, разработанный для упрощения работы с удаленными серверами. Ранее известный как "Snowflake", проект был переименован, чтобы избежать путаницы с другим популярным продуктом с таким же названием.
 
@@ -25,11 +25,12 @@
 ---
 
 ## Содержание
+
 - [О Muon SSH](#о-muon-ssh)
 - [Функции](#функции)
 - [Установка](#установка)
-    - [Пакет Snap (Рекомендуется)](#пакет-snap-рекомендуется)
-    - [Пакет Deb](#пакет-deb)
+  - [Пакет Snap (Рекомендуется)](#пакет-snap-рекомендуется)
+  - [Пакет Deb](#пакет-deb)
 - [Целевая аудитория](#целевая-аудитория)
 - [Скачать](#скачать)
 - [Сборка из исходного кода](#сборка-из-исходного-кода)
@@ -42,7 +43,9 @@
 ---
 
 ## О Muon SSH
+
 Muon SSH — это многофункциональный графический SSH-клиент, предоставляющий интуитивно понятный интерфейс для управления удаленными серверами. Он включает такие инструменты, как:
+
 - Улучшенный файловый браузер SFTP
 - Эмулятор терминала SSH
 - Управление удаленными ресурсами/процессами
@@ -56,6 +59,7 @@ Muon SSH устраняет необходимость установки на �
 ---
 
 ## Функции
+
 - **Графический интерфейс для файловых операций**: Упрощает выполнение обычных задач с файлами с помощью интуитивного интерфейса.
 - **Встроенный текстовый редактор**: Редактируйте файлы удаленно с подсветкой синтаксиса и поддержкой sudo.
 - **Просмотрщик лог/текстовых файлов**: Быстро просматривайте и ищите в больших лог-файлах или текстовых файлах.
@@ -72,29 +76,35 @@ Muon SSH устраняет необходимость установки на �
 ## Установка
 
 ### Пакет Snap (Рекомендуется)
+
 [![Установите Muon SSH Terminal с помощью Snap](https://snapcraft.io/muon-ssh/badge.svg)](https://snapcraft.io/muon-ssh)
 
 Muon SSH доступен в виде пакета Snap, что обеспечивает простую установку и обновление на различных дистрибутивах Linux.
 
 Для установки выполните:
-```sh  
-sudo snap install muon-ssh --classic  
+
+```sh
+sudo snap install muon-ssh --classic
 ```
 
 Для последней сборки (может быть нестабильной):
-```sh  
-sudo snap install muon-ssh --classic --edge    
+
+```sh
+sudo snap install muon-ssh --classic --edge
 ```
 
 ### Пакет Deb
+
 Muon SSH также доступен в виде пакета Debian. Установите его с помощью:
-```sh  
-sudo dpkg -i muon_package.deb   
+
+```sh
+sudo dpkg -i muon_package.deb
 ```
 
 ---
 
 ## Целевая аудитория
+
 Muon SSH предназначен для:
 
 **Веб/Backend-разработчиков:** Упростите развертывание и отладку на удаленных серверах.
@@ -104,6 +114,7 @@ Muon SSH предназначен для:
 ---
 
 ## Скачать
+
 **Примечание**: Требуется Java 11 или выше.
 
 <table>
@@ -116,19 +127,19 @@ Muon SSH предназначен для:
   </tr>
   <tr>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">v3.0.0</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.deb">v3.1.0</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.exe">Файл Exe</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.exe">Файл Exe</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">Установщик DEB</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.deb">Установщик DEB</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.dmg">Установщик DMG</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.dmg">Установщик DMG</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.jar">Портативный JAR (Java 11)</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.jar">Портативный JAR (Java 11)</a>
     </td>
   </tr>
 </table>
@@ -138,11 +149,12 @@ Muon SSH предназначен для:
 ---
 
 ## Сборка из исходного кода
+
 Muon SSH — это стандартный проект Maven. Для сборки из исходного кода убедитесь, что у вас установлены Java и Maven, затем выполните:
 
-```sh  
+```sh
 ## (Temp solution)
-git clone https://github.com/devlinx9/sshj 
+git clone https://github.com/devlinx9/sshj
 cd sshj
 ./gradlew publishToMavenLocal
 cd ..
@@ -150,7 +162,7 @@ git clone --recurse-submodules https://github.com/devlinx9/muon-ssh
 cd muon-ssh/muon-jediterm/
 ./gradlew publishToMavenLocal
 cd ..
-mvn clean package  
+mvn clean package
 ```
 
 Скомпилированный файл JAR будет находиться в каталоге `target`.
@@ -158,16 +170,19 @@ mvn clean package
 ---
 
 ## Дорожная карта
+
 См. [ROADMAP.md](ROADMAP.md)
 
 ---
 
 ## Документация
+
 Подробную документацию см. на <a href="https://github.com/devlinx9/muon-ssh/wiki">вики Muon SSH</a>.
 
 ---
 
 ## Разработка
+
 **Основная ветка**: <a href="https://github.com/devlinx9/muon-ssh">Стабильная версия</a>
 
 **Ветка разработки**: <a href="https://github.com/devlinx9/muon-ssh/tree/develop">Активная разработка</a>
@@ -175,6 +190,7 @@ mvn clean package
 ---
 
 ## Лицензия и сторонние библиотеки
+
 **Muon SSH**: см. [LICENSE](LICENSE)
 
 **JSch**: см. [LICENSE-Jsch](LICENSE-Jsch)
@@ -182,4 +198,5 @@ mvn clean package
 ---
 
 ## История изменений
+
 Подробный список изменений, исправлений ошибок и новых функций см. в [CHANGELOG.md](CHANGELOG.md)

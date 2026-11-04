@@ -12,23 +12,21 @@ This document outlines the current status, upcoming releases, and future plans f
 - [x] [#80](https://github.com/devlinx9/muon-ssh/issues/80): Implementation of ftp/sftp
 - [x] [#64](https://github.com/devlinx9/muon-ssh/issues/64): Monitor for background upload/download
 - [x] [#94](https://github.com/devlinx9/muon-ssh/issues/94): Doesn't suggest using sudo (Partially fixed)
-- [ ] [#126](https://github.com/devlinx9/muon-ssh/issues/126): double click doesn't work
-- [ ] [#101](https://github.com/devlinx9/muon-ssh/issues/101): Error while copying
-- [ ] [#133](https://github.com/devlinx9/muon-ssh/issues/133): Unicode char are not shown
+- [x] [#126](https://github.com/devlinx9/muon-ssh/issues/126): double click doesn't work
+- [x] [#133](https://github.com/devlinx9/muon-ssh/issues/133): Unicode char are not shown
 - [x] [#71](https://github.com/devlinx9/muon-ssh/issues/71): Fractional scaling not working under Linux
 - [x] [#76](https://github.com/devlinx9/muon-ssh/issues/76): Everything too small on hidpi monitors
 - [x] [#128](https://github.com/devlinx9/muon-ssh/issues/128): Copying text now working outside the app
 - [x] [#135](https://github.com/devlinx9/muon-ssh/issues/135): Muon SSH missing icon in dash taskbar
-- [ ] [#65](https://github.com/devlinx9/muon-ssh/issues/65): Scroll in vi or nano not work (jediterm support)
-- [ ] [#137](https://github.com/devlinx9/muon-ssh/issues/137): tmux in SSH connection is very slow
-- [ ] [#136](https://github.com/devlinx9/muon-ssh/issues/136): Can connect on port 2223
+- [x] [#65](https://github.com/devlinx9/muon-ssh/issues/65): Scroll in vi or nano not work (jediterm support)
+- [x] [#136](https://github.com/devlinx9/muon-ssh/issues/136): Can connect on port 2223
 
 
 ### Features:
-- [ ] [#28](https://github.com/devlinx9/muon-ssh/issues/28): Scroll in vi or nano not work (jediterm support)
-- [ ] [#88](https://github.com/devlinx9/muon-ssh/issues/88): [Request] Built-in Code Editor
+- [x] [#28](https://github.com/devlinx9/muon-ssh/issues/28): Scroll in vi or nano not work (jediterm support)
+- [x] [#88](https://github.com/devlinx9/muon-ssh/issues/88): [Request] Built-in Code Editor
 - [x] [#93](https://github.com/devlinx9/muon-ssh/issues/93): A mobaxterm feature: ssh to tmate.io links (I've made a fix in the sshj library, until it's officially publish, I'm using my own repo)
-- [ ] [#129](https://github.com/devlinx9/muon-ssh/issues/129): need at switch tabs hotkeys
+- [x] [#129](https://github.com/devlinx9/muon-ssh/issues/129): need at switch tabs hotkeys
 - [x] [#127](https://github.com/devlinx9/muon-ssh/issues/127): Option to change connection list width (Partially fixed)
 
 ## Tasks: **v3.0.0**

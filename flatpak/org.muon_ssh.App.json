@@ -24,7 +24,7 @@
         "mkdir -p /app/bin",
         "mkdir -p /app/share/icons/hicolor/128x128/apps",
         "mkdir -p /app/share/applications",
-        "cp muonssh_3.0.0.jar /app/muon",
+        "cp muonssh_3.1.0.jar /app/muon",
         "cp muon /app/bin",
         "chmod 755 /app/bin/muon",
         "cp org.muon_ssh.App.png /app/share/icons/hicolor/128x128/apps",
@@ -33,7 +33,7 @@
       "sources": [
         {
           "type": "file",
-          "path": "../muon-app/target/muonssh_3.0.0.jar"
+          "path": "../muon-app/target/muonssh_3.1.0.jar"
         },
         {
           "type": "file",
