@@ -3,6 +3,7 @@ package muon.app.ui.components.session.terminal.snippets;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -27,4 +28,15 @@ public class SnippetItem {
         this.command = command;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof SnippetItem)) return false;
+        SnippetItem that = (SnippetItem) o;
+        return Objects.equals(name, that.name) && Objects.equals(command, that.command) && Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, command, id);
+    }
 }

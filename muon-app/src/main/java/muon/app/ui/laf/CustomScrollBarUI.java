@@ -8,6 +8,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static muon.app.util.ScalingUtil.scale;
+
 public class CustomScrollBarUI extends BasicScrollBarUI {
     private final AtomicBoolean hot = new AtomicBoolean(false);
 
@@ -62,16 +64,16 @@ public class CustomScrollBarUI extends BasicScrollBarUI {
     @Override
     protected JButton createDecreaseButton(int orientation) {
         JButton btn = new JButton();
-        btn.setMaximumSize(new Dimension(0, 0));
-        btn.setPreferredSize(new Dimension(0, 0));
+        btn.setMaximumSize(scale(new Dimension(0, 0)));
+        btn.setPreferredSize(scale(new Dimension(0, 0)));
         return btn;
     }
 
     @Override
     protected JButton createIncreaseButton(int orientation) {
         JButton btn = new JButton();
-        btn.setMaximumSize(new Dimension(0, 0));
-        btn.setPreferredSize(new Dimension(0, 0));
+        btn.setMaximumSize(scale(new Dimension(0, 0)));
+        btn.setPreferredSize(scale(new Dimension(0, 0)));
         return btn;
     }
 }

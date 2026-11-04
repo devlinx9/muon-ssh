@@ -4,13 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.MouseAdapter;
 import java.util.function.Consumer;
+
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 public class TransferProgressPanel extends JPanel {
     private final JProgressBar prg;
@@ -31,7 +33,7 @@ public class TransferProgressPanel extends JPanel {
         setOpaque(false);
         Box b1 = Box.createHorizontalBox();
         b1.setOpaque(true);
-        b1.setMaximumSize(new Dimension(300, 50));
+        b1.setMaximumSize(scale(new Dimension(300, 50)));
         b1.setAlignmentX(Box.LEFT_ALIGNMENT);
         prg = new JProgressBar();
         b1.add(prg);
@@ -48,7 +50,7 @@ public class TransferProgressPanel extends JPanel {
         label.setAlignmentX(Box.LEFT_ALIGNMENT);
         b12.add(label);
         b12.add(b1);
-        b12.setBorder(new EmptyBorder(10, 10, 10, 10));
+        b12.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         b12.setAlignmentX(Box.CENTER_ALIGNMENT);
         add(b12);
         add(Box.createVerticalGlue());

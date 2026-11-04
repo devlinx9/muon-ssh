@@ -10,9 +10,9 @@ import muon.app.ui.components.session.Page;
 import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.util.FontAwesomeContants;
 import muon.app.util.OptionPaneUtils;
-import muon.app.util.PathUtils;
 
 import javax.swing.*;
+import java.nio.file.Path;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -26,7 +26,7 @@ public class LogViewer extends Page {
     private final SessionContentPanel sessionContent;
     private final Set<String> openLogs = new LinkedHashSet<>();
 
-    
+
     public LogViewer(SessionContentPanel sessionContent) {
         this.sessionContent = sessionContent;
         startPage = new StartPage(this::openLog, sessionContent.getInfo().getId());
@@ -77,16 +77,16 @@ public class LogViewer extends Page {
                                                startPage, e -> openLogs.remove(remotePath));
         TabTitle title = new TabTitle();
         tabs.addTab(title, logContent);
-        title.getCallback().accept(PathUtils.getFileName(remotePath));
+        title.getCallback().accept(Path.of(remotePath).getFileName().toString());
         openLogs.add(remotePath);
     }
 
     private String promptLogPath() {
         JTextField txt = new SkinnedTextField(30);
-        if (OptionPaneUtils.showOptionDialog(this,
+        if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                              new Object[]{App.getCONTEXT().getBundle().getString("provide_log_file_path"),
                                                           txt},
-                                             "Input") == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
+                                             App.getCONTEXT().getBundle().getString("path")) == JOptionPane.OK_OPTION && !txt.getText().isEmpty()) {
             return txt.getText();
         }
         return null;

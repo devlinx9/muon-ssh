@@ -1,5 +1,6 @@
 package muon.app.ui.components.session.terminal;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.common.ClosableTabbedPanel;
@@ -21,6 +22,7 @@ import static muon.app.util.Constants.SMALL_TEXT_SIZE;
 
 @Slf4j
 public class TerminalHolder extends Page implements AutoCloseable {
+    @Getter
     private final ClosableTabbedPanel tabs;
     private JPopupMenu snippetPopupMenu;
     private final SnippetPanel snippetPanel;
@@ -36,7 +38,7 @@ public class TerminalHolder extends Page implements AutoCloseable {
         btn = new JButton();
         btn.setToolTipText("Snippets");
         btn.addActionListener(e -> showSnippets());
-        btn.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+        btn.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
         btn.setText(FontAwesomeContants.FA_BOOKMARK);
         btn.putClientProperty("Nimbus.Overrides", App.getCONTEXT().getSkin().createTabButtonSkin());
         btn.setForeground(App.getCONTEXT().getSkin().getInfoTextForeground());

@@ -12,10 +12,11 @@ import muon.app.ui.components.session.terminal.ssh.DisposableTtyConnector;
 import muon.app.ui.components.session.terminal.ssh.SshTtyConnector;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 @Slf4j
 public class TerminalComponent extends JPanel implements ClosableTabContent {
@@ -71,7 +72,7 @@ public class TerminalComponent extends JPanel implements ClosableTabContent {
         });
         reconnectionBox.add(Box.createHorizontalGlue());
         reconnectionBox.add(btnReconnect);
-        reconnectionBox.setBorder(new EmptyBorder(10, 10, 10, 10));
+        reconnectionBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         term.addListener(e -> {
             log.info("Disconnected");
             SwingUtilities.invokeLater(() -> {

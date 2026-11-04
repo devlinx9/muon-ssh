@@ -8,15 +8,16 @@ import muon.app.ui.components.common.TabbedPanel;
 import muon.app.util.enums.JumpType;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
 
+import static muon.app.util.ScalingUtil.*;
 
 
 @Slf4j
@@ -24,6 +25,7 @@ public class SessionInfoPanel extends JPanel {
 
     public static final int DEFAULT_MAX_PORT = 65535;
     private static final long serialVersionUID = 6679029920589652547L;
+    private static final String ORIG_COMBO_RENDERER = "orig.combo.renderer";
     private JTextField inpHostName;
     private JTextField inpUserName;
     private JPasswordField inpPassword;
@@ -45,22 +47,166 @@ public class SessionInfoPanel extends JPanel {
     private PortForwardingPanel panPF;
     private SessionInfo info;
     private JCheckBox chkUseX11Forwarding;
+    private JCheckBox chkSftpOnly;
+
+    private JPanel proxyPanel;
+    private JPanel jumpPanel;
+    private JPanel portForwardingPanel;
 
 
     public SessionInfoPanel() {
         createUI();
     }
 
-    public void hideFields() {
-        for (Component c : this.getComponents()) {
-            c.setVisible(false);
+    private static void setEnableSubComponents(Component c, boolean enabled) {
+        c.setEnabled(enabled);
+        if (c instanceof Container) {
+            for (Component child : ((Container) c).getComponents()) {
+                setEnableSubComponents(child, enabled);
+            }
         }
     }
 
-    public void showFields() {
-        for (Component c : this.getComponents()) {
-            c.setVisible(true);
+    public void setEditable(boolean editable) {
+        applyEditability(this, editable);
+        if (panJumpHost != null) {
+            panJumpHost.setEditable(editable);
         }
+        if (panPF != null) {
+            panPF.setEditable(editable);
+        }
+        applyReadOnlyColors(editable);
+        if (editable && info != null) {
+            applySftpOnlyState(info.isSftpOnly());
+        }
+    }
+
+    private void applyEditability(Component component, boolean editable) {
+        if (component instanceof JLabel) {
+            component.setEnabled(true);
+            return;
+        }
+
+        if (component instanceof JTextComponent) {
+            JTextComponent textComponent = (JTextComponent) component;
+            textComponent.setEnabled(true);
+            textComponent.setEditable(editable);
+            textComponent.setFocusable(editable);
+            return;
+        }
+
+        if (component instanceof JComboBox || component instanceof JSpinner || component instanceof AbstractButton
+                || component instanceof JTable || component instanceof JList || component instanceof JTree) {
+            component.setEnabled(editable);
+        }
+
+        if (component instanceof Container) {
+            Container container = (Container) component;
+            for (Component child : container.getComponents()) {
+                applyEditability(child, editable);
+            }
+        }
+    }
+
+    private void applyReadOnlyColors(boolean editable) {
+        Color readOnlyBg = App.getCONTEXT().getSkin().getReadOnlyFieldBackground();
+        Color readOnlyFg = App.getCONTEXT().getSkin().getReadOnlyFieldForeground();
+
+        for (Component c : getAllComponents(this)) {
+            boolean formControl = c instanceof JTextComponent || c instanceof JComboBox || c instanceof JSpinner || c instanceof JCheckBox || c instanceof JButton;
+            if (!formControl) continue;
+
+            boolean readOnlyText = c instanceof JTextComponent && !((JTextComponent) c).isEditable();
+            boolean disabled = !c.isEnabled();
+            if (readOnlyText || disabled) {
+                c.setBackground(readOnlyBg);
+                c.setForeground(readOnlyFg);
+                if (c instanceof JComponent) {
+                    ((JComponent) c).setOpaque(true);
+                }
+                if (c instanceof JTextComponent) {
+                    ((JTextComponent) c).setDisabledTextColor(readOnlyFg);
+                    ((JTextComponent) c).setCaretColor(readOnlyFg);
+                }
+                if (c instanceof JSpinner) {
+                    JComponent editor = ((JSpinner) c).getEditor();
+                    if (editor instanceof JSpinner.DefaultEditor) {
+                        JTextField tf = ((JSpinner.DefaultEditor) editor).getTextField();
+                        tf.setBackground(readOnlyBg);
+                        tf.setForeground(readOnlyFg);
+                        tf.setDisabledTextColor(readOnlyFg);
+                    }
+                    for (Component sc : ((JSpinner) c).getComponents()) {
+                        if (sc instanceof JButton || sc instanceof JComponent) {
+                            sc.setBackground(readOnlyBg);
+                            sc.setForeground(readOnlyFg);
+                            if (sc instanceof JComponent) {
+                                ((JComponent) sc).setOpaque(true);
+                            }
+                        }
+                    }
+                }
+                if (c instanceof JComboBox) {
+                    JComboBox<?> combo = (JComboBox<?>) c;
+                    combo.setBackground(readOnlyBg);
+                    combo.setForeground(readOnlyFg);
+                    applyComboRenderer(combo, readOnlyBg, readOnlyFg, true);
+                    ComboBoxEditor editor = combo.getEditor();
+                    if (editor != null && editor.getEditorComponent() instanceof JComponent) {
+                        JComponent ec = (JComponent) editor.getEditorComponent();
+                        ec.setBackground(readOnlyBg);
+                        ec.setForeground(readOnlyFg);
+                        ec.setOpaque(true);
+                    }
+                }
+            } else {
+                c.setBackground(null);
+                c.setForeground(null);
+                if (c instanceof JTextComponent) {
+                    ((JTextComponent) c).setDisabledTextColor(UIManager.getColor("nimbusDisabledText"));
+                }
+                if (c instanceof JComboBox) {
+                    applyComboRenderer((JComboBox<?>) c, readOnlyBg, readOnlyFg, false);
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void applyComboRenderer(JComboBox<?> combo, Color bg, Color fg, boolean readOnly) {
+        if (readOnly) {
+            if (combo.getClientProperty(ORIG_COMBO_RENDERER) == null) {
+                combo.putClientProperty(ORIG_COMBO_RENDERER, combo.getRenderer());
+            }
+            combo.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                                                              boolean isSelected, boolean cellHasFocus) {
+                    JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    if (index == -1 || isSelected) {
+                        label.setBackground(bg);
+                        label.setForeground(fg);
+                    }
+                    return label;
+                }
+            });
+        } else {
+            Object original = combo.getClientProperty(ORIG_COMBO_RENDERER);
+            if (original instanceof ListCellRenderer) {
+                combo.setRenderer((ListCellRenderer<? super Object>) original);
+            }
+        }
+    }
+
+    private java.util.List<Component> getAllComponents(Container c) {
+        java.util.List<Component> list = new java.util.ArrayList<>();
+        for (Component comp : c.getComponents()) {
+            list.add(comp);
+            if (comp instanceof Container) {
+                list.addAll(getAllComponents((Container) comp));
+            }
+        }
+        return list;
     }
 
     public boolean validateFields() {
@@ -93,6 +239,7 @@ public class SessionInfoPanel extends JPanel {
 
         setJumpHostDetails(info.isUseJumpHosts(), info.getJumpType(), info.getJumpHosts());
         this.chkUseX11Forwarding.setSelected(info.isUseX11Forwarding());
+        this.chkSftpOnly.setSelected(info.isSftpOnly());
 
         panPF.setInfo(info);
     }
@@ -146,7 +293,7 @@ public class SessionInfoPanel extends JPanel {
     }
 
     private void showError(String msg) {
-        JOptionPane.showMessageDialog(this, msg, App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(App.getAppWindow(), msg, App.getCONTEXT().getBundle().getString("error"), JOptionPane.ERROR_MESSAGE);
     }
 
     private void setJumpHostDetails(boolean useJumpHosts, JumpType jumpType, List<HopEntry> jumpHosts) {
@@ -161,13 +308,16 @@ public class SessionInfoPanel extends JPanel {
 
     private void createUI() {
         setLayout(new BorderLayout());
-        setBorder(new EmptyBorder(10, 0, 10, 0));
+        setBorder(getScaledEmptyBorder(10, 0, 10, 0));
         TabbedPanel tabs = new TabbedPanel();
         tabs.addTab(App.getCONTEXT().getBundle().getString("connection"), createConnectionPanel());
         tabs.addTab(App.getCONTEXT().getBundle().getString("directories"), createDirectoryPanel());
-        tabs.addTab(App.getCONTEXT().getBundle().getString("proxy"), createProxyPanel());
-        tabs.addTab(App.getCONTEXT().getBundle().getString("jump_hosts"), createJumpPanel());
-        tabs.addTab(App.getCONTEXT().getBundle().getString("port_forwarding"), createPortForwardingPanel());
+        proxyPanel = createProxyPanel();
+        tabs.addTab(App.getCONTEXT().getBundle().getString("proxy"), proxyPanel);
+        jumpPanel = createJumpPanel();
+        tabs.addTab(App.getCONTEXT().getBundle().getString("jump_hosts"), jumpPanel);
+        portForwardingPanel = createPortForwardingPanel();
+        tabs.addTab(App.getCONTEXT().getBundle().getString("port_forwarding"), portForwardingPanel);
         this.add(tabs);
         tabs.setSelectedIndex(0);
     }
@@ -176,8 +326,8 @@ public class SessionInfoPanel extends JPanel {
         GridBagLayout gbl1 = new GridBagLayout();
         JPanel panel = new JPanel(gbl1);
 
-        Insets topInset = new Insets(20, 10, 0, 10);
-        Insets noInset = new Insets(5, 10, 0, 10);
+        Insets topInset = scaleInsets(20, 10, 0, 10);
+        Insets noInset = scaleInsets(5, 10, 0, 10);
 
         chkUseJumpHosts = new JCheckBox("Jump Hosts / Multi hop port forwarding");
         radMultiHopTunnel = new JRadioButton("Use multihop SSH tunnel");
@@ -261,8 +411,8 @@ public class SessionInfoPanel extends JPanel {
         GridBagLayout gbl1 = new GridBagLayout();
         JPanel panel = new JPanel(gbl1);
 
-        Insets topInset = new Insets(20, 10, 0, 10);
-        Insets noInset = new Insets(5, 10, 0, 10);
+        Insets topInset = scaleInsets(20, 10, 0, 10);
+        Insets noInset = scaleInsets(5, 10, 0, 10);
 
         // -----------
         JLabel lblProxyType = new JLabel(App.getCONTEXT().getBundle().getString("proxy_type"));
@@ -300,6 +450,8 @@ public class SessionInfoPanel extends JPanel {
         proxyPortModel = new SpinnerNumberModel(8080, 1, DEFAULT_MAX_PORT, 1);
         proxyPortModel.addChangeListener(arg0 -> info.setProxyPort((Integer) proxyPortModel.getValue()));
         JSpinner inpProxyPort = new JSpinner(proxyPortModel);
+        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(inpProxyPort, "#");
+        inpProxyPort.setEditor(editor);
         inpProxyUserName = new SkinnedTextField(10);// new
         inpProxyUserName.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -447,8 +599,8 @@ public class SessionInfoPanel extends JPanel {
         GridBagLayout gbl1 = new GridBagLayout();
         JPanel panel = new JPanel(gbl1);
 
-        Insets topInset = new Insets(20, 10, 0, 10);
-        Insets noInset = new Insets(5, 10, 0, 10);
+        Insets topInset = scaleInsets(20, 10, 0, 10);
+        Insets noInset = scaleInsets(5, 10, 0, 10);
 
         inpLocalFolder = new SkinnedTextField(10);// new
         inpLocalFolder.getDocument().addDocumentListener(new DocumentListener() {
@@ -531,7 +683,7 @@ public class SessionInfoPanel extends JPanel {
         c.gridx = 1;
         c.gridy = 13;
         c.gridwidth = 1;
-        c.insets = new Insets(5, 0, 0, 10);
+        c.insets = scaleInsets(5, 0, 0, 10);
         c.weightx = 0;
         panel.add(inpLocalBrowse, c);
 
@@ -564,8 +716,8 @@ public class SessionInfoPanel extends JPanel {
         GridBagLayout gbl1 = new GridBagLayout();
         JPanel panel = new JPanel(gbl1);
 
-        Insets topInset = new Insets(20, 10, 0, 10);
-        Insets noInset = new Insets(5, 10, 0, 10);
+        Insets topInset = scaleInsets(20, 10, 0, 10);
+        Insets noInset = scaleInsets(5, 10, 0, 10);
 
         JLabel lblHost = new JLabel(App.getCONTEXT().getBundle().getString("host"));
         lblHost.setHorizontalAlignment(JLabel.LEADING);
@@ -602,6 +754,8 @@ public class SessionInfoPanel extends JPanel {
         portModel = new SpinnerNumberModel(22, 1, DEFAULT_MAX_PORT, 1);
         portModel.addChangeListener(arg0 -> info.setPort((Integer) portModel.getValue()));
         JSpinner inpPort = new JSpinner(portModel);
+        JSpinner.NumberEditor editorTarget = new JSpinner.NumberEditor(inpPort, "#");
+        inpPort.setEditor(editorTarget);
         inpUserName = new SkinnedTextField(10);
         inpUserName.getDocument().addDocumentListener(new DocumentListener() {
 
@@ -682,8 +836,8 @@ public class SessionInfoPanel extends JPanel {
             if (jfc.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 String selectedFile = jfc.getSelectedFile().getAbsolutePath();
                 if (selectedFile.endsWith(".ppk") && !isSupportedPuttyKeyFile(jfc.getSelectedFile())) {
-                    JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("unsupported_key")
-                                                 );
+                    JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("unsupported_key")
+                    );
                     return;
                 }
 
@@ -697,12 +851,16 @@ public class SessionInfoPanel extends JPanel {
             ta.setText(inpPassword.getText());
             ta.setEditable(false);
             ta.setLineWrap(false);
-            JOptionPane.showMessageDialog(this, ta, App.getCONTEXT().getBundle().getString("password"), JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.showMessageDialog(App.getAppWindow(), ta, App.getCONTEXT().getBundle().getString("password"), JOptionPane.PLAIN_MESSAGE);
         });
 
         chkUseX11Forwarding = new JCheckBox("X11 forwarding");
 
         chkUseX11Forwarding.addActionListener(e -> info.setUseX11Forwarding(chkUseX11Forwarding.isSelected()));
+
+        chkSftpOnly = new JCheckBox("SFTP Only");
+
+        chkSftpOnly.addItemListener(e -> applySftpOnlyState(chkSftpOnly.isSelected()));
 
         GridBagConstraints c = new GridBagConstraints();
         c.weightx = 1;
@@ -765,7 +923,7 @@ public class SessionInfoPanel extends JPanel {
         c.gridy = 8;
         c.gridwidth = 1;
         c.weightx = 0;
-        c.insets = new Insets(5, 0, 0, 8);
+        c.insets = scaleInsets(5, 0, 0, 8);
         panel.add(inpKeyShowPass, c);
 
         c.gridx = 0;
@@ -786,11 +944,17 @@ public class SessionInfoPanel extends JPanel {
         c.gridwidth = 1;
         c.weightx = 0;
         c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(5, 0, 0, 10);
+        c.insets = scaleInsets(5, 0, 0, 10);
         panel.add(inpKeyBrowse, c);
 
         c.gridx = 0;
         c.gridy = 11;
+        c.gridwidth = 2;
+        c.insets = noInset;
+        panel.add(chkSftpOnly, c);
+
+        c.gridx = 0;
+        c.gridy = 12;
         c.gridwidth = 2;
         c.insets = noInset;
         panel.add(chkUseX11Forwarding, c);
@@ -823,7 +987,7 @@ public class SessionInfoPanel extends JPanel {
                 return false;
             }
             if (content.contains("Encryption:")
-                && (content.contains("Encryption: aes256-cbc") || content.contains("Encryption: none"))) {
+                    && (content.contains("Encryption: aes256-cbc") || content.contains("Encryption: none"))) {
                 return true;
             }
         } catch (Exception e) {
@@ -831,5 +995,53 @@ public class SessionInfoPanel extends JPanel {
         }
         return false;
     }
+
+    private void applySftpOnlyState(boolean sftpOnly) {
+        info.setSftpOnly(sftpOnly);
+
+        // X11: deselect & disable (you already had this; keeping it here for one place)
+        if (sftpOnly) {
+            chkUseX11Forwarding.setSelected(false);
+            info.setUseX11Forwarding(false);
+        }
+        chkUseX11Forwarding.setEnabled(!sftpOnly);
+        chkUseX11Forwarding.setForeground(UIManager.getColor(
+                sftpOnly ? "Label.disabledForeground" : "Label.foreground"));
+
+        chkUseJumpHosts.setForeground(UIManager.getColor(
+                sftpOnly ? "Label.disabledForeground" : "Label.foreground"));
+
+
+        setEnableSubComponents(proxyPanel, !sftpOnly);
+        setEnableSubComponents(jumpPanel, !sftpOnly);
+        setEnableSubComponents(portForwardingPanel, !sftpOnly);
+
+        // Force model into a safe state when SFTP-only
+        if (sftpOnly) {
+            // Proxy → NONE
+            if (cmbProxy != null) {
+                cmbProxy.setSelectedIndex(0);
+                info.setProxyType(0);
+            }
+            // Jump hosts → off
+            if (chkUseJumpHosts != null) {
+                chkUseJumpHosts.setSelected(false);
+                info.setUseJumpHosts(false);
+            }
+            if (radMultiHopTunnel != null) radMultiHopTunnel.setSelected(false);
+            if (radMultiHopPortForwarding != null) radMultiHopPortForwarding.setSelected(false);
+        }
+
+        // Refresh visuals
+        proxyPanel.revalidate();
+        proxyPanel.repaint();
+        jumpPanel.revalidate();
+        jumpPanel.repaint();
+        portForwardingPanel.revalidate();
+        portForwardingPanel.repaint();
+        chkUseX11Forwarding.revalidate();
+        chkUseX11Forwarding.repaint();
+    }
+
 
 }

@@ -3,6 +3,8 @@ package muon.app.util;
 
 import java.awt.*;
 
+import static muon.app.util.ScalingUtil.scale;
+
 /**
  * @author subhro
  *
@@ -25,7 +27,7 @@ public final class LayoutUtilities {
             }
         }
 
-        Dimension dimMax = new Dimension(maxWidth, maxHeight);
+        Dimension dimMax = scale(new Dimension(maxWidth, maxHeight));
         for (Component item : components) {
             item.setPreferredSize(dimMax);
             item.setMinimumSize(dimMax);

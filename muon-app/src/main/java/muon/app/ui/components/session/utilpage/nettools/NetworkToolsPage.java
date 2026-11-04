@@ -10,12 +10,13 @@ import muon.app.ui.components.session.utilpage.UtilPageItemView;
 import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 /**
@@ -47,7 +48,7 @@ public class NetworkToolsPage extends UtilPageItemView {
                                                   "dig +short", "host", "getent ahostsv4"});
 
         JPanel grid = new JPanel(new GridLayout(1, 4, 10, 10));
-        grid.setBorder(new EmptyBorder(10, 10, 10, 10));
+        grid.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         JButton btn1 = new JButton("Ping");
         JButton btn2 = new JButton("Port check");
@@ -55,14 +56,14 @@ public class NetworkToolsPage extends UtilPageItemView {
         JButton btn4 = new JButton("DNS lookup");
 
         btn1.addActionListener(e -> {
-            if (OptionPaneUtils.showOptionDialog(this,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("host_ping"), cmbHost}, "Ping") == JOptionPane.OK_OPTION) {
                 executeAsync("ping -c 4 " + cmbHost.getSelectedItem());
             }
         });
 
         btn2.addActionListener(e -> {
-            if (OptionPaneUtils.showOptionDialog(this,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("host_name"), cmbHost, App.getCONTEXT().getBundle().getString("port_number"),
                                                               cmbPort},
                                                  "Port check") == JOptionPane.OK_OPTION) {
@@ -74,14 +75,14 @@ public class NetworkToolsPage extends UtilPageItemView {
         });
 
         btn3.addActionListener(e -> {
-            if (OptionPaneUtils.showOptionDialog(this,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("host_name"), cmbHost}, "Traceroute") == JOptionPane.OK_OPTION) {
                 executeAsync("traceroute " + cmbHost.getSelectedItem());
             }
         });
 
         btn4.addActionListener(e -> {
-            if (OptionPaneUtils.showOptionDialog(this,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("host_name"), cmbHost, App.getCONTEXT().getBundle().getString("tool_use"),
                                                               cmbDNSTool},
                                                  "DNS lookup") == JOptionPane.OK_OPTION) {
@@ -95,7 +96,7 @@ public class NetworkToolsPage extends UtilPageItemView {
         grid.add(btn3);
         grid.add(btn4);
 
-        this.setBorder(new EmptyBorder(5, 5, 5, 5));
+        this.setBorder(getScaledEmptyBorder(5, 5, 5, 5));
         this.add(grid, BorderLayout.NORTH);
 
         txtOutput = new SkinnedTextArea();
@@ -117,7 +118,7 @@ public class NetworkToolsPage extends UtilPageItemView {
                     outText.append(bout.toString(StandardCharsets.UTF_8)).append("\n");
                     log.info("Command stdout: {}", outText);
                 } else {
-                    JOptionPane.showMessageDialog(this,
+                    JOptionPane.showMessageDialog(App.getAppWindow(),
                                                   App.getCONTEXT().getBundle().getString("executed_errors"));
                 }
             } catch (Exception e) {

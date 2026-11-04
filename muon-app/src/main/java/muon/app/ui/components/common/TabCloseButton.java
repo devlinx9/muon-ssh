@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.scale;
 
 /**
  * @author subhro
@@ -22,10 +23,10 @@ public class TabCloseButton extends JComponent {
     private final Font font;
 
     public TabCloseButton() {
-        setPreferredSize(new Dimension(20, 20));
-        setMinimumSize(new Dimension(20, 20));
-        setMaximumSize(new Dimension(20, 20));
-        font = App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE);
+        setPreferredSize(scale(new Dimension(20, 20)));
+        setMinimumSize(scale(new Dimension(20, 20)));
+        setMaximumSize(scale(new Dimension(20, 20)));
+        font = App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {

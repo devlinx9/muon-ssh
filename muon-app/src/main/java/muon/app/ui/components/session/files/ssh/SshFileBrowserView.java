@@ -21,6 +21,7 @@ import muon.app.util.enums.TransferAction;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -104,7 +105,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
             SwingUtilities.invokeLater(() -> {
                 addressBar.setText(path);
                 folderView.setItems(list2);
-                tabTitle.getCallback().accept(PathUtils.getFileName(path));
+                tabTitle.getCallback().accept(Path.of(path).getFileName().toString());
                 int tc = list2.size();
                 String text = String.format("Total %d remote file(s)", tc);
                 fileBrowser.updateRemoteStatus(text);
@@ -142,11 +143,11 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                         this.fileBrowser.getHolder().reconnect();
 
                         log.error(e.getMessage(), e);
-                        if (JOptionPane.showConfirmDialog(null,
-                                                          "Unable to connect to server " + this.fileBrowser.getInfo().getName() + " at "
-                                                          + this.fileBrowser.getInfo().getHost()
-                                                          + (e.getMessage() != null ? "\n\nReason: " + e.getMessage() : "\n")
-                                                          + "\n\nDo you want to retry?") == JOptionPane.YES_OPTION) {
+                        if (JOptionPane.showConfirmDialog(App.getAppWindow(),
+                                                          String.format(App.getCONTEXT().getBundle().getString("unable_connect_server_sentence"),
+                                                                        this.fileBrowser.getInfo().getName(),
+                                                                        this.fileBrowser.getInfo().getHost(),
+                                                                        (e.getMessage() != null ? ": " + e.getMessage() : "\n"))) == JOptionPane.YES_OPTION) {
                             continue;
                         }
                         break;
@@ -168,8 +169,15 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
         FileInfo fileInfo = folderView.getSelectedFiles()[0];
         try {
+            if (App.getGlobalSettings().isUseLocalEditor()) {
+                App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
+                                                              fileBrowser.getActiveSessionId(), false, "muon-editor", fileBrowser.getHolder());
+                return;
+
+            }
+
             App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                                                          fileBrowser.getActiveSessionId(), false, null);
+                                                          fileBrowser.getActiveSessionId(), false, null, null);
         } catch (IOException e1) {
             log.error(e1.getMessage(), e1);
         }
@@ -204,7 +212,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
 
     public boolean handleDrop(DndTransferData transferData) {
         if (App.getGlobalSettings().isConfirmBeforeMoveOrCopy()
-            && JOptionPane.showConfirmDialog(null, App.getCONTEXT().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
+            && JOptionPane.showConfirmDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("move_copy_files")) != JOptionPane.YES_OPTION) {
             return false;
         }
         try {
@@ -243,7 +251,7 @@ public class SshFileBrowserView extends AbstractFileBrowserView {
                         pwd += "/";
                     }
                     if (parent.equals(pwd)) {
-                        JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("same_directory"));
+                        JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("same_directory"));
                         return false;
                     }
                 }

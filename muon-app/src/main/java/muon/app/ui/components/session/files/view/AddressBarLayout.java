@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static muon.app.util.ScalingUtil.scale;
+
 public class AddressBarLayout implements LayoutManager {
 
     @Override
@@ -26,13 +28,13 @@ public class AddressBarLayout implements LayoutManager {
             h = Math.max(h, pref.height);
         }
         Insets border = c.getInsets();
-        return new Dimension(w + border.left + border.right,
-                h + border.top + border.bottom);
+        return scale(new Dimension(w + border.left + border.right,
+                h + border.top + border.bottom));
     }
 
     @Override
     public Dimension minimumLayoutSize(Container parent) {
-        return new Dimension(0, 0);
+        return scale(new Dimension(0, 0));
     }
 
     @Override

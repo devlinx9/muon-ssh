@@ -101,7 +101,7 @@ public class PlatformUtils {
             WinDef.HWND h = null;
             WString file = new WString(f.getAbsolutePath());
             instance.shellExecuteW(h, new WString("open"), file, null, null, 1);
-        } catch (Exception e) {
+        } catch (Exception | UnsatisfiedLinkError e) {
             log.error(e.getMessage(), e);
             try {
                 ProcessBuilder builder = new ProcessBuilder();
@@ -116,7 +116,7 @@ public class PlatformUtils {
 
     public static void openLinux(final File f) throws FileNotFoundException {
         if (!f.exists()) {
-            throw new FileNotFoundException();
+            throw new FileNotFoundException(f.getAbsolutePath());
         }
         try {
             ProcessBuilder pb = new ProcessBuilder();
@@ -206,6 +206,21 @@ public class PlatformUtils {
                                  "Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\atom", "InstallLocation");
         if (atom != null) {
             EditorEntry ent = new EditorEntry("Atom", atom + "\\atom.exe");
+            list.add(ent);
+        }
+
+        String winDir = System.getenv("SystemRoot");
+        if (winDir == null) {
+            winDir = "C:\\Windows";
+        }
+
+        File notepad = new File(winDir, "System32\\notepad.exe");
+        if (!notepad.exists()) {
+            notepad = new File(winDir, "notepad.exe");
+        }
+
+        if (notepad.exists()) {
+            EditorEntry ent = new EditorEntry("Notepad", notepad.getAbsolutePath());
             list.add(ent);
         }
     }

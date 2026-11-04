@@ -8,8 +8,7 @@ import muon.app.App;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.MatteBorder;
+
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -19,6 +18,9 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
+
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 /**
  * This class will display line numbers for a related text component. The text
@@ -36,7 +38,7 @@ public class TextLineNumber extends JPanel
     public static final float CENTER = 0.5f;
     public static final float RIGHT = 1.0f;
 
-    private static final Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
+    private static final Border OUTER = getScaledMatteBorder(0, 0, 0, 2, Color.GRAY);
 
     private static final int HEIGHT = Integer.MAX_VALUE - 1000000;
 
@@ -120,7 +122,7 @@ public class TextLineNumber extends JPanel
      */
     public void setBorderGap(int borderGap) {
         this.borderGap = borderGap;
-        Border inner = new EmptyBorder(0, borderGap, 0, borderGap);
+        Border inner = getScaledEmptyBorder(0, borderGap, 0, borderGap);
         setBorder(new CompoundBorder(OUTER, inner));
         lastDigits = 0;
         setPreferredWidth();

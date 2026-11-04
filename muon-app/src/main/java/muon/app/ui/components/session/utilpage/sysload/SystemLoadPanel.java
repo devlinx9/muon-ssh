@@ -5,9 +5,10 @@ import muon.app.App;
 import muon.app.util.FormatUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 public class SystemLoadPanel extends JPanel {
@@ -31,13 +32,13 @@ public class SystemLoadPanel extends JPanel {
 
     public SystemLoadPanel() {
         super(new BorderLayout(5, 5));
-        setBorder(new EmptyBorder(10, 10, 10, 10));
-        setMinimumSize(new Dimension(200, 100));
-        setPreferredSize(new Dimension(300, 400));
+        setBorder(getScaledEmptyBorder(10, 10, 10, 10));
+        setMinimumSize(scale(new Dimension(200, 100)));
+        setPreferredSize(scale(new Dimension(300, 400)));
         Box b1 = Box.createVerticalBox();
 
         cpuLabel = new JLabel(App.getCONTEXT().getBundle().getString("cpu_usage"));
-        cpuLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
+        cpuLabel.setBorder(getScaledEmptyBorder(0, 0, 10, 0));
         cpuLabel.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(cpuLabel);
 
@@ -47,7 +48,7 @@ public class SystemLoadPanel extends JPanel {
         b1.add(cpuGraph);
 
         memoryLabel = new JLabel(App.getCONTEXT().getBundle().getString("memory_usage"));
-        memoryLabel.setBorder(new EmptyBorder(20, 0, 10, 0));
+        memoryLabel.setBorder(getScaledEmptyBorder(20, 0, 10, 0));
         memoryLabel.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(memoryLabel);
 
@@ -57,7 +58,7 @@ public class SystemLoadPanel extends JPanel {
         b1.add(memGraph);
 
         swapLabel = new JLabel(App.getCONTEXT().getBundle().getString("swap_usage"));
-        swapLabel.setBorder(new EmptyBorder(20, 0, 10, 0));
+        swapLabel.setBorder(getScaledEmptyBorder(20, 0, 10, 0));
         swapLabel.setAlignmentX(Box.LEFT_ALIGNMENT);
         b1.add(swapLabel);
 

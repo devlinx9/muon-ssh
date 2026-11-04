@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import static muon.app.util.ScalingUtil.scale;
+
 @Slf4j
 public class FolderView extends JPanel {
     private final FolderViewTableModel folderViewModel;
@@ -56,7 +58,7 @@ public class FolderView extends JPanel {
 
         listener.install(this);
 
-        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setIntercellSpacing(scale(new Dimension(0, 0)));
         table.setDragEnabled(true);
         table.setDropMode(DropMode.ON);
         table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -189,6 +191,10 @@ public class FolderView extends JPanel {
                 if (files.length > 0 && (files[0].getType() == FileType.DIRECTORY || files[0].getType() == FileType.DIR_LINK)) {
                     String str = files[0].getPath();
                     listener.render(str, App.getGlobalSettings().isDirectoryCache());
+                }
+
+                if (files.length == 1) {
+                    listener.openApp(files[0]);
                 }
 
             }

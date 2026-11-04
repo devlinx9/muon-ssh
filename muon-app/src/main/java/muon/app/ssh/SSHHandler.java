@@ -21,6 +21,9 @@ import net.schmizz.sshj.connection.channel.forwarded.RemotePortForwarder;
 import net.schmizz.sshj.connection.channel.forwarded.SocketForwardingConnectListener;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.transport.Transport;
+import net.schmizz.sshj.transport.compression.DelayedZlibCompression;
+import net.schmizz.sshj.transport.compression.NoneCompression;
+import net.schmizz.sshj.transport.compression.ZlibCompression;
 import net.schmizz.sshj.userauth.keyprovider.KeyProvider;
 import net.schmizz.sshj.userauth.method.AuthKeyboardInteractive;
 import net.schmizz.sshj.userauth.method.AuthNone;
@@ -171,11 +174,17 @@ public class SSHHandler implements Closeable {
 
     private void connect(Deque<HopEntry> hopStack) throws IOException, OperationCancelledException {
         try {
+            closed.set(false);
             this.sessionContentPanel.disableUi();
             initializeSSHClient();
             if (hopStack.isEmpty()) {
                 this.setupProxyAndSocketFactory();
                 this.sshj.addHostKeyVerifier(App.getCONTEXT().getHostKeyVerifier());
+                this.sshj.getTransport().getConfig().setCompressionFactories(
+                        Arrays.asList(
+                                new NoneCompression.Factory(),
+                                new DelayedZlibCompression.Factory(),
+                                new ZlibCompression.Factory()));
                 sshj.connect(info.getHost(), info.getPort());
             } else {
                 createTunnel(hopStack);
@@ -228,7 +237,7 @@ public class SSHHandler implements Closeable {
                         passwordAuth(authenticated);
                         break;
                     default:
-                        throw new IllegalStateException("Unexpected value: " + authMethod);
+                        log.warn("Unexpected auth method: {}", authMethod);
                 }
 
                 if (authenticated.get()) {
@@ -357,7 +366,7 @@ public class SSHHandler implements Closeable {
         if (user == null || user.isEmpty()) {
             JTextField txtUser = new SkinnedTextField(30);
             JCheckBox chkCacheUser = new JCheckBox(App.getCONTEXT().getBundle().getString("remember_username"));
-            int ret = OptionPaneUtils.showOptionDialog(null, new Object[]{App.getCONTEXT().getBundle().getString("username"), txtUser, chkCacheUser}, App.getCONTEXT().getBundle().getString("user"));
+            int ret = OptionPaneUtils.showOptionDialog(App.getAppWindow(), new Object[]{App.getCONTEXT().getBundle().getString("username"), txtUser, chkCacheUser}, App.getCONTEXT().getBundle().getString("user"));
             if (ret == JOptionPane.OK_OPTION) {
                 user = txtUser.getText();
                 if (chkCacheUser.isSelected()) {

@@ -8,10 +8,13 @@ import muon.app.App;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
+import static muon.app.util.ScalingUtil.scale;
 
 /**
  * @author subhro
@@ -25,14 +28,14 @@ public class ColorSelectorButton extends JLabel {
         setBorder(new CompoundBorder(
                 new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor()),
                 new CompoundBorder(
-                        new MatteBorder(5, 5, 5, 5,
+                        getScaledMatteBorder(5, 5, 5, 5,
                                         App.getCONTEXT().getSkin().getSelectedTabColor()),
                         new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor()))));
         setOpaque(true);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                java.awt.Color pColor = JColorChooser.showDialog(null, "Select color",
+                java.awt.Color pColor = JColorChooser.showDialog(App.getAppWindow(), "Select color",
                                                                  getColor());
                 if (color != null) {
                     Color jeditermColor = new Color(pColor.getRGB());
@@ -44,7 +47,7 @@ public class ColorSelectorButton extends JLabel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(50, 30);
+        return scale(new Dimension(50, 30));
     }
 
     @Override

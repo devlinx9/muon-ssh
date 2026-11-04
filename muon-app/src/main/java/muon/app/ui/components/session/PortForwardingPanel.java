@@ -8,38 +8,46 @@ import muon.app.util.OptionPaneUtils;
 import muon.app.util.enums.PortForwardingType;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.scale;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+
 
 public class PortForwardingPanel extends JPanel {
     private final PFTableModel model;
     private final JTable table;
+    private final JButton btnAdd;
+    private final JButton btnDel;
+    private final JButton btnEdit;
     private SessionInfo info;
+    private boolean editable = true;
 
     public PortForwardingPanel() {
         super(new BorderLayout(10, 10));
-        setBorder(new EmptyBorder(10, 0, 0, 10));
+        setBorder(getScaledEmptyBorder(10, 0, 0, 10));
         model = new PFTableModel();
         table = new JTable(model);
 
         JLabel lblTitle = new JLabel("Port forwarding rules");
 
         JScrollPane scrollPane = new SkinnedScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setPreferredSize(scale(new Dimension(400, 200)));
 
         Box b1 = Box.createVerticalBox();
-        JButton btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
-        btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont());
-        JButton btnDel = new JButton(FontAwesomeContants.FA_MINUS);
-        btnDel.setFont(App.getCONTEXT().getSkin().getIconFont());
-        JButton btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
-        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont());
+        btnAdd = new JButton(FontAwesomeContants.FA_PLUS);
+        btnAdd.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
+        btnDel = new JButton(FontAwesomeContants.FA_MINUS);
+        btnDel.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
+        btnEdit = new JButton(FontAwesomeContants.FA_PENCIL);
+        btnEdit.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
 
         btnAdd.addActionListener(e -> {
+            if (!editable) return;
             PortForwardingRule ent = addOrEditEntry(null);
             if (ent != null) {
                 model.addRule(ent);
@@ -48,6 +56,7 @@ public class PortForwardingPanel extends JPanel {
         });
 
         btnEdit.addActionListener(e -> {
+            if (!editable) return;
             int index = table.getSelectedRow();
             if (index != -1) {
                 PortForwardingRule ent = model.get(index);
@@ -59,6 +68,7 @@ public class PortForwardingPanel extends JPanel {
         });
 
         btnDel.addActionListener(e -> {
+            if (!editable) return;
             int index = table.getSelectedRow();
             if (index != -1) {
                 model.remove(index);
@@ -80,6 +90,15 @@ public class PortForwardingPanel extends JPanel {
         this.add(b1, BorderLayout.EAST);
     }
 
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+        table.setEnabled(editable);
+        table.setRowSelectionAllowed(editable);
+        btnAdd.setEnabled(editable);
+        btnEdit.setEnabled(editable);
+        btnDel.setEnabled(editable);
+    }
+
     private void updatePFRules() {
         this.info.setPortForwardingRules(model.getRules());
     }
@@ -95,7 +114,11 @@ public class PortForwardingPanel extends JPanel {
         JTextField txtHost = new SkinnedTextField(30);
 
         JSpinner spSourcePort = new JSpinner(new SpinnerNumberModel(0, 0, SessionInfoPanel.DEFAULT_MAX_PORT, 1));
+        JSpinner.NumberEditor editorSource = new JSpinner.NumberEditor(spSourcePort, "#");
+        spSourcePort.setEditor(editorSource);
         JSpinner spTargetPort = new JSpinner(new SpinnerNumberModel(0, 0, SessionInfoPanel.DEFAULT_MAX_PORT, 1));
+        JSpinner.NumberEditor editorTarget = new JSpinner.NumberEditor(spTargetPort, "#");
+        spTargetPort.setEditor(editorTarget);
 
         JTextField txtBindAddress = new SkinnedTextField(30);
         txtBindAddress.setText("127.0.0.1");
@@ -108,7 +131,7 @@ public class PortForwardingPanel extends JPanel {
             cmbPFType.setSelectedIndex(r.getType() == PortForwardingType.LOCAL ? 0 : 1);
         }
 
-        while (OptionPaneUtils.showOptionDialog(this,
+        while (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                 new Object[]{"Port forwarding type", cmbPFType, "Host", txtHost, "Source Port", spSourcePort,
                                                              "Target Port", spTargetPort, "Bind Address", txtBindAddress},
                                                 "Port forwarding rule") == JOptionPane.OK_OPTION) {
@@ -119,7 +142,7 @@ public class PortForwardingPanel extends JPanel {
             String bindAddress = txtBindAddress.getText();
 
             if (host.isEmpty() || bindAddress.isEmpty() || port1 <= 0 || port2 <= 0) {
-                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("invalid_input"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("invalid_input"));
                 continue;
             }
 

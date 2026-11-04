@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static muon.app.util.ScalingUtil.scale;
 
 
 /**
@@ -50,7 +51,7 @@ public class ProcessViewer extends Page {
     
     private void createUI() {
         processListPanel = new ProcessListPanel(this::runCommand);
-        processListPanel.setMinimumSize(new Dimension(10, 10));
+        processListPanel.setMinimumSize(scale(new Dimension(10, 10)));
         this.add(processListPanel);
     }
 
@@ -86,7 +87,7 @@ public class ProcessViewer extends Page {
                         if (holder.getRemoteSessionInstance().exec(cmd, stopFlag, new StringBuilder(),
                                                                    new StringBuilder()) != 0) {
                             if (!holder.isSessionClosed()) {
-                                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
+                                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("operation_failed"));
                             }
                         } else {
                             updateProcessList(stopFlag);
@@ -103,7 +104,7 @@ public class ProcessViewer extends Page {
                 holder.EXECUTOR.execute(() -> {
                     if (SudoUtils.runSudo(cmd, holder.getRemoteSessionInstance(), holder.getInfo().getPassword()) != 0) {
                         if (!holder.isSessionClosed()) {
-                            JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
+                            JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("operation_failed"));
                         }
                     } else {
                         updateProcessList(stopFlag);

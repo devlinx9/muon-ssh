@@ -12,75 +12,29 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class SessionInfo extends NamedItem implements Serializable {
 
-    @Setter
-    @Getter
     private String host;
-
-    @Setter
-    @Getter
     private String user;
-
-    @Setter
-    @Getter
     private String localFolder;
-
-    @Setter
-    @Getter
     private String remoteFolder;
-
-    @Setter
-    @Getter
     private int port = 22;
-
-    @Setter
-    @Getter
     private List<String> favouriteRemoteFolders = new ArrayList<>();
-
-    @Setter
-    @Getter
     private List<String> favouriteLocalFolders = new ArrayList<>();
-
-    @Setter
-    @Getter
     private String privateKeyFile;
-
-    @Setter
-    @Getter
     private int proxyPort = 8080;
-
-    @Setter
-    @Getter
     private String proxyHost;
-
-    @Setter
-    @Getter
     private String proxyUser;
-
-    @Setter
-    @Getter
     private String proxyPassword;
-
-    @Setter
-    @Getter
     private int proxyType = 0;
-    @Setter
-    @Getter
     private boolean useJumpHosts = false;
-    @Setter
-    @Getter
     private JumpType jumpType = JumpType.TCP_FORWARDING;
-    @Setter
-    @Getter
     private List<HopEntry> jumpHosts = new ArrayList<>();
-    @Setter
-    @Getter
     private List<PortForwardingRule> portForwardingRules = new ArrayList<>();
-
-    @Setter
-    @Getter
     private boolean useX11Forwarding = false;
+    private boolean sftpOnly = false;
 
     private String password;
 

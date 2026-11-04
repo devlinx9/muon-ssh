@@ -51,6 +51,12 @@ public class FileInfo implements Serializable {
         this.hidden = hidden;
     }
 
+    public FileInfo(String name, String path) {
+        super();
+        this.name = name;
+        this.path = path;
+    }
+
     private String getUserName() {
         try {
             if (this.extra != null && !this.extra.isEmpty()) {

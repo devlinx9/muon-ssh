@@ -5,6 +5,8 @@ import javax.swing.tree.TreeModel;
 import java.awt.*;
 import java.awt.dnd.Autoscroll;
 
+import static muon.app.util.ScalingUtil.scaleInsets;
+
 //http://www.java2s.com/Code/Java/Swing-JFC/DnDdraganddropJTreecode.htm
 public class AutoScrollingJTree extends JTree implements Autoscroll {
     private static final int MARGIN = 12;
@@ -35,7 +37,7 @@ public class AutoScrollingJTree extends JTree implements Autoscroll {
     public Insets getAutoscrollInsets() {
         Rectangle outer = getBounds();
         Rectangle inner = getParent().getBounds();
-        return new Insets(inner.y - outer.y + MARGIN, inner.x - outer.x + MARGIN,
+        return scaleInsets(inner.y - outer.y + MARGIN, inner.x - outer.x + MARGIN,
                 outer.height - inner.height - inner.y + outer.y + MARGIN,
                 outer.width - inner.width - inner.x + outer.x + MARGIN);
     }

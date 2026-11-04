@@ -13,6 +13,12 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import static muon.app.util.FontUtils.TERMINAL_FONTS_EMOJI_FALLBACK;
+import static muon.app.util.ScalingUtil.scale;
 
 /**
  * @author subhro
@@ -104,6 +110,11 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     }
 
     @Override
+    public boolean forceActionOnMouseReporting() {
+        return App.getGlobalSettings().isPuttyLikeCopyPaste();
+    }
+
+    @Override
     public boolean copyOnSelect() {
         return App.getGlobalSettings().isPuttyLikeCopyPaste();
     }
@@ -112,12 +123,24 @@ public class CustomizedSettingsProvider extends DefaultSettingsProvider {
     public Font getTerminalFont() {
         log.debug("Called terminal font: {}", App.getGlobalSettings().getTerminalFontName());
         return FontUtils.loadTerminalFont(App.getGlobalSettings().getTerminalFontName()).deriveFont(Font.PLAIN,
-                                                                                                    App.getGlobalSettings().getTerminalFontSize());
+                                                                                                    scale(App.getGlobalSettings().getTerminalFontSize()));
+    }
+
+    @Override
+    public Set<Font> getTerminalEmojiFonts() {
+        var fonts = new HashSet<Font>();
+        for (var terminalFont : TERMINAL_FONTS_EMOJI_FALLBACK.entrySet()) {
+            log.debug("Called terminal emoji font: {}", terminalFont.getValue());
+
+            var font = Objects.requireNonNull(FontUtils.loadTerminalFont(terminalFont.getKey())).deriveFont(Font.PLAIN, scale(App.getGlobalSettings().getTerminalFontSize()));
+            fonts.add(font);
+        }
+        return fonts;
     }
 
     @Override
     public float getTerminalFontSize() {
-        return App.getGlobalSettings().getTerminalFontSize();
+        return scale(App.getGlobalSettings().getTerminalFontSize());
     }
 
     @Override

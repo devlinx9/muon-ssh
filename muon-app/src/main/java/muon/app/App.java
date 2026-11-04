@@ -76,11 +76,6 @@ public final class App {
             SessionExportImport.importOnFirstRun();
         }
 
-        if (CONTEXT.getSettings().isManualScaling()) {
-            System.setProperty("sun.java2d.uiScale.enabled", "true");
-            System.setProperty("sun.java2d.uiScale", String.format("%.2f", CONTEXT.getSettings().getUiScaling()));
-        }
-
         if (CONTEXT.getSettings().getEditors().isEmpty()) {
             log.info("Searching for known editors...");
             CONTEXT.getSettings().setEditors(PlatformUtils.getKnownEditors());
@@ -100,7 +95,12 @@ public final class App {
         mw = new AppWindow();
         externalEditorHandler = new ExternalEditorHandler(mw);
         SwingUtilities.invokeLater(() -> mw.setVisible(true));
-        mw.createFirstSessionPanel();
+
+        if (App.getGlobalSettings().isStartWithTerminal()) {
+            mw.createLocalSessionPanel();
+        } else {
+            mw.createFirstSessionPanel();
+        }
     }
 
     private static void setKnownHostFile() {
@@ -117,7 +117,7 @@ public final class App {
             int maxKeySize = javax.crypto.Cipher.getMaxAllowedKeyLength("AES");
             log.info("maxKeySize: {}", maxKeySize);
             if (maxKeySize < Integer.MAX_VALUE) {
-                JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("unlimited_cryptography"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("unlimited_cryptography"));
             }
         } catch (NoSuchAlgorithmException e1) {
             log.error(e1.getMessage(), e1);

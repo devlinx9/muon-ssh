@@ -12,6 +12,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import static muon.app.util.ScalingUtil.scaleInsets;
+
 @Slf4j
 public class AddressBarBreadCrumbs extends JPanel {
     public UIDefaults toolBarButtonSkin = new UIDefaults();
@@ -133,7 +135,7 @@ public class AddressBarBreadCrumbs extends JPanel {
             g.fillRect(0, 0, width - 1, height - 1);
         };
 
-        toolBarButtonSkin.put("Button.contentMargins", new Insets(2, 8, 2, 8));
+        toolBarButtonSkin.put("Button.contentMargins", scaleInsets(2, 8, 2, 8));
         setTolbarButtonSkin(toolBarButtonPainterNormal, toolBarButtonPainterHot, toolBarButtonPainterPressed, toolBarButtonSkin);
     }
 

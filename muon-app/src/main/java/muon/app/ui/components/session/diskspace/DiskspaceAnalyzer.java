@@ -10,7 +10,6 @@ import muon.app.util.FontAwesomeContants;
 import muon.app.util.OptionPaneUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 /**
@@ -53,13 +53,13 @@ public class DiskspaceAnalyzer extends Page {
         btnStart.addActionListener(e -> cardLayout.show(this, "firstPanel"));
 
         Box resultBox = Box.createHorizontalBox();
-        resultBox.setBorder(new EmptyBorder(10, 10, 10, 10));
+        resultBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         resultBox.add(Box.createHorizontalGlue());
         resultBox.add(Box.createHorizontalStrut(10));
         resultBox.add(btnStart);
 
         JLabel resultTitle = new JLabel(App.getCONTEXT().getBundle().getString("directory_usage"));
-        resultTitle.setBorder(new EmptyBorder(10, 10, 10, 10));
+        resultTitle.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         JPanel resultPanel = new JPanel(new BorderLayout());
         resultPanel.add(resultBox, BorderLayout.SOUTH);
@@ -71,12 +71,12 @@ public class DiskspaceAnalyzer extends Page {
     private Component createFirstPanel() {
         JRadioButton radFolder = new JRadioButton(App.getCONTEXT().getBundle().getString("analyze_folder"));
         JRadioButton radVolume = new JRadioButton(App.getCONTEXT().getBundle().getString("analyze_volume"));
-        radFolder.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(SMALL_TEXT_SIZE));
-        radVolume.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(SMALL_TEXT_SIZE));
+        radFolder.setFont(App.getCONTEXT().getSkin().getDefaultFont(SMALL_TEXT_SIZE));
+        radVolume.setFont(App.getCONTEXT().getSkin().getDefaultFont(SMALL_TEXT_SIZE));
         radFolder.setHorizontalAlignment(JRadioButton.LEFT);
         radVolume.setHorizontalAlignment(JRadioButton.LEFT);
         JLabel lblIcon = new JLabel();
-        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(128.0f));
+        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont(128.0f));
         lblIcon.setText(FontAwesomeContants.FA_HDD_O);
         JButton btnNext = new JButton(App.getCONTEXT().getBundle().getString("next"));
         btnNext.addActionListener(e -> {
@@ -84,7 +84,7 @@ public class DiskspaceAnalyzer extends Page {
                 cardLayout.show(this, "volPanel");
                 listVolumes();
             } else {
-                String text = OptionPaneUtils.showInputDialog(this, "Please enter folder path to analyze", "Input");
+                String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("analyze_sentence_path"), App.getCONTEXT().getBundle().getString("path"));
                 if (text != null) {
                     cardLayout.show(this, "resultPanel");
                     analyze(text);
@@ -146,7 +146,7 @@ public class DiskspaceAnalyzer extends Page {
                 cardLayout.show(this, "resultPanel");
                 analyze(model.get(r).getMountPoint());
             } else {
-                JOptionPane.showMessageDialog(this, App.getCONTEXT().getBundle().getString("select_partition"));
+                JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("select_partition"));
             }
         });
 
@@ -158,10 +158,10 @@ public class DiskspaceAnalyzer extends Page {
         bottomBox.add(btnBack);
         bottomBox.add(Box.createHorizontalStrut(10));
         bottomBox.add(btnNext);
-        bottomBox.setBorder(new EmptyBorder(10, 10, 10, 10));
+        bottomBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         JLabel lblTitle = new JLabel(App.getCONTEXT().getBundle().getString("select_volume"));
-        lblTitle.setBorder(new EmptyBorder(10, 10, 10, 10));
+        lblTitle.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(lblTitle, BorderLayout.NORTH);

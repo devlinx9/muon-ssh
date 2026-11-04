@@ -60,6 +60,7 @@ public class SshMenuHandler {
     private JMenuItem mChangePerm;
     private JMenuItem mUpload;
     private JMenuItem mEditorConfig;
+    private JMenuItem mOpenWithLocalEditor;
     private JMenuItem mOpenWithLogView;
     private JMenuItem mDownload;
     private JMenuItem mCreateLink;
@@ -91,7 +92,7 @@ public class SshMenuHandler {
     }
 
     private void initMenuItems(InputMap map, ActionMap act) {
-        KeyStroke ksOpenInTab = KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK);
+        KeyStroke ksOpenInTab = KeyStroke.getKeyStroke(KeyEvent.VK_T, InputEvent.CTRL_DOWN_MASK);
         mOpenInTab = new JMenuItem(App.getCONTEXT().getBundle().getString("open_in_tab"));
         mOpenInTab.setAccelerator(ksOpenInTab);
         AbstractAction aOpenInTab = new AbstractAction() {
@@ -110,8 +111,14 @@ public class SshMenuHandler {
                 log.info("Open app");
                 FileInfo fileInfo = folderView.getSelectedFiles()[0];
                 try {
+                    if (App.getGlobalSettings().isUseLocalEditor()) {
+                        App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
+                                                                      fileBrowser.getActiveSessionId(), false, "muon-editor", fileBrowser.getHolder());
+                        return;
+                    }
                     App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                                                                  fileBrowser.getActiveSessionId(), false, null);
+                                                                  fileBrowser.getActiveSessionId(), false, null, null);
+
                 } catch (IOException e1) {
 
                     log.error(e1.getMessage(), e1);
@@ -133,13 +140,26 @@ public class SshMenuHandler {
                 try {
                     log.info("Called open with");
                     App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                                                                  fileBrowser.getActiveSessionId(), true, null);
+                                                                  fileBrowser.getActiveSessionId(), true, null, null);
                 } catch (IOException e1) {
 
                     log.error(e1.getMessage(), e1);
                 }
             });
         }
+
+        mOpenWithLocalEditor = new JMenuItem(App.getCONTEXT().getBundle().getString("muon_editor"));
+        mOpenWithLocalEditor.addActionListener(e -> {
+            FileInfo fileInfo = folderView.getSelectedFiles()[0];
+            try {
+                log.info("Called open with");
+                App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
+                                                              fileBrowser.getActiveSessionId(), false, "muon-editor", fileBrowser.getHolder());
+            } catch (IOException e1) {
+
+                log.error(e1.getMessage(), e1);
+            }
+        });
 
         mEditorConfig = new JMenuItem(App.getCONTEXT().getBundle().getString("configure_editor"));
         mEditorConfig.addActionListener(e -> openEditorConfig());
@@ -176,7 +196,8 @@ public class SshMenuHandler {
         mRunScriptInBackground = new JMenuItem(App.getCONTEXT().getBundle().getString("run_file_in_background"));
         mRunScriptInBackground.addActionListener(e -> openRunInBackground(fileBrowserView.getCurrentDirectory(), folderView.getSelectedFiles()[0].getPath()));
 
-        KeyStroke ksRename = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
+        KeyStroke ksRename = KeyStroke.getKeyStroke(KeyEvent.VK_R, InputEvent.CTRL_DOWN_MASK);
+        KeyStroke ksRename2 = KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0);
         AbstractAction aRename = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -185,9 +206,10 @@ public class SshMenuHandler {
         };
         mRename = new JMenuItem(App.getCONTEXT().getBundle().getString("rename"));
         mRename.addActionListener(aRename);
-        map.put(ksRename, "mRename");
-        act.put("mRename", aRename);
-        mRename.setAccelerator(ksRename);
+        map.put(ksRename, "ksRename");
+        map.put(ksRename2, "ksRename");
+        act.put("ksRename", aRename);
+        mRename.setAccelerator(ksRename2);
 
         KeyStroke ksDelete = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0);
         AbstractAction aDelete = new AbstractAction() {
@@ -325,7 +347,7 @@ public class SshMenuHandler {
 
         mExtractTo = new JMenuItem(App.getCONTEXT().getBundle().getString("extract_to"));
         mExtractTo.addActionListener(e -> {
-            String text = OptionPaneUtils.showInputDialog(null, App.getCONTEXT().getBundle().getString("select_target"),
+            String text = OptionPaneUtils.showInputDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("select_target"),
                                                           fileBrowserView.getCurrentDirectory());
             if (text == null || text.isEmpty()) {
                 return;
@@ -783,7 +805,7 @@ public class SshMenuHandler {
             try {
                 if (!archiveOperation.extractArchive(fileBrowserView.getSshClient(), archive, folder, stopFlag)
                     && !fileBrowser.isSessionClosed()) {
-                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
+                    JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("operation_failed"));
                 }
 
                 fileBrowserView.render(currentFolder);
@@ -799,7 +821,7 @@ public class SshMenuHandler {
             fileBrowser.disableUi(stopFlag);
             try {
                 if (!archiveOperation.createArchive(fileBrowserView.getSshClient(), files, folder, stopFlag) && !fileBrowser.isSessionClosed()) {
-                    JOptionPane.showMessageDialog(null, App.getCONTEXT().getBundle().getString("operation_failed"));
+                    JOptionPane.showMessageDialog(App.getAppWindow(), App.getCONTEXT().getBundle().getString("operation_failed"));
                 }
                 fileBrowserView.render(currentFolder);
             } catch (Exception e) {
@@ -854,7 +876,7 @@ public class SshMenuHandler {
         FileInfo fileInfo = folderView.getSelectedFiles()[0];
         try {
             App.getExternalEditorHandler().openRemoteFile(fileInfo, fileBrowser.getSSHFileSystem(),
-                                                          fileBrowser.getActiveSessionId(), false, path);
+                                                          fileBrowser.getActiveSessionId(), false, path, null);
         } catch (IOException e1) {
             log.error(e1.getMessage(), e1);
         }
@@ -882,6 +904,10 @@ public class SshMenuHandler {
             JMenuItem mEditorItem = new JMenuItem(ent.getName());
             mEditorItem.addActionListener(e -> openWithEditor(ent.getPath()));
             mEditWith.add(mEditorItem);
+        }
+
+        if (App.getGlobalSettings().isUseLocalEditor()) {
+            mEditWith.add(mOpenWithLocalEditor);
         }
         mEditWith.add(mEditorConfig);
     }

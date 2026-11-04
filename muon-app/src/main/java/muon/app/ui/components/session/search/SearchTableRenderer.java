@@ -7,6 +7,8 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.Objects;
 
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+
 public class SearchTableRenderer implements TableCellRenderer {
 
     private final JLabel label;
@@ -23,7 +25,7 @@ public class SearchTableRenderer implements TableCellRenderer {
         this.textLabel = new JLabel();
         this.iconLabel = new JLabel();
         this.iconLabel
-                .setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(Font.PLAIN, 20));
+                .setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE).deriveFont(Font.PLAIN, 20));
         panel.add(iconLabel, BorderLayout.WEST);
         panel.add(textLabel);
     }

@@ -14,6 +14,8 @@ import muon.app.ssh.SshFileSystem;
 import muon.app.ui.components.common.DisabledPanel;
 import muon.app.ui.components.session.diskspace.DiskspaceAnalyzer;
 import muon.app.ui.components.session.files.FileBrowser;
+import muon.app.ui.components.session.files.editor.TextEditor;
+import muon.app.ui.components.session.files.editor.TextEditorHolder;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
 import muon.app.ui.components.session.files.transfer.FileTransfer;
 import muon.app.ui.components.session.files.transfer.TransferProgressPanel;
@@ -26,14 +28,16 @@ import muon.app.util.LayoutUtilities;
 import muon.app.util.enums.ConflictAction;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 /**
  * @author subhro
@@ -52,7 +56,11 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     private final TransferProgressPanel progressPanel = new TransferProgressPanel();
     private final TabbedPage[] pages;
     public final FileBrowser fileBrowser;
+
+    @Getter
+    public final TextEditorHolder textEditorHolder;
     private final LogViewer logViewer;
+    @Getter
     private final TerminalHolder terminalHolder;
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final Deque<RemoteSessionInstance> cachedSessions = new LinkedList<>();
@@ -72,13 +80,14 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         this.disabledPanel = new DisabledPanel();
         this.remoteSessionInstance = new RemoteSessionInstance(info, this, this);
         Box contentTabs = Box.createHorizontalBox();
-        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
+        contentTabs.setBorder(getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         fileBrowser = new FileBrowser(info, this, null, this.hashCode());
+        textEditorHolder = new TextEditorHolder(new TextEditor(this, false));
         logViewer = new LogViewer(this);
         terminalHolder = new TerminalHolder(info, this);
 
-        Page[] pageArr = getPages();
+        Page[] pageArr = getPages(info.isSftpOnly());
 
         this.cardLayout = new CardLayout();
         this.cardPanel = new JPanel(this.cardLayout);
@@ -89,6 +98,9 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
             this.pages[i] = tabbedPage;
             this.cardPanel.add(tabbedPage.getPage(), tabbedPage.getId());
             pageArr[i].putClientProperty(PAGE_ID, tabbedPage.getId());
+            if (info.isSftpOnly()) {
+                tabbedPage.setVisible(false);
+            }
         }
 
         LayoutUtilities.equalizeSize(this.pages);
@@ -116,21 +128,37 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
         }
     }
 
-    private Page[] getPages() {
+    private Page[] getPages(boolean sftpOnly) {
+        if (sftpOnly) {
+            return new Page[]{fileBrowser};
+        }
+
         DiskspaceAnalyzer diskspaceAnalyzer = new DiskspaceAnalyzer(this);
         SearchPanel searchPanel = new SearchPanel(this);
         ProcessViewer processViewer = new ProcessViewer(this);
         UtilityPage utilityPage = new UtilityPage(this);
 
-        Page[] pageArr;
+        ArrayList<Page> pagesList = new ArrayList<>();
+
         if (App.getGlobalSettings().isFirstFileBrowserView()) {
-            pageArr = new Page[]{fileBrowser, terminalHolder, logViewer, searchPanel, diskspaceAnalyzer,
-                                 processViewer, utilityPage};
+            pagesList.add(fileBrowser);
+            pagesList.add(terminalHolder);
         } else {
-            pageArr = new Page[]{terminalHolder, fileBrowser, logViewer, searchPanel, diskspaceAnalyzer,
-                                 processViewer, utilityPage};
+            pagesList.add(terminalHolder);
+            pagesList.add(fileBrowser);
         }
-        return pageArr;
+
+        if (App.getGlobalSettings().isUseLocalEditor()) {
+            pagesList.add(textEditorHolder);
+        }
+
+        pagesList.add(logViewer);
+        pagesList.add(searchPanel);
+        pagesList.add(diskspaceAnalyzer);
+        pagesList.add(processViewer);
+        pagesList.add(utilityPage);
+        return pagesList.toArray(new Page[0]);
+
     }
 
     public void reconnect() {
@@ -213,6 +241,9 @@ public class SessionContentPanel extends JPanel implements PageHolder, CachedCre
     }
 
     public void openTerminal(String command) {
+        if (info.isSftpOnly()) {
+            return;
+        }
         showPage(this.terminalHolder.getClientProperty(PAGE_ID) + "");
         this.terminalHolder.openNewTerminal(command);
     }

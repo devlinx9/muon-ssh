@@ -1,14 +1,15 @@
 package muon.app.ui.components.session.utilpage.services;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 public class ServiceTableCellRenderer extends JLabel implements TableCellRenderer {
     public ServiceTableCellRenderer() {
         setText("HHH");
-        setBorder(new EmptyBorder(5, 5, 5, 5));
+        setBorder(getScaledEmptyBorder(5, 5, 5, 5));
         setOpaque(true);
     }
 

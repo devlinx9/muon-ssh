@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +35,8 @@ public class FileTransfer implements Runnable, AutoCloseable {
     // -> skip
     private static final int BUF_SIZE = Short.MAX_VALUE;
     @Getter
+    private LocalDateTime startTransactionDate = LocalDateTime.now();
+    @Getter
     private final FileSystem sourceFs;
     @Getter
     private final FileSystem targetFs;
@@ -42,7 +45,13 @@ public class FileTransfer implements Runnable, AutoCloseable {
     @Getter
     private final String targetFolder;
     private final AtomicBoolean stopFlag = new AtomicBoolean(false);
+
+    @Getter
+    @Setter
+    private AtomicBoolean operationCancelledByUser = new AtomicBoolean(false);
+
     private final RemoteSessionInstance instance;
+    @Getter
     private long totalSize;
     @Setter
     private FileTransferProgress callback;
@@ -50,6 +59,12 @@ public class FileTransfer implements Runnable, AutoCloseable {
     private int processedFilesCount;
     private long totalFiles;
     private ConflictAction conflictAction; // 0 -> overwrite, 1 -> auto rename, 2
+
+    @Getter
+    private String currentTargetFilePath;
+
+    @Getter
+    private String currentSourceFilePath;
 
     public FileTransfer(FileSystem sourceFs, FileSystem targetFs, FileInfo[] files, String targetFolder,
                         FileTransferProgress callback, ConflictAction defaultConflictAction, RemoteSessionInstance instance) {
@@ -70,11 +85,13 @@ public class FileTransfer implements Runnable, AutoCloseable {
         List<FileInfoHolder> fileList = new ArrayList<>();
         List<FileInfo> list = targetFs.list(targetFolder);
         List<FileInfo> dupList = new ArrayList<>();
+        startTransactionDate = LocalDateTime.now();
 
         if (this.conflictAction == ConflictAction.PROMPT) {
             this.conflictAction = checkForConflict(dupList);
             if (!dupList.isEmpty() && this.conflictAction == ConflictAction.CANCEL) {
                 log.info("Operation cancelled by user");
+                operationCancelledByUser.set(true);
                 return;
             }
         }
@@ -111,6 +128,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
             log.info("Copying: {}", file.info.getPath());
             if (stopFlag.get()) {
                 log.info("Operation cancelled by user");
+                operationCancelledByUser.set(true);
                 return;
             }
             copyFile(file.info, file.targetPath, file.proposedName, inc, outc);
@@ -135,11 +153,11 @@ public class FileTransfer implements Runnable, AutoCloseable {
                         JTextArea tmpFilePath = new JTextArea(5, 20);
                         tmpFilePath.setText("Files copied in " + tmpDir + " due to permission issues");
                         tmpFilePath.setEnabled(true);
-                        JOptionPane.showMessageDialog(null, tmpFilePath, App.getCONTEXT().getBundle().getString("copied_temp_directory"), JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(App.getAppWindow(), tmpFilePath, App.getCONTEXT().getBundle().getString("copied_temp_directory"), JOptionPane.WARNING_MESSAGE);
                     }
 
                     if (!App.getGlobalSettings().isPromptForSudo() ||
-                        JOptionPane.showConfirmDialog(null,
+                        JOptionPane.showConfirmDialog(App.getAppWindow(),
                                                       App.getCONTEXT().getBundle().getString("permission_denied_file"),
                                                       App.getCONTEXT().getBundle().getString("insufficient_permisions"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                         // Because transferTemporaryDirectory already create and transfer files, here can skip these steps
@@ -164,10 +182,17 @@ public class FileTransfer implements Runnable, AutoCloseable {
             log.error(e.getMessage(), e);
             if (stopFlag.get()) {
                 log.info("Operation cancelled by user");
+                operationCancelledByUser.set(true);
                 callback.done(this);
                 return;
             }
-            callback.error("Error", this);
+            String errorSession = e.getMessage();
+
+            if (e instanceof muon.app.ssh.OperationCancelledException) {
+                errorSession = "Connection error with the server";
+            }
+
+            callback.error(errorSession, this);
         }
     }
 
@@ -201,6 +226,8 @@ public class FileTransfer implements Runnable, AutoCloseable {
                                            outc.getSeparator());
         String inPath = file.getPath();
         log.info("Copying -- {} to {}", inPath, outPath);
+        currentSourceFilePath = inPath;
+        currentTargetFilePath = outPath;
         try (InputStream in = inc.getInputStream(inPath); OutputStream out = outc.getOutputStream(outPath)) {
             long len = inc.getSize(inPath);
             log.info("Initiate write");
@@ -257,7 +284,7 @@ public class FileTransfer implements Runnable, AutoCloseable {
 
             JComboBox<ConflictAction> cmbs = SessionExportImport.getUserConflictAction();
 
-            if (OptionPaneUtils.showOptionDialog(null,
+            if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                                  new Object[]{App.getCONTEXT().getBundle().getString("some_file_exists_action_required"), cmbs},
                                                  App.getCONTEXT().getBundle().getString("action_required")) == JOptionPane.YES_OPTION) {
                 action = (ConflictAction) cmbs.getSelectedItem();

@@ -3,6 +3,8 @@ package muon.app.ui.components.session.files.view;
 import javax.swing.*;
 import java.awt.*;
 
+import static muon.app.util.ScalingUtil.scale;
+
 public class WrappedLabel extends JComponent {
 
     private String text;
@@ -11,7 +13,7 @@ public class WrappedLabel extends JComponent {
     public void setText(String text) {
         this.text = text;
         FontMetrics fm = getFontMetrics(getFont());
-        Dimension d = new Dimension(10, fm.getHeight() * ROWS);
+        Dimension d = scale(new Dimension(10, fm.getHeight() * ROWS));
         setPreferredSize(d);
         revalidate();
         repaint(0);

@@ -6,6 +6,8 @@ import muon.app.App;
 import javax.swing.*;
 import java.awt.*;
 
+import static muon.app.util.ScalingUtil.scale;
+
 /**
  * @author subhro
  *
@@ -19,7 +21,7 @@ public class UtilityPageButton extends JToggleButton {
     public UtilityPageButton(String text, String iconText) {
         this.text = text;
         this.iconText = iconText;
-        this.iconFont = App.getCONTEXT().getSkin().getIconFont().deriveFont(24.0f);
+        this.iconFont = App.getCONTEXT().getSkin().getIconFont(24.0f);
     }
 
     @Override
@@ -53,7 +55,7 @@ public class UtilityPageButton extends JToggleButton {
         int w2 = fm2.stringWidth(iconText);
         int h1 = fm1.getHeight();
         int h2 = fm2.getHeight();
-        return new Dimension(Math.max(w1, w2) + 10, h1 + h2 + 30);
+        return scale(new Dimension(Math.max(w1, w2) + 10, h1 + h2 + 30));
     }
 
     @Override
@@ -64,7 +66,7 @@ public class UtilityPageButton extends JToggleButton {
     @Override
     public Dimension getMaximumSize() {
         Dimension d = this.getPreferredSize();
-        return new Dimension(Short.MAX_VALUE, d.height);
+        return scale(new Dimension(Short.MAX_VALUE, d.height));
     }
 
 }

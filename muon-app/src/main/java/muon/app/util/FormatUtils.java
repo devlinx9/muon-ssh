@@ -21,4 +21,9 @@ public class FormatUtils {
     public static String formatDate(LocalDateTime dateTime) {
         return dateTime.format(DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
     }
+
+    public static String limitTextOutput(String text, int maxLength) {
+        if (text == null) return "";
+        return text.length() > maxLength ? text.substring(0, maxLength) + "…" : text;
+    }
 }

@@ -4,10 +4,10 @@ import muon.app.App;
 import muon.app.util.FontAwesomeContants;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 import static muon.app.util.Constants.SMALL_TEXT_SIZE;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
 
@@ -22,9 +22,9 @@ public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
         lblText = new JLabel();
         lblHost = new JLabel();
 
-        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(24.0f));
-        lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(SMALL_TEXT_SIZE));
-        lblHost.setFont(App.getCONTEXT().getSkin().getDefaultFont().deriveFont(12.0f));
+        lblIcon.setFont(App.getCONTEXT().getSkin().getIconFont(24.0f));
+        lblText.setFont(App.getCONTEXT().getSkin().getDefaultFont(SMALL_TEXT_SIZE));
+        lblHost.setFont(App.getCONTEXT().getSkin().getDefaultFont(12.0f));
 
         lblText.setText("Sample server");
         lblHost.setText("server host");
@@ -39,7 +39,7 @@ public class RemoteHostRenderer implements ListCellRenderer<RemoteServerEntry> {
         panel.add(lblIcon, BorderLayout.WEST);
         panel.add(textHolder);
 
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        panel.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
         panel.setBackground(App.getCONTEXT().getSkin().getDefaultBackground());
         panel.setOpaque(true);
 

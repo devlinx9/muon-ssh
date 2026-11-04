@@ -3,22 +3,33 @@ package muon.app.ui.components.session.files.transfer;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.util.FontAwesomeContants;
+import muon.app.util.FormatUtils;
+import muon.app.util.PathUtils;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+
+import static muon.app.util.Constants.MEDIUM_TEXT_SIZE;
+import static muon.app.util.FormatUtils.humanReadableByteCount;
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
+import static muon.app.util.ScalingUtil.scale;
 
 @Slf4j
 public class BackgroundTransferPanel extends JPanel {
     private final Box verticalBox;
     private final AtomicInteger transferCount = new AtomicInteger(0);
     private final Consumer<Integer> callback;
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm:ss");
 
     /**
      * @param callback callback for notifying number of active transfers
@@ -54,7 +65,7 @@ public class BackgroundTransferPanel extends JPanel {
             try {
                 SwingUtilities.invokeAndWait(() -> stopSession(sessionId));
             } catch (InvocationTargetException | InterruptedException e) {
-                
+
                 log.error(e.getMessage(), e);
             }
         } else {
@@ -78,6 +89,7 @@ public class BackgroundTransferPanel extends JPanel {
         private final BackgroundFileTransfer fileTransfer;
         private final JProgressBar progressBar;
         private final JLabel progressLabel;
+        private final JLabel removeLabel;
         private Future<?> handle;
 
         public TransferPanelItem(BackgroundFileTransfer transfer) {
@@ -88,19 +100,30 @@ public class BackgroundTransferPanel extends JPanel {
             transfer.getFileTransfer().setCallback(this);
             progressBar = new JProgressBar();
             progressLabel = new JLabel("Waiting...");
-            progressLabel.setBorder(new EmptyBorder(5, 0, 5, 5));
-            JLabel removeLabel = new JLabel();
-            removeLabel.setFont(App.getCONTEXT().getSkin().getIconFont());
-            removeLabel.setText(FontAwesomeContants.FA_TRASH);
+            progressLabel.setBorder(getScaledEmptyBorder(10, 0, 10, 5));
+            removeLabel = new JLabel();
+            removeLabel.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
+            removeLabel.setText(FontAwesomeContants.FA_STOP_CIRCLE);
 
             removeLabel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    fileTransfer.getFileTransfer().stop();
+                    if (removeLabel.getText().equals(FontAwesomeContants.FA_STOP_CIRCLE)) {
+                        fileTransfer.getFileTransfer().stop();
+                        fileTransfer.getFileTransfer().setOperationCancelledByUser(new AtomicBoolean(true));
+                        return;
+                    }
+
+                    SwingUtilities.invokeLater(() -> {
+                        BackgroundTransferPanel.this.verticalBox.remove(TransferPanelItem.this);
+                        BackgroundTransferPanel.this.revalidate();
+                        BackgroundTransferPanel.this.repaint();
+                    });
+
                 }
             });
 
-            setBorder(new EmptyBorder(10, 10, 10, 10));
+            setBorder(getScaledEmptyBorder(10, 10, 10, 10));
             Box topBox = Box.createHorizontalBox();
             topBox.add(progressLabel);
             topBox.add(Box.createHorizontalGlue());
@@ -109,7 +132,7 @@ public class BackgroundTransferPanel extends JPanel {
             add(topBox);
             add(progressBar, BorderLayout.SOUTH);
 
-            setMaximumSize(new Dimension(getMaximumSize().width, getPreferredSize().height));
+            setMaximumSize(scale(new Dimension(getMaximumSize().width, getPreferredSize().height)));
         }
 
         public void stop() {
@@ -121,7 +144,15 @@ public class BackgroundTransferPanel extends JPanel {
         public void init(long totalSize, long files, FileTransfer fileTransfer) {
             SwingUtilities.invokeLater(() -> {
                 progressLabel.setText(
-                        String.format("Copying %s to %s", fileTransfer.getSourceName(), fileTransfer.getTargetName()));
+                        String.format("<html>%s: %s to %s (%s)<br>File: %s</html>",
+                                      formatter.format(fileTransfer.getStartTransactionDate()),
+                                      fileTransfer.getSourceFs().getName(),
+                                      fileTransfer.getTargetName(),
+                                      humanReadableByteCount(totalSize, false),
+                                      FormatUtils.limitTextOutput(fileTransfer.getCurrentSourceFilePath(), 40)));
+                progressLabel.setToolTipText(String.format("%s to %s",
+                                                           fileTransfer.getCurrentSourceFilePath(),
+                                                           fileTransfer.getCurrentTargetFilePath()));
                 progressBar.setValue(0);
             });
         }
@@ -129,15 +160,40 @@ public class BackgroundTransferPanel extends JPanel {
         @Override
         public void progress(long processedBytes, long totalBytes, long processedCount, long totalCount,
                              FileTransfer fileTransfer) {
-            SwingUtilities.invokeLater(() -> progressBar.setValue(totalBytes > 0 ? ((int) ((processedBytes * 100) / totalBytes)) : 0));
+            SwingUtilities.invokeLater(() -> {
+                String fileName = getFileName(fileTransfer);
+                progressLabel.setText(
+                        String.format("<html>%s: %s to %s (%s)<br>File: %s</html>",
+                                      formatter.format(fileTransfer.getStartTransactionDate()),
+                                      fileTransfer.getSourceName(),
+                                      fileTransfer.getTargetName(),
+                                      humanReadableByteCount(totalBytes, false),
+                                      FormatUtils.limitTextOutput(fileName, 40)));
+                progressLabel.setToolTipText(String.format("%s to %s",
+                                                           fileTransfer.getCurrentSourceFilePath(),
+                                                           fileTransfer.getCurrentTargetFilePath()));
+                progressBar.setValue(totalBytes > 0 ? ((int) ((processedBytes * 100) / totalBytes)) : 0);
+            });
         }
 
         @Override
         public void error(String cause, FileTransfer fileTransfer) {
             transferCount.decrementAndGet();
             callback.accept(transferCount.get());
-            SwingUtilities.invokeLater(() -> progressLabel.setText(String.format("Error while copying from %s to %s", fileTransfer.getSourceName(),
-                                                                             fileTransfer.getTargetName())));
+
+            SwingUtilities.invokeLater(() -> {
+                String fileName = getFileName(fileTransfer);
+
+                progressLabel.setText(
+                        String.format("<html>%s: Error %s to %s<br>File (%s): %s</html>",
+                                      formatter.format(fileTransfer.getStartTransactionDate()),
+                                      fileTransfer.getSourceName(),
+                                      fileTransfer.getTargetName(),
+                                      FormatUtils.limitTextOutput(fileName, 15),
+                                      FormatUtils.limitTextOutput(cause, 25)));
+                progressLabel.setToolTipText(fileName.concat(": ").concat(cause));
+                removeLabel.setText(FontAwesomeContants.FA_EXCLAMATION_TRIANGLE);
+            });
         }
 
         @Override
@@ -145,15 +201,36 @@ public class BackgroundTransferPanel extends JPanel {
             transferCount.decrementAndGet();
             callback.accept(transferCount.get());
             this.fileTransfer.getSession().addToSessionCache(this.fileTransfer.getInstance());
-            log.info("done transfer");
+            removeLabel.setText(FontAwesomeContants.FA_TRASH);
+            String status = "Done transfer!";
+            if (this.fileTransfer.getFileTransfer().getOperationCancelledByUser().get()) {
+                status = "Transfer cancelled by user";
+            }
+
+            log.info(status);
+
+            progressLabel.setText(
+                    String.format("<html>%s: %s to %s (%s)<br>%s</html>",
+                                  formatter.format(fileTransfer.getStartTransactionDate()),
+                                  fileTransfer.getSourceName(),
+                                  fileTransfer.getTargetName(),
+                                  humanReadableByteCount(fileTransfer.getTotalSize(), false),
+                                  status));
+            progressLabel.setToolTipText(status);
 
             this.fileTransfer.getSession().fileBrowser.reloadView();
-
-            SwingUtilities.invokeLater(() -> {
-                BackgroundTransferPanel.this.verticalBox.remove(this);
-                BackgroundTransferPanel.this.revalidate();
-                BackgroundTransferPanel.this.repaint();
-            });
         }
+    }
+
+    private static String getFileName(FileTransfer fileTransfer) {
+        String fileName = "";
+        if (fileTransfer.getCurrentSourceFilePath() == null) {
+            if(fileTransfer.getFiles().length > 0){
+                fileName = fileTransfer.getFiles()[0].getName();
+            }
+        } else {
+            fileName = Path.of(fileTransfer.getCurrentSourceFilePath()).getFileName().toString();
+        }
+        return fileName;
     }
 }

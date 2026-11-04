@@ -2,7 +2,7 @@
 
 [![Github All Releases](https://img.shields.io/github/downloads/subhra74/snowflake/total.svg)]()
 
-<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"> </div> 
+<div> <img src="https://raw.githubusercontent.com/devlinx9/muonssh-screenshots/master/file-browser/2.png"> </div>
 
 **Muon SSH Terminal/Client SFTP** est un puissant client SSH graphique conçu pour simplifier le travail avec les serveurs distants. Anciennement connu sous le nom de "Snowflake", le projet a été renommé pour éviter toute confusion avec un autre produit populaire du même nom.
 
@@ -25,11 +25,12 @@ Tout le monde ne préfère ou ne se sent pas à l'aise de travailler avec des lo
 ---
 
 ## Table des matières
+
 - [À propos de Muon SSH](#à-propos-de-muon-ssh)
 - [Fonctionnalités](#fonctionnalités)
 - [Installation](#installation)
-    - [Paquet Snap (Recommandé)](#paquet-snap-recommandé)
-    - [Paquet Deb](#paquet-deb)
+  - [Paquet Snap (Recommandé)](#paquet-snap-recommandé)
+  - [Paquet Deb](#paquet-deb)
 - [Public cible](#public-cible)
 - [Téléchargement](#téléchargement)
 - [Compilation à partir du code source](#compilation-à-partir-du-code-source)
@@ -42,7 +43,9 @@ Tout le monde ne préfère ou ne se sent pas à l'aise de travailler avec des lo
 ---
 
 ## À propos de Muon SSH
+
 Muon SSH est un client SSH graphique riche en fonctionnalités qui fournit une interface intuitive pour gérer les serveurs distants. Il comprend des outils tels que :
+
 - Navigateur de fichiers SFTP amélioré
 - Émulateur de terminal SSH
 - Gestionnaire de ressources/processus distants
@@ -56,6 +59,7 @@ Muon SSH élimine le besoin d'installations côté serveur, car il fonctionne en
 ---
 
 ## Fonctionnalités
+
 - **Interface graphique pour les opérations sur les fichiers**: Simplifie les tâches courantes sur les fichiers avec une interface intuitive.
 - **Éditeur de texte intégré**: Modifiez les fichiers à distance avec coloration syntaxique et support sudo.
 - **Visionneuse de fichiers journaux/texte**: Visualisez et recherchez rapidement dans les fichiers journaux ou texte volumineux.
@@ -72,29 +76,35 @@ Muon SSH élimine le besoin d'installations côté serveur, car il fonctionne en
 ## Installation
 
 ### Paquet Snap (Recommandé)
+
 [![Installez Muon SSH Terminal avec Snap](https://snapcraft.io/muon-ssh/badge.svg)](https://snapcraft.io/muon-ssh)
 
 Muon SSH est disponible en tant que paquet Snap, garantissant une installation et une mise à jour faciles sur plusieurs distributions Linux.
 
 Pour installer, exécutez :
-```sh  
-sudo snap install muon-ssh  
+
+```sh
+sudo snap install muon-ssh --classic
 ```
 
 Pour la dernière version (peut être instable) :
-```sh  
-sudo snap install muon-ssh --edge    
+
+```sh
+sudo snap install muon-ssh --classic --edge
 ```
 
 ### Paquet Deb
+
 Muon SSH est également disponible en tant que paquet Debian. Installez-le en utilisant :
-```sh  
-sudo dpkg -i muon_package.deb   
+
+```sh
+sudo dpkg -i muon_package.deb
 ```
 
 ---
 
 ## Public cible
+
 Muon SSH est conçu pour :
 
 **Développeurs Web/Backend:** Simplifiez le déploiement et le débogage sur les serveurs distants.
@@ -104,6 +114,7 @@ Muon SSH est conçu pour :
 ---
 
 ## Téléchargement
+
 **Remarque**: Java 11 ou supérieur est requis.
 
 <table>
@@ -116,19 +127,19 @@ Muon SSH est conçu pour :
   </tr>
   <tr>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">v3.0.0</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.deb">v3.1.0</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.exe">Fichier Exe</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.exe">Fichier Exe</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.deb">Installeur DEB</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.deb">Installeur DEB</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.dmg">Installeur DMG</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.dmg">Installeur DMG</a>
     </td>
     <td>
-      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.0.0/muonssh_3.0.0.jar">JAR portable (Java 11)</a>
+      <a href="https://github.com/devlinx9/muon-ssh/releases/download/v3.1.0/muonssh_3.1.0.jar">JAR portable (Java 11)</a>
     </td>
   </tr>
 </table>
@@ -138,9 +149,20 @@ Pour d'autres versions, visitez la <a href="https://github.com/devlinx9/muon-ssh
 ---
 
 ## Compilation à partir du code source
+
 Muon SSH est un projet Maven standard. Pour le compiler à partir du code source, assurez-vous d'avoir Java et Maven installés, puis exécutez :
-```sh  
-mvn clean install  
+
+```sh
+## (Temp solution)
+git clone https://github.com/devlinx9/sshj
+cd sshj
+./gradlew publishToMavenLocal
+cd ..
+git clone --recurse-submodules https://github.com/devlinx9/muon-ssh
+cd muon-ssh/muon-jediterm/
+./gradlew publishToMavenLocal
+cd ..
+mvn clean package
 ```
 
 Le fichier JAR compilé se trouvera dans le répertoire `target`.
@@ -148,16 +170,19 @@ Le fichier JAR compilé se trouvera dans le répertoire `target`.
 ---
 
 ## Feuille de route
+
 Voir [ROADMAP.md](ROADMAP.md)
 
 ---
 
 ## Documentation
+
 Pour une documentation détaillée, consultez le <a href="https://github.com/devlinx9/muon-ssh/wiki">Wiki de Muon SSH</a>.
 
 ---
 
 ## Développement
+
 **Branche principale**: <a href="https://github.com/devlinx9/muon-ssh">Version stable</a>
 
 **Branche de développement**: <a href="https://github.com/devlinx9/muon-ssh/tree/develop">Développement actif</a>
@@ -165,6 +190,7 @@ Pour une documentation détaillée, consultez le <a href="https://github.com/dev
 ---
 
 ## Licence et bibliothèques tierces
+
 **Muon SSH**: Voir [LICENSE](LICENSE)
 
 **JSch**: Voir [LICENSE-Jsch](LICENSE-Jsch)
@@ -172,4 +198,5 @@ Pour une documentation détaillée, consultez le <a href="https://github.com/dev
 ---
 
 ## Journal des modifications
+
 Pour une liste détaillée des modifications, corrections de bugs et nouvelles fonctionnalités, consultez le [CHANGELOG.md](CHANGELOG.md)

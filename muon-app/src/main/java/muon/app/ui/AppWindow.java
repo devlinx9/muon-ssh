@@ -3,9 +3,8 @@ package muon.app.ui;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
-import muon.app.ui.components.session.ISessionContentPanel;
-import muon.app.ui.components.session.SessionInfo;
-import muon.app.ui.components.session.SessionListPanel;
+import muon.app.ui.components.common.ClosableTabbedPanel;
+import muon.app.ui.components.session.*;
 import muon.app.ui.components.session.dialog.NewSessionDlg;
 import muon.app.ui.components.session.files.ssh.KubeContextSelectorPanel;
 import muon.app.ui.components.session.files.transfer.BackgroundFileTransfer;
@@ -14,23 +13,22 @@ import muon.app.ui.components.settings.SettingsDialog;
 import muon.app.ui.components.settings.SettingsPageName;
 import muon.app.updater.UpdateChecker;
 import muon.app.util.FontAwesomeContants;
+import muon.app.util.ScalingUtil;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.border.MatteBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
+import java.util.prefs.Preferences;
 
 import static muon.app.util.Constants.*;
+import static muon.app.util.ScalingUtil.*;
 
 /**
  * @author subhro
@@ -39,13 +37,25 @@ import static muon.app.util.Constants.*;
 public class AppWindow extends JFrame {
 
     private final String updateUrl = BASE_UPDATE_URL + "/check-update.html?v="
-                                     + App.getCONTEXT().getVersion().getNumericValue();
+            + App.getCONTEXT().getVersion().getNumericValue();
     private final CardLayout sessionCard = new CardLayout();
     private final JPanel cardPanel = new JPanel(sessionCard, true);
     private final BackgroundTransferPanel uploadPanel;
     private final BackgroundTransferPanel downloadPanel;
     private final KubeContextSelectorPanel kubeContextSelectorPanel;
     private final Component bottomPanel;
+
+    // Load stored preferences
+    static final Preferences prefs = Preferences.userRoot().node("muonPrefs");
+
+
+    private static final String PREF_X = "frame_x";
+    private static final String PREF_Y = "frame_y";
+    private static final String PREF_WIDTH = "frame_width";
+    private static final String PREF_HEIGHT = "frame_height";
+
+    private JPanel topBox;
+    private JButton btnToggle;
 
     @Getter
     private SessionListPanel sessionListPanel;
@@ -75,6 +85,105 @@ public class AppWindow extends JFrame {
         this.downloadPanel = new BackgroundTransferPanel(count -> SwingUtilities.invokeLater(() -> lblDownloadCount.setText(count + "")));
 
         checkForUpdates();
+
+        addKeyboardShortcuts();
+    }
+
+    private void addKeyboardShortcuts() {
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .addKeyEventDispatcher(e -> {
+
+                    if (e.getID() != KeyEvent.KEY_PRESSED) return false;
+
+                    boolean ctrl = (e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0;
+                    boolean shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
+                    boolean alt = (e.getModifiersEx() & InputEvent.ALT_DOWN_MASK) != 0;
+                    boolean isTab = (e.getKeyCode() == KeyEvent.VK_TAB);
+                    boolean isF9 = (e.getKeyCode() == KeyEvent.VK_F9);
+                    boolean isPageUp = (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN);
+                    boolean isPageDown = (e.getKeyCode() == KeyEvent.VK_PAGE_UP);
+                    boolean isLKey = (e.getKeyCode() == KeyEvent.VK_L);
+                    boolean isNKey = (e.getKeyCode() == KeyEvent.VK_N);
+
+                    if (alt) {
+                        if (isNKey) {
+                            createFirstSessionPanel();
+                            e.consume();
+                            return true;
+                        }
+                        if (isF9) {
+                            hideSessionPanel();
+                            e.consume();
+                            return true;
+                        }
+
+                        if (isLKey) {
+                            createLocalSessionPanel();
+                            e.consume();
+                            return true;
+                        }
+                    }
+
+                    if (ctrl) {
+                        if (isTab) {
+                            changeSessionTab(shift);
+                            e.consume();
+                            return true;
+                        }
+
+                        if (isPageUp) {
+                            changeTerminalTab(true);
+                            e.consume();
+                            return true;
+                        }
+
+                        if (isPageDown) {
+                            changeTerminalTab(false);
+                            e.consume();
+                            return true;
+                        }
+                    }
+
+                    return false;
+                });
+    }
+
+    private void changeSessionTab(boolean shift) {
+        int size = sessionListPanel.getSessionList().getModel().getSize();
+        if (size <= 1) {
+            return;
+        }
+
+        int selectedIndex = sessionListPanel.getSessionList().getSelectedIndex();
+        int step = shift ? -1 : 1;   // Ctrl+Shift+Tab = previous, Ctrl+Tab = next
+        int next = selectedIndex;
+
+        next = Math.floorMod(next + step, size);
+        sessionListPanel.selectSession(next);
+        sessionListPanel.getSessionList().setSelectedIndex(next);
+    }
+
+    private void changeTerminalTab(boolean isUp) {
+        int selectedIndex = sessionListPanel.getSessionList().getSelectedIndex();
+        var session = sessionListPanel.getSessionList().getModel().getElementAt(selectedIndex);
+        ClosableTabbedPanel tabs = null;
+        if (session instanceof LocalSessionContentPanel) {
+            var localContentPanel = (LocalSessionContentPanel) session;
+            tabs = localContentPanel.getTerminalHolder().getTabs();
+        } else if (session instanceof SessionContentPanel) {
+            var localContentPanel = (SessionContentPanel) session;
+            tabs = localContentPanel.getTerminalHolder().getTabs();
+        }
+
+        if (tabs == null) {
+            return;
+        }
+        var size = tabs.getTabHolder().getComponentCount();
+        int step = isUp ? -1 : 1;   // Ctrl+page up = previous, Ctrl+down = next
+        int next = tabs.getSelectedIndex();
+
+        next = Math.floorMod(next + step, size);
+        tabs.setSelectedIndex(next);
     }
 
     private void setWindowProperties() {
@@ -86,6 +195,18 @@ public class AppWindow extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         setWindowsSizeAndPosition();
+
+        // Save position and size on close
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                Rectangle bounds = getBounds();
+                prefs.putInt(PREF_X, bounds.x);
+                prefs.putInt(PREF_Y, bounds.y);
+                prefs.putInt(PREF_WIDTH, bounds.width);
+                prefs.putInt(PREF_HEIGHT, bounds.height);
+            }
+        });
     }
 
     private void checkForUpdates() {
@@ -104,6 +225,11 @@ public class AppWindow extends JFrame {
         // Get the graphics environment
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] screens = ge.getScreenDevices();
+
+        float scaleFactor = ScalingUtil.getScaleFactor();
+        int baseWidth;
+        int baseHeight;
+
         if (App.getGlobalSettings().isOpenInSecondScreen() && screens.length > 1) {
             // Get the default configuration of the second screen (index 1)
             GraphicsConfiguration gc = screens[1].getDefaultConfiguration();
@@ -113,11 +239,8 @@ public class AppWindow extends JFrame {
             Insets inset = Toolkit.getDefaultToolkit().getScreenInsets(gc);
 
             // Calculate the available screen size (excluding insets)
-            int screenWidth = bounds.width - inset.left - inset.right;
-            int screenHeight = bounds.height - inset.top - inset.bottom;
-
-            // Set the window size based on the available screen size
-            setScreenWidthAndHeight(screenWidth, screenHeight);
+            baseWidth = bounds.width - inset.left - inset.right;
+            baseHeight = bounds.height - inset.top - inset.bottom;
 
             // Set the window location to the second screen
             int x = bounds.x + inset.left; // Adjust for insets
@@ -126,24 +249,26 @@ public class AppWindow extends JFrame {
         } else {
             // Fallback to primary screen if no second screen is detected
             Dimension screenD = Toolkit.getDefaultToolkit().getScreenSize();
-            int screenWidth = screenD.width;
-            int screenHeight = screenD.height;
-
-            setScreenWidthAndHeight(screenWidth, screenHeight);
+            baseWidth = screenD.width;
+            baseHeight = screenD.height;
 
             // Center on the primary screen
             setLocationRelativeTo(null);
-        }
-    }
 
-    private void setScreenWidthAndHeight(int screenWidth, int screenHeight) {
-        if (screenWidth < 1024 || screenHeight < 650 || App.getGlobalSettings().isStartMaximized()) {
-            setSize(screenWidth, screenHeight);
-        } else {
-            int width = (screenWidth * 80) / 100;
-            int height = (screenHeight * 80) / 100;
-            setSize(width, height);
+            if (App.getGlobalSettings().isRememberLastSizeAndPosition()) {
+                int x = prefs.getInt(PREF_X, 100);
+                int y = prefs.getInt(PREF_Y, 100);
+                baseWidth = prefs.getInt(PREF_WIDTH, screenD.width);
+                baseHeight = prefs.getInt(PREF_HEIGHT, screenD.height);
+                setLocation(x, y);
+            }
         }
+
+        // FIX: Multiply by scale factor, not divide!
+        int screenWidth = (int) (baseWidth * scaleFactor);
+        int screenHeight = (int) (baseHeight * scaleFactor);
+
+        setSize(screenWidth, screenHeight);
     }
 
     public void createFirstSessionPanel() {
@@ -153,23 +278,24 @@ public class AppWindow extends JFrame {
         }
     }
 
-    private void createLocalSessionPanel() {
+    public void createLocalSessionPanel() {
         sessionListPanel.createLocalSession();
     }
 
 
     private JPanel createSessionPanel() {
         JButton btnNew = new JButton(FontAwesomeContants.FA_TELEVISION);
-        btnNew.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+        btnNew.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
         btnNew.addActionListener(e -> this.createFirstSessionPanel());
-        btnNew.setToolTipText(App.getCONTEXT().getBundle().getString("new_connection"));
+        btnNew.setToolTipText(String.format(TOOLTIP_FORMAT, App.getCONTEXT().getBundle().getString("new_connection"), "alt+n"));
 
-        JButton btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
-        btnToggle.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+        btnToggle = new JButton(FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
+        btnToggle.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
 
         JButton btnLocalTerm = new JButton(FontAwesomeContants.FA_TERMINAL);
         btnLocalTerm.addActionListener(e -> this.createLocalSessionPanel());
-        btnLocalTerm.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(SMALL_TEXT_SIZE));
+        btnLocalTerm.setFont(App.getCONTEXT().getSkin().getIconFont(SMALL_TEXT_SIZE));
+        btnLocalTerm.setToolTipText(String.format(TOOLTIP_FORMAT, App.getCONTEXT().getBundle().getString("local_term"), "alt+l"));
 
         // Calculate the maximum width and height between the two buttons
         Dimension sizeNew = btnNew.getPreferredSize();
@@ -179,7 +305,7 @@ public class AppWindow extends JFrame {
         int maxHeight = Math.max(sizeNew.height, sizeToggle.height);
 
         // Create a new Dimension with the maximum width and height
-        Dimension maxSize = new Dimension(maxWidth, maxHeight);
+        Dimension maxSize = scale(new Dimension(maxWidth, maxHeight));
 
         // Set the preferred, minimum, and maximum size for both buttons
         btnNew.setPreferredSize(maxSize);
@@ -189,47 +315,48 @@ public class AppWindow extends JFrame {
         btnToggle.setPreferredSize(maxSize);
         btnToggle.setMinimumSize(maxSize);
         btnToggle.setMaximumSize(maxSize);
+        btnToggle.setToolTipText(String.format(TOOLTIP_FORMAT, App.getCONTEXT().getBundle().getString("hide_panel"), "alt+f9"));
 
         btnLocalTerm.setPreferredSize(maxSize);
         btnLocalTerm.setMinimumSize(maxSize);
         btnLocalTerm.setMaximumSize(maxSize);
 
-        JPanel topBox = new JPanel();
+        topBox = new JPanel();
         topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
-        topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
-        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        topBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
+        topBox.add(Box.createRigidArea(scale(new Dimension(5, 0))));
         topBox.add(btnToggle);
-        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        topBox.add(Box.createRigidArea(scale(new Dimension(5, 0))));
         topBox.add(btnNew);
-        topBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        topBox.add(Box.createRigidArea(scale(new Dimension(5, 0))));
         topBox.add(btnLocalTerm);
         JPanel panel = new JPanel(new BorderLayout());
-        panel.setBorder(new MatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
+        panel.setBorder(getScaledMatteBorder(0, 0, 0, 1, App.getCONTEXT().getSkin().getDefaultBorderColor()));
 
         sessionListPanel = new SessionListPanel(this);
         panel.add(topBox, BorderLayout.NORTH);
         panel.add(sessionListPanel, BorderLayout.CENTER);
 
-        btnToggle.addActionListener(e -> {
-            boolean isVisible = sessionListPanel.isVisible();
-            topBox.setLayout(new BoxLayout(topBox, BoxLayout.Y_AXIS));
-            sessionListPanel.setVisible(!isVisible);
-            topBox.setBorder(null);
-
-            if (!isVisible) {
-                topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
-                topBox.setBorder(new EmptyBorder(10, 10, 10, 10));
-            }
-
-            btnToggle.setText(isVisible ? FontAwesomeContants.FA_ANGLE_DOUBLE_RIGHT : FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
-
-            topBox.revalidate();
-            topBox.repaint();
-
-        });
-
+        btnToggle.addActionListener(e -> hideSessionPanel());
 
         return panel;
+    }
+
+    private void hideSessionPanel() {
+        boolean isVisible = sessionListPanel.isVisible();
+        topBox.setLayout(new BoxLayout(topBox, BoxLayout.Y_AXIS));
+        sessionListPanel.setVisible(!isVisible);
+        topBox.setBorder(null);
+
+        if (!isVisible) {
+            topBox.setLayout(new BoxLayout(topBox, BoxLayout.X_AXIS));
+            topBox.setBorder(getScaledEmptyBorder(10, 10, 10, 10));
+        }
+
+        btnToggle.setText(isVisible ? FontAwesomeContants.FA_ANGLE_DOUBLE_RIGHT : FontAwesomeContants.FA_ANGLE_DOUBLE_LEFT);
+
+        topBox.revalidate();
+        topBox.repaint();
     }
 
 
@@ -250,13 +377,13 @@ public class AppWindow extends JFrame {
     private Component createBottomPanel() {
         popup = new JPopupMenu();
         popup.setBorder(new LineBorder(App.getCONTEXT().getSkin().getDefaultBorderColor(), 1));
-        popup.setPreferredSize(new Dimension(400, 500));
+        popup.setPreferredSize(scale(new Dimension(400, 500)));
 
         Box b1 = Box.createHorizontalBox();
         b1.setOpaque(true);
         b1.setBackground(App.getCONTEXT().getSkin().getTableBackgroundColor());
-        b1.setBorder(new CompoundBorder(new MatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
-                                        new EmptyBorder(5, 5, 5, 5)));
+        b1.setBorder(new CompoundBorder(getScaledMatteBorder(1, 0, 0, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()),
+                getScaledEmptyBorder(5, 5, 5, 5)));
         b1.add(createSpacer(10, 10));
         b1.add(createBrandLabel());
         b1.add(createSpacer(10, 10));
@@ -390,7 +517,7 @@ public class AppWindow extends JFrame {
     }
 
     private Component createSpacer(int width, int height) {
-        return Box.createRigidArea(new Dimension(width, height));
+        return Box.createRigidArea(scale(new Dimension(width, height)));
     }
 
     private JLabel createBrandLabel() {
@@ -410,7 +537,7 @@ public class AppWindow extends JFrame {
 
     private JLabel createIconLabel(String icon) {
         JLabel label = new JLabel(icon);
-        label.setFont(App.getCONTEXT().getSkin().getIconFont().deriveFont(MEDIUM_TEXT_SIZE));
+        label.setFont(App.getCONTEXT().getSkin().getIconFont(MEDIUM_TEXT_SIZE));
         label.setCursor(new Cursor(Cursor.HAND_CURSOR));
         return label;
     }
@@ -454,13 +581,13 @@ public class AppWindow extends JFrame {
         popup.setInvoker(bottomPanel);
 
         if (panel instanceof KubeContextSelectorPanel) {
-            popup.setPreferredSize(new Dimension(150, 200));
+            popup.setPreferredSize(scale(new Dimension(150, 200)));
             popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
-                       -popup.getPreferredSize().height);
+                    -popup.getPreferredSize().height);
         } else {
-            popup.setPreferredSize(new Dimension(400, 500));
+            popup.setPreferredSize(scale(new Dimension(400, 500)));
             popup.show(bottomPanel, bottomPanel.getWidth() - popup.getPreferredSize().width,
-                       -popup.getPreferredSize().height);
+                    -popup.getPreferredSize().height);
         }
     }
 
@@ -471,7 +598,7 @@ public class AppWindow extends JFrame {
 
     public void openSettings(SettingsPageName page) {
         SettingsDialog settingsDialog = new SettingsDialog(this);
-        settingsDialog.showDialog(this, page);
+        settingsDialog.showDialog(App.getAppWindow(), page);
     }
 
     private void createK8sLabel(String currentContext) {

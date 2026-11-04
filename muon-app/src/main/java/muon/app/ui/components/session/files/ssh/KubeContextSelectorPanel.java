@@ -15,6 +15,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static muon.app.util.ScalingUtil.scale;
+
 @Slf4j
 public class KubeContextSelectorPanel extends JPanel {
 
@@ -23,6 +25,8 @@ public class KubeContextSelectorPanel extends JPanel {
     private final Box verticalBox;
     @Getter
     private boolean commandWorking = false;
+
+    private static final int MAX_LENGTH_TEXT = 16;
 
     @Getter
     private String currentContext = "";
@@ -77,7 +81,7 @@ public class KubeContextSelectorPanel extends JPanel {
                     String contextName = isCurrent ? parts[1] : parts[0];
                     actualContext = isCurrent ? contextName : actualContext;
 
-                    JLabel label = createContextLabel(contextName, isCurrent);
+                    JLabel label = createItemContextLabel(contextName, isCurrent);
                     verticalBox.add(label);
                 }
             }
@@ -86,19 +90,21 @@ public class KubeContextSelectorPanel extends JPanel {
         return actualContext;
     }
 
-    private @NotNull JLabel createContextLabel(String contextName, boolean isCurrent) {
-        JLabel label = new JLabel(contextName);
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+    private @NotNull JLabel createItemContextLabel(String contextName, boolean isCurrent) {
+        JLabel label = new JLabel();
+        label.setText(truncateText(contextName));
+        label.setToolTipText(contextName);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         Font baseFont = label.getFont();
-        Font labelFont = baseFont.deriveFont(isCurrent ? Font.BOLD : Font.PLAIN, 14f);
+        Font labelFont = baseFont.deriveFont(isCurrent ? Font.BOLD : Font.PLAIN, scale(14f));
         label.setFont(labelFont);
 
         label.setForeground(isCurrent ? App.getCONTEXT().getSkin().getDefaultSelectionForeground() : App.getCONTEXT().getSkin().getDefaultForeground());
 
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        label.setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 12));
+        label.setBorder(BorderFactory.createEmptyBorder(scale(8), scale(12), scale(8), scale(12)));
 
         label.setOpaque(true);
         label.setBackground(isCurrent ? App.getCONTEXT().getSkin().getDefaultSelectionBackground() : App.getCONTEXT().getSkin().getDefaultBackground());
@@ -180,5 +186,17 @@ public class KubeContextSelectorPanel extends JPanel {
             log.info("Auto-updating local K8s context: {}", context);
         }, 0, 30, TimeUnit.SECONDS);
 
+    }
+
+    private static String truncateText(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+
+        if (text.length() <= MAX_LENGTH_TEXT) {
+            return text;
+        }
+
+        return text.substring(0, MAX_LENGTH_TEXT - 3) + "...";
     }
 }

@@ -1,8 +1,8 @@
 package muon.app.ui.components.session.diskspace;
 
 import lombok.extern.slf4j.Slf4j;
-import muon.app.util.PathUtils;
 
+import java.nio.file.Path;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,8 +14,8 @@ public final class DuOutputParser {
     private final DiskUsageEntry root;
 
     public DuOutputParser(String folder) {
-        root = new DiskUsageEntry(PathUtils.getFileName(folder), "", 0, 0,
-                true);
+        root = new DiskUsageEntry(Path.of(folder).getFileName().toString(), "", 0, 0,
+                                  true);
     }
 
     public DiskUsageEntry parseList(List<String> lines, int prefixLen) {
@@ -55,7 +55,7 @@ public final class DuOutputParser {
             }
             if (!found) {
                 DiskUsageEntry entry = new DiskUsageEntry(s,
-                        node.getPath() + "/" + s, -1, 0, true);
+                                                          node.getPath() + "/" + s, -1, 0, true);
                 entry.setDirectory(true);
                 node.getChildren().add(entry);
                 node = entry;
@@ -71,7 +71,7 @@ public final class DuOutputParser {
         }
         if (entry == null) {
             entry = new DiskUsageEntry(arr[arr.length - 1],
-                    node.getPath() + "/" + name, size, 0, true);
+                                       node.getPath() + "/" + name, size, 0, true);
             node.getChildren().add(entry);
         } else {
             entry.setSize(size);

@@ -1,5 +1,6 @@
 package muon.app.ui.components.session;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.common.FileInfo;
 
@@ -14,6 +15,8 @@ import java.util.function.Consumer;
 @Slf4j
 public class FileChangeWatcher {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    @Getter
     private final List<FileModificationInfo> filesToWatch = new ArrayList<>();
     private final AtomicBoolean skipMonitoring = new AtomicBoolean(false);
     private final Consumer<List<FileModificationInfo>> callback;
@@ -26,13 +29,7 @@ public class FileChangeWatcher {
         this.interval = interval;
     }
 
-    public void addForMonitoring(FileInfo fileInfo, String localFile,
-                                 int activeSessionId) {
-        FileModificationInfo item = new FileModificationInfo();
-        item.remoteFile = fileInfo;
-        item.localFile = new File(localFile);
-        item.lastModified = item.localFile.lastModified();
-        item.activeSessionId = activeSessionId;
+    public void addForMonitoring(FileModificationInfo item) {
         filesToWatch.add(item);
     }
 
@@ -41,14 +38,7 @@ public class FileChangeWatcher {
             while (!stopFlag.get()) {
                 if (!skipMonitoring.get()) {
                     List<FileModificationInfo> list = new ArrayList<>();
-                    for (FileModificationInfo info : filesToWatch) {
-                        File f = info.localFile;
-                        long modified = f.lastModified();
-                        if (modified > info.lastModified) {
-                            list.add(info);
-                            info.lastModified = modified;
-                        }
-                    }
+                    getModifiedFileList(list);
                     if (!list.isEmpty()) {
                         callback.accept(list);
                     }
@@ -60,6 +50,19 @@ public class FileChangeWatcher {
                 }
             }
         });
+    }
+
+    private void getModifiedFileList(List<FileModificationInfo> list) {
+        for (FileModificationInfo info : filesToWatch) {
+            File f = info.localFile;
+            long modified = f.lastModified();
+            if (info.lastModified == 0) {
+                info.lastModified = modified;
+            } else if (modified > info.lastModified) {
+                list.add(info);
+                info.lastModified = modified;
+            }
+        }
     }
 
     public void startWatching() {
@@ -83,11 +86,13 @@ public class FileChangeWatcher {
         public File localFile;
         public int activeSessionId;
         public long lastModified;
+        public boolean alreadyWatched;
 
         @Override
         public String toString() {
-            if (remoteFile != null)
+            if (remoteFile != null) {
                 return remoteFile.getName();
+            }
             return "";
         }
     }

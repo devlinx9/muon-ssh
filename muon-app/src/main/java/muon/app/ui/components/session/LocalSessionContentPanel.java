@@ -5,14 +5,17 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import muon.app.App;
 import muon.app.ui.components.common.DisabledPanel;
+import muon.app.ui.components.session.files.editor.TextEditor;
+import muon.app.ui.components.session.files.editor.TextEditorHolder;
 import muon.app.ui.components.session.terminal.LocalTerminalHolder;
 import muon.app.util.LayoutUtilities;
 
 import javax.swing.*;
-import javax.swing.border.MatteBorder;
 import java.awt.*;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static muon.app.util.ScalingUtil.getScaledMatteBorder;
 
 /**
  * @author subhro
@@ -28,7 +31,10 @@ public class LocalSessionContentPanel extends JPanel implements PageHolder, ISes
     private final JRootPane rootPane;
     private final DisabledPanel disabledPanel;
     private final TabbedPage[] pages;
+    @Getter
     private final LocalTerminalHolder terminalHolder;
+    public final TextEditorHolder textEditorHolder;
+
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
     public LocalSessionContentPanel(SessionInfo info) {
@@ -36,10 +42,18 @@ public class LocalSessionContentPanel extends JPanel implements PageHolder, ISes
         this.info = info;
         this.disabledPanel = new DisabledPanel();
         Box contentTabs = Box.createHorizontalBox();
-        contentTabs.setBorder(new MatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
+        contentTabs.setBorder(getScaledMatteBorder(0, 0, 1, 0, App.getCONTEXT().getSkin().getDefaultBorderColor()));
         terminalHolder = new LocalTerminalHolder();
 
-        Page[] pageArr = new Page[]{terminalHolder};
+        textEditorHolder = new TextEditorHolder(new TextEditor(null, true));
+
+        Page[] pageArr;
+
+        if (App.getGlobalSettings().isUseLocalEditor()) {
+            pageArr = new Page[]{terminalHolder, textEditorHolder};
+        } else {
+            pageArr = new Page[]{terminalHolder};
+        }
 
         this.cardLayout = new CardLayout();
         this.cardPanel = new JPanel(this.cardLayout);
@@ -50,6 +64,7 @@ public class LocalSessionContentPanel extends JPanel implements PageHolder, ISes
             this.pages[i] = tabbedPage;
             this.cardPanel.add(tabbedPage.getPage(), tabbedPage.getId());
             pageArr[i].putClientProperty(PAGE_ID, tabbedPage.getId());
+            tabbedPage.setVisible(true);
         }
 
         LayoutUtilities.equalizeSize(this.pages);

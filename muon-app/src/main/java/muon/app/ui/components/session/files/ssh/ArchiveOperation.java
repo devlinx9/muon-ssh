@@ -1,11 +1,13 @@
 package muon.app.ui.components.session.files.ssh;
 
 import lombok.extern.slf4j.Slf4j;
+import muon.app.App;
 import muon.app.ssh.RemoteSessionInstance;
 import muon.app.util.OptionPaneUtils;
 import muon.app.util.PathUtils;
 
 import javax.swing.*;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -96,8 +98,7 @@ public class ArchiveOperation {
                 .format(command, archivePath,
                         isSingleArchive(archivePath)
                         ? PathUtils.combineUnix(targetFolder,
-                                                getArchiveFileName(PathUtils
-                                                                           .getFileName(archivePath)))
+                                                getArchiveFileName(Path.of(archivePath).getFileName().toString()))
                         : targetFolder);
         log.info("Invoke command: {}", command);
         StringBuilder output = new StringBuilder();
@@ -108,13 +109,13 @@ public class ArchiveOperation {
 
     public boolean createArchive(RemoteSessionInstance client,
                                  List<String> files, String targetFolder, AtomicBoolean stopFlag) throws Exception {
-        String text = files.size() > 1 ? PathUtils.getFileName(targetFolder)
+        String text = files.size() > 1 ? Path.of(targetFolder).getFileName().toString()
                                        : files.get(0);
         JTextField txtFileName = new JTextField(text);
         JTextField txtTargetFolder = new JTextField(targetFolder);
         JComboBox<String> comboBox = new JComboBox<>(
                 compressCommands.keySet().toArray(new String[0]));
-        if (OptionPaneUtils.showOptionDialog(null,
+        if (OptionPaneUtils.showOptionDialog(App.getAppWindow(),
                                              new Object[]{"Archive name", txtFileName, "Target folder",
                                                           txtTargetFolder, "Archive type", comboBox},
                                              "Create archive") == JOptionPane.OK_OPTION) {

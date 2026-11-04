@@ -30,8 +30,10 @@ public class Settings {
     private TransferMode fileTransferMode = TransferMode.BACKGROUND;
     private ConflictAction conflictAction = ConflictAction.AUTORENAME;
     private boolean confirmBeforeDelete = true;
+    private boolean useLocalEditor = false;
     private boolean enabledK8sContextPlugin = false;
     private boolean startMaximized = true;
+    private boolean rememberLastSizeAndPosition = false;
     private boolean confirmBeforeMoveOrCopy = false;
     private boolean showHiddenFilesByDefault = false;
     private boolean firstFileBrowserView = false;
@@ -47,6 +49,7 @@ public class Settings {
     private boolean useGlobalDarkTheme = true;
     private int connectionTimeout = 60;
     private boolean connectionKeepAlive = false;
+    private boolean useCompactView = false;
     private int logViewerFont = 14;
     private boolean logViewerUseWordWrap = true;
     private int logViewerLinesPerPage = 50;
@@ -107,6 +110,8 @@ public class Settings {
 
     private double uiScaling = 1.0;
     private boolean manualScaling = false;
+
+    private boolean startWithTerminal = false;
 
     private List<EditorEntry> editors = new ArrayList<>();
 

@@ -19,11 +19,13 @@ public class FontAwesomeContants {
     public static final String FA_SEARCH = "\uf002";
     public static final String FA_BOLT = "\uf0e7";
     public static final String FA_STICKY_NOTE_O = "\uf24a";
+    public static final String FA_FLOPPY_O = "\uf0c7";
     public static final String FA_FOLDER_O = "\uf114";
     public static final String FA_SLIDERS = "\uf1de";
     public static final String FA_FOLDER_OPEN_O = "\uf115";
     public static final String FA_LAPTOP = "\uf109";
     public static final String FA_TELEVISION = "\uf26c";
+    public static final String FA_STOP_CIRCLE = "\uf28d";
     public static final String FA_PLUS_SQUARE = "\uf0fe";
     public static final String FA_WINDOW_CLOSE = "\uf2d3";
     public static final String FA_COG = "\uf013";
@@ -77,4 +79,5 @@ public class FontAwesomeContants {
     public static final String FA_APPLE = "\uf179";
     public static final String FA_CERTIFICATE = "\uf0a3";
     public static final String FA_VCARD = "\uf2bb";
+    public static final String FA_EXCLAMATION_TRIANGLE = "\uf06a";
 }

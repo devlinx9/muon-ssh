@@ -7,10 +7,10 @@ import muon.app.ui.components.session.SessionContentPanel;
 import muon.app.ui.components.session.utilpage.UtilPageItemView;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static muon.app.util.ScalingUtil.getScaledEmptyBorder;
 
 
 /**
@@ -115,7 +115,7 @@ public class SysLoadPage extends UtilPageItemView {
         systemLoadPanel = new SystemLoadPanel();
 
         Box topPanel = Box.createHorizontalBox();
-        topPanel.setBorder(new EmptyBorder(5, 10, 5, 10));
+        topPanel.setBorder(getScaledEmptyBorder(5, 10, 5, 10));
 
         JLabel titleLabel = new JLabel("System Monitor");
         titleLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 18));
